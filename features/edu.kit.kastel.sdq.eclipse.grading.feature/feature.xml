@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="edu.kit.kastel.sdq.eclipse.grading.feature"
+      label="%featureName"
+      version="1.0.0.qualifier"
+      provider-name="%providerName">
+
+   <description>
+      %description
+   </description>
+
+   <copyright url="%copyrightURL">
+      %copyright
+   </copyright>
+
+   <license url="%licenseURL">
+      %license
+   </license>
+   
+   <!--<requires>-->
+      <!-- required plugins need to be provided by update sites -->
+      <!-- <import plugin="edu.kit.kastel.sdq.artemis.special" version="3.10.0" match="greaterOrEqual"/>-->
+   <!--</requires> -->
+   <!--
+   <plugin
+         id="org.eclipse.jgit"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+   -->
+</feature>

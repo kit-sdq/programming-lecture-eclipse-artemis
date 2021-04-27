@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/edu.kit.kastel.sdq.eclipse.grading.feature_1.0.0.qualifier.jar" id="edu.kit.kastel.sdq.eclipse.grading.feature" version="1.0.0.qualifier">
+      <category name="Eclipse Grading"/>
+   </feature>
+   <feature id="edu.kit.kastel.sdq.eclipse.grading.feature.source" version="1.0.0.qualifier">
+      <category name="Eclipse Grading"/>
+   </feature>
+   <category-def name="Eclipse Grading" label="Eclipse Grading">
+      <description>
+         Plugin for easier grading with Artemis and Eclipse
+      </description>
+   </category-def>
+</site>
