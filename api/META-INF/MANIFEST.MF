@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: ArtemisPluginInnerAPIPlugin
+Bundle-SymbolicName: ArtemisPluginInnerAPIPlugin
+Bundle-Version: 1.0.0.qualifier
+Automatic-Module-Name: ArtemisPluginInnerAPIPlugin
+Bundle-RequiredExecutionEnvironment: JavaSE-12
