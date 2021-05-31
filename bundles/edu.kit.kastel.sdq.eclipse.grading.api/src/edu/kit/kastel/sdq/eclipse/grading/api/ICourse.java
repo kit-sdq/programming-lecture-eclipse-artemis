@@ -10,6 +10,12 @@ import java.util.Collection;
 public interface ICourse {
 	//TODO noch id, name usw 
 	
+	public int getCourseId();
+	
+	public String getTitle();
+	
+	public String getShortName();
+	
 	public Collection<IExercise> getExercises();
 
 }

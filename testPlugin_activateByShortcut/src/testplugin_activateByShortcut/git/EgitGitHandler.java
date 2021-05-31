@@ -6,8 +6,12 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.egit.core.EclipseGitProgressTransformer;
 import org.eclipse.egit.core.op.CloneOperation;
+import org.eclipse.jgit.lib.TextProgressMonitor;
 import org.eclipse.jgit.transport.URIish;
+import org.eclipse.jgit.util.FileUtils;
 
 public class EgitGitHandler extends AbstractGitHandler {
 
@@ -21,11 +25,15 @@ public class EgitGitHandler extends AbstractGitHandler {
 	public void cloneRepo(final File destination, final String branch) {
 		// TODO this currently clones all branches. Sparse checkout might be better?!
 		try {
+			System.out.println("Cloning repo " + getRepoURL() + " to " + destination);
+			
 			CloneOperation cloneOperation = new CloneOperation(getURIish(), true, null, destination, branch, remoteName, 0);
-			cloneOperation.run(null);
+			
+			cloneOperation.run(new DumbProgressMonitor());
 		} catch (Exception e) {
 			//TODO rethrow
 			System.out.println("[EgitGitHandler - Erreur] Clone failed with exception [" + e.getClass() + "]:"+ e.getMessage());
+			e.printStackTrace();
 			return;
 		}
 		System.out.println("[EgitGitHandler] Clone ran through! ");

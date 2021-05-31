@@ -10,9 +10,9 @@
 	<name>Artemis Eclipse Importer</name>
 
 	<modules>
-		<!--<module>bundles</module>-->
+		<module>bundles</module>
 		<module>features</module>
-		<!--<module>tests</module>-->
+		<module>tests</module>
 		<module>releng</module>
 	</modules>
 	

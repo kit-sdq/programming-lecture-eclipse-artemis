@@ -22,7 +22,7 @@ public class Activator extends AbstractUIPlugin {
 
 	@Override
 	public void start(BundleContext context) throws Exception {
-		System.out.println("   ######################################################################################################Activator was executed!!!!!!!!!-begin");
+		System.out.println("   ######################################################################################################Äctivator was executed!!!!!!!!!-begin");
 		
 		System.out.println(context.toString());
 		

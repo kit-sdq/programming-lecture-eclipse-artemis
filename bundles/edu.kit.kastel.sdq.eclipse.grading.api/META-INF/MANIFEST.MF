@@ -5,3 +5,4 @@ Bundle-SymbolicName: ArtemisPluginInnerAPIPlugin
 Bundle-Version: 1.0.0.qualifier
 Automatic-Module-Name: ArtemisPluginInnerAPIPlugin
 Bundle-RequiredExecutionEnvironment: JavaSE-12
+Export-Package: edu.kit.kastel.sdq.eclipse.grading.api
