@@ -13,7 +13,7 @@ public interface IAssessmentController {
 	 * 
 	 * @return all mistake types.
 	 */
-	public Collection<IMistake> getMistakes();
+	public Collection<IMistakeType> getMistakes();
 	
 	/**
 	 * Add an annotation to the current assessment.

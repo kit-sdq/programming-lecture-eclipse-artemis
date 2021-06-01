@@ -15,6 +15,7 @@ import javax.ws.rs.client.WebTarget;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.glassfish.jersey.jackson.internal.FilteringJacksonJaxbJsonProvider;
@@ -34,6 +35,7 @@ import testplugin_activateByShortcut.mappings.ArtemisCourses;
 import testplugin_activateByShortcut.mappings.ArtemisExercise;
 import testplugin_activateByShortcut.mappings.ArtemisSubmission;
 import testplugin_activateByShortcut.rest.ArtemisRESTClient;
+import testplugin_activateByShortcut.testConfig.ConfigDaoTest;
 
 import com.fasterxml.jackson.core.JsonFactory;
 
@@ -47,7 +49,7 @@ public class ShortcutHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		
+		final File eclipseWorkspaceRoot =  ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile();
 		//System.out.println(event.toString());
 		ITextSelection selection = (ITextSelection)HandlerUtil.getActiveSiteChecked(event).getSelectionProvider().getSelection();
 		System.out.println(
@@ -67,7 +69,9 @@ public class ShortcutHandler extends AbstractHandler {
 //		gitCloneWithJgit("https://github.com/RobinRSchulz/sonntagsfrage.git", "testPlugin_bookmarks/target/testJgit");
 		
 		
-		artemisTest();
+//		artemisTest();
+		// you need to import the file into a new Lala-Project.
+		new ConfigDaoTest(new File(eclipseWorkspaceRoot, "Lala/src/config.json")).run();
 		return null;
 	}
 	

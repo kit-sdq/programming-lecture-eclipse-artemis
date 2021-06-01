@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Eclipse_Artemis_Grading_Core
+Bundle-SymbolicName: Eclipse_Artemis_Grading_Core
+Bundle-Version: 1.0.0.qualifier
+Automatic-Module-Name: Eclipse.Artemis.Grading.Core
+Bundle-RequiredExecutionEnvironment: JavaSE-11
+Import-Package: com.fasterxml.jackson.annotation;version="2.9.1",
+ com.fasterxml.jackson.core;version="2.9.1",
+ com.fasterxml.jackson.databind;version="2.9.1",
+ com.fasterxml.jackson.databind.deser.std;version="2.9.1",
+ com.fasterxml.jackson.databind.module;version="2.9.1",
+ edu.kit.kastel.sdq.eclipse.grading.api
+Export-Package: edu.kit.kastel.sdq.eclipse.grading.core.config,
+ edu.kit.kastel.sdq.eclipse.grading.core.model
