@@ -9,13 +9,13 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.jgit;bundle-version="5.11.0",
  org.eclipse.egit;bundle-version="5.11.0",
  org.eclipse.egit.core;bundle-version="5.11.0",
- com.eclipsesource.jaxrs.jersey-all;bundle-version="2.22.2"
+ com.eclipsesource.jaxrs.jersey-all;bundle-version="2.22.2",
+ com.fasterxml.jackson.core.jackson-databind;bundle-version="2.12.1",
+ com.fasterxml.jackson.core.jackson-core;bundle-version="2.12.1"
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Automatic-Module-Name: testPlugin.bookmarks
 Bundle-ActivationPolicy: lazy
-Import-Package: com.fasterxml.jackson.core;version="2.9.1",
- com.fasterxml.jackson.databind;version="2.9.1",
- edu.kit.kastel.sdq.eclipse.grading.api,
+Import-Package: edu.kit.kastel.sdq.eclipse.grading.api,
  edu.kit.kastel.sdq.eclipse.grading.core.config,
  edu.kit.kastel.sdq.eclipse.grading.core.model,
  javax.ws.rs;version="2.0.0",
