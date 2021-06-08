@@ -37,6 +37,7 @@ import testplugin_activateByShortcut.mappings.ArtemisCourses;
 import testplugin_activateByShortcut.mappings.ArtemisExercise;
 import testplugin_activateByShortcut.mappings.ArtemisSubmission;
 import testplugin_activateByShortcut.rest.ArtemisRESTClient;
+import testplugin_activateByShortcut.testConfig.AssessmentControllerTest;
 import testplugin_activateByShortcut.testConfig.ConfigDaoTest;
 
 import com.fasterxml.jackson.core.JsonFactory;
@@ -71,9 +72,12 @@ public class ShortcutHandler extends AbstractHandler {
 //		gitCloneWithJgit("https://github.com/RobinRSchulz/sonntagsfrage.git", "testPlugin_bookmarks/target/testJgit");
 		
 		
-		artemisTest();
+//		artemisTest();
 		// you need to import the file into a new Lala-Project.
-//		new ConfigDaoTest(new JsonFileConfigDao(new File(eclipseWorkspaceRoot, "Lala/src/config_v2.json"))).run();
+		new ConfigDaoTest(new JsonFileConfigDao(new File(eclipseWorkspaceRoot, "Lala/src/config_v2.json"))).run();
+		
+		System.out.println("#####AssessmentControllerTest#####");
+		new AssessmentControllerTest(new File(eclipseWorkspaceRoot, "Lala/src/config_v2.json"), "Final Task 1").run();
 		return null;
 	}
 	

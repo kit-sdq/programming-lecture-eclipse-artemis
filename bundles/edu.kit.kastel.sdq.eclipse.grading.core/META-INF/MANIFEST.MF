@@ -6,7 +6,8 @@ Bundle-Version: 1.0.0.qualifier
 Automatic-Module-Name: Eclipse.Artemis.Grading.Core
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Import-Package: edu.kit.kastel.sdq.eclipse.grading.api
-Export-Package: edu.kit.kastel.sdq.eclipse.grading.core.config,
+Export-Package: edu.kit.kastel.sdq.eclipse.grading.core,
+ edu.kit.kastel.sdq.eclipse.grading.core.config,
  edu.kit.kastel.sdq.eclipse.grading.core.model
 Require-Bundle: com.fasterxml.jackson.core.jackson-databind;bundle-version="2.12.1",
  com.fasterxml.jackson.core.jackson-core;bundle-version="2.12.1",

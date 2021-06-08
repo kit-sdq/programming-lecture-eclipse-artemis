@@ -31,7 +31,9 @@ public class AssessmentController implements IAssessmentController {
 	
 	@Override
 	public Collection<IMistakeType> getMistakes() throws IOException {
-		final Optional<ExerciseConfig> exerciseConfigOptional = this.configDao.getExerciseConfigs().stream().filter(exerciseConfig -> exerciseConfig.getShortName().equals(this.exerciseName)).findFirst();
+		final Optional<ExerciseConfig> exerciseConfigOptional = this.configDao.getExerciseConfigs().stream()
+				.filter(exerciseConfig -> exerciseConfig.getShortName().equals(this.exerciseName))
+				.findFirst();
 		if (exerciseConfigOptional.isPresent()) {
 			return exerciseConfigOptional.get().getIMistakeTypes();
 		} else throw new IOException("TODO: write msg");
