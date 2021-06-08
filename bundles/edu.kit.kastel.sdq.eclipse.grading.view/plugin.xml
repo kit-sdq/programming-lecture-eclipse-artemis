@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.commands">
+      <category
+            id="gui.commands.category"
+            name="Sample Category">
+      </category>
+      <command
+            categoryId="gui.commands.category"
+            name="Sample Command"
+            id="gui.commands.sampleCommand">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="gui.handlers.SampleHandler"
+            commandId="gui.commands.sampleCommand">
+      </handler>
+   </extension>
+   <extension
+         point="org.eclipse.ui.bindings">
+      <key
+            commandId="gui.commands.sampleCommand"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            contextId="org.eclipse.ui.contexts.window"
+            sequence="M1+6">
+      </key>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="menu:org.eclipse.ui.main.menu?after=additions">
+         <menu
+               id="gui.menus.sampleMenu"
+               label="Sample Menu"
+               mnemonic="M">
+            <command
+                  commandId="gui.commands.sampleCommand"
+                  id="gui.menus.sampleCommand"
+                  mnemonic="S">
+            </command>
+         </menu>
+      </menuContribution>
+      <menuContribution
+            locationURI="toolbar:org.eclipse.ui.main.toolbar?after=additions">
+         <toolbar
+               id="gui.toolbars.sampleToolbar">
+            <command
+                  id="gui.toolbars.sampleCommand"
+                  commandId="gui.commands.sampleCommand"
+                  icon="icons/sample.png"
+                  tooltip="Say hello world">
+            </command>
+         </toolbar>
+      </menuContribution>
+   </extension>
+   <extension
+         id="gui.assessment.marker"
+         name="Assessment Marker"
+         point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.core.resources.textmarker">
+      </super>
+      <attribute
+            name="start">
+      </attribute>
+      <attribute
+            name="end">
+      </attribute>
+      <attribute
+            name="path">
+      </attribute>
+      <attribute
+            name="errorType">
+      </attribute>
+      <attribute
+            name="ratingGroup">
+      </attribute>
+      <attribute
+            name="customPenalty">
+      </attribute>
+      <attribute
+            name="customMessage">
+      </attribute>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors.annotationTypes">
+      <type
+            markerType="gui.assessment.marker"
+            name="Assessment Annotation">
+      </type>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors.markerAnnotationSpecification">
+      <specification
+            annotationType="Assessment Annotation"
+            colorPreferenceKey="key1"
+            colorPreferenceValue="192,255,192"
+            highlightPreferenceKey="key5"
+            highlightPreferenceValue="true"
+            includeOnPreferencePage="true"
+            label="Assessment Annotation"
+            overviewRulerPreferenceKey="key2"
+            overviewRulerPreferenceValue="true"
+            presentationLayer="0"
+            textPreferenceKey="key4"
+            textPreferenceValue="true"
+            textStylePreferenceKey="key20"
+            textStylePreferenceValue="BOX"
+            verticalRulerPreferenceKey="key3"
+            verticalRulerPreferenceValue="true">
+      </specification>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            class="gui.marker.view.AssessmentMarkerView"
+            id="gui.annotaion.marker.view"
+            name="Assessment Annotation View"
+            restorable="true">
+      </view>
+      <view
+            class="gui.button.selection.view.ButtonSelectionView"
+            id="gui.button.selection.view"
+            name="Error Type Selection"
+            restorable="true">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.ide.markerSupport">
+      <markerContentGenerator
+            id="gui.annotationMarkerGenerator"
+            name="Assessment Marker View Generator">
+         <markerTypeReference
+               id="gui.assessment.marker">
+         </markerTypeReference>
+         <markerFieldReference
+               id="gui.markerPositionField"
+               visible="true">
+         </markerFieldReference>
+         <markerFieldReference
+               id="gui.marker.ratingGroupField">
+         </markerFieldReference>
+         <markerFieldReference
+               id="gui.markerErrorTypeField"
+               visible="true">
+         </markerFieldReference>
+         <markerFieldReference
+               id="gui.marker.customMessageField">
+         </markerFieldReference>
+         <markerFieldReference
+               id="gui.marker.customPenaltyField">
+         </markerFieldReference>
+      </markerContentGenerator>
+      <markerField
+            class="gui.marker.view.AssessmentMarkerPositionField"
+            id="gui.markerPositionField"
+            name="Position">
+      </markerField>
+      <markerField
+            class="gui.marker.view.AssessmentRatingGroupField"
+            id="gui.marker.ratingGroupField"
+            name="Rating Group ">
+      </markerField>
+      <markerField
+            class="gui.marker.view.AssessmentErrorTypeField"
+            id="gui.markerErrorTypeField"
+            name="Error Type">
+      </markerField>
+      <markerField
+            class="gui.marker.view.AssessmentMarkerCustomPenalyField"
+            id="gui.marker.customPenaltyField"
+            name="Custom Penalty">
+      </markerField>
+      <markerField
+            class="gui.marker.view.AssessmentMarkerCustomMessageField"
+            id="gui.marker.customMessageField"
+            name="Custom Message">
+      </markerField>
+   </extension>
+
+</plugin>
