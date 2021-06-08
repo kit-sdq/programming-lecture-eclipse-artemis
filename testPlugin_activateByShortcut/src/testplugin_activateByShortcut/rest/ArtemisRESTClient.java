@@ -292,4 +292,23 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 		exercises.forEach(exercise -> downloadExercise(exercise, new File(directory, exercise.getShortName())));
 	}
 
+	@Override
+	public void downloadExerciseAndSubmissions(IExercise exercise, Collection<ISubmission> submissions,
+			File directory) {
+		//exercise-$EXERCISEID-$EXERCISENAME_submission-$SUBMISSIONID-$SUBMISSIONNAME
+		submissions.forEach(submission -> {
+			final File project = new File(directory, new StringBuilder()
+					.append("exercise-").append(exercise.getExerciseId()).append("-").append(exercise.getShortName())
+					.append("_submission-").append(submission.getSubmissionId()).append("-").append(submission.getParticipantIdentifier())
+					.toString()
+			);
+			
+			downloadExercise(exercise, project);
+			
+			//download submission inside
+			downloadSubmission(submission, new File(project, "assignment"));
+			
+		});		
+	}
+
 }

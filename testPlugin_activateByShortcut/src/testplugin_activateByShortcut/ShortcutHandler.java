@@ -72,9 +72,9 @@ public class ShortcutHandler extends AbstractHandler {
 //		gitCloneWithJgit("https://github.com/RobinRSchulz/sonntagsfrage.git", "testPlugin_bookmarks/target/testJgit");
 		
 		
-//		artemisTest();
+		artemisTest();
 		// you need to import the file into a new Lala-Project.
-		new ConfigDaoTest(new JsonFileConfigDao(new File(eclipseWorkspaceRoot, "Lala/src/config_v2.json"))).run();
+//		new ConfigDaoTest(new JsonFileConfigDao(new File(eclipseWorkspaceRoot, "Lala/src/config_v2.json"))).run();
 		
 		System.out.println("#####AssessmentControllerTest#####");
 		new AssessmentControllerTest(new File(eclipseWorkspaceRoot, "Lala/src/config_v2.json"), "Final Task 1").run();
@@ -114,17 +114,22 @@ public class ShortcutHandler extends AbstractHandler {
 	
 	public void downloadExerciseTest(AbstractArtemisClient artemisClient, Collection<ICourse> courses, int courseId, int exerciseId) {
 		final File eclipseWorkspaceRoot =  ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile();
-		
-		System.out.println("workspaceRoot="+eclipseWorkspaceRoot);
-		//TODO
+
 		Collection<IExercise> exercises = courses.stream().filter(course -> (course.getCourseId() == courseId)).findAny().get()
 				.getExercises().stream().filter(exercise -> (exercise.getExerciseId() == exerciseId)).collect(Collectors.toList());
-		artemisClient.downloadExercises(exercises,
-				eclipseWorkspaceRoot
-		);
 		final IExercise exercise = exercises.iterator().next();
-		artemisClient.downloadSubmissions(List.of(exercise.getSubmissions().iterator().next()), 
-				new File(eclipseWorkspaceRoot, exercise.getShortName() + "/assignment"));
+		
+//		System.out.println("workspaceRoot="+eclipseWorkspaceRoot);
+//		//TODO
+//		artemisClient.downloadExercises(exercises,
+//				eclipseWorkspaceRoot
+//		);
+//		artemisClient.downloadSubmissions(List.of(exercise.getSubmissions().iterator().next()), 
+//				new File(eclipseWorkspaceRoot, exercise.getShortName() + "/assignment"));
+		
+		
+		artemisClient.downloadExerciseAndSubmissions(exercise, exercise.getSubmissions(), eclipseWorkspaceRoot);
+		
 		
 		System.out.println("Download Done!");
 	}

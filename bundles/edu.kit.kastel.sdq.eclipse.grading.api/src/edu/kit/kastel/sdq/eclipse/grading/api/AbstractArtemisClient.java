@@ -48,6 +48,7 @@ public abstract class AbstractArtemisClient {
 	public abstract Collection<ICourse> getCourses() throws Exception;
 	
 	/**
+	 * TODO maybe remove
 	 * TODO multiple Submissions might not be possible 
 	 * Download submissions defined by the given submissionIds
 	 * @param exerciseId	needed, although submissionIds are unique!
@@ -56,12 +57,19 @@ public abstract class AbstractArtemisClient {
 	public abstract void downloadSubmissions(Collection<ISubmission> submissions, File directory);
 	
 	/**
+	 * TODO maybe remove
 	 * Using the IExercise instead of exerciseId, because the caller has gotten the IExercise object, already.
 	 * @param exerciss	needed, although submissionIds are unique!
 	 * @param directory the root directory. Exercise dirs are named by Exercise::getShortName
 	 */
 	public abstract void downloadExercises(Collection<IExercise> exercises, File directory);
 	
+	/**
+	 * Clones Exercise n times for n submissions, like so
+	 * exercise-$EXERCISEID-$EXERCISENAME_submission-$SUBMISSIONID-$SUBMISSIONNAME.
+	 * E.g.: exercise-1-TestExercise_submission-5-HansPeterBaxter
+	 */
+	public abstract void downloadExerciseAndSubmissions(IExercise exercise, Collection<ISubmission> submissions, File directory);
 	
 	
 	/**
