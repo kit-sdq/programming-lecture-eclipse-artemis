@@ -5,7 +5,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
 import edu.kit.kastel.sdq.eclipse.grading.api.IAnnotation;
+import edu.kit.kastel.sdq.eclipse.grading.core.config.PenaltyRuleDeserializer;
 
 /**
  * This class is used by an IMistakeType-Instance to calculate penalties.
@@ -16,6 +19,7 @@ import edu.kit.kastel.sdq.eclipse.grading.api.IAnnotation;
  * TODO might well be an interface, decide!
  *
  */
+@JsonDeserialize(using = PenaltyRuleDeserializer.class)
 public abstract class PenaltyRule {
 	
 	/**

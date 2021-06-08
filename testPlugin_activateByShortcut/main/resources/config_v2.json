@@ -1,0 +1,148 @@
+[
+    {
+        "shortName": "Final Task 1",
+        "ratingGroups": [
+            {
+                "shortName": "functionality",
+                "displayName": "Funktionalität",
+                "praktomatId": 0,
+                "scoring": "fn currentStudentScore"
+            },
+            {
+                "shortName": "modelling",
+                "displayName": "OO-Modellierung",
+                "praktomatId": 1,
+                "scoring": "fn genericRatingFunction",
+                "render": "fn genericRenderer"
+            },
+            {
+                "shortName": "understandability",
+                "displayName": "Verständlichkeit/Komplexität",
+                "praktomatId": 2,
+                "scoring": "fn genericRatingFunction",
+                "render": "fn genericRenderer"
+            },
+            {
+                "shortName": "style",
+                "displayName": "Programmierstil",
+                "praktomatId": 3,
+                "scoring": "fn genericRatingFunction",
+                "render": "fn genericRenderer"
+            }
+        ],
+        "mistakeTypes": [
+            {
+                "shortName": "mixedAlgo",
+                "button": "Algorithmus/Datenstruktur",
+                "message": "Graphstrukturen und Algorithmus sind stark vermischt",
+                "penaltyRule": {
+                    "shortName": "thresholdPenalty",
+                    "threshold": 1,
+                    "penalty": 5
+                },
+                "appliesTo": "modelling"
+            },
+            {
+                "shortName": "jdEmpty",
+                "button": "JavaDoc Leer",
+                "message": "JavaDoc ist leer oder nicht vorhanden",
+                "penaltyRule": {
+                    "shortName": "thresholdPenalty",
+                    "threshold": 1,
+                    "penalty": 5
+                },
+                "appliesTo": "style"
+            },
+            {
+                "shortName": "jdTrivial",
+                "button": "JavaDoc Trivial",
+                "message": "JavaDoc beschreibt nur triviales und die Fehlerfälle werden nicht beachtet",
+                "penaltyRule": {
+                    "shortName": "thresholdPenalty",
+                    "threshold": 123,
+                    "penalty": 52
+                },
+                "appliesTo": "style"
+            }
+        ]
+    },
+    {
+        "shortName": "Final Task 2",
+        "ratingGroups": [
+            {
+                "shortName": "functionality",
+                "displayName": "Funktionalität",
+                "praktomatId": 0,
+                "scoring": "fn currentStudentScore"
+            },
+            {
+                "shortName": "modelling",
+                "displayName": "OO-Modellierung",
+                "praktomatId": 1,
+                "scoring": "fn genericRatingFunction",
+                "render": "fn genericRenderer"
+            },
+            {
+                "shortName": "understandability",
+                "displayName": "Verständlichkeit/Komplexität",
+                "praktomatId": 2,
+                "scoring": "fn genericRatingFunction",
+                "render": "fn genericRenderer"
+            },
+            {
+                "shortName": "style",
+                "displayName": "Programmierstil",
+                "praktomatId": 3,
+                "scoring": "fn genericRatingFunction",
+                "render": "fn genericRenderer"
+            }
+        ],
+        "mistakeTypes": [
+            {
+                "shortName": "jdEmpty",
+                "button": "JavaDoc Leer",
+                "message": "JavaDoc ist leer oder nicht vorhanden",
+                "penaltyRule": {
+                    "shortName": "thresholdPenalty",
+                    "threshold": 1,
+                    "penalty": 5
+                },
+                "appliesTo": "style"
+            },
+            {
+                "shortName": "jdTrivial",
+                "button": "JavaDoc Trivial",
+                "message": "JavaDoc beschreibt nur triviales und die Fehlerfälle werden nicht beachtet",
+                "penaltyRule": {
+                    "shortName": "thresholdPenalty",
+                    "threshold": 1,
+                    "penalty": 5
+                },
+                "appliesTo": "style"
+            },
+            {
+                "shortName": "complexCode",
+                "button": "schwieriger Code",
+                "message": "Sehr komplexe Codestelle; es fehlt ein erklärender Kommentar oder der Code sollte durch geeignete Hilfsmethoden strukturiert werden",
+                "penaltyRule": {
+                    "shortName": "thresholdPenalty",
+                    "threshold": 1,
+                    "penalty": 5
+                },
+                "appliesTo": "understandability"
+            },
+            {
+                "shortName": "magicNumber",
+                "button": "Magic Number",
+                "message": "Magic Numbers / Strings",
+                "penaltyRule": {
+                    "shortName": "thresholdPenalty",
+                    "threshold": 1,
+                    "penalty": 5
+                },
+                "appliesTo": "understandability"
+            }
+        ]
+    }
+]
+  

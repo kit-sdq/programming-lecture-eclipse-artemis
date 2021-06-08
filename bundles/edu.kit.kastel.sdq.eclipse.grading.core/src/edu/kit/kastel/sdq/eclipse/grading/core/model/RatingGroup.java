@@ -4,6 +4,9 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import edu.kit.kastel.sdq.eclipse.grading.api.IRatingGroup;
 
 public class RatingGroup implements IRatingGroup {
@@ -13,7 +16,8 @@ public class RatingGroup implements IRatingGroup {
 	
 	private Collection<MistakeType> mistakeTypes;
 	
-	public RatingGroup(final String shortName, final String displayName) {
+	@JsonCreator
+	public RatingGroup(@JsonProperty("shortName") final String shortName, @JsonProperty("displayName") final String displayName) {
 		this.shortName = shortName;
 		this.displayName = displayName;
 		this.mistakeTypes = new LinkedList<>();

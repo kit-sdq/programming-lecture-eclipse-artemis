@@ -54,11 +54,7 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 				.buildPost(getAuthenticationEntity())
 				.invoke();
 		
-		if (!authenticationResponse.getStatusInfo().getFamily().equals(Family.SUCCESSFUL)) {
-			throw new AuthenticationException("Authentication to \"" + getApiRoot() + "\" failed with status code " 
-					+ authenticationResponse.getStatus() 
-					+ "and reason phrase \"" + authenticationResponse.getStatusInfo().getReasonPhrase() + "\".");
-		}
+		checkStatusSuccessful(authenticationResponse);
 		System.out.println("Tried to authenticate with status " + authenticationResponse.getStatus());
 		final String authRspEntity = authenticationResponse.readEntity(String.class);
 		try {
@@ -79,6 +75,7 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 				.buildGet()
 				.invoke(); // synchronous variant
 //				.submit(); // asynchronous variant
+		checkStatusSuccessful(rsp);
 		String rspString = rsp.readEntity(String.class);
 		System.out.println("Got entity from rest call: " + rspString );
 		try {
@@ -109,6 +106,14 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 		
 	}
 	
+	private void checkStatusSuccessful(final Response authenticationResponse) throws AuthenticationException {
+		if (!authenticationResponse.getStatusInfo().getFamily().equals(Family.SUCCESSFUL)) {
+			throw new AuthenticationException("Authentication to \"" + getApiRoot() + "\" failed with status \"" 
+					+ authenticationResponse.getStatus() 
+					+ ": " + authenticationResponse.getStatusInfo().getReasonPhrase() + "\".");
+		}
+	}
+	
 	private ICourse getCoursefromJsonNode(JsonNode courseJsonNode) throws Exception {
 		System.out.println("IN getCoursefromJsonNode:");
 		final int courseId = courseJsonNode.get("id").intValue();
@@ -124,6 +129,8 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 				.buildGet()
 				.invoke(); // synchronous variant
 //				.submit(); // asynchronous variant
+		checkStatusSuccessful(rsp);
+		
 		JsonNode jsonNode = new ObjectMapper().readTree(rsp.readEntity(String.class));
 		System.out.println("  Read jsonNode from response entity: \n  " + jsonNode.toString());
 		
@@ -158,7 +165,8 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 				.request().header("Authorization", id_token.get().getHeaderString())
 				.buildGet()
 				.invoke(); // synchronous variant
-
+		checkStatusSuccessful(rsp);
+		
 		JsonNode submissionsArrayJsonNode = new ObjectMapper().readTree(rsp.readEntity(String.class));
 		System.out.println("  Read jsonNode from response entity: \n  " + submissionsArrayJsonNode.toString());
 
@@ -194,6 +202,8 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 				.request().header("Authorization", id_token.get().getHeaderString())
 				.buildGet()
 				.invoke(); // synchronous variant
+		checkStatusSuccessful(rsp);
+		
 		String rspString = rsp.readEntity(String.class);
 		final JsonNode jsonNode;
 		try {
@@ -227,6 +237,8 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 				.request().header("Authorization", id_token.get().getHeaderString())
 				.buildGet()
 				.invoke(); // synchronous variant
+		checkStatusSuccessful(rsp);
+		
 		String rspString = rsp.readEntity(String.class);
 		final JsonNode jsonNode;
 		try {

@@ -28,6 +28,8 @@ import edu.kit.kastel.sdq.eclipse.grading.api.AbstractArtemisClient;
 import edu.kit.kastel.sdq.eclipse.grading.api.ICourse;
 import edu.kit.kastel.sdq.eclipse.grading.api.IExercise;
 import edu.kit.kastel.sdq.eclipse.grading.api.ISubmission;
+import edu.kit.kastel.sdq.eclipse.grading.core.config.JsonFileConfigDao;
+import edu.kit.kastel.sdq.eclipse.grading.core.config.JsonFileConfigDao;
 import testplugin_activateByShortcut.git.AbstractGitHandler;
 import testplugin_activateByShortcut.git.EgitGitHandler;
 import testplugin_activateByShortcut.git.JGitGitHandler;
@@ -71,7 +73,8 @@ public class ShortcutHandler extends AbstractHandler {
 		
 //		artemisTest();
 		// you need to import the file into a new Lala-Project.
-		new ConfigDaoTest(new File(eclipseWorkspaceRoot, "Lala/src/config.json")).run();
+//		new ConfigDaoTest(new JsonFileConfigDao(new File(eclipseWorkspaceRoot, "Lala/src/config.json"))).run();
+		new ConfigDaoTest(new JsonFileConfigDao(new File(eclipseWorkspaceRoot, "Lala/src/config_v2.json"))).run();
 		return null;
 	}
 	

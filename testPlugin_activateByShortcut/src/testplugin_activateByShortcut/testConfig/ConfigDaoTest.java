@@ -12,14 +12,15 @@ public class ConfigDaoTest {
 
 	ConfigDao configDao;
 	
-	public ConfigDaoTest(File configFile) {
-		this.configDao = new JsonFileConfigDao(configFile);
+	public ConfigDaoTest(ConfigDao configDao) {
+		this.configDao = configDao;
 	}
 	
 	public void run() {
 		System.out.println("Running ConfigDaoTest");
 		try {
 			Collection<ExerciseConfig> configs = configDao.getExerciseConfigs();
+			System.out.println("Gotten Configs: " + configs);
 			configs.stream().forEach(config -> {
 				System.out.println("  |--" + config);
 				config.getRatingGroups().forEach(ratingGroup -> {
