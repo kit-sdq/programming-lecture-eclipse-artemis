@@ -1,5 +1,6 @@
 package edu.kit.kastel.sdq.eclipse.grading.api;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -12,8 +13,9 @@ public interface IAssessmentController {
 	/**
 	 * 
 	 * @return all mistake types.
+	 * @throws IOException 
 	 */
-	public Collection<IMistakeType> getMistakes();
+	public Collection<IMistakeType> getMistakes() throws IOException;
 	
 	/**
 	 * Add an annotation to the current assessment.

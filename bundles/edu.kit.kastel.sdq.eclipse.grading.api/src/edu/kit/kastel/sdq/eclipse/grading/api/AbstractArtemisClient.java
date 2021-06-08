@@ -48,16 +48,17 @@ public abstract class AbstractArtemisClient {
 	public abstract Collection<ICourse> getCourses() throws Exception;
 	
 	/**
+	 * TODO multiple Submissions might not be possible 
 	 * Download submissions defined by the given submissionIds
 	 * @param exerciseId	needed, although submissionIds are unique!
 	 * @param submissionIds
 	 */
-	public abstract void downloadSubmissions(int exerciseId, Collection<Integer> submissionIDs, File directory);
+	public abstract void downloadSubmissions(Collection<ISubmission> submissions, File directory);
 	
 	/**
 	 * Using the IExercise instead of exerciseId, because the caller has gotten the IExercise object, already.
-	 * @param exerciseId	needed, although submissionIds are unique!
-	 * @param submissionIds
+	 * @param exerciss	needed, although submissionIds are unique!
+	 * @param directory the root directory. Exercise dirs are named by Exercise::getShortName
 	 */
 	public abstract void downloadExercises(Collection<IExercise> exercises, File directory);
 	
@@ -68,7 +69,7 @@ public abstract class AbstractArtemisClient {
 	 * @param submissionID
 	 * @throws Exception TODO create an exception type!
 	 */
-	public abstract void startAssessments(Collection<Integer> submissionIDs) throws Exception;
+	public abstract void startAssessments(Collection<ISubmission> submissions) throws Exception;
 	
 	/**
 	 * Submit the assessment to Artemis. Must have been started by {@code startAssessment}, before!

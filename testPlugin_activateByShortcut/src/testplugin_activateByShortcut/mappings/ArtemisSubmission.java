@@ -38,7 +38,8 @@ public class ArtemisSubmission implements ISubmission {
 		return participantName;
 	}
 	
-	protected String getRepositoryUrl() {
+	@Override
+	public String getRepositoryUrl() {
 		return repositoryUrl;
 	}
 

@@ -9,4 +9,6 @@ public interface ISubmission {
 	public String getParticipantIdentifier();
 	
 	public String getParticipantName();
+
+	String getRepositoryUrl();
 }

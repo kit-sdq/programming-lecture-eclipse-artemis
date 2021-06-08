@@ -71,10 +71,9 @@ public class ShortcutHandler extends AbstractHandler {
 //		gitCloneWithJgit("https://github.com/RobinRSchulz/sonntagsfrage.git", "testPlugin_bookmarks/target/testJgit");
 		
 		
-//		artemisTest();
+		artemisTest();
 		// you need to import the file into a new Lala-Project.
-//		new ConfigDaoTest(new JsonFileConfigDao(new File(eclipseWorkspaceRoot, "Lala/src/config.json"))).run();
-		new ConfigDaoTest(new JsonFileConfigDao(new File(eclipseWorkspaceRoot, "Lala/src/config_v2.json"))).run();
+//		new ConfigDaoTest(new JsonFileConfigDao(new File(eclipseWorkspaceRoot, "Lala/src/config_v2.json"))).run();
 		return null;
 	}
 	
@@ -86,7 +85,7 @@ public class ShortcutHandler extends AbstractHandler {
 		try {
 			Collection<ICourse> courses = artemisClient.getCourses();
 			coursesTest(courses);
-			downloadExerciseTest(artemisClient, courses, 5, 16);
+			downloadExerciseTest(artemisClient, courses, 1, 1);
 //			artemisClient.startAssessments(assessments);
 //			artemisClient.startAssessment(500000);
 		} catch (Exception e) {
@@ -110,12 +109,19 @@ public class ShortcutHandler extends AbstractHandler {
 	}
 	
 	public void downloadExerciseTest(AbstractArtemisClient artemisClient, Collection<ICourse> courses, int courseId, int exerciseId) {
+		final File eclipseWorkspaceRoot =  ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile();
+		
+		System.out.println("workspaceRoot="+eclipseWorkspaceRoot);
 		//TODO
-		artemisClient.downloadExercises(
-			courses.stream().filter(course -> (course.getCourseId() == courseId)).findAny().get()
-				.getExercises().stream().filter(exercise -> (exercise.getExerciseId() == exerciseId)).collect(Collectors.toList()),
-			new File("testPlugin_bookmarks/target/testExercise16/")
+		Collection<IExercise> exercises = courses.stream().filter(course -> (course.getCourseId() == courseId)).findAny().get()
+				.getExercises().stream().filter(exercise -> (exercise.getExerciseId() == exerciseId)).collect(Collectors.toList());
+		artemisClient.downloadExercises(exercises,
+				eclipseWorkspaceRoot
 		);
+		final IExercise exercise = exercises.iterator().next();
+		artemisClient.downloadSubmissions(List.of(exercise.getSubmissions().iterator().next()), 
+				new File(eclipseWorkspaceRoot, exercise.getShortName() + "/assignment"));
+		
 		System.out.println("Download Done!");
 	}
 	

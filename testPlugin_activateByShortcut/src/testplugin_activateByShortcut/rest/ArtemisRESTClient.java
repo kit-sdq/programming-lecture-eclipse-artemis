@@ -227,36 +227,8 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 		//TODO implement starting the assessment
 	}
 	
-	protected void downloadSubmission(int exerciseId, int submissionID, File directory) throws AuthenticationException {
-		checkAuthentication();
-		
-		final Response rsp = rootApiTarget
-				.path("programming-submissions")
-				.path(String.valueOf(submissionID))
-				.path("lock")				// TODO dont do dis!
-				.request().header("Authorization", id_token.get().getHeaderString())
-				.buildGet()
-				.invoke(); // synchronous variant
-		checkStatusSuccessful(rsp);
-		
-		String rspString = rsp.readEntity(String.class);
-		final JsonNode jsonNode;
-		try {
-			// Put the result into java objects
-//			ArtemisCourses courses = objectMapper.readValue(rspString, ArtemisCourses.class);
-//			System.out.println("Got parsed entity from rest call: " + courses );
-
-			// Put the result into a JsonNode -> No need for java objects, but bad style.
-			jsonNode = new ObjectMapper().readTree(rspString);
-			System.out.println("Read jsonNode from response entity: \n" + jsonNode.toString());
-		} catch (IOException e) {
-			e.printStackTrace();
-			return;
-		}
-		final String repositoryUrl = jsonNode.get("participation").get("repositoryUrl").asText();
-		System.out.println("Read repositoryUrl from response entity: \n" + repositoryUrl);
-		
-		new EgitGitHandler(repositoryUrl).cloneRepo(new File("testPlugin_bookmarks/target/testEgitFromArtemisCall"), "master");
+	protected void downloadSubmission(ISubmission submission, File directory) {
+		new EgitGitHandler(submission.getRepositoryUrl()).cloneRepo(directory, "master");
 	}
 	
 	protected void submitAssessment(int submissionID) throws AuthenticationException {
@@ -294,15 +266,18 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 	}
 
 	@Override
-	public void downloadSubmissions(int exerciseId, Collection<Integer> submissionIds, File directory) {
+	public void downloadSubmissions(Collection<ISubmission> submissions, File directory) {
 		// TODO IMplement
-		
+		for (ISubmission submission : submissions) {
+			this.downloadSubmission(submission, directory);
+		}
 	}
 
 	@Override
-	public void startAssessments(Collection<Integer> submissionIDs) throws Exception {
-		for (Integer submissionID : submissionIDs) {
-			this.startAssessment(submissionID);
+	public void startAssessments(Collection<ISubmission> submissions) throws Exception {
+		for (ISubmission submissionID : submissions) {
+			//TODO see whats best here
+//			this.startAssessment(submissionID);
 		}
 	}
 
@@ -314,7 +289,7 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 
 	@Override
 	public void downloadExercises(Collection<IExercise> exercises, File directory) {
-		exercises.forEach(exercise -> downloadExercise(exercise, directory));
+		exercises.forEach(exercise -> downloadExercise(exercise, new File(directory, exercise.getShortName())));
 	}
 
 }

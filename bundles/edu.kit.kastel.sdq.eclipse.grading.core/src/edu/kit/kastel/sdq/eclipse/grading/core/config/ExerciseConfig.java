@@ -2,11 +2,13 @@ package edu.kit.kastel.sdq.eclipse.grading.core.config;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+import edu.kit.kastel.sdq.eclipse.grading.api.IMistakeType;
 import edu.kit.kastel.sdq.eclipse.grading.core.model.MistakeType;
 import edu.kit.kastel.sdq.eclipse.grading.core.model.RatingGroup;
 
@@ -37,6 +39,9 @@ public class ExerciseConfig {
 
 	public Collection<MistakeType> getMistakeTypes() {
 		return mistakeTypes;
+	}
+	public Collection<IMistakeType> getIMistakeTypes() {
+		return mistakeTypes.stream().map(mistakeType -> (IMistakeType) mistakeType).collect(Collectors.toList());
 	}
 
 	@Override
