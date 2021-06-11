@@ -27,10 +27,10 @@ public class ThresholdPenaltyRule extends PenaltyRule {
 	}
 	
 	@Override
-	public Map<IAnnotation, Double> calculatePenalty(List<IAnnotation> annotations) {
+	public double calculatePenalty(List<IAnnotation> annotations) {
 		return (annotations.size() >= this.threshold) 
-			? Map.of(annotations.get(0), this.penalty)
-			: Map.of();
+			? this.penalty
+			: 0.D;
 	}
 
 	@Override
@@ -41,11 +41,6 @@ public class ThresholdPenaltyRule extends PenaltyRule {
 	@Override
 	public String getShortName() {
 		return SHORT_NAME;
-	}
-
-	@Override
-	public boolean isCollectiveType() {
-		return true;
 	}
 
 	@Override

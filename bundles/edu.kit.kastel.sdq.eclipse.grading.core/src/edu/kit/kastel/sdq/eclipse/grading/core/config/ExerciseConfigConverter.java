@@ -18,6 +18,7 @@ public class ExerciseConfigConverter extends StdConverter<ExerciseConfig, Exerci
 			Optional<RatingGroup> ratingGroupOptional = ratingGroups.stream().filter(ratingGroup -> ratingGroup.getShortName().equals(mistakeType.getAppliesTo())).findFirst();
 			if (ratingGroupOptional.isEmpty()) {
 				//TODO maybe not do a lambda so we can throw checked exceptions...
+				//TODO at least find better suited exception (like ParseException)
 				throw new RuntimeException("no rating group could be associated with mistake Type" + mistakeType.getShortName() 
 					+ " with appliesTo=" + mistakeType.getAppliesTo() + " and available ratingGroups=" + ratingGroups
 				);

@@ -33,18 +33,7 @@ public abstract class PenaltyRule {
 	 * penalties. Since Artemis only knows independent penalties, this simplifies the translation, but makes it bound to this class...
 	 * TODO if independent penalties are not desired, the return type can be changed to Double
 	 */
-	public abstract Map<IAnnotation, Double> calculatePenalty(List<IAnnotation> annotations);
-	
-	/**
-	 * Returns whether the penalty type considers other lines in the result or not.
-	 * 
-	 * This might seem anti-OO but that way, result handling gets a lot easier:
-	 * With a PenaltyResult Superclass (and two Subclasses CollectivePenaltyResult and IndependentPenaltyResult), 
-	 * we'd always need to check instanceOf (and maybe even add more?) or need to add a "toMap" method which annihilates the "OO beauty".
-	 * 
-	 * @return whether the calculatePenalty will consider all annotations to calculate the results (collective) or only one (individual) 
-	 */
-	public abstract boolean isCollectiveType();
+	public abstract double calculatePenalty(List<IAnnotation> annotations);
 	
 	/**
 	 * A util function.
@@ -59,5 +48,4 @@ public abstract class PenaltyRule {
 	public abstract String getDisplayName();
 
 	public abstract String getShortName();
-
 }

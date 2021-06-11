@@ -15,7 +15,10 @@ import javax.ws.rs.client.WebTarget;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.glassfish.jersey.jackson.internal.FilteringJacksonJaxbJsonProvider;
@@ -72,7 +75,7 @@ public class ShortcutHandler extends AbstractHandler {
 //		gitCloneWithJgit("https://github.com/RobinRSchulz/sonntagsfrage.git", "testPlugin_bookmarks/target/testJgit");
 		
 		
-		artemisTest();
+//		artemisTest();
 		// you need to import the file into a new Lala-Project.
 //		new ConfigDaoTest(new JsonFileConfigDao(new File(eclipseWorkspaceRoot, "Lala/src/config_v2.json"))).run();
 		
@@ -119,17 +122,28 @@ public class ShortcutHandler extends AbstractHandler {
 				.getExercises().stream().filter(exercise -> (exercise.getExerciseId() == exerciseId)).collect(Collectors.toList());
 		final IExercise exercise = exercises.iterator().next();
 		
-//		System.out.println("workspaceRoot="+eclipseWorkspaceRoot);
-//		//TODO
-//		artemisClient.downloadExercises(exercises,
-//				eclipseWorkspaceRoot
-//		);
-//		artemisClient.downloadSubmissions(List.of(exercise.getSubmissions().iterator().next()), 
-//				new File(eclipseWorkspaceRoot, exercise.getShortName() + "/assignment"));
+		
+		
 		
 		
 		artemisClient.downloadExerciseAndSubmissions(exercise, exercise.getSubmissions(), eclipseWorkspaceRoot);
 		
+		//TODO test the opening in eclipse
+		
+				//TODO 1. Optional? Create project file with 
+				IProjectDescription description = ResourcesPlugin.getWorkspace().newProjectDescription("exercise-1-testAufgabe1_submission-5-uyduk");
+				// and save it
+				//TODO 2. Create Project with
+				IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject("exercise-1-testAufgabe1_submission-5-uyduk");
+				try {
+					project.create(null);
+					project.open(null);
+				} catch (CoreException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				// inspired by https://www.programcreek.com/java-api-examples/demo/?class=org.eclipse.core.resources.IWorkspace&method=loadProjectDescription
 		
 		System.out.println("Download Done!");
 	}
