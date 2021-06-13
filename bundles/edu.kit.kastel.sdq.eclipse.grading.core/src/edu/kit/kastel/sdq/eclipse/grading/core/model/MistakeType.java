@@ -101,6 +101,6 @@ public class MistakeType implements IMistakeType {
 
 	@Override
 	public String getButtonName() {
-		return this.getButtonName();
+		return this.buttonName;
 	}	
 }
