@@ -97,5 +97,10 @@ public class MistakeType implements IMistakeType {
 	
 	public PenaltyRule getPenaltyRule() {
 		return this.penaltyRule;
+	}
+
+	@Override
+	public String getButtonName() {
+		return this.getButtonName();
 	}	
 }
