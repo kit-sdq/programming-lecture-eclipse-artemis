@@ -18,6 +18,13 @@ public interface IAssessmentController {
 	public Collection<IMistakeType> getMistakes() throws IOException;
 	
 	/**
+	 * 
+	 * @return all rating groups.
+	 * @throws IOException 
+	 */
+	public Collection<IRatingGroup> getRatingGroups() throws IOException;
+	
+	/**
 	 * Add an annotation to the current assessment.
 	 * 
 	 * TODO 
@@ -52,7 +59,8 @@ public interface IAssessmentController {
 	 * @param customMessage	new custom message
 	 * @param customPenalty new custom penalty
 	 */
-	public void modifyAnnotation(int annatationId, Optional<String> customMessage, Optional<Double> customPenalty);	
+	public void modifyAnnotation(int annatationId, Optional<String> customMessage, Optional<Double> customPenalty);
+
 	
 	
 	

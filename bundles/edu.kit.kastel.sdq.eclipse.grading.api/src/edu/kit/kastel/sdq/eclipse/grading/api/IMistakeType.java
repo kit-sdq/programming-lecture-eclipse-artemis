@@ -9,4 +9,6 @@ public interface IMistakeType {
 	IRatingGroup getRatingGroup();
 
 	String getButtonName();
+	
+	String getRatingGroupName();
 }

@@ -8,6 +8,7 @@ import java.util.Optional;
 import edu.kit.kastel.sdq.eclipse.grading.api.IAnnotation;
 import edu.kit.kastel.sdq.eclipse.grading.api.IAssessmentController;
 import edu.kit.kastel.sdq.eclipse.grading.api.IMistakeType;
+import edu.kit.kastel.sdq.eclipse.grading.api.IRatingGroup;
 import edu.kit.kastel.sdq.eclipse.grading.core.config.ConfigDao;
 import edu.kit.kastel.sdq.eclipse.grading.core.config.ExerciseConfig;
 import edu.kit.kastel.sdq.eclipse.grading.core.config.JsonFileConfigDao;
@@ -62,6 +63,12 @@ public class AssessmentController implements IAssessmentController {
 	public void modifyAnnotation(int annatationId, Optional<String> customMessage, Optional<Double> customPenalty) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public Collection<IRatingGroup> getRatingGroups() throws IOException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

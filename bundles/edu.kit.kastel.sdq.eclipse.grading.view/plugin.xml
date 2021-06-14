@@ -182,5 +182,20 @@
             name="Custom Message">
       </markerField>
    </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="gui.preferences.ArtemisGradingPreferencesPage"
+            id="gui.preferences.SamplePreferencePage"
+            name="Artemis Grading">
+      </page>
+   </extension>
+   <extension
+         name="Artemis Grading"
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="gui.preferences.PreferenceInitializer">
+      </initializer>
+   </extension>
 
 </plugin>

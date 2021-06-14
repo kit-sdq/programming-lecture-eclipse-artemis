@@ -102,5 +102,9 @@ public class MistakeType implements IMistakeType {
 	@Override
 	public String getButtonName() {
 		return this.buttonName;
-	}	
+	}
+	
+	public String getRatingGroupName() {
+		return this.ratingGroup.getDisplayName();
+	}
 }
