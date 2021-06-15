@@ -4,10 +4,14 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.IAnnotation;
 import edu.kit.kastel.sdq.eclipse.grading.api.IAssessmentController;
 import edu.kit.kastel.sdq.eclipse.grading.api.IMistakeType;
+import edu.kit.kastel.sdq.eclipse.grading.core.annotation.Annotation;
+import edu.kit.kastel.sdq.eclipse.grading.core.annotation.AnnotationDao;
+import edu.kit.kastel.sdq.eclipse.grading.core.annotation.JsonFileAnnotationDao;
 import edu.kit.kastel.sdq.eclipse.grading.core.config.ConfigDao;
 import edu.kit.kastel.sdq.eclipse.grading.core.config.ExerciseConfig;
 import edu.kit.kastel.sdq.eclipse.grading.core.config.JsonFileConfigDao;
@@ -17,6 +21,7 @@ public class AssessmentController implements IAssessmentController {
 	private File configFile;
 	private ConfigDao configDao;
 	private String exerciseName;
+	private AnnotationDao annotationDao;
 	
 	/**
 	 * 
@@ -26,7 +31,10 @@ public class AssessmentController implements IAssessmentController {
 	public AssessmentController(File configFile, String exerciseName) {
 		this.configFile = configFile;
 		this.configDao = new JsonFileConfigDao(configFile);
+		
 		this.exerciseName = exerciseName;
+		
+		this.annotationDao = new JsonFileAnnotationDao();
 	}
 	
 	@Override
@@ -40,28 +48,31 @@ public class AssessmentController implements IAssessmentController {
 	}
 
 	@Override
-	public void addAnnotation(int startLine, int endLine, String fullyClassifiedClassName,
+	public void addAnnotation(IMistakeType mistakeType, int startLine, int endLine, String fullyClassifiedClassName,
 			Optional<String> customMessage, Optional<Double> customPenalty) {
-		// TODO Auto-generated method stub
+		this.annotationDao.addAnnotation(mistakeType, startLine, endLine, fullyClassifiedClassName, customMessage, customPenalty);
 		
 	}
 
 	@Override
 	public Collection<IAnnotation> getAnnotations(String className) {
-		// TODO Auto-generated method stub
-		return null;
+		return this.annotationDao.getAnnotations().stream()
+				.filter(annotation -> annotation.getFullyClassifiedClassName().equals(className))
+				.collect(Collectors.toUnmodifiableList());
 	}
 
 	@Override
 	public void removeAnnotation(int annotationId) {
-		// TODO Auto-generated method stub
-		
+		this.annotationDao.removeAnnotation(annotationId);
 	}
 
 	@Override
 	public void modifyAnnotation(int annatationId, Optional<String> customMessage, Optional<Double> customPenalty) {
-		// TODO Auto-generated method stub
-		
+		//TODO problem: need to modify annotation 
+		// without the annotation to be able to be edited by the caller, which would make the state inconsistent
+		// (cast to Annotation class would be dumb..)
+		// ==> Best Idea so far: create a method in AnnotationDao which creates a new Object with the same ID
+		throw new RuntimeException("AssessmentController::modifyAnnotation Not implemented yet");		
 	}
 
 }

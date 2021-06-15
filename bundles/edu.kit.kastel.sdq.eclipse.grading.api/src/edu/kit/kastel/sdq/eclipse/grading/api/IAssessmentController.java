@@ -29,9 +29,10 @@ public interface IAssessmentController {
 	 * @param className	unique name of the respective Class to be annotated TODO (maybe) path/ "workspace URI"
 	 * 		 instead of class name (other langs etc)
 	 * @param customMessage	custom message set by tutor
-	 * @param customPenalty custom penalty set by tutor
+	 * @param customPenalty This may or may not have an effekt, depending on the MistakeType's PenaltyRule!
+	 * E.g. a ThresholdPenaltyRule will not consider custom penalties while a (thinkable) "AggregatedPenaltyThresholdPenaltyRule" would do so.
 	 */
-	public void addAnnotation(int startLine, int endLine, String fullyClassifiedClassName, Optional<String> customMessage, Optional<Double> customPenalty);
+	public void addAnnotation(IMistakeType mistakeType, int startLine, int endLine, String fullyClassifiedClassName, Optional<String> customMessage, Optional<Double> customPenalty);
 	
 	/**
 	 * 
@@ -50,7 +51,8 @@ public interface IAssessmentController {
 	 * Modify an existent annotation
 	 * @param annatationId	unique annotation identifier
 	 * @param customMessage	new custom message
-	 * @param customPenalty new custom penalty
+	 * @param customPenalty new custom penalty. This may or may not have an effekt, depending on the MistakeType's PenaltyRule!
+	 * E.g. a ThresholdPenaltyRule will not consider custom penalties while a (thinkable) "AggregatedPenaltyThresholdPenaltyRule" would do so.
 	 */
 	public void modifyAnnotation(int annatationId, Optional<String> customMessage, Optional<Double> customPenalty);	
 	

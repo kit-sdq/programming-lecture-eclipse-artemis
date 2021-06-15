@@ -20,7 +20,6 @@ public class MistakeType implements IMistakeType {
 	
 	private RatingGroup ratingGroup;
 	private PenaltyRule penaltyRule;
-	private List<IAnnotation> annotations;
 	
 	/**
 	 * This Constructor is used by Deserialization!
@@ -87,7 +86,7 @@ public class MistakeType implements IMistakeType {
 	@Override
 	public String toString() {
 		return "MistakeType [shortName=" + shortName + ", buttonName=" + buttonName + ", message=" + message
-				+ ", ratingGroup=" + ratingGroup.getShortName() + ", penaltyRule=" + penaltyRule + ", annotations=" + annotations
+				+ ", ratingGroup=" + ratingGroup.getShortName() + ", penaltyRule=" + penaltyRule
 				+ "]";
 	}
 	
