@@ -1,4 +1,4 @@
-package testplugin_activateByShortcut.mappings;
+package edu.kit.kastel.sdq.eclipse.grading.client.mappings;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.ISubmission;
 

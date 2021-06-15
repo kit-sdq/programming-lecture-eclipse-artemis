@@ -35,13 +35,14 @@ import edu.kit.kastel.sdq.eclipse.grading.core.config.JsonFileConfigDao;
 import edu.kit.kastel.sdq.eclipse.grading.core.config.JsonFileConfigDao;
 import edu.kit.kastel.sdq.eclipse.grading.core.artemis.WorkspaceUtil;
 
-import testplugin_activateByShortcut.git.AbstractGitHandler;
-import testplugin_activateByShortcut.git.EgitGitHandler;
-import testplugin_activateByShortcut.git.JGitGitHandler;
-import testplugin_activateByShortcut.mappings.ArtemisCourses;
-import testplugin_activateByShortcut.mappings.ArtemisExercise;
-import testplugin_activateByShortcut.mappings.ArtemisSubmission;
-import testplugin_activateByShortcut.rest.ArtemisRESTClient;
+import edu.kit.kastel.sdq.eclipse.grading.client.git.AbstractGitHandler;
+import edu.kit.kastel.sdq.eclipse.grading.client.git.EgitGitHandler;
+import edu.kit.kastel.sdq.eclipse.grading.client.git.JGitGitHandler;
+import edu.kit.kastel.sdq.eclipse.grading.client.mappings.ArtemisCourses;
+import edu.kit.kastel.sdq.eclipse.grading.client.mappings.ArtemisExercise;
+import edu.kit.kastel.sdq.eclipse.grading.client.mappings.ArtemisSubmission;
+import edu.kit.kastel.sdq.eclipse.grading.client.rest.ArtemisRESTClient;
+
 import testplugin_activateByShortcut.testConfig.AssessmentControllerTest;
 import testplugin_activateByShortcut.testConfig.ConfigDaoTest;
 

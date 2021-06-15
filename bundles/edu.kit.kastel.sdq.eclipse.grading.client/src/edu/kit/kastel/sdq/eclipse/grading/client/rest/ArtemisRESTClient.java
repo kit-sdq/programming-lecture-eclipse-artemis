@@ -1,4 +1,4 @@
-package testplugin_activateByShortcut.rest;
+package edu.kit.kastel.sdq.eclipse.grading.client.rest;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,10 +23,10 @@ import edu.kit.kastel.sdq.eclipse.grading.api.AbstractArtemisClient;
 import edu.kit.kastel.sdq.eclipse.grading.api.ICourse;
 import edu.kit.kastel.sdq.eclipse.grading.api.IExercise;
 import edu.kit.kastel.sdq.eclipse.grading.api.ISubmission;
-import testplugin_activateByShortcut.git.EgitGitHandler;
-import testplugin_activateByShortcut.mappings.ArtemisCourse;
-import testplugin_activateByShortcut.mappings.ArtemisExercise;
-import testplugin_activateByShortcut.mappings.ArtemisSubmission;
+import edu.kit.kastel.sdq.eclipse.grading.client.git.EgitGitHandler;
+import edu.kit.kastel.sdq.eclipse.grading.client.mappings.ArtemisCourse;
+import edu.kit.kastel.sdq.eclipse.grading.client.mappings.ArtemisExercise;
+import edu.kit.kastel.sdq.eclipse.grading.client.mappings.ArtemisSubmission;
 
 public class ArtemisRESTClient extends AbstractArtemisClient  {
 	

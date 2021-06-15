@@ -1,7 +1,5 @@
 package edu.kit.kastel.sdq.eclipse.grading.core.artemis;
 
-import java.io.IOException;
-import java.io.StringWriter;
 import java.util.Collection;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.IAnnotation;

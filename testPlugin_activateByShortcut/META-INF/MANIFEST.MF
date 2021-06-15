@@ -16,6 +16,9 @@ Bundle-RequiredExecutionEnvironment: JavaSE-11
 Automatic-Module-Name: testPlugin.bookmarks
 Bundle-ActivationPolicy: lazy
 Import-Package: edu.kit.kastel.sdq.eclipse.grading.api,
+ edu.kit.kastel.sdq.eclipse.grading.client.git,
+ edu.kit.kastel.sdq.eclipse.grading.client.mappings,
+ edu.kit.kastel.sdq.eclipse.grading.client.rest,
  edu.kit.kastel.sdq.eclipse.grading.core.config,
  edu.kit.kastel.sdq.eclipse.grading.core.model,
  javax.ws.rs;version="2.0.0",
