@@ -45,7 +45,7 @@ public class AssessmentController implements IAssessmentController {
 				.findFirst();
 		if (exerciseConfigOptional.isPresent()) {
 			return exerciseConfigOptional.get().getIMistakeTypes();
-		} else throw new IOException("TODO: write msg");
+		} else throw new IOException("Exercise not found in config!");
 	}
 
 	@Override
@@ -78,8 +78,13 @@ public class AssessmentController implements IAssessmentController {
 
 	@Override
 	public Collection<IRatingGroup> getRatingGroups() throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+
+		final Optional<ExerciseConfig> exerciseConfigOptional = this.configDao.getExerciseConfigs().stream()
+				.filter(exerciseConfig -> exerciseConfig.getShortName().equals(this.exerciseName))
+				.findFirst();
+		if (exerciseConfigOptional.isPresent()) {
+			return exerciseConfigOptional.get().getIRatingGroups();
+		} else throw new IOException("Exercise not found in config!");
 	}
 
 }

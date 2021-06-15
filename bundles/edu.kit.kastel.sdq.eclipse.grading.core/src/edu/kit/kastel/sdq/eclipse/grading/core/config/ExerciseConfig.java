@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.IMistakeType;
+import edu.kit.kastel.sdq.eclipse.grading.api.IRatingGroup;
 import edu.kit.kastel.sdq.eclipse.grading.core.model.MistakeType;
 import edu.kit.kastel.sdq.eclipse.grading.core.model.RatingGroup;
 
@@ -36,6 +37,11 @@ public class ExerciseConfig {
 	public Collection<RatingGroup> getRatingGroups() {
 		return ratingGroups;
 	}
+
+	public Collection<IRatingGroup> getIRatingGroups() {
+		return ratingGroups.stream().map(ratingGroup -> (IRatingGroup) ratingGroup).collect(Collectors.toList());
+	}
+
 
 	public Collection<MistakeType> getMistakeTypes() {
 		return mistakeTypes;
