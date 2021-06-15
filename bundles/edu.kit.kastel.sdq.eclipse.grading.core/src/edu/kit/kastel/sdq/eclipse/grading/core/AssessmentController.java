@@ -12,6 +12,7 @@ import edu.kit.kastel.sdq.eclipse.grading.api.IMistakeType;
 import edu.kit.kastel.sdq.eclipse.grading.core.annotation.Annotation;
 import edu.kit.kastel.sdq.eclipse.grading.core.annotation.AnnotationDao;
 import edu.kit.kastel.sdq.eclipse.grading.core.annotation.JsonFileAnnotationDao;
+import edu.kit.kastel.sdq.eclipse.grading.api.IRatingGroup;
 import edu.kit.kastel.sdq.eclipse.grading.core.config.ConfigDao;
 import edu.kit.kastel.sdq.eclipse.grading.core.config.ExerciseConfig;
 import edu.kit.kastel.sdq.eclipse.grading.core.config.JsonFileConfigDao;
@@ -73,6 +74,12 @@ public class AssessmentController implements IAssessmentController {
 		// (cast to Annotation class would be dumb..)
 		// ==> Best Idea so far: create a method in AnnotationDao which creates a new Object with the same ID
 		throw new RuntimeException("AssessmentController::modifyAnnotation Not implemented yet");		
+	}
+
+	@Override
+	public Collection<IRatingGroup> getRatingGroups() throws IOException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

@@ -18,6 +18,13 @@ public interface IAssessmentController {
 	public Collection<IMistakeType> getMistakes() throws IOException;
 	
 	/**
+	 * 
+	 * @return all rating groups.
+	 * @throws IOException 
+	 */
+	public Collection<IRatingGroup> getRatingGroups() throws IOException;
+	
+	/**
 	 * Add an annotation to the current assessment.
 	 * 
 	 * TODO 
@@ -54,7 +61,8 @@ public interface IAssessmentController {
 	 * @param customPenalty new custom penalty. This may or may not have an effekt, depending on the MistakeType's PenaltyRule!
 	 * E.g. a ThresholdPenaltyRule will not consider custom penalties while a (thinkable) "AggregatedPenaltyThresholdPenaltyRule" would do so.
 	 */
-	public void modifyAnnotation(int annatationId, Optional<String> customMessage, Optional<Double> customPenalty);	
+	public void modifyAnnotation(int annatationId, Optional<String> customMessage, Optional<Double> customPenalty);
+
 	
 	
 	

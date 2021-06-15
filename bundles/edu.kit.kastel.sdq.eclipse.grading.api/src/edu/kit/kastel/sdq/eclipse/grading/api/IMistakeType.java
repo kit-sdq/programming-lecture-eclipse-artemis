@@ -6,5 +6,9 @@ package edu.kit.kastel.sdq.eclipse.grading.api;
  */
 public interface IMistakeType {
 
-	public IRatingGroup getRatingGroup();
+	IRatingGroup getRatingGroup();
+
+	String getButtonName();
+	
+	String getRatingGroupName();
 }
