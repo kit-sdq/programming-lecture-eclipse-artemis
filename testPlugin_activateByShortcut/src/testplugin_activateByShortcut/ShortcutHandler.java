@@ -33,6 +33,8 @@ import edu.kit.kastel.sdq.eclipse.grading.api.IExercise;
 import edu.kit.kastel.sdq.eclipse.grading.api.ISubmission;
 import edu.kit.kastel.sdq.eclipse.grading.core.config.JsonFileConfigDao;
 import edu.kit.kastel.sdq.eclipse.grading.core.config.JsonFileConfigDao;
+import edu.kit.kastel.sdq.eclipse.grading.core.artemis.WorkspaceUtil;
+
 import testplugin_activateByShortcut.git.AbstractGitHandler;
 import testplugin_activateByShortcut.git.EgitGitHandler;
 import testplugin_activateByShortcut.git.JGitGitHandler;
@@ -75,7 +77,7 @@ public class ShortcutHandler extends AbstractHandler {
 //		gitCloneWithJgit("https://github.com/RobinRSchulz/sonntagsfrage.git", "testPlugin_bookmarks/target/testJgit");
 		
 		
-//		artemisTest();
+		artemisTest();
 		// you need to import the file into a new Lala-Project.
 //		new ConfigDaoTest(new JsonFileConfigDao(new File(eclipseWorkspaceRoot, "Lala/src/config_v2.json"))).run();
 		
@@ -124,28 +126,9 @@ public class ShortcutHandler extends AbstractHandler {
 				.getExercises().stream().filter(exercise -> (exercise.getExerciseId() == exerciseId)).collect(Collectors.toList());
 		final IExercise exercise = exercises.iterator().next();
 		
-		
-		
-		
-		
+	
 		artemisClient.downloadExerciseAndSubmissions(exercise, exercise.getSubmissions(), eclipseWorkspaceRoot);
-		
-		//TODO test the opening in eclipse
-		
-				//TODO 1. Optional? Create project file with 
-				IProjectDescription description = ResourcesPlugin.getWorkspace().newProjectDescription("exercise-1-testAufgabe1_submission-5-uyduk");
-				// and save it
-				//TODO 2. Create Project with
-				IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject("exercise-1-testAufgabe1_submission-5-uyduk");
-				try {
-					project.create(null);
-					project.open(null);
-				} catch (CoreException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				
-				// inspired by https://www.programcreek.com/java-api-examples/demo/?class=org.eclipse.core.resources.IWorkspace&method=loadProjectDescription
+		WorkspaceUtil.createEclipseProject("exercise-1-testAufgabe1_submission-5-uyduk");
 		
 		System.out.println("Download Done!");
 	}

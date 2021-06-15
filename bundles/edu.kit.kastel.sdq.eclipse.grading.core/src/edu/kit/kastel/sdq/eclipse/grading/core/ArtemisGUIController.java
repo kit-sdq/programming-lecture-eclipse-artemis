@@ -35,18 +35,25 @@ public class ArtemisGUIController implements IArtemisGUIController {
 
 	@Override
 	public void downloadSubmissions(Collection<Integer> submissionIds) {
-		// TODO Auto-generated method stub
+		/* TODO for each submission: 
+		 * * download via ArtemisClient
+		 * * create a project
+		 */
 	}
 
 	@Override
 	public void startAssessment(int submissionID) {
-		// TODO Auto-generated method stub
+		//  
+		/* TODO
+		 * * check if submission is already in the workspace.
+		 * * acquire lock via ArtemisClient (need a method which only locks and does not download)
+		 */
 		
 	}
 
 	@Override
 	public void submitAssessment(int submissionID) {
-		// TODO Auto-generated method stub
+		// TODO implement
 		
 	}
 
