@@ -38,12 +38,17 @@ public class AssessmentControllerTest {
 				assessmentController.addAnnotation(mistakeType, 0, 22, "class.name", Optional.empty(), Optional.empty());
 			});
 		} catch (IOException e) { }
+		
 		System.out.println("  Got Annotations: ");
 		printAnnotations(assessmentController.getAnnotations("class.name"), "    ");
 		
 		assessmentController.removeAnnotation(1);
-
 		System.out.println("  Got Annotations after remove: ");
+		printAnnotations(assessmentController.getAnnotations("class.name"), "    ");
+		
+
+		assessmentController.modifyAnnotation(2, Optional.of("mmmmmmmmmmmmmmmmmmmmmmmMmmmmmmodified message"), Optional.empty());
+		System.out.println("  Got Annotations after modifying (2): ");
 		printAnnotations(assessmentController.getAnnotations("class.name"), "    ");
 	}
 	

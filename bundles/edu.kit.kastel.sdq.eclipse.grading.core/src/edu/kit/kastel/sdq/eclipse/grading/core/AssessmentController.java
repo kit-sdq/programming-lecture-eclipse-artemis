@@ -69,11 +69,7 @@ public class AssessmentController implements IAssessmentController {
 
 	@Override
 	public void modifyAnnotation(int annatationId, Optional<String> customMessage, Optional<Double> customPenalty) {
-		//TODO problem: need to modify annotation 
-		// without the annotation to be able to be edited by the caller, which would make the state inconsistent
-		// (cast to Annotation class would be dumb..)
-		// ==> Best Idea so far: create a method in AnnotationDao which creates a new Object with the same ID
-		throw new RuntimeException("AssessmentController::modifyAnnotation Not implemented yet");		
+		this.annotationDao.modifyAnnotation(annatationId, customMessage, customPenalty);	
 	}
 
 	@Override

@@ -41,10 +41,18 @@ public interface AnnotationDao {
 	 * @return the annotation
 	 */
 	public IAnnotation getAnnotation(int annotationId);
+
+	/**
+	 * Modify an annotation in the database.
+	 * @param annatationId
+	 * @param customMessage
+	 * @param customPenalty
+	 */
+	void modifyAnnotation(int annatationId, Optional<String> customMessage, Optional<Double> customPenalty);	
 	
 	/**
 	 * Write current state to disk. This is to be called upon each of the other methods calls!
 	 * (Explicit serialization needs to be done by the caller if they change Annotations) TODO maybe not the best style..
 	 */
-	public void serialize();	
+	public void serialize();
 }
