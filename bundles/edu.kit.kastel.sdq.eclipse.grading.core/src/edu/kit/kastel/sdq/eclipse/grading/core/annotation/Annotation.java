@@ -79,4 +79,11 @@ public class Annotation implements IAnnotation {
 				? this.getId() == ((IAnnotation)otherAnnotation).getId()
 				: false;
 	}
+
+	@Override
+	public String toString() {
+		return "Annotation [id=" + id + ", mistakeType=" + mistakeType + ", startLine=" + startLine + ", endLine="
+				+ endLine + ", fullyClassifiedClassName=" + fullyClassifiedClassName + ", customMessage="
+				+ customMessage + ", customPenalty=" + customPenalty + "]";
+	}
 }

@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Optional;
 
+import edu.kit.kastel.sdq.eclipse.grading.api.IAnnotation;
 import edu.kit.kastel.sdq.eclipse.grading.api.IMistakeType;
 import edu.kit.kastel.sdq.eclipse.grading.core.AssessmentController;
 
@@ -32,13 +33,21 @@ public class AssessmentControllerTest {
 		try {
 			Collection<IMistakeType> mistakeTypes = assessmentController.getMistakes();
 			mistakeTypes.forEach(mistakeType -> {
-				System.out.println("Testing mistakeType " + mistakeType.toString());
+				System.out.println("  Testing mistakeType " + mistakeType.toString());
 				
 				assessmentController.addAnnotation(mistakeType, 0, 22, "class.name", Optional.empty(), Optional.empty());
 			});
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		} catch (IOException e) { }
+		System.out.println("  Got Annotations: ");
+		printAnnotations(assessmentController.getAnnotations("class.name"), "    ");
+		
+		assessmentController.removeAnnotation(1);
+
+		System.out.println("  Got Annotations after remove: ");
+		printAnnotations(assessmentController.getAnnotations("class.name"), "    ");
+	}
+	
+	private void printAnnotations(Collection<IAnnotation> annos, String space) {
+		annos.stream().forEach(annotation -> System.out.println(space + annotation));
 	}
 }

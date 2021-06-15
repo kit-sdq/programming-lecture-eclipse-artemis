@@ -80,7 +80,9 @@ public class ShortcutHandler extends AbstractHandler {
 //		new ConfigDaoTest(new JsonFileConfigDao(new File(eclipseWorkspaceRoot, "Lala/src/config_v2.json"))).run();
 		
 		System.out.println("#####AssessmentControllerTest#####");
-		new AssessmentControllerTest(new File(eclipseWorkspaceRoot, "Lala/src/config_v2.json"), "Final Task 1").run();
+		AssessmentControllerTest act = new AssessmentControllerTest(new File(eclipseWorkspaceRoot, "Lala/src/config_v2.json"), "Final Task 1");
+		act.testConfigLoading();
+		act.testMistakesEtc();
 		return null;
 	}
 	
