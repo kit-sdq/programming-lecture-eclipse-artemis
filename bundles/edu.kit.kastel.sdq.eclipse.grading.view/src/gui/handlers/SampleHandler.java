@@ -87,6 +87,8 @@ public class SampleHandler extends AbstractHandler {
 			marker = file.createMarker("gui.assessment.marker");
 			marker.setAttribute(IMarker.CHAR_START, lineOffset);
 			marker.setAttribute(IMarker.CHAR_END, lineOffset + lenght + 1);
+			marker.setAttribute(IMarker.MESSAGE, "this is a test tooltip");
+			marker.setAttribute("errorTypeDescription", "This is a test description");
 			marker.setAttribute("start", startLine + 1);
 			marker.setAttribute("end", endLine + 1);
 		} catch (CoreException e) {

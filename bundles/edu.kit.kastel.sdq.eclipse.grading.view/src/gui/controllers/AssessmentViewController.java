@@ -23,8 +23,7 @@ public class AssessmentViewController {
 
 	public void createAssessmentController() {
 		IPreferenceStore store = Activator.getDefault().getPreferenceStore();
-		this.CONFIG_PATH = store.getString(PreferenceConstants.P_CONFIG_PATH);
-		System.out.println("CONFIG" + this.CONFIG_PATH);
+		AssessmentViewController.CONFIG_PATH = store.getString(PreferenceConstants.P_CONFIG_PATH);
 		this.assessmentController =  new AssessmentController(new File(AssessmentViewController.CONFIG_PATH),
 				AssessmentViewController.EXERCISE_NAME);
 	}

@@ -26,7 +26,7 @@ public class ArtemisGradingPreferencesPage
 	public ArtemisGradingPreferencesPage() {
 		super(GRID);
 		setPreferenceStore(Activator.getDefault().getPreferenceStore());
-		setDescription("Set references for the Artemis Grading");
+		setDescription("Set preferences for the Artemis Grading");
 	}
 	
 	/**
@@ -37,7 +37,7 @@ public class ArtemisGradingPreferencesPage
 	 */
 	public void createFieldEditors() {
 		addField(
-			new StringFieldEditor(PreferenceConstants.P_CONFIG_PATH, "Set config path of rating groups and error types", getFieldEditorParent()));
+			new StringFieldEditor(PreferenceConstants.P_CONFIG_PATH, "Set config path for error types", getFieldEditorParent()));
 	}
 
 	/* (non-Javadoc)

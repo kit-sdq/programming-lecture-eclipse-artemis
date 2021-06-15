@@ -150,10 +150,10 @@
                visible="true">
          </markerFieldReference>
          <markerFieldReference
-               id="gui.marker.customMessageField">
+               id="gui.marker.customErrorTypeDescription">
          </markerFieldReference>
          <markerFieldReference
-               id="gui.marker.customPenaltyField">
+               id="gui.marker.customMessageField">
          </markerFieldReference>
       </markerContentGenerator>
       <markerField
@@ -172,9 +172,9 @@
             name="Error Type">
       </markerField>
       <markerField
-            class="gui.marker.view.AssessmentMarkerCustomPenalyField"
-            id="gui.marker.customPenaltyField"
-            name="Custom Penalty">
+            class="gui.marker.view.AssessmentErrorTypeDescriptionField"
+            id="gui.marker.customErrorTypeDescription"
+            name="Error Type Description">
       </markerField>
       <markerField
             class="gui.marker.view.AssessmentMarkerCustomMessageField"

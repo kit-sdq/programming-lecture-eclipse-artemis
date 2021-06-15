@@ -5,6 +5,6 @@ package gui.preferences;
  */
 public class PreferenceConstants {
 
-	public static final String P_CONFIG_PATH = "configPath";
+	public static final String P_CONFIG_PATH = "";
 	
 }
