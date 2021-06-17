@@ -24,13 +24,9 @@ public class WorkspaceUtil {
 		description.setNatureIds(natures);
 		
 		// and save it
-		//TODO 2. Create Project with
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject("exercise-1-testAufgabe1_submission-5-uyduk");
 		try {
 			project.create(description, null);
-			
-			//add natures now?
-			
 			project.open(null);
 		} catch (CoreException e) {
 			// TODO Auto-generated catch block
