@@ -19,21 +19,26 @@ public class AssessmentViewController {
 	private static String CONFIG_PATH;
 	private IAssessmentController assessmentController;
 
-	public AssessmentViewController() {}
+	public AssessmentViewController() {
+	}
 
 	public void createAssessmentController() {
-		IPreferenceStore store = Activator.getDefault().getPreferenceStore();
-		AssessmentViewController.CONFIG_PATH = store.getString(PreferenceConstants.P_CONFIG_PATH);
-		this.assessmentController =  new AssessmentController(new File(AssessmentViewController.CONFIG_PATH),
+		this.setConfigPathFromPreferenceStore();
+		this.assessmentController = new AssessmentController(new File(AssessmentViewController.CONFIG_PATH),
 				AssessmentViewController.EXERCISE_NAME);
 	}
-	
+
 	public Collection<IMistakeType> getMistakeTypesForButtonView() throws IOException {
 		return this.assessmentController.getMistakes();
 	}
-	
-	public Collection<IRatingGroup> getRatingGroups() throws IOException{
+
+	public Collection<IRatingGroup> getRatingGroups() throws IOException {
 		return this.assessmentController.getRatingGroups();
+	}
+
+	private void setConfigPathFromPreferenceStore() {
+		IPreferenceStore store = Activator.getDefault().getPreferenceStore();
+		AssessmentViewController.CONFIG_PATH = store.getString(PreferenceConstants.P_CONFIG_PATH);
 	}
 
 }
