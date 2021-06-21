@@ -7,7 +7,7 @@ public class AssessmentErrorTypeField extends MarkerField {
 
 	@Override
 	public String getValue(MarkerItem item) {
-		return item.getAttributeValue("errorType", "No error type defined");
+		return item.getAttributeValue("errorType", "");
 	}
 
 }

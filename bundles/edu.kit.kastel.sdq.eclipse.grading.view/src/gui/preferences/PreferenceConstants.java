@@ -5,6 +5,10 @@ package gui.preferences;
  */
 public class PreferenceConstants {
 
-	public static final String P_CONFIG_PATH = "";
+	public static final String P_IS_RELATIVE_CONFIG_PATH = "isRelativeConfigPath";
+	public static final String P_ABSOLUTE_CONFIG_PATH = "absoluteConfigPath";
+	public static final String P_RELATIVE_CONFIG_PATH = "relativeConfigPath";
+	public static final String P_ARTEMIS_URL = "artemisUrl";
+	
 	
 }

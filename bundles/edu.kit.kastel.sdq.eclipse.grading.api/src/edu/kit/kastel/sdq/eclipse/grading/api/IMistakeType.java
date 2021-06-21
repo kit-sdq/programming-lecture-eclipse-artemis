@@ -11,4 +11,6 @@ public interface IMistakeType {
 	String getButtonName();
 	
 	String getRatingGroupName();
+	
+	String getMessage();
 }

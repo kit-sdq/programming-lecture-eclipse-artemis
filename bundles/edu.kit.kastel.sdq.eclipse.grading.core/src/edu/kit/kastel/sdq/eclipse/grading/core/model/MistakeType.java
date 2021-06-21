@@ -106,4 +106,8 @@ public class MistakeType implements IMistakeType {
 	public String getRatingGroupName() {
 		return this.ratingGroup.getDisplayName();
 	}
+	
+	public String getMessage() {
+		return this.message;
+	}
 }

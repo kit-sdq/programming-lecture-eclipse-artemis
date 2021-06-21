@@ -7,7 +7,7 @@ public class AssessmentMarkerCustomPenalyField extends MarkerField {
 
 	@Override
 	public String getValue(MarkerItem item) {
-		return item.getAttributeValue("customPenalty", "No custom penalty defined");
+		return item.getAttributeValue("customPenalty", "");
 	}
 
 }

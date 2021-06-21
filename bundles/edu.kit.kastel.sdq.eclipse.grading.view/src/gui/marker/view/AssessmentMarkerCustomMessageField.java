@@ -7,7 +7,7 @@ public class AssessmentMarkerCustomMessageField extends MarkerField {
 
 	@Override
 	public String getValue(MarkerItem item) {
-		return item.getAttributeValue("customMessage", "no custom message defined");
+		return item.getAttributeValue("customMessage", "");
 	}
 
 }

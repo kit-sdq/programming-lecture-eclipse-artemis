@@ -7,7 +7,7 @@ public class AssessmentRatingGroupField extends MarkerField {
 
 	@Override
 	public String getValue(MarkerItem item) {
-		return item.getAttributeValue("ratingGroup", "No rating Group defined");
+		return item.getAttributeValue("ratingGroup", "");
 	}
 
 }

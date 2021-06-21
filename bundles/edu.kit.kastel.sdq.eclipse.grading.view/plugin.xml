@@ -72,7 +72,7 @@
             name="end">
       </attribute>
       <attribute
-            name="path">
+            name="className">
       </attribute>
       <attribute
             name="errorType">
@@ -85,6 +85,9 @@
       </attribute>
       <attribute
             name="customMessage">
+      </attribute>
+      <attribute
+            name="errorTypeDescription">
       </attribute>
    </extension>
    <extension
@@ -139,6 +142,9 @@
                id="gui.assessment.marker">
          </markerTypeReference>
          <markerFieldReference
+               id="gui.marker.className">
+         </markerFieldReference>
+         <markerFieldReference
                id="gui.markerPositionField"
                visible="true">
          </markerFieldReference>
@@ -154,6 +160,9 @@
          </markerFieldReference>
          <markerFieldReference
                id="gui.marker.customMessageField">
+         </markerFieldReference>
+         <markerFieldReference
+               id="gui.marker.customPenalty">
          </markerFieldReference>
       </markerContentGenerator>
       <markerField
@@ -180,6 +189,16 @@
             class="gui.marker.view.AssessmentMarkerCustomMessageField"
             id="gui.marker.customMessageField"
             name="Custom Message">
+      </markerField>
+      <markerField
+            class="gui.marker.view.AssessmentMarkerClassNameField"
+            id="gui.marker.className"
+            name="Class Name">
+      </markerField>
+      <markerField
+            class="gui.marker.view.AssessmentMarkerCustomPenalyField"
+            id="gui.marker.customPenalty"
+            name="Custom Penalty">
       </markerField>
    </extension>
    <extension
