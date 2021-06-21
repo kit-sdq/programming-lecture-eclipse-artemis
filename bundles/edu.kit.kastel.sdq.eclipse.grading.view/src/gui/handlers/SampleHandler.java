@@ -42,16 +42,6 @@ public class SampleHandler extends AbstractHandler {
 		String selectedText = textSelection.getText();
 		int lenght = textSelection.getLength();
 
-		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		IResourceChangeListener listener = new IResourceChangeListener() {
-
-			@Override
-			public void resourceChanged(IResourceChangeEvent event) {
-				System.out.println(event.getClass().toString());
-			}
-		};
-		workspace.addResourceChangeListener(listener);
-
 		IWorkbenchPart workbenchPart = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
 				.getActivePart();
 		String name = workbenchPart.getSite().getPage().getActiveEditor().getEditorInput().getName();
