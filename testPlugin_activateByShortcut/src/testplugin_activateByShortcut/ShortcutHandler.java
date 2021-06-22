@@ -17,7 +17,6 @@ import edu.kit.kastel.sdq.eclipse.grading.api.AbstractArtemisClient;
 import edu.kit.kastel.sdq.eclipse.grading.api.ICourse;
 import edu.kit.kastel.sdq.eclipse.grading.api.IExercise;
 import edu.kit.kastel.sdq.eclipse.grading.api.ISubmission;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.ILockResult;
 import edu.kit.kastel.sdq.eclipse.grading.client.git.AbstractGitHandler;
 import edu.kit.kastel.sdq.eclipse.grading.client.git.EgitGitHandler;
 import edu.kit.kastel.sdq.eclipse.grading.client.git.JGitGitHandler;
@@ -26,6 +25,7 @@ import edu.kit.kastel.sdq.eclipse.grading.client.mappings.ArtemisSubmission;
 import edu.kit.kastel.sdq.eclipse.grading.client.rest.ArtemisRESTClient;
 import edu.kit.kastel.sdq.eclipse.grading.core.artemis.WorkspaceUtil;
 import testplugin_activateByShortcut.testConfig.AssessmentControllerTest;
+import testplugin_activateByShortcut.testConfig.LockAndSubmitTest;
 
 //import org.glassfish.jersey.jackson.
 
@@ -42,10 +42,18 @@ public class ShortcutHandler extends AbstractHandler {
 			Collection<ICourse> courses = artemisClient.getCourses();
 			this.coursesTest(courses);
 			this.downloadExerciseTest(artemisClient, courses, 1, 1);
-//			artemisClient.startAssessments(assessments);
-			ILockResult lockResult = artemisClient.startAssessment(3);
-			System.out.println("################################LOCK stuff###########################");
-			System.out.println("Got Lock result\n" + lockResult);
+////			artemisClient.startAssessments(assessments);
+//			ILockResult lockResult = artemisClient.startAssessment(3);
+//			System.out.println("################################LOCK stuff###########################");
+//			System.out.println("Got Lock result\n" + lockResult);
+//
+//			IAssessor assessor = artemisClient.getAssessor();
+//			System.out.println("Got ASSessor\n" + assessor);
+//
+//			System.out.println("################################AnnotationMapper stufff###########################");
+//
+			new LockAndSubmitTest(credentials.L, credentials.R, "artemis-test.ipd.kit.edu").test();
+
 
 
 		} catch (Exception e) {

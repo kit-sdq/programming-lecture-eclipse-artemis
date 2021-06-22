@@ -14,8 +14,7 @@ public class Assessor {
 	private String langKey;
 	private String lastNotificationRead;
 	private String name;
-	private String participantIdentifier;
-	
+	private String participantIdentifier;	
 	
 	public Assessor(int id, String login, String firstName, String lastName, String email, boolean activated,
 			String langKey, String lastNotificationRead, String name, String participantIdentifier) {
