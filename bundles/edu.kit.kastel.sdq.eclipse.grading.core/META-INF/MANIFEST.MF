@@ -5,7 +5,6 @@ Bundle-SymbolicName: Eclipse_Artemis_Grading_Core
 Bundle-Version: 1.0.0.qualifier
 Automatic-Module-Name: Eclipse.Artemis.Grading.Core
 Bundle-RequiredExecutionEnvironment: JavaSE-11
-Import-Package: edu.kit.kastel.sdq.eclipse.grading.api
 Export-Package: edu.kit.kastel.sdq.eclipse.grading.core,
  edu.kit.kastel.sdq.eclipse.grading.core.artemis,
  edu.kit.kastel.sdq.eclipse.grading.core.config,
@@ -16,4 +15,6 @@ Require-Bundle: com.fasterxml.jackson.core.jackson-databind;bundle-version="2.12
  org.eclipse.core.resources;bundle-version="3.14.0",
  org.eclipse.core.runtime;bundle-version="3.20.100",
  org.eclipse.m2e.core;bundle-version="1.17.2",
- org.eclipse.jdt.core;bundle-version="3.25.0"
+ org.eclipse.jdt.core;bundle-version="3.25.0",
+ ArtemisPluginInnerAPIPlugin,
+ Eclipse_Artemis_Grading_RESTClient;bundle-version="1.0.0"

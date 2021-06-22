@@ -5,34 +5,36 @@ import java.util.Collection;
 public interface IArtemisGUIController {
 
 	/**
+	 * Download submissions defined by the given submissionIds
+	 * @param submissionIds
+	 */
+	void downloadSubmissions(Collection<Integer> submissionIds, String exerciseName);
+
+	/**
+	 *
+	 * @return all available courses (contains exercices and available submissions
+	 */
+	Collection<ICourse> getCourses();
+
+	/**
 	 * TODO baseURL hardcoded or config file or param here?
-	 * 
+	 *
 	 * @param username
 	 * @param password
 	 * @return true if login succeeded
 	 */
-	public boolean loginToArtemis(String username, String password);
-	
-	/**
-	 * 
-	 * @return all available courses (contains exercices and available submissions
-	 */
-	public Collection<ICourse> getCourses();
-	
-	/**
-	 * Download submissions defined by the given submissionIds
-	 * @param submissionIds
-	 */
-	public void downloadSubmissions(Collection<Integer> submissionIds);
-	
+	boolean loginToArtemis(String username, String password);
+
 	/**
 	 * Starts an assessment for the given submission
 	 * @param submissionID
 	 */
-	public void startAssessment(int submissionID);
-	
+	void startAssessment(int submissionID, String exerciseName);
+
 	/**
 	 * Submit the assessment to Artemis. Must have been started by {@code startAssessment}, before.
+	 * @param submissionID
+	 * @param exerciseName the exercise name is used to internally identify which annotations should be sent.
 	 */
-	public void submitAssessment(int submissionID);
+	void submitAssessment(int submissionID, String exerciseName);
 }
