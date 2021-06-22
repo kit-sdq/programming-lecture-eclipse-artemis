@@ -39,7 +39,7 @@ public class AssessmentControllerTest {
 			mistakeTypes.forEach(mistakeType -> {
 				System.out.println("  Testing mistakeType " + mistakeType.toString());
 
-				this.assessmentController.addAnnotation(mistakeType, 0, 22, "class.name", Optional.empty(), Optional.empty());
+				this.assessmentController.addAnnotation(mistakeType, 0, 22, "class.name", null, null);
 			});
 		} catch (IOException e) { }
 
