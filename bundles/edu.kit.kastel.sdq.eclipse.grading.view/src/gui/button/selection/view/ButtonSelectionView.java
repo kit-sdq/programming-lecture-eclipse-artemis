@@ -53,7 +53,8 @@ public class ButtonSelectionView extends ViewPart {
 		child.setLayout(new GridLayout(this.ratingGroups.size(), true));
 		this.ratingGroups.forEach(element -> {
 			final Group rgDisplay = new Group(child, SWT.NULL);
-			rgDisplay.setText(element.getDisplayName());
+			rgDisplay.setText(element.getDisplayName() + " (" +
+			this.viewController.getCurrentPenaltyForRatingGroup(element) + " penalty points)");
 			final GridLayout gridLayout = new GridLayout();
 			gridLayout.numColumns = 3;
 			rgDisplay.setLayout(gridLayout);

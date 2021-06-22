@@ -12,7 +12,7 @@ public class ArtemisGUIController implements IArtemisGUIController {
 
 	private final String host;
 	private final SystemwideController systemwideController;
-	private AbstractArtemisClient artemisClient;
+	private final AbstractArtemisClient artemisClient;
 
 	public ArtemisGUIController(final SystemwideController systemwideController, final String host, final String username, final String password) {
 		this.host = host;
@@ -35,7 +35,7 @@ public class ArtemisGUIController implements IArtemisGUIController {
 	public Collection<ICourse> getCourses() {
 		try {
 			return this.artemisClient.getCourses();
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			//TODO exception handling!
 			throw new RuntimeException("..");
 
@@ -59,7 +59,7 @@ public class ArtemisGUIController implements IArtemisGUIController {
 		/* TODO change signature of AbstractArtemisClient::submitAssessments to sth like
 		 *      submitAssessment(int submissionID, ISubmission (or just a json formatted String))
 		 */
-		this.artemisClient.submitAssessments(null);
+	//	this.artemisClient.submitAssessments(null);
 	}
 
 

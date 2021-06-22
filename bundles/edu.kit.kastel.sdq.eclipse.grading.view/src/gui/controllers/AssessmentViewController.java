@@ -15,7 +15,7 @@ import org.eclipse.jface.text.ITextSelection;
 import edu.kit.kastel.sdq.eclipse.grading.api.IAssessmentController;
 import edu.kit.kastel.sdq.eclipse.grading.api.IMistakeType;
 import edu.kit.kastel.sdq.eclipse.grading.api.IRatingGroup;
-import edu.kit.kastel.sdq.eclipse.grading.core.AssessmentController;
+import edu.kit.kastel.sdq.eclipse.grading.core.SystemwideController;
 import gui.activator.Activator;
 import gui.preferences.PreferenceConstants;
 import gui.utilities.AssessmentUtilities;
@@ -84,14 +84,23 @@ public class AssessmentViewController {
 
 	public void createAssessmentController() {
 		this.setConfigPathFromPreferenceStore();
-		this.assessmentController = new AssessmentController(this.createConfigFile(),
-				AssessmentViewController.EXERCISE_NAME);
+		this.assessmentController = new SystemwideController(
+				this.createConfigFile(), null, null, null).getAssessmentController(AssessmentViewController.EXERCISE_NAME);
 	}
 
 	private File createConfigFile() {
 		return AssessmentViewController.IS_RELATIVE_PATH ?
 					new File(this.getEclipseWorkspaceRootFile(), AssessmentViewController.CONFIG_PATH) :
 					new File(AssessmentViewController.CONFIG_PATH);
+	}
+
+	public double getCurrentPenaltyForRatingGroup(IRatingGroup ratingGroup)  {
+		return -1;
+//		try {
+//			return this.assessmentController.calculateCurrentPenaltyForRatingGroup(ratingGroup);
+//		} catch (final IOException e) {
+//			return -1;
+//		}
 	}
 
 	private File getEclipseWorkspaceRootFile() {
