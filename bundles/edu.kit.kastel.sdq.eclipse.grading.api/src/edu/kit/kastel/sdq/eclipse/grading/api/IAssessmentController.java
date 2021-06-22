@@ -28,6 +28,20 @@ public interface IAssessmentController {
 	void addAnnotation(IMistakeType mistakeType, int startLine, int endLine, String fullyClassifiedClassName, String customMessage, Double customPenalty);
 
 	/**
+	 * Calculate a single penalty for a given mistakeType (uses one or many annotations)
+	 * @param ratingGroup
+	 * @return
+	 */
+	double calculateCurrentPenaltyForMistakeType(IMistakeType mistakeType);
+
+	/**
+	 * Sum up all penalties of annotations whose mistakeTypes belong to the given rating group
+	 * @param ratingGroup
+	 * @return
+	 */
+	double calculateCurrentPenaltyForRatingGroup(IRatingGroup ratingGroup) throws IOException ;
+
+	/**
 	 *
 	 * @param className
 	 * @return all annotations already made for the given class.
@@ -62,8 +76,6 @@ public interface IAssessmentController {
 	 * @param annotationId	unique annotation identifier
 	 */
 	void removeAnnotation(int annotationId);
-
-
 
 
 }
