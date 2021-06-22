@@ -43,12 +43,6 @@ public class ArtemisGUIController implements IArtemisGUIController {
 	}
 
 	@Override
-	public boolean loginToArtemis(String username, String password) {
-		// TODO Implementation
-		return false;
-	}
-
-	@Override
 	public void startAssessment(int submissionID, String exerciseName) {
 		//
 		/* TODO

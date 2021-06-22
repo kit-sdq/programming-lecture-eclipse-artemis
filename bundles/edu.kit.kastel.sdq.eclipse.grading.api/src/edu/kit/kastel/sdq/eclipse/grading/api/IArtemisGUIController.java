@@ -17,15 +17,6 @@ public interface IArtemisGUIController {
 	Collection<ICourse> getCourses();
 
 	/**
-	 * TODO baseURL hardcoded or config file or param here?
-	 *
-	 * @param username
-	 * @param password
-	 * @return true if login succeeded
-	 */
-	boolean loginToArtemis(String username, String password);
-
-	/**
 	 * Starts an assessment for the given submission
 	 * @param submissionID
 	 */
