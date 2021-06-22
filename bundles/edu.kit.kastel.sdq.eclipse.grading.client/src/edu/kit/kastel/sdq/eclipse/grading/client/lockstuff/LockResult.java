@@ -1,6 +1,7 @@
 package edu.kit.kastel.sdq.eclipse.grading.client.lockstuff;
 
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -19,10 +20,12 @@ public class LockResult implements ILockResult {
 	@JsonCreator
 	public LockResult(
 			@JsonProperty("id") int id,
-			@JsonProperty("results") List<AssessmentResult> previousAssessmentresults) {
+			@JsonProperty("results") List<LockCallAssessmentResult> previousAssessmentresults) {
 		this.id = id;
 		//TODO should be only one, right? Get the last, for now...
-		this.preexistentFeedbacks = previousAssessmentresults.get(0).getFeedbacks();
+		this.preexistentFeedbacks = new LinkedList();
+		previousAssessmentresults.stream().forEach(prevAssessment -> this.preexistentFeedbacks.addAll(prevAssessment.getFeedbacks()));
+//		this.preexistentFeedbacks = previousAssessmentresults.get(0).getFeedbacks();
 	}
 
 	@Override

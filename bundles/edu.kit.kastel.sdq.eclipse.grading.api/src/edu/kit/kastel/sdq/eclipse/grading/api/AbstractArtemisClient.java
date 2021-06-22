@@ -5,6 +5,7 @@ import java.util.Collection;
 
 import javax.security.sasl.AuthenticationException;
 
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IAssessor;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.ILockResult;
 
 /**
@@ -70,11 +71,18 @@ public abstract class AbstractArtemisClient {
 
 	/**
 	 *
+	 * @return the artemis "assessor" (needed for submitting the assessment).
+	 * @throws Exception
+	 */
+	public abstract IAssessor getAssessor() throws Exception;
+
+
+	/**
+	 *
 	 * @return all available courses (contains exercises and available submissions
 	 * @throws Exception TODO create an exception type!
 	 */
 	public abstract Collection<ICourse> getCourses() throws Exception;
-
 
 	/**
 	 * Starts an assessment for the given submission. Acquires a lock in the process.

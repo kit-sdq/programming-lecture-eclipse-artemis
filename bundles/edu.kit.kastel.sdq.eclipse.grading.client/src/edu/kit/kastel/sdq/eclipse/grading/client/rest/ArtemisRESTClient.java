@@ -24,8 +24,10 @@ import edu.kit.kastel.sdq.eclipse.grading.api.AbstractArtemisClient;
 import edu.kit.kastel.sdq.eclipse.grading.api.ICourse;
 import edu.kit.kastel.sdq.eclipse.grading.api.IExercise;
 import edu.kit.kastel.sdq.eclipse.grading.api.ISubmission;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IAssessor;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.ILockResult;
 import edu.kit.kastel.sdq.eclipse.grading.client.git.EgitGitHandler;
+import edu.kit.kastel.sdq.eclipse.grading.client.lockstuff.Assessor;
 import edu.kit.kastel.sdq.eclipse.grading.client.lockstuff.LockResult;
 import edu.kit.kastel.sdq.eclipse.grading.client.mappings.ArtemisCourse;
 import edu.kit.kastel.sdq.eclipse.grading.client.mappings.ArtemisExercise;
@@ -107,6 +109,22 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 
 	private String getApiRoot() {
 		return new StringBuilder("https://").append(this.getArtemisHostname()).append("/api").toString();
+	}
+
+	@Override
+	public IAssessor getAssessor() throws Exception {
+		this.checkAuthentication();
+
+		// /api/users/{login}
+		final Response rsp = this.rootApiTarget
+				.path("users")
+				.path(this.getArtemisUsername())
+				.request().header("Authorization", this.id_token.get().getHeaderString())
+				.buildGet()
+				.invoke(); // synchronous variant
+		this.checkStatusSuccessful(rsp);
+
+		return this.parseAssessorResult(rsp.readEntity(String.class));
 	}
 
 	private Entity<String> getAuthenticationEntity() {
@@ -261,8 +279,15 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 		}
 	}
 
+	private IAssessor parseAssessorResult(final String jsonString) throws JsonMappingException, JsonProcessingException {
+		return new ObjectMapper()
+				.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+				.readValue(jsonString, Assessor.class);
+	}
+
 	private ILockResult parseLockResult(final String jsonString) throws JsonMappingException, JsonProcessingException {
 		//TODO impl
+		System.out.println("######DEBUG: " + jsonString);
 		return new ObjectMapper()
 				.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 				.readValue(jsonString, LockResult.class);
@@ -310,6 +335,24 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 	@Override
 	public void submitAssessment(int submissionID, String payload) throws AuthenticationException {
 		this.checkAuthentication();
-		//TODO implement submitting
+		this.checkAuthentication();
+
+		// /api/users/{login}
+		final Response rsp = this.rootApiTarget
+				.path("participations")
+				.path(Integer.toString(submissionID))
+				.path("manual-results")
+				.queryParam("submit", true)
+				.request().header("Authorization", this.id_token.get().getHeaderString())
+				.buildPut(this.toJsonStringEntity(payload))
+				.invoke(); // synchronous variant
+		this.checkStatusSuccessful(rsp);
+	}
+
+	private Entity<String> toJsonStringEntity(String jsonString) {
+
+		return Entity.entity(
+				jsonString,
+				MediaType.APPLICATION_JSON_TYPE);
 	}
 }
