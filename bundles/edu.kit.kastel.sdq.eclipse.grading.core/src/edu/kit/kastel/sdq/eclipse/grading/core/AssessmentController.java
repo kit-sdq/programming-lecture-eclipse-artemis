@@ -104,7 +104,7 @@ public class AssessmentController implements IAssessmentController {
 	 * TODO null statt optional
 	 */
 	@Override
-	public void modifyAnnotation(int annatationId, Optional<String> customMessage, Optional<Double> customPenalty) {
+	public void modifyAnnotation(int annatationId, String customMessage, Double customPenalty) {
 		this.annotationDao.modifyAnnotation(annatationId, customMessage, customPenalty);
 	}
 

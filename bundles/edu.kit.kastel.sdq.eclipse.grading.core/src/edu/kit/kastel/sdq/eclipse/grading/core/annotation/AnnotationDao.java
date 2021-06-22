@@ -1,7 +1,6 @@
 package edu.kit.kastel.sdq.eclipse.grading.core.annotation;
 
 import java.util.Collection;
-import java.util.Optional;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.IAnnotation;
 import edu.kit.kastel.sdq.eclipse.grading.api.IMistakeType;
@@ -19,9 +18,6 @@ public interface AnnotationDao {
 	 *
 	 * @param annotation the annotation to be added
 	 */
-	void addAnnotation(IMistakeType mistakeType, int startLine, int endLine, String fullyClassifiedClassName,
-			Optional<String> customMessage, Optional<Double> customPenalty);
-
 	void addAnnotation(IMistakeType mistakeType, int startLine, int endLine, String fullyClassifiedClassName,
 			String customMessage, Double customPenalty);
 
@@ -45,7 +41,7 @@ public interface AnnotationDao {
 	 * @param customMessage
 	 * @param customPenalty
 	 */
-	void modifyAnnotation(int annatationId, Optional<String> customMessage, Optional<Double> customPenalty);
+	void modifyAnnotation(int annatationId, String customMessage, Double customPenalty);
 
 	/**
 	 * Remove an existent annotation

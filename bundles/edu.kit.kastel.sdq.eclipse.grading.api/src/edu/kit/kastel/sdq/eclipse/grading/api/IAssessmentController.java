@@ -2,7 +2,6 @@ package edu.kit.kastel.sdq.eclipse.grading.api;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Optional;
 
 /**
  * TODO Zwischenberechnung der mistakes (pro Klasse e.g.) zurück an die GUI.
@@ -69,7 +68,7 @@ public interface IAssessmentController {
 	 * @param customPenalty new custom penalty. This may or may not have an effekt, depending on the MistakeType's PenaltyRule!
 	 * E.g. a ThresholdPenaltyRule will not consider custom penalties while a (thinkable) "AggregatedPenaltyThresholdPenaltyRule" would do so.
 	 */
-	void modifyAnnotation(int annatationId, Optional<String> customMessage, Optional<Double> customPenalty);
+	void modifyAnnotation(int annatationId, String customMessage, Double customPenalty);
 
 	/**
 	 * Remove an existent annotation

@@ -20,7 +20,6 @@ public class AssessmentResult {
 	
 	public AssessmentResult(int id, String resultString, String assessmentType, double score, boolean rated,
 			boolean hasFeedback, String completionDate, Assessor assessor, List<Feedback> feedbacks) {
-		super();
 		this.id = id;
 		this.resultString = resultString;
 		this.assessmentType = assessmentType;

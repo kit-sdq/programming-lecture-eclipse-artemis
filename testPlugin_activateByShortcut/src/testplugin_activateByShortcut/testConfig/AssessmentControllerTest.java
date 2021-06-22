@@ -3,7 +3,6 @@ package testplugin_activateByShortcut.testConfig;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Optional;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.IAnnotation;
 import edu.kit.kastel.sdq.eclipse.grading.api.IAssessmentController;
@@ -51,7 +50,7 @@ public class AssessmentControllerTest {
 		this.printAnnotations(this.assessmentController.getAnnotations("class.name"), "    ");
 
 
-		this.assessmentController.modifyAnnotation(2, Optional.of("mmmmmmmmmmmmmmmmmmmmmmmMmmmmmmodified message"), Optional.empty());
+		this.assessmentController.modifyAnnotation(2, "mmmmmmmmmmmmmmmmmmmmmmmMmmmmmmodified message", null);
 		System.out.println("  Got Annotations after modifying (2): ");
 		this.printAnnotations(this.assessmentController.getAnnotations("class.name"), "    ");
 	}

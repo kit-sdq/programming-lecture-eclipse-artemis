@@ -12,24 +12,51 @@ public class Annotation implements IAnnotation {
 	private final int startLine;
 	private final int endLine;
 	private final String fullyClassifiedClassName;
-	
-	private Optional<String> customMessage;
-	private Optional<Double> customPenalty;
-	
-	public Annotation(int id, IMistakeType mistakeType, int startLine, int endLine, String fullyClassifiedClassName, 
-			Optional<String> customMessage, Optional<Double> customPenalty) {
+
+	private String customMessage;
+	private Double customPenalty;
+
+	public Annotation(int id, IMistakeType mistakeType, int startLine, int endLine, String fullyClassifiedClassName,
+			String customMessage, Double customPenalty) {
 		//TODO IDs uniqueness controlled by other class.
 		this.id = id;
 		this.mistakeType = mistakeType;
 		this.startLine = startLine;
 		this.endLine = endLine;
-		this.fullyClassifiedClassName = fullyClassifiedClassName;	
-		
-		this.customMessage = customMessage == null ? Optional.empty() : customMessage;
-		this.customPenalty = customPenalty == null ? Optional.empty() : customPenalty;
-		
+		this.fullyClassifiedClassName = fullyClassifiedClassName;
+
+		this.customMessage = customMessage;
+		this.customPenalty = customPenalty;
+
 	}
-	
+
+	@Override
+	public boolean equals(Object otherAnnotation) {
+		return (IAnnotation.class.isInstance(otherAnnotation))
+				? this.getId() == ((IAnnotation)otherAnnotation).getId()
+				: false;
+	}
+
+	@Override
+	public Optional<String> getCustomMessage() {
+		return (this.customMessage == null) ? Optional.empty() : Optional.of(this.customMessage);
+	}
+
+	@Override
+	public Optional<Double> getCustomPenalty() {
+		return (this.customPenalty == null) ? Optional.empty() : Optional.of(this.customPenalty);
+	}
+
+	@Override
+	public int getEndLine() {
+		return this.endLine;
+	}
+
+	@Override
+	public String getFullyClassifiedClassName() {
+		return this.fullyClassifiedClassName;
+	}
+
 	@Override
 	public int getId() {
 		return this.id;
@@ -45,45 +72,18 @@ public class Annotation implements IAnnotation {
 		return this.startLine;
 	}
 
-	@Override
-	public int getEndLine() {
-		return this.endLine;
-	}
-
-	@Override
-	public String getFullyClassifiedClassName() {
-		return this.fullyClassifiedClassName;
-	}
-
-	@Override
-	public Optional<String> getCustomMessage() {
-		return this.customMessage;
-	}
-
-	@Override
-	public Optional<Double> getCustomPenalty() {
-		return this.customPenalty;
-	}
-
 	protected void setCustomMessage(String customMessage) {
-		this.customMessage = Optional.of(customMessage);
+		this.customMessage = customMessage;
 	}
-	
+
 	protected void setCustomPenalty(double customPenalty) {
-		this.customPenalty = Optional.of(customPenalty);		
-	}
-	
-	@Override
-	public boolean equals(Object otherAnnotation) {
-		return (IAnnotation.class.isInstance(otherAnnotation)) 
-				? this.getId() == ((IAnnotation)otherAnnotation).getId()
-				: false;
+		this.customPenalty = customPenalty;
 	}
 
 	@Override
 	public String toString() {
-		return "Annotation [id=" + id + ", mistakeType=" + mistakeType + ", startLine=" + startLine + ", endLine="
-				+ endLine + ", fullyClassifiedClassName=" + fullyClassifiedClassName + ", customMessage="
-				+ customMessage + ", customPenalty=" + customPenalty + "]";
+		return "Annotation [id=" + this.id + ", mistakeType=" + this.mistakeType + ", startLine=" + this.startLine + ", endLine="
+				+ this.endLine + ", fullyClassifiedClassName=" + this.fullyClassifiedClassName + ", customMessage="
+				+ this.customMessage + ", customPenalty=" + this.customPenalty + "]";
 	}
 }
