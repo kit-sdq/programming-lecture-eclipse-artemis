@@ -57,7 +57,7 @@ public class JsonFileAnnotationDao implements AnnotationDao {
 		final IAnnotation newAnnotation = new Annotation(
 				oldAnnotation.getId(), oldAnnotation.getMistakeType(),
 				oldAnnotation.getStartLine(), oldAnnotation.getEndLine(),
-				oldAnnotation.getFullyClassifiedClassName(),
+				oldAnnotation.getClassFilePath(),
 				customMessage, customPenalty);
 
 		this.annotations.remove(oldAnnotation);

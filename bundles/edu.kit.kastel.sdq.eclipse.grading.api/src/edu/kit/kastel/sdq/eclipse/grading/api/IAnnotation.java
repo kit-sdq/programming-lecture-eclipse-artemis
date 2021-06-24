@@ -11,6 +11,12 @@ import java.util.Optional;
  */
 public interface IAnnotation {
 
+	/**
+	 *
+	 * @return the relative path to the class, formatted like "src/edu/kit/informatik/BubbleSort" (as that is what artemis requires)
+	 */
+	String getClassFilePath();
+
 	Optional<String> getCustomMessage();
 
 	Optional<Double> getCustomPenalty();
@@ -21,12 +27,6 @@ public interface IAnnotation {
 	 * @return the start line starting at TODO 0 or 1.
 	 */
 	int getEndLine();
-
-	/**
-	 *
-	 * @return the "fully classified class name", formatted like "src/edu/kit/informatik/BubbleSort" (as that is what artemis requires)
-	 */
-	String getFullyClassifiedClassName();
 
 	int getId();
 

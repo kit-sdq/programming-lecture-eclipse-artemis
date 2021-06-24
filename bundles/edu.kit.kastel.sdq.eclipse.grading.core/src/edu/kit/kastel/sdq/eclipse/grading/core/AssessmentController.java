@@ -65,7 +65,7 @@ public class AssessmentController implements IAssessmentController {
 	@Override
 	public Collection<IAnnotation> getAnnotations(String className) {
 		return this.annotationDao.getAnnotations().stream()
-				.filter(annotation -> annotation.getFullyClassifiedClassName().equals(className))
+				.filter(annotation -> annotation.getClassFilePath().equals(className))
 				.collect(Collectors.toUnmodifiableList());
 	}
 

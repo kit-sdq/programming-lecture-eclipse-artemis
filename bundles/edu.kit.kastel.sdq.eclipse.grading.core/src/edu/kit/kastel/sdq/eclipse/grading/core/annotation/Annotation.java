@@ -53,7 +53,7 @@ public class Annotation implements IAnnotation {
 	}
 
 	@Override
-	public String getFullyClassifiedClassName() {
+	public String getClassFilePath() {
 		return this.fullyClassifiedClassName;
 	}
 
