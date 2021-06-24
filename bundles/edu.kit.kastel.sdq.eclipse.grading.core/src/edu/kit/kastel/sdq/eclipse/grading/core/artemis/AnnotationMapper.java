@@ -52,20 +52,44 @@ public class AnnotationMapper {
 		return result;
 	}
 
+	private double calculateCurrentPenaltyForMistakeType(IMistakeType mistakeType) {
+		// TODO Auto-generated method stub
+		return mistakeType.calculatePenalty(
+			this.annotations.stream()
+				.filter(annotation -> annotation.getMistakeType().equals(mistakeType))
+				.collect(Collectors.toList())
+		);
+	}
+
 	private Collection<Feedback> calculateManualFeedbacks() {
 		//TODO dis is just for test
-		final String text = "File src/edu/kit/informatik/BubbleSort at line 11";
-		final String reference = "file:src/edu/kit/informatik/BubbleSort.java_line:10";
-		final String detailText = " SENT FROM ZE ECLIPSE CLIENT (BubbleSort CodeRef)";
-		return List.of(
-				new Feedback(FeedbackType.MANUAL.toString(), -1D, null, null, null, text, reference, detailText),
-				new Feedback(FeedbackType.MANUAL_UNREFERENCED.toString(), -1D, null, null, null, null, null, " SENT FROM ZE ECLIPSE CLIENT (Feedback unrefD)")
+//		final String text = "File src/edu/kit/informatik/BubbleSort at line 11";
+//		final String reference = "file:src/edu/kit/informatik/BubbleSort.java_line:10";
+//		final String detailText = " SENT FROM ZE ECLIPSE CLIENT (BubbleSort CodeRef)";
+//		return List.of(
+//				new Feedback(FeedbackType.MANUAL.toString(), -1D, null, null, null, text, reference, detailText),
+//				new Feedback(FeedbackType.MANUAL_UNREFERENCED.toString(), -1D, null, null, null, null, null, " SENT FROM ZE ECLIPSE CLIENT (Feedback unrefD)")
+//
+//				);
 
-				);
+		Collection<Feedback> manualFeedbacks = new LinkedList<Feedback>();
+		//add the code annotations
+		manualFeedbacks.addAll(
+			this.annotations.stream()
+				.map(this::createNewManualFeedback)
+				.collect(Collectors.toList())
+		);
 
+		//add the (rated!) rating group annotations
+		//TODO comment in, when createNewManualUnreferencedFeedback is implemented
+		manualFeedbacks.addAll(
+			this.ratingGroups.stream()
+				.map(this::createNewManualUnreferencedFeedback)
+				.filter(feedback -> !this.isZero(feedback.getCredits()))
+				.collect(Collectors.toList())
+		);
 
-		//TODO implement calculation
-		//TODO implement calculating the UNREFERENCED Feedbacks (Zusammenfassung RatingGroups!)
+		return manualFeedbacks;
 	}
 
 	private double calculateScore() {
@@ -74,12 +98,81 @@ public class AnnotationMapper {
 	}
 
 	private AssessmentResult createAssessmentResult() {
-		// only add preexistent automatic feedback (unit tests etc) and manual feedback.													arTem155
-		final Collection<IFeedback> allFeedbacks = new LinkedList();
+		// only add preexistent automatic feedback (unit tests etc) and manual feedback.										arTem155
+		final Collection<IFeedback> allFeedbacks = new LinkedList<IFeedback>();
 		allFeedbacks.addAll(this.calculateAllFeedbacks());
 
 		return new AssessmentResult(this.lockResult.getId(), "TODO resultString", "SEMI_AUTOMATIC", this.calculateScore(),
 				true, true, null, this.assessor, allFeedbacks);
+	}
+
+	private Feedback createNewManualFeedback(IAnnotation annotation) {
+		// manual feedbacks do not have no credits!
+//		final String text = "File src/edu/kit/informatik/BubbleSort at line 11";
+//		final String reference = "file:src/edu/kit/informatik/BubbleSort.java_line:10";
+//		final String detailText = " SENT FROM ZE ECLIPSE CLIENT (BubbleSort CodeRef)";
+		final String text = new StringBuilder()
+				.append("File ")
+				.append(annotation.getClassFilePath())
+				.append(" at line ")
+				.append(annotation.getStartLine())
+				.toString();
+		final String reference = new StringBuilder()
+				.append("file:")
+				.append(annotation.getClassFilePath())
+				.append(".java_line:")
+				.append(annotation.getStartLine())
+				.toString();
+		final String detailText = new StringBuilder()
+				.append("[")
+				.append(annotation.getMistakeType().getRatingGroupName())
+				.append(":")
+				.append(annotation.getMistakeType().getButtonName())
+				.append("] ")
+				.append(annotation.getMistakeType().getMessage())
+				.append("\n")
+				.append(annotation.getCustomMessage().orElse(""))
+				.toString();
+
+		return new Feedback(FeedbackType.MANUAL.toString(), 0D, null, null, null, text, reference, detailText);
+	}
+
+	private Feedback createNewManualUnreferencedFeedback(IRatingGroup ratingGroup) {
+
+		//TODO here, do the magic (calculation, per rating group)
+		//	new Feedback(FeedbackType.MANUAL_UNREFERENCED.toString(), -1D, null, null, null, null, null, " SENT FROM ZE ECLIPSE CLIENT (Feedback unrefD)")
+
+		double penalty = this.mistakeTypes.stream()
+				.filter(mistakeType -> mistakeType.getRatingGroup().equals(ratingGroup))
+				.map(this::calculateCurrentPenaltyForMistakeType)
+				.collect(Collectors.summingDouble(Double::doubleValue));
+		final StringBuilder detailTextStringBuilder = new StringBuilder()
+				.append(ratingGroup.getDisplayName())
+				.append(" [")
+				.append(penalty)
+				.append(" /")
+				.append("X")
+				.append(" P]");
+
+		// add mistake-specific penalties TODO this is not wanted! just for debug!!!!1
+		this.mistakeTypes.stream()
+			.filter(mistakeType -> mistakeType.getRatingGroup().equals(ratingGroup))
+			.forEach(mistakeType -> {
+				double currentPenalty = this.calculateCurrentPenaltyForMistakeType(mistakeType);
+				//TODO make schön!
+				if ( !this.isZero(currentPenalty)) {
+					detailTextStringBuilder
+						.append("\n  * ")
+						.append(mistakeType.getButtonName())
+						.append(" [")
+						.append(currentPenalty)
+						.append("]");
+				}
+			});
+
+
+		return new Feedback(FeedbackType.MANUAL_UNREFERENCED.toString(), penalty, null, null, null, null, null,
+				detailTextStringBuilder.toString());
 	}
 
 	private String getCurrentTimestamp() {
@@ -98,6 +191,10 @@ public class AnnotationMapper {
 			if (currentId > greatestId) greatestId = currentId;
 		}
 		return greatestId;
+	}
+
+	private boolean isZero(double d) {
+		return  (0D + Math.abs(d)) < 0.001D;
 	}
 
 	public String mapToJsonFormattedString() throws JsonProcessingException {

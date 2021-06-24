@@ -28,9 +28,9 @@ public class ThresholdPenaltyRule extends PenaltyRule {
 	
 	@Override
 	public double calculatePenalty(List<IAnnotation> annotations) {
-		return (annotations.size() >= this.threshold) 
+		return -1D * Math.abs((annotations.size() >= this.threshold) 
 			? this.penalty
-			: 0.D;
+			: 0.D);
 	}
 
 	@Override

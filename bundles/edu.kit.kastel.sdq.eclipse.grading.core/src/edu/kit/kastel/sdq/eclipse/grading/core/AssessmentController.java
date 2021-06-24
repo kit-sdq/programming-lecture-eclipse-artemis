@@ -58,6 +58,7 @@ public class AssessmentController implements IAssessmentController {
 	@Override
 	public double calculateCurrentPenaltyForRatingGroup(IRatingGroup ratingGroup) throws IOException {
 		return this.getMistakes().stream()
+				.filter(mistakeType -> mistakeType.getRatingGroup().equals(ratingGroup))
 				.map(this::calculateCurrentPenaltyForMistakeType)
 				.collect(Collectors.summingDouble(Double::doubleValue));
 	}

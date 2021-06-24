@@ -6,6 +6,7 @@ Bundle-Version: 1.0.0.qualifier
 Automatic-Module-Name: Eclipse.Artemis.Grading.Core
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Export-Package: edu.kit.kastel.sdq.eclipse.grading.core,
+ edu.kit.kastel.sdq.eclipse.grading.core.annotation,
  edu.kit.kastel.sdq.eclipse.grading.core.artemis,
  edu.kit.kastel.sdq.eclipse.grading.core.config,
  edu.kit.kastel.sdq.eclipse.grading.core.model
