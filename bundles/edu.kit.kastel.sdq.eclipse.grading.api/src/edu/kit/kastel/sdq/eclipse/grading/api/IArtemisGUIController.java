@@ -20,12 +20,12 @@ public interface IArtemisGUIController {
 	 * Starts an assessment for the given submission
 	 * @param submissionID
 	 */
-	void startAssessment(int submissionID, String exerciseName);
+	void startAssessment(int submissionID, String exerciseName) throws Exception;
 
 	/**
 	 * Submit the assessment to Artemis. Must have been started by {@code startAssessment}, before.
 	 * @param submissionID
 	 * @param exerciseName the exercise name is used to internally identify which annotations should be sent.
 	 */
-	void submitAssessment(int submissionID, String exerciseName);
+	void submitAssessment(int submissionID, String exerciseName) throws Exception;
 }
