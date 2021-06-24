@@ -20,7 +20,7 @@ public class ArtemisGUIController implements IArtemisGUIController {
 
 	private final Map<String, ILockResult> lockResults;
 
-	public ArtemisGUIController(final SystemwideController systemwideController, final String host, final String username, final String password) {
+	protected ArtemisGUIController(final SystemwideController systemwideController, final String host, final String username, final String password) {
 		this.host = host;
 		this.artemisClient = new ArtemisRESTClient(username, password, host);
 		this.systemwideController = systemwideController;
