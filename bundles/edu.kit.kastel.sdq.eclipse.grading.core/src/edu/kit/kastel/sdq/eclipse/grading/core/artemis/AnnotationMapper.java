@@ -1,8 +1,11 @@
 package edu.kit.kastel.sdq.eclipse.grading.core.artemis;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -12,12 +15,15 @@ import edu.kit.kastel.sdq.eclipse.grading.api.IMistakeType;
 import edu.kit.kastel.sdq.eclipse.grading.api.IRatingGroup;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IAssessor;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IFeedback;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IFeedback.FeedbackType;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.ILockResult;
 
 /**
  * Maps Annotations to Artemis-accepted json-formatted strings.
  */
 public class AnnotationMapper {
+
+	private static final String DATE_FORMAT_STRING = "yyyy-MM-dd'T'hh:mm:ss.nnnnnn";
 
 	private final Collection<IAnnotation> annotations;
 	private final Collection<IMistakeType> mistakeTypes;
@@ -37,31 +43,52 @@ public class AnnotationMapper {
 		this.lockResult = lockResult;
 	}
 
-	private Collection<IFeedback> convertAnnotationsToFeedbacks() {
+	private Collection<IFeedback> calculateAllFeedbacks() {
 		//TODO auslagern in eigene Klasse evlt
-
-		//TODO implement dat
-
-		// this is a dummy for testing
-		// todo need to retrieve latest feedback id
-		final String text = "File src/edu/kit/informatik/BubbleSort at line 11";
-		final String reference = "file:src/edu/kit/informatik/BubbleSort.java_line:10";
-		final String detailText = " SENT FROM ZE CLIENNENENENENENTTTT!";
-
-		List<IFeedback> result = new LinkedList();
-		result.addAll(this.lockResult.getPreexistentFeedbacks());
-		result.add(new Feedback("MANUAL", -1D, this.getLatestFeedbackID()+1, null, null, text, reference, detailText));
+		final List<IFeedback> result = new LinkedList();
+		result.addAll(this.getFilteredPreexistentFeedbacks(FeedbackType.AUTOMATIC));
+		result.addAll(this.calculateManualFeedbacks());
 
 		return result;
 	}
 
-	private AssessmentResult createAssessmentResult() {
-		//TODO resultString, points calculation, annotations --> Feedbacks
-		final Collection<IFeedback> allFeedbacks = new LinkedList(this.lockResult.getPreexistentFeedbacks());
-		allFeedbacks.addAll(this.convertAnnotationsToFeedbacks());
+	private Collection<Feedback> calculateManualFeedbacks() {
+		//TODO dis is just for test
+		final String text = "File src/edu/kit/informatik/BubbleSort at line 11";
+		final String reference = "file:src/edu/kit/informatik/BubbleSort.java_line:10";
+		final String detailText = " SENT FROM ZE ECLIPSE CLIENT (BubbleSort CodeRef)";
+		return List.of(
+				new Feedback(FeedbackType.MANUAL.toString(), -1D, null, null, null, text, reference, detailText),
+				new Feedback(FeedbackType.MANUAL_UNREFERENCED.toString(), -1D, null, null, null, null, null, " SENT FROM ZE ECLIPSE CLIENT (Feedback unrefD)")
 
-		return new AssessmentResult(this.lockResult.getId(), "TODO resultString", "SEMI_AUTOMATIC", 51,
+				);
+
+
+		//TODO implement calculation
+		//TODO implement calculating the UNREFERENCED Feedbacks (Zusammenfassung RatingGroups!)
+	}
+
+	private double calculateScore() {
+		//TODO implement
+		return 51;
+	}
+
+	private AssessmentResult createAssessmentResult() {
+		// only add preexistent automatic feedback (unit tests etc) and manual feedback.													arTem155
+		final Collection<IFeedback> allFeedbacks = new LinkedList();
+		allFeedbacks.addAll(this.calculateAllFeedbacks());
+
+		return new AssessmentResult(this.lockResult.getId(), "TODO resultString", "SEMI_AUTOMATIC", this.calculateScore(),
 				true, true, null, this.assessor, allFeedbacks);
+	}
+
+	private String getCurrentTimestamp() {
+		return LocalDateTime.now().format(DateTimeFormatter.ofPattern(this.DATE_FORMAT_STRING));
+	}
+
+	private Collection<IFeedback> getFilteredPreexistentFeedbacks(FeedbackType feedbackType) {
+		return this.lockResult.getPreexistentFeedbacks().stream()
+				.filter(feedback -> feedback.getFeedbackType().equals(feedbackType)).collect(Collectors.toList());
 	}
 
 	private int getLatestFeedbackID() {

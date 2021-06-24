@@ -1,7 +1,12 @@
 package edu.kit.kastel.sdq.eclipse.grading.core.artemis;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IFeedback;
 
+@JsonInclude(Include.NON_NULL)
 public class Feedback implements IFeedback {
 
 	private String type;
@@ -29,49 +34,47 @@ public class Feedback implements IFeedback {
 
 	@Override
 	public double getCredits() {
-		// TODO Auto-generated method stub
 		return this.credits;
 	}
 
 	@Override
 	public String getDetailText() {
-		// TODO Auto-generated method stub
 		return this.detailText;
 	}
 
 	@Override
+	@JsonIgnore
+	public FeedbackType getFeedbackType() {
+		return FeedbackType.valueOfIgnoreCase(this.getType());
+	}
+
+	@Override
 	public Integer getId() {
-		// TODO Auto-generated method stub
 		return this.id;
 	}
 
 	@Override
 	public Boolean getPositive() {
-		// TODO Auto-generated method stub
 		return this.positive;
 	}
 
 	@Override
 	public String getReference() {
-		// TODO Auto-generated method stub
 		return this.reference;
 	}
 
 	@Override
 	public String getText() {
-		// TODO Auto-generated method stub
 		return this.text;
 	}
 
 	@Override
 	public String getType() {
-		// TODO Auto-generated method stub
 		return this.type;
 	}
 
 	@Override
 	public String getVisibility() {
-		// TODO Auto-generated method stub
 		return this.visibility;
 	}
 

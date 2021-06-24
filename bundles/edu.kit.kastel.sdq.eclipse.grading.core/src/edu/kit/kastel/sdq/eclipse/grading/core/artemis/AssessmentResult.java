@@ -2,6 +2,9 @@ package edu.kit.kastel.sdq.eclipse.grading.core.artemis;
 
 import java.util.Collection;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IAssessor;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IFeedback;
 
@@ -9,6 +12,7 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IFeedback;
  *
  * This is used to construct a JSON Object to be sent as the assessment
  */
+@JsonInclude(Include.NON_NULL)
 public class AssessmentResult {
 
 	private int id;
