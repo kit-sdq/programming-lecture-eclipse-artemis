@@ -89,7 +89,8 @@ public class ArtemisGUIController implements IArtemisGUIController {
 			return this.artemisClient.getCourses();
 		} catch (final Exception e) {
 			//TODO exception handling!
-			throw new RuntimeException("..");
+			e.printStackTrace();
+			throw new RuntimeException("Underlying " + e.getClass() + ": " + e.getMessage());
 
 		}
 	}
