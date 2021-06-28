@@ -49,7 +49,7 @@ public class AssessmentController implements IAssessmentController {
 	public double calculateCurrentPenaltyForMistakeType(IMistakeType mistakeType) {
 		// TODO Auto-generated method stub
 		return mistakeType.calculatePenalty(
-			this.getAnnotations(this.exerciseName).stream()
+			this.getAnnotations().stream()
 				.filter(annotation -> annotation.getMistakeType().equals(mistakeType))
 				.collect(Collectors.toList())
 		);
@@ -61,6 +61,12 @@ public class AssessmentController implements IAssessmentController {
 				.filter(mistakeType -> mistakeType.getRatingGroup().equals(ratingGroup))
 				.map(this::calculateCurrentPenaltyForMistakeType)
 				.collect(Collectors.summingDouble(Double::doubleValue));
+	}
+
+	@Override
+	public Collection<IAnnotation> getAnnotations() {
+		return this.annotationDao.getAnnotations().stream()
+				.collect(Collectors.toUnmodifiableList());
 	}
 
 	@Override

@@ -40,19 +40,12 @@ public class ShortcutHandler extends AbstractHandler {
 		submissionIds.add(79);
 		try {
 			Collection<ICourse> courses = artemisClient.getCourses();
-			this.coursesTest(courses);
-			this.downloadExerciseTest(artemisClient, courses, 1, 1);
-////			artemisClient.startAssessments(assessments);
-//			ILockResult lockResult = artemisClient.startAssessment(3);
-//			System.out.println("################################LOCK stuff###########################");
-//			System.out.println("Got Lock result\n" + lockResult);
-//
-//			IAssessor assessor = artemisClient.getAssessor();
-//			System.out.println("Got ASSessor\n" + assessor);
-//
-//			System.out.println("################################AnnotationMapper stufff###########################");
-//
-			new LockAndSubmitTest(credentials.L, credentials.R, "artemis-test.ipd.kit.edu").test();
+//			this.coursesTest(courses);
+//			this.downloadExerciseTest(artemisClient, courses, 1, 1);
+
+
+//			new LockAndSubmitTest(credentials.L, credentials.R, "artemis-test.ipd.kit.edu").test();
+			new LockAndSubmitTest(credentials.L, credentials.R, "artemis-test.ipd.kit.edu").testShowcase();
 
 
 

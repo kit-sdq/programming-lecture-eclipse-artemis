@@ -9,9 +9,11 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import edu.kit.kastel.sdq.eclipse.grading.api.AbstractArtemisClient;
 import edu.kit.kastel.sdq.eclipse.grading.api.IAnnotation;
 import edu.kit.kastel.sdq.eclipse.grading.api.IMistakeType;
+import edu.kit.kastel.sdq.eclipse.grading.api.ISystemwideController;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IAssessor;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.ILockResult;
 import edu.kit.kastel.sdq.eclipse.grading.client.rest.ArtemisRESTClient;
+import edu.kit.kastel.sdq.eclipse.grading.core.SystemwideController;
 import edu.kit.kastel.sdq.eclipse.grading.core.annotation.Annotation;
 import edu.kit.kastel.sdq.eclipse.grading.core.artemis.AnnotationMapper;
 import edu.kit.kastel.sdq.eclipse.grading.core.config.ConfigDao;
@@ -24,11 +26,30 @@ public class LockAndSubmitTest {
 	final private AbstractArtemisClient artemisClient;
 	final private ConfigDao configDao;
 
+	private final String username;
+	private final String password;
+	private final String host;
+
 	public LockAndSubmitTest(String username, String password, String host) {
 		this.artemisClient = new ArtemisRESTClient(username, password, host);
 		this.configDao = new JsonFileConfigDao(new File(this.eclipseWorkspaceRoot, "Lala/src/config_v2.json"));
+
+		this.username = username;
+		this.password = password;
+		this.host = host;
 	}
 
+
+	private Collection<IAnnotation> getForgedAnnotations(final ExerciseConfig exerciseConfig) {
+		final Collection<IAnnotation> forgedAnnotations = new LinkedList<IAnnotation>();
+		int i = 1;
+		for (IMistakeType mistakeType : exerciseConfig.getMistakeTypes()) {
+			if (i >= 10) break;
+			i++;
+			forgedAnnotations.add(new Annotation(i, mistakeType, i*2, i*2, "src/edu/kit/informatik/BubbleSort", null, null));
+		}
+		return forgedAnnotations;
+	}
 
 	public void test() throws Exception {
 
@@ -46,15 +67,7 @@ public class LockAndSubmitTest {
 				.get();
 
 
-		final Collection<IAnnotation> forgedAnnotations = new LinkedList<IAnnotation>();
-		int i = 1;
-		for (IMistakeType mistakeType : exerciseConfig.getMistakeTypes()) {
-			if (i >= 10) break;
-			i++;
-			forgedAnnotations.add(new Annotation(i, mistakeType, i*2, i*2, "src/edu/kit/informatik/BubbleSort", null, null));
-		}
-
-
+		final Collection<IAnnotation> forgedAnnotations = this.getForgedAnnotations(exerciseConfig);
 
 		String mapped = new AnnotationMapper(forgedAnnotations, exerciseConfig.getIMistakeTypes(), exerciseConfig.getIRatingGroups(), assessor, lockResult)
 				.mapToJsonFormattedString();
@@ -62,6 +75,42 @@ public class LockAndSubmitTest {
 
 		this.artemisClient.submitAssessment(3, mapped);
 
+
+	}
+
+	public void testShowcase() throws Exception {
+		final ISystemwideController sysController = new SystemwideController(
+				new File(this.eclipseWorkspaceRoot, "Lala/src/config_v2.json"),
+				this.host,
+				this.username,
+				this.password);
+		final String exerciseName = "Final Task 1";
+
+
+		//THIS ID SEEMS TO BE THE PARTICIPATION ID !!!! It is gotten via LOCKing --> TODO einbauen!
+		final int NOT_THE_submissionId = sysController.getArtemisGUIController().downloadHardcodedExerciseAndSubmissionExample();
+		System.out.println("++++++++++++++ Downloaded hardcoded exercise and submission example with id: "
+				+ NOT_THE_submissionId);
+
+		// add new annotations to the assessmentController
+		int i = 1;
+		for (IMistakeType mistakeType : sysController.getAssessmentController(exerciseName).getMistakes()) {
+			if (i >= 10) break;
+			i++;
+			sysController.getAssessmentController(exerciseName).addAnnotation(
+					mistakeType,
+					i*2,
+					i*2, "src/edu/kit/informatik/BubbleSort",
+					null,
+					null);
+		}
+
+		System.out.println("++++++++++++++  Added the following annotations"
+				+ sysController.getAssessmentController(exerciseName).getAnnotations());
+
+		//start and submit the assessment
+		sysController.getArtemisGUIController().startAssessment(NOT_THE_submissionId, exerciseName);
+		sysController.getArtemisGUIController().submitAssessment(NOT_THE_submissionId, exerciseName);
 
 	}
 }

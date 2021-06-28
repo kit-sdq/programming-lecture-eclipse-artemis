@@ -58,11 +58,11 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 		if (this.id_token.isEmpty()) this.login();
 	}
 
-	private void checkStatusSuccessful(final Response authenticationResponse) throws AuthenticationException {
-		if (!authenticationResponse.getStatusInfo().getFamily().equals(Family.SUCCESSFUL)) {
-			throw new AuthenticationException("Authentication to \"" + this.getApiRoot() + "\" failed with status \""
-					+ authenticationResponse.getStatus()
-					+ ": " + authenticationResponse.getStatusInfo().getReasonPhrase() + "\".");
+	private void checkStatusSuccessful(final Response response) throws AuthenticationException {
+		if (!response.getStatusInfo().getFamily().equals(Family.SUCCESSFUL)) {
+			throw new AuthenticationException("Communication with \"" + this.getApiRoot() + "\" failed with status \""
+					+ response.getStatus()
+					+ ": " + response.getStatusInfo().getReasonPhrase() + "\".");
 		}
 	}
 
@@ -306,36 +306,16 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 				.invoke(); // synchronous variant
 		this.checkStatusSuccessful(rsp);
 
-		String rspString = rsp.readEntity(String.class);
-		final JsonNode jsonNode;
-		try {
-			// Put the result into java objects
-//			ArtemisCourses courses = objectMapper.readValue(rspString, ArtemisCourses.class);
-//			System.out.println("Got parsed entity from rest call: " + courses );
-
-			// Put the result into a JsonNode -> No need for java objects, but bad style.
-			jsonNode = new ObjectMapper().readTree(rspString);
-			System.out.println("Read jsonNode from response entity: \n" + jsonNode.toString());
-		} catch (IOException e) {
-			e.printStackTrace();
-			return null;
-		}
-		final String repositoryUrl = jsonNode.get("participation").get("repositoryUrl").asText();
-		System.out.println("Read repositoryUrl from response entity: \n" + repositoryUrl);
-
-		//TODO that should be done only, if submissions are not downloaded, yet!
-		new EgitGitHandler(repositoryUrl).cloneRepo(new File("testPlugin_bookmarks/target/testEgitFromArtemisCall"), "master");
-
-		//TODO implement returning ILockResult
-
-		return this.parseLockResult(rspString);
+		return this.parseLockResult(rsp.readEntity(String.class));
 
 	}
 
 	@Override
 	public void submitAssessment(int submissionID, String payload) throws AuthenticationException {
 		this.checkAuthentication();
-		this.checkAuthentication();
+
+		System.out.println("######################################################SUBMIT ASSESSMAENT DEBUG with\n" + payload);
+
 
 		// /api/users/{login}
 		final Response rsp = this.rootApiTarget

@@ -42,6 +42,12 @@ public interface IAssessmentController {
 
 	/**
 	 *
+	 * @return all annotations already made with this AssessmentController.
+	 */
+	Collection<IAnnotation> getAnnotations();
+
+	/**
+	 *
 	 * @param className
 	 * @return all annotations already made for the given class.
 	 */

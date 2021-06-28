@@ -54,7 +54,7 @@ public class ArtemisGUIController implements IArtemisGUIController {
 		WorkspaceUtil.createEclipseProject("exercise-1-testAufgabe1_submission-5-uyduk");
 
 		System.out.println("Download Done!");
-		return exercise.getSubmissions().stream().findAny().get().getSubmissionId();
+		return 3;
 	}
 
 	@Override
@@ -110,8 +110,9 @@ public class ArtemisGUIController implements IArtemisGUIController {
 			throw new IllegalStateException("Assessment not started, yet!");
 
 		//TODO exception only? or parse result?
+
 		this.artemisClient.submitAssessment(submissionID,
-			new AnnotationMapper(assessmentController.getAnnotations(exerciseName),
+			new AnnotationMapper(assessmentController.getAnnotations(),
 					assessmentController.getMistakes(),
 					assessmentController.getRatingGroups(),
 					this.artemisClient.getAssessor(),
