@@ -30,3 +30,4 @@ Import-Package: edu.kit.kastel.sdq.eclipse.grading.api,
  org.eclipse.ui.ide,
  org.eclipse.ui.texteditor,
  org.glassfish.jersey.jackson.internal;version="2.22.2"
+Export-Package: testplugin_activateByShortcut
