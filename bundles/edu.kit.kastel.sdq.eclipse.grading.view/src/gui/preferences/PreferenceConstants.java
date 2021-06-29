@@ -9,6 +9,7 @@ public class PreferenceConstants {
 	public static final String P_ABSOLUTE_CONFIG_PATH = "absoluteConfigPath";
 	public static final String P_RELATIVE_CONFIG_PATH = "relativeConfigPath";
 	public static final String P_ARTEMIS_URL = "artemisUrl";
-	
-	
+	public static final String P_ARTEMIS_USER = "artemisUser";
+	public static final String P_ARTEMIS_PASSWORD = "artemisPassword";
+
 }

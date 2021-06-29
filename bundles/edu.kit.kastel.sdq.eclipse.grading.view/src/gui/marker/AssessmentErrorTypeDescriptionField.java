@@ -1,13 +1,13 @@
-package gui.marker.view;
+package gui.marker;
 
 import org.eclipse.ui.views.markers.MarkerField;
 import org.eclipse.ui.views.markers.MarkerItem;
 
-public class AssessmentErrorTypeField extends MarkerField {
+public class AssessmentErrorTypeDescriptionField extends MarkerField {
 
 	@Override
 	public String getValue(MarkerItem item) {
-		return item.getAttributeValue("errorType", "");
+		return item.getAttributeValue("errorTypeDescription", "");
 	}
 
 }

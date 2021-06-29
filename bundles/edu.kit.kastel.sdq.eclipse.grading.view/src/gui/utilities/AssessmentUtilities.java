@@ -18,10 +18,10 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 
-
 public class AssessmentUtilities {
 
-	public static String createMarkerTooltip(int startLine, int endline, String errorTypeName, String ratingGroupName, String message) {
+	public static String createMarkerTooltip(int startLine, int endline, String errorTypeName, String ratingGroupName,
+			String message) {
 		final StringBuilder out = new StringBuilder();
 		final String position = "[" + startLine + "," + endline + "]";
 		out.append(position);
@@ -36,7 +36,8 @@ public class AssessmentUtilities {
 		return out.toString();
 	}
 
-	public static String createMarkerTooltipForCustomButton(int startLine, int endline, String customMessage, Double customPenalty) {
+	public static String createMarkerTooltipForCustomButton(int startLine, int endline, String customMessage,
+			Double customPenalty) {
 		final StringBuilder builder = new StringBuilder();
 		final String position = "[" + startLine + "," + endline + "]";
 		builder.append(position);
@@ -63,7 +64,7 @@ public class AssessmentUtilities {
 	}
 
 	public static Integer getLineOffSet(Integer startLine) {
-		final IWorkbenchWindow window =  PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		final IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		final IWorkbench workbench = PlatformUI.getWorkbench();
 		final IWorkbenchWindow wb = workbench == null ? null : workbench.getActiveWorkbenchWindow();
 		final IWorkbenchPage activePage = wb == null ? null : window.getActivePage();
@@ -83,8 +84,8 @@ public class AssessmentUtilities {
 		return lineOffset;
 	}
 
-	public static IPath getPathForAnnotation() {
-		final IWorkbenchWindow window =  PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+	public static String getPathForAnnotation() {
+		final IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 
 		final IWorkbench workbench = PlatformUI.getWorkbench();
 		final IWorkbenchWindow wb = workbench == null ? null : workbench.getActiveWorkbenchWindow();
@@ -94,22 +95,35 @@ public class AssessmentUtilities {
 
 		final IEditorInput input = editor == null ? null : editor.getEditorInput();
 		final IPath path = input instanceof FileEditorInput ? ((FileEditorInput) input).getPath() : null;
-		return path;
+		int srcIndex = 0;
+		for (int i = 0; i < path.segments().length; i++) {
+			if (path.segments()[i].equals("src")) {
+				srcIndex = i;
+				break;
+			}
+		}
+		System.out.println(srcIndex);
+		StringBuilder result = new StringBuilder().append("src");
+		for (int j = srcIndex + 1; j < path.segments().length; j++) {
+			result.append("/");
+			result.append(path.segments()[j]);
+		}
+		System.out.println(result.toString());
+		return result.toString();
 	}
 
 	public static ITextSelection getTextSelection() {
 		final IEditorPart part = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
-		if(part instanceof ITextEditor){
-		    final ITextEditor editor = (ITextEditor)part;
-	     final ISelection selection = editor.getSelectionProvider()
-	            .getSelection();
-	     return (ITextSelection) selection;
+		if (part instanceof ITextEditor) {
+			final ITextEditor editor = (ITextEditor) part;
+			final ISelection selection = editor.getSelectionProvider().getSelection();
+			return (ITextSelection) selection;
 		}
 		return null;
 	}
 
 	public static Shell getWindowsShell() {
-		final IWorkbenchWindow window =  PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		final IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		return window.getShell();
 	}
 

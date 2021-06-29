@@ -1,13 +1,13 @@
-package gui.marker.view;
+package gui.marker;
 
 import org.eclipse.ui.views.markers.MarkerField;
 import org.eclipse.ui.views.markers.MarkerItem;
 
-public class AssessmentRatingGroupField extends MarkerField {
+public class AssessmentMarkerCustomPenalyField extends MarkerField {
 
 	@Override
 	public String getValue(MarkerItem item) {
-		return item.getAttributeValue("ratingGroup", "");
+		return item.getAttributeValue("customPenalty", "");
 	}
 
 }

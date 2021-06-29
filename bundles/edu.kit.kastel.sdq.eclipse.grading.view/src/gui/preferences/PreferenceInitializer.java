@@ -20,9 +20,12 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 	public void initializeDefaultPreferences() {
 		IPreferenceStore store = Activator.getDefault().getPreferenceStore();
 		store.setDefault(PreferenceConstants.P_ABSOLUTE_CONFIG_PATH,
-				"C:\\Users\\Paul\\git\\programming-lecture-eclipse-artemis-grading\\bundles\\edu.kit.kastel.sdq.eclipse.grading.view\\resources\\config_v2.json");
+				"C:\\Users\\Ruessmann\\Desktop\\programming-lecture-eclipse-artemis-grading\\bundles\\edu.kit.kastel.sdq.eclipse.grading.view\\resources\\config_v2.json");
 		store.setDefault(PreferenceConstants.P_RELATIVE_CONFIG_PATH, "");
 		store.setDefault(PreferenceConstants.P_IS_RELATIVE_CONFIG_PATH, "false");
+		store.setDefault(PreferenceConstants.P_ARTEMIS_URL, "artemis-test.ipd.kit.edu");
+		store.setDefault(PreferenceConstants.P_ARTEMIS_USER, "uyduk");
+		store.setDefault(PreferenceConstants.P_ARTEMIS_PASSWORD, "arTem155");
 	}
 
 }

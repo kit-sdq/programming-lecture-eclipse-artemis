@@ -31,34 +31,6 @@
       </key>
    </extension>
    <extension
-         point="org.eclipse.ui.menus">
-      <menuContribution
-            locationURI="menu:org.eclipse.ui.main.menu?after=additions">
-         <menu
-               id="gui.menus.sampleMenu"
-               label="Sample Menu"
-               mnemonic="M">
-            <command
-                  commandId="gui.commands.sampleCommand"
-                  id="gui.menus.sampleCommand"
-                  mnemonic="S">
-            </command>
-         </menu>
-      </menuContribution>
-      <menuContribution
-            locationURI="toolbar:org.eclipse.ui.main.toolbar?after=additions">
-         <toolbar
-               id="gui.toolbars.sampleToolbar">
-            <command
-                  id="gui.toolbars.sampleCommand"
-                  commandId="gui.commands.sampleCommand"
-                  icon="icons/sample.png"
-                  tooltip="Say hello world">
-            </command>
-         </toolbar>
-      </menuContribution>
-   </extension>
-   <extension
          id="gui.assessment.marker"
          name="Assessment Marker"
          point="org.eclipse.core.resources.markers">
@@ -121,15 +93,15 @@
    <extension
          point="org.eclipse.ui.views">
       <view
-            class="gui.marker.view.AssessmentMarkerView"
+            class="gui.marker.AssessmentMarkerView"
             id="gui.annotaion.marker.view"
-            name="Assessment Annotation View"
+            name="Assessment Annotations"
             restorable="true">
       </view>
       <view
-            class="gui.button.selection.view.ButtonSelectionView"
+            class="gui.artemis.grading.ArtemisGradingView"
             id="gui.button.selection.view"
-            name="Error Type Selection"
+            name="Artemis Grading"
             restorable="true">
       </view>
    </extension>
@@ -166,37 +138,37 @@
          </markerFieldReference>
       </markerContentGenerator>
       <markerField
-            class="gui.marker.view.AssessmentMarkerPositionField"
+            class="gui.marker.AssessmentMarkerPositionField"
             id="gui.markerPositionField"
             name="Position">
       </markerField>
       <markerField
-            class="gui.marker.view.AssessmentRatingGroupField"
+            class="gui.marker.AssessmentRatingGroupField"
             id="gui.marker.ratingGroupField"
             name="Rating Group ">
       </markerField>
       <markerField
-            class="gui.marker.view.AssessmentErrorTypeField"
+            class="gui.marker.AssessmentErrorTypeField"
             id="gui.markerErrorTypeField"
             name="Error Type">
       </markerField>
       <markerField
-            class="gui.marker.view.AssessmentErrorTypeDescriptionField"
+            class="gui.marker.AssessmentErrorTypeDescriptionField"
             id="gui.marker.customErrorTypeDescription"
             name="Error Type Description">
       </markerField>
       <markerField
-            class="gui.marker.view.AssessmentMarkerCustomMessageField"
+            class="gui.marker.AssessmentMarkerCustomMessageField"
             id="gui.marker.customMessageField"
             name="Custom Message">
       </markerField>
       <markerField
-            class="gui.marker.view.AssessmentMarkerClassNameField"
+            class="gui.marker.AssessmentMarkerClassNameField"
             id="gui.marker.className"
             name="Class Name">
       </markerField>
       <markerField
-            class="gui.marker.view.AssessmentMarkerCustomPenalyField"
+            class="gui.marker.AssessmentMarkerCustomPenalyField"
             id="gui.marker.customPenalty"
             name="Custom Penalty">
       </markerField>
