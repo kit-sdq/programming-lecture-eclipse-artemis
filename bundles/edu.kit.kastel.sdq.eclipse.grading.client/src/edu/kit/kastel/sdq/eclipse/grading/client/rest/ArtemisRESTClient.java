@@ -26,6 +26,7 @@ import edu.kit.kastel.sdq.eclipse.grading.api.IExercise;
 import edu.kit.kastel.sdq.eclipse.grading.api.ISubmission;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IAssessor;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.ILockResult;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IProjectFileNamingStrategy;
 import edu.kit.kastel.sdq.eclipse.grading.client.git.EgitGitHandler;
 import edu.kit.kastel.sdq.eclipse.grading.client.lockstuff.Assessor;
 import edu.kit.kastel.sdq.eclipse.grading.client.lockstuff.LockResult;
@@ -72,22 +73,15 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 	}
 
 	@Override
-	public void downloadExerciseAndSubmissions(IExercise exercise, Collection<ISubmission> submissions,
-			File directory) {
-		//exercise-$EXERCISEID-$EXERCISENAME_submission-$SUBMISSIONID-$SUBMISSIONNAME
-		submissions.forEach(submission -> {
-			final File project = new File(directory, new StringBuilder()
-					.append("exercise-").append(exercise.getExerciseId()).append("-").append(exercise.getShortName())
-					.append("_submission-").append(submission.getSubmissionId()).append("-").append(submission.getParticipantIdentifier())
-					.toString()
-			);
+	public void downloadExerciseAndSubmission(IExercise exercise, ISubmission submission,
+			File directory, IProjectFileNamingStrategy projectFileNamingStrategy) {
 
-			this.downloadExercise(exercise, project);
+		final File projectDirectory = projectFileNamingStrategy.getProjectFileInWorkspace(directory, exercise, submission);
+		this.downloadExercise(exercise, projectDirectory);
 
-			//download submission inside
-			this.downloadSubmission(submission, new File(project, "assignment"));
+		//download submission inside the exercise project directory
+		this.downloadSubmission(submission, projectFileNamingStrategy.getAssignmentFileInProjectDirectory(projectDirectory));
 
-		});
 	}
 
 	@Override
@@ -99,13 +93,6 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 		new EgitGitHandler(submission.getRepositoryUrl()).cloneRepo(directory, "master");
 	}
 
-	@Override
-	public void downloadSubmissions(Collection<ISubmission> submissions, File directory) {
-		// TODO IMplement
-		for (ISubmission submission : submissions) {
-			this.downloadSubmission(submission, directory);
-		}
-	}
 
 	private String getApiRoot() {
 		return new StringBuilder("https://").append(this.getArtemisHostname()).append("/api").toString();
@@ -287,7 +274,7 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 
 	private ILockResult parseLockResult(final String jsonString) throws JsonMappingException, JsonProcessingException {
 		//TODO impl
-		System.out.println("######DEBUG: " + jsonString);
+		System.out.println("######DEBUG(ArtemisRESTClient::parseLockResult): " + jsonString);
 		return new ObjectMapper()
 				.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 				.readValue(jsonString, LockResult.class);
@@ -311,7 +298,7 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 	}
 
 	@Override
-	public void submitAssessment(int submissionID, String payload) throws AuthenticationException {
+	public void submitAssessment(int participationID, String payload) throws AuthenticationException {
 		this.checkAuthentication();
 
 		System.out.println("######################################################SUBMIT ASSESSMAENT DEBUG with\n" + payload);
@@ -320,7 +307,7 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 		// /api/users/{login}
 		final Response rsp = this.rootApiTarget
 				.path("participations")
-				.path(Integer.toString(submissionID))
+				.path(Integer.toString(participationID))
 				.path("manual-results")
 				.queryParam("submit", true)
 				.request().header("Authorization", this.id_token.get().getHeaderString())

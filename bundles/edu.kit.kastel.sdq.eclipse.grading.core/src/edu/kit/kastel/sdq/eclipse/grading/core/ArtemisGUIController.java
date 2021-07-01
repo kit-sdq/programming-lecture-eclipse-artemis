@@ -13,9 +13,12 @@ import edu.kit.kastel.sdq.eclipse.grading.api.IArtemisGUIController;
 import edu.kit.kastel.sdq.eclipse.grading.api.IAssessmentController;
 import edu.kit.kastel.sdq.eclipse.grading.api.ICourse;
 import edu.kit.kastel.sdq.eclipse.grading.api.IExercise;
+import edu.kit.kastel.sdq.eclipse.grading.api.ISubmission;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.ILockResult;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IProjectFileNamingStrategy;
 import edu.kit.kastel.sdq.eclipse.grading.client.rest.ArtemisRESTClient;
 import edu.kit.kastel.sdq.eclipse.grading.core.artemis.AnnotationMapper;
+import edu.kit.kastel.sdq.eclipse.grading.core.artemis.DefaultProjectFileNamingStrategy;
 import edu.kit.kastel.sdq.eclipse.grading.core.artemis.WorkspaceUtil;
 
 public class ArtemisGUIController implements IArtemisGUIController {
@@ -33,6 +36,26 @@ public class ArtemisGUIController implements IArtemisGUIController {
 		this.lockResults = new HashMap<Integer, ILockResult>();
 	}
 
+	private void checkOneElementInCollection(Collection collection) throws Exception {
+		if (collection.size() != 1) throw new Exception("More ore less than one element: " + collection);
+	}
+
+	@Override
+	public void downloadExerciseAndSubmission(int courseID, int exerciseID, int submissionID) throws Exception {
+		final File eclipseWorkspaceRoot =  ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile();
+		final IProjectFileNamingStrategy defaultProjectFileNamingStrategy = new DefaultProjectFileNamingStrategy();
+
+		final Collection<ICourse> courses = this.getCourses();
+		final IExercise exercise = this.getExerciseFromCourses(courses, courseID, exerciseID);
+		final ISubmission submission = this.getSubmissionFromExercise(exercise, submissionID);
+
+		this.artemisClient.downloadExerciseAndSubmission(exercise, submission, eclipseWorkspaceRoot,
+				defaultProjectFileNamingStrategy);
+		WorkspaceUtil.createEclipseProject(
+				defaultProjectFileNamingStrategy.getProjectFileInWorkspace(eclipseWorkspaceRoot, exercise, submission));
+
+	}
+
 	//TODO hardcoded download of exercise and submission (and maybe give back submissionID)
 	@Override
 	public int downloadHardcodedExerciseAndSubmissionExample() {
@@ -41,46 +64,24 @@ public class ArtemisGUIController implements IArtemisGUIController {
 		final Collection<ICourse> courses = this.getCourses();
 		final int exerciseId = 1;
 		final int courseId = 1;
+		final int submissionId = 5;
 
-		Collection<IExercise> exercises = courses.stream()
-				.filter(course -> (course.getCourseId() == courseId)).findAny().get()
-				.getExercises().stream()
-				.filter(exercise -> (exercise.getExerciseId() == exerciseId))
-				.collect(Collectors.toList());
-		final IExercise exercise = exercises.iterator().next();
-
-		this.artemisClient.downloadExerciseAndSubmissions(exercise, exercise.getSubmissions(), eclipseWorkspaceRoot);
-		WorkspaceUtil.createEclipseProject("exercise-1-testAufgabe1_submission-5-uyduk");
-
+		try {
+			this.downloadExerciseAndSubmission(courseId, exerciseId, submissionId);
+		} catch (Exception e) {
+			System.out.println("Caught exception in downloadHardcodedExerciseAndSubmissionExample: ");
+			e.printStackTrace();
+		}
 		System.out.println("Download Done!");
 		return 3;
 	}
 
-	//TODO delete this and offer downloadSubmission (singular
-	@Override
-	public void downloadSubmissions(Collection<Integer> submissionIds, String courseName , String exerciseConfigShortName) {
-//		final IAssessmentController assessmentController = this.systemwideController.getAssessmentController(exerciseName);
-//		/* TODO for each submission:
-//		 * * download via ArtemisClient
-//		 * * create a project
-//		 */
-//		//TODO get file
-//		final File eclipseWorkspaceRoot =  ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile();
-//
-//		Collection<ISubmission> submissions = this.getCourses().stream()
-//			.filter(course -> course.getShortName().equals(courseName))
-//			.findAny().get()
-//			.getExercises().stream()
-//			.filter(exercise -> exercise.getShortName().equals(exerciseName))
-//			.findAny().get()
-//			.getSubmissions().stream()
-//			.filter(submission -> submissionIds.contains(submission.getSubmissionId()))
-//			.collect(Collectors.toList());
-//
-//		this.artemisClient.downloadSubmissions(submissions, eclipseWorkspaceRoot);
-//
-//
-//		WorkspaceUtil.createEclipseProject("exercise-1-testAufgabe1_submission-5-uyduk");
+	private ICourse getCourseFromCourses(Collection<ICourse> courses, int courseID) throws Exception {
+		final Collection<ICourse> coursesWithCorrectID = courses.stream()
+				.filter(course -> (course.getCourseId() == courseID)).collect(Collectors.toList());
+		this.checkOneElementInCollection(coursesWithCorrectID);
+		return coursesWithCorrectID.iterator().next();
+
 	}
 
 	@Override
@@ -95,35 +96,44 @@ public class ArtemisGUIController implements IArtemisGUIController {
 		}
 	}
 
+	private IExercise getExerciseFromCourses(Collection<ICourse> courses, int courseID, int exerciseID) throws Exception {
+		final Collection<IExercise> filteredExercises = this.getCourseFromCourses(courses, courseID).getExercises().stream()
+				.filter(exercise -> (exercise.getExerciseId() == exerciseID))
+				.collect(Collectors.toList());
+		this.checkOneElementInCollection(filteredExercises);
+		return filteredExercises.iterator().next();
+	}
+
+	private ISubmission getSubmissionFromExercise(IExercise exercise, int submissionID) throws Exception {
+		final Collection<ISubmission> filteredSubmissions = exercise.getSubmissions().stream()
+				.filter(submission -> (submission.getSubmissionId() == submissionID))
+				.collect(Collectors.toList());
+		this.checkOneElementInCollection(filteredSubmissions);
+		return filteredSubmissions.iterator().next();
+	}
+
 	@Override
 	public void startAssessment(int submissionID) throws Exception {
-		// TODO check if submission is already in the workspace!
-		// TODO need to get the PARTICIPATION ID! Maybe the artemisClient needs both submissionID and participationID
 		this.lockResults.put(submissionID, this.artemisClient.startAssessment(submissionID));
 	}
 
 	@Override
 	public void submitAssessment(int submissionID) throws Exception {
 		final IAssessmentController assessmentController = this.systemwideController.getAssessmentController(submissionID, null);
-		/* TODO change signature of AbstractArtemisClient::submitAssessments to sth like
-		 *      submitAssessment(int submissionID, ISubmission (or just a json formatted String))
-		 */
 		if (!this.lockResults.containsKey(submissionID))
 			throw new IllegalStateException("Assessment not started, yet!");
+		final ILockResult lockResult = this.lockResults.get(submissionID);
+		final int participationID = lockResult.getParticipationID();
 
-		//TODO exception only? or parse result?
-
-		this.artemisClient.submitAssessment(submissionID,
+		this.artemisClient.submitAssessment(participationID,
 			new AnnotationMapper(assessmentController.getAnnotations(),
 					assessmentController.getMistakes(),
 					assessmentController.getRatingGroups(),
 					this.artemisClient.getAssessor(),
-					this.lockResults.get(submissionID))
+					lockResult)
 			.mapToJsonFormattedString());
 
 		//TODO only if successful!
 		this.lockResults.remove(submissionID);
 	}
-
-
 }

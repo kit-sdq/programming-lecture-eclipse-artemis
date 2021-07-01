@@ -102,7 +102,7 @@ public class AnnotationMapper {
 		final Collection<IFeedback> allFeedbacks = new LinkedList<IFeedback>();
 		allFeedbacks.addAll(this.calculateAllFeedbacks());
 
-		return new AssessmentResult(this.lockResult.getId(), "TODO resultString", "SEMI_AUTOMATIC", this.calculateScore(),
+		return new AssessmentResult(this.lockResult.getSubmissionID(), "TODO resultString", "SEMI_AUTOMATIC", this.calculateScore(),
 				true, true, null, this.assessor, allFeedbacks);
 	}
 

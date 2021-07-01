@@ -7,6 +7,7 @@ import javax.security.sasl.AuthenticationException;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IAssessor;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.ILockResult;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IProjectFileNamingStrategy;
 
 /**
  * Defines interface between "backend" and e.g. ArtemisRestClient. The latter implements this interface.
@@ -39,7 +40,8 @@ public abstract class AbstractArtemisClient {
 	 * exercise-$EXERCISEID-$EXERCISENAME_submission-$SUBMISSIONID-$SUBMISSIONNAME.
 	 * E.g.: exercise-1-TestExercise_submission-5-HansPeterBaxter
 	 */
-	public abstract void downloadExerciseAndSubmissions(IExercise exercise, Collection<ISubmission> submissions, File directory);
+	public abstract void downloadExerciseAndSubmission(IExercise exercise, ISubmission submission,
+			File directory, IProjectFileNamingStrategy projectFileNamingStrategy);
 
 	/**
 	 * TODO maybe remove
@@ -49,14 +51,6 @@ public abstract class AbstractArtemisClient {
 	 */
 	public abstract void downloadExercises(Collection<IExercise> exercises, File directory);
 
-	/**
-	 * TODO maybe remove
-	 * TODO multiple Submissions might not be possible
-	 * Download submissions defined by the given submissionIds
-	 * @param exerciseId	needed, although submissionIds are unique!
-	 * @param submissionIds
-	 */
-	public abstract void downloadSubmissions(Collection<ISubmission> submissions, File directory);
 	protected String getArtemisHostname() {
 		return this.artemisHostname;
 	}
@@ -95,6 +89,9 @@ public abstract class AbstractArtemisClient {
 
 	/**
 	 * Submit the assessment to Artemis. Must have been started by {@code startAssessment}, before!
+	 * @param participationID THOU SHALT NOT PROVIDE THE SUBMISSIONID, HERE!
+ * 							The participationID can be gotten from the ILockResult (AbstractArtemisClient::startAssessment)!
+	 * @param payload the payload formatted correctly.
 	 */
-	public abstract void submitAssessment(int submissionIDs, String payload) throws AuthenticationException;
+	public abstract void submitAssessment(int participationID, String payload) throws AuthenticationException;
 }

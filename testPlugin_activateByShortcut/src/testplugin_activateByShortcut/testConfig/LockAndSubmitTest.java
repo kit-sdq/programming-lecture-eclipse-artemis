@@ -89,9 +89,9 @@ public class LockAndSubmitTest {
 
 
 		//THIS ID SEEMS TO BE THE PARTICIPATION ID !!!! It is gotten via LOCKing --> TODO einbauen!
-		final int NOT_THE_submissionId = sysController.getArtemisGUIController().downloadHardcodedExerciseAndSubmissionExample();
+		final int participationID = sysController.getArtemisGUIController().downloadHardcodedExerciseAndSubmissionExample();
 		System.out.println("++++++++++++++ Downloaded hardcoded exercise and submission example with id: "
-				+ NOT_THE_submissionId);
+				+ participationID);
 
 		// add new annotations to the assessmentController
 		int i = 1;
@@ -110,8 +110,8 @@ public class LockAndSubmitTest {
 				+ sysController.getAssessmentController(submissionID, exerciseConfigShortName).getAnnotations());
 
 		//start and submit the assessment
-		sysController.getArtemisGUIController().startAssessment(NOT_THE_submissionId);
-		sysController.getArtemisGUIController().submitAssessment(NOT_THE_submissionId);
+		sysController.getArtemisGUIController().startAssessment(submissionID);
+		sysController.getArtemisGUIController().submitAssessment(submissionID);
 
 	}
 }

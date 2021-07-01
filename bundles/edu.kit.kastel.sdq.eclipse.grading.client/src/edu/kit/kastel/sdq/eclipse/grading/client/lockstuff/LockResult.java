@@ -12,16 +12,18 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.ILockResult;
 
 public class LockResult implements ILockResult {
 
-	private int id;
+	private int submissionID;
 	private Collection<IFeedback> preexistentFeedbacks;
-
-	//results: Map<Integer,
+	private int participationID;
 
 	@JsonCreator
 	public LockResult(
-			@JsonProperty("id") int id,
-			@JsonProperty("results") List<LockCallAssessmentResult> previousAssessmentresults) {
-		this.id = id;
+			@JsonProperty("id") int submissionID,
+			@JsonProperty("results") List<LockCallAssessmentResult> previousAssessmentresults,
+			@JsonProperty("participation") ParticipationDummy participationDummy) {
+		this.submissionID = submissionID;
+		this.participationID = participationDummy.getParticipationID();
+
 		//TODO should be only one, right? Get the last, for now...
 		this.preexistentFeedbacks = new LinkedList();
 		previousAssessmentresults.stream().forEach(prevAssessment -> this.preexistentFeedbacks.addAll(prevAssessment.getFeedbacks()));
@@ -29,8 +31,8 @@ public class LockResult implements ILockResult {
 	}
 
 	@Override
-	public int getId() {
-		return this.id;
+	public int getParticipationID() {
+		return this.participationID;
 	}
 
 	@Override
@@ -39,8 +41,17 @@ public class LockResult implements ILockResult {
 	}
 
 	@Override
+	public int getSubmissionID() {
+		return this.submissionID;
+	}
+
+	@Override
 	public String toString() {
-		return "LockResult [id=" + this.id + ", preexistentFeedbacks=" + this.preexistentFeedbacks + "]";
+		return "LockResult ["
+				+ "submissionID=" + this.submissionID
+				+ ", participationID=" + this.participationID
+				+ ", preexistentFeedbacks=" + this.preexistentFeedbacks
+				+ "]";
 	}
 
 }

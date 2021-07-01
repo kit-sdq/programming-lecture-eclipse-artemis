@@ -5,16 +5,16 @@ import java.util.Collection;
 public interface IArtemisGUIController {
 
 	/**
+	 * Download submissions defined by the given submissionIds
+	 * @param submissionIds
+	 */
+	void downloadExerciseAndSubmission(int courseID, int exerciseID, int submissionID) throws Exception;
+
+	/**
 	 * TODO hardcoded download of some exercise and submission, also project-making so that it's all ready to work on.
 	 * @return submissionID (later this is gotten via IArtemisGUIController::getCourses)
 	 */
 	int downloadHardcodedExerciseAndSubmissionExample();
-
-	/**
-	 * Download submissions defined by the given submissionIds
-	 * @param submissionIds
-	 */
-	void downloadSubmissions(Collection<Integer> submissionIds, String courseName, String exerciseName);
 
 	/**
 	 *

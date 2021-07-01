@@ -23,6 +23,7 @@ import edu.kit.kastel.sdq.eclipse.grading.client.git.JGitGitHandler;
 import edu.kit.kastel.sdq.eclipse.grading.client.mappings.ArtemisExercise;
 import edu.kit.kastel.sdq.eclipse.grading.client.mappings.ArtemisSubmission;
 import edu.kit.kastel.sdq.eclipse.grading.client.rest.ArtemisRESTClient;
+import edu.kit.kastel.sdq.eclipse.grading.core.artemis.DefaultProjectFileNamingStrategy;
 import edu.kit.kastel.sdq.eclipse.grading.core.artemis.WorkspaceUtil;
 import testplugin_activateByShortcut.testConfig.AssessmentControllerTest;
 import testplugin_activateByShortcut.testConfig.LockAndSubmitTest;
@@ -77,8 +78,13 @@ public class ShortcutHandler extends AbstractHandler {
 		final IExercise exercise = exercises.iterator().next();
 
 
-		artemisClient.downloadExerciseAndSubmissions(exercise, exercise.getSubmissions(), eclipseWorkspaceRoot);
-		WorkspaceUtil.createEclipseProject("exercise-1-testAufgabe1_submission-5-uyduk");
+		artemisClient.downloadExerciseAndSubmission(exercise, exercise.getSubmissions().iterator().next(),
+				eclipseWorkspaceRoot, new DefaultProjectFileNamingStrategy());
+		WorkspaceUtil.createEclipseProject(new DefaultProjectFileNamingStrategy().getProjectFileInWorkspace(
+				eclipseWorkspaceRoot,
+				exercise,
+				exercise.getSubmissions().iterator().next()
+		));
 
 		System.out.println("Download Done!");
 	}
