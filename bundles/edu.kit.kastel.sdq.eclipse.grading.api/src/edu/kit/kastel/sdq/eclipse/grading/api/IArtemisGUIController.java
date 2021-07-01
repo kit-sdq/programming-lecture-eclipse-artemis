@@ -1,6 +1,7 @@
 package edu.kit.kastel.sdq.eclipse.grading.api;
 
 import java.util.Collection;
+import java.util.Optional;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IFeedback;
 
@@ -39,9 +40,11 @@ public interface IArtemisGUIController {
 	/**
 	 * Starts the next assessment. Which one is smh determined by artemis.
 	 * @param exerciseID the exerciseID (found in your ICourse-Collection gotten via IArtemisGUIController::getCourses())
-	 * @return the submissionID which defines what is assessed.
+	 * @return
+	 * 		<li> the submissionID which defines what is assessed.
+	 * 		<li> Optional.empty(), if no assessment is left!
 	 */
-	int startNextAssessment(int exerciseID) throws Exception;
+	Optional<Integer> startNextAssessment(int exerciseID) throws Exception;
 
 	/**
 	 * Submit the assessment to Artemis. Must have been started by {@code startAssessment}, before.

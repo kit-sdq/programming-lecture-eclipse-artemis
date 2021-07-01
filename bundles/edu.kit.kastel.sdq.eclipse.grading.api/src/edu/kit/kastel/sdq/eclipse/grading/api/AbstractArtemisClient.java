@@ -2,6 +2,7 @@ package edu.kit.kastel.sdq.eclipse.grading.api;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.Optional;
 
 import javax.security.sasl.AuthenticationException;
 
@@ -82,9 +83,11 @@ public abstract class AbstractArtemisClient {
 	 * Starts an assessment for any submission (determined by artemis). Acquires a lock in the process.
 	 * @throws Exception TODO create an exception type!
 	 *
-	 * @return the data gotten back. Needed for submitting correctly.
+	 * @return
+	 * 		<li> the data gotten back. Needed for submitting correctly.
+	 * 		<li> null, if no submission left to correct
 	 */
-	public abstract ILockResult startNextAssessment(int exerciseID) throws Exception;
+	public abstract Optional<ILockResult> startNextAssessment(int exerciseID) throws Exception;
 
 	/**
 	 * Submit the assessment to Artemis. Must have been started by {@code startAssessment}, before!

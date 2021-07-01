@@ -59,14 +59,6 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 		if (this.id_token.isEmpty()) this.login();
 	}
 
-	private void checkStatusSuccessful(final Response response) throws AuthenticationException {
-		if (!response.getStatusInfo().getFamily().equals(Family.SUCCESSFUL)) {
-			throw new AuthenticationException("Communication with \"" + this.getApiRoot() + "\" failed with status \""
-					+ response.getStatus()
-					+ ": " + response.getStatusInfo().getReasonPhrase() + "\".");
-		}
-	}
-
 	private void downloadExercise(IExercise exercise, File directory) {
 		//TODO remove hardcoded
 		new EgitGitHandler(exercise.getTestRepositoryUrl()).cloneRepo(directory, "master");
@@ -88,7 +80,6 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 		new EgitGitHandler(submission.getRepositoryUrl()).cloneRepo(directory, "master");
 	}
 
-
 	private String getApiRoot() {
 		return new StringBuilder("https://").append(this.getArtemisHostname()).append("/api").toString();
 	}
@@ -104,10 +95,11 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 				.request().header("Authorization", this.id_token.get().getHeaderString())
 				.buildGet()
 				.invoke(); // synchronous variant
-		this.checkStatusSuccessful(rsp);
+		this.throwIfStatusUnsuccessful(rsp);
 
 		return this.parseAssessorResult(rsp.readEntity(String.class));
 	}
+
 
 	private Entity<String> getAuthenticationEntity() {
 		//TODO use a json lib!
@@ -140,7 +132,7 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 				.buildGet()
 				.invoke(); // synchronous variant
 //				.submit(); // asynchronous variant
-		this.checkStatusSuccessful(rsp);
+		this.throwIfStatusUnsuccessful(rsp);
 
 		JsonNode jsonNode = new ObjectMapper().readTree(rsp.readEntity(String.class));
 		System.out.println("  Read jsonNode from response entity: \n  " + jsonNode.toString());
@@ -171,7 +163,7 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 				.buildGet()
 				.invoke(); // synchronous variant
 //				.submit(); // asynchronous variant
-		this.checkStatusSuccessful(rsp);
+		this.throwIfStatusUnsuccessful(rsp);
 		String rspString = rsp.readEntity(String.class);
 		System.out.println("Got entity from rest call: " + rspString );
 		try {
@@ -219,7 +211,7 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 				.request().header("Authorization", this.id_token.get().getHeaderString())
 				.buildGet()
 				.invoke(); // synchronous variant
-		this.checkStatusSuccessful(rsp);
+		this.throwIfStatusUnsuccessful(rsp);
 
 		JsonNode submissionsArrayJsonNode = new ObjectMapper().readTree(rsp.readEntity(String.class));
 		System.out.println("  Read jsonNode from response entity: \n  " + submissionsArrayJsonNode.toString());
@@ -246,12 +238,16 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 		return new ArtemisSubmission(submissionId, participantIdentifier, participantName, repositoryUrl, commitHash);
 	}
 
+	private boolean isStatusSuccessful(final Response response) {
+		return response.getStatusInfo().getFamily().equals(Family.SUCCESSFUL);
+	}
+
 	private void login() throws AuthenticationException {
 		final Response authenticationResponse = this.rootApiTarget.path("authenticate").request()
 				.buildPost(this.getAuthenticationEntity())
 				.invoke();
 
-		this.checkStatusSuccessful(authenticationResponse);
+		this.throwIfStatusUnsuccessful(authenticationResponse);
 		System.out.println("Tried to authenticate with status " + authenticationResponse.getStatus());
 		final String authRspEntity = authenticationResponse.readEntity(String.class);
 		try {
@@ -286,14 +282,14 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 				.request().header("Authorization", this.id_token.get().getHeaderString())
 				.buildGet()
 				.invoke(); // synchronous variant
-		this.checkStatusSuccessful(rsp);
+		this.throwIfStatusUnsuccessful(rsp);
 
 		return this.parseLockResult(rsp.readEntity(String.class));
 
 	}
 
 	@Override
-	public ILockResult startNextAssessment(int exerciseID) throws Exception {
+	public Optional<ILockResult> startNextAssessment(int exerciseID) throws Exception {
 		this.checkAuthentication();
 		System.out.println("###startNextAssessment");
 
@@ -305,9 +301,12 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 				.request().header("Authorization", this.id_token.get().getHeaderString())
 				.buildGet()
 				.invoke(); // synchronous variant
-		this.checkStatusSuccessful(rsp);
+		if (!this.isStatusSuccessful(rsp)) {
+			//no assessment left!
+			return Optional.empty();
+		}
 
-		return this.parseLockResult(rsp.readEntity(String.class));
+		return Optional.of(this.parseLockResult(rsp.readEntity(String.class)));
 	}
 
 	@Override
@@ -326,7 +325,15 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 				.request().header("Authorization", this.id_token.get().getHeaderString())
 				.buildPut(this.toJsonStringEntity(payload))
 				.invoke(); // synchronous variant
-		this.checkStatusSuccessful(rsp);
+		this.throwIfStatusUnsuccessful(rsp);
+	}
+
+	private void throwIfStatusUnsuccessful(final Response response) throws AuthenticationException {
+		if (!this.isStatusSuccessful(response)) {
+			throw new AuthenticationException("Communication with \"" + this.getApiRoot() + "\" failed with status \""
+					+ response.getStatus()
+					+ ": " + response.getStatusInfo().getReasonPhrase() + "\".");
+		}
 	}
 
 	private Entity<String> toJsonStringEntity(String jsonString) {

@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -128,11 +129,14 @@ public class ArtemisGUIController implements IArtemisGUIController {
 	}
 
 	@Override
-	public int startNextAssessment(int exerciseID) throws Exception {
-		final ILockResult lockResult = this.artemisClient.startNextAssessment(exerciseID);
+	public Optional<Integer> startNextAssessment(int exerciseID) throws Exception {
+		final Optional<ILockResult> lockResultOptional = this.artemisClient.startNextAssessment(exerciseID);
+		if (lockResultOptional.isEmpty()) return Optional.empty();
+		final ILockResult lockResult = lockResultOptional.get();
+
 		final int submissionID = lockResult.getSubmissionID();
 		this.lockResults.put(submissionID, lockResult);
-		return submissionID;
+		return Optional.of(submissionID);
 	}
 
 	@Override

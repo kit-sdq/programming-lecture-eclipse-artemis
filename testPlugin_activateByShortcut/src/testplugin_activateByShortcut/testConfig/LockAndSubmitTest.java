@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.Optional;
 
 import org.eclipse.core.resources.ResourcesPlugin;
 
@@ -106,7 +107,12 @@ public class LockAndSubmitTest {
 		final String exerciseConfigShortName = "Final Task 1";
 		final int exerciseID = 1;
 
-		final int submissionID = sysController.getArtemisGUIController().startNextAssessment(exerciseID);
+		final Optional<Integer> submissionIDOptional = sysController.getArtemisGUIController().startNextAssessment(exerciseID);
+		if (submissionIDOptional.isEmpty()) {
+			System.out.println("######################### NO MORE SUBMISSIONS FOUND ####");
+			return;
+		}
+		final int submissionID = submissionIDOptional.get();
 
 		this.addSomeFakeAssessments(sysController, submissionID, exerciseConfigShortName);
 
