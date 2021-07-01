@@ -12,10 +12,11 @@ public interface ISystemwideController {
 
 	/**
 	 *
-	 * @param exerciseName
+	 * @param submissionID the submission for which this assessmentController should manage the assessment.
+	 * @param exerciseConfigName the name identifying the exercise configuration.
 	 * @return an exercise-specific assessment controller.
 	 */
-	IAssessmentController getAssessmentController(String exerciseName);
+	IAssessmentController getAssessmentController(int submissionID, String exerciseConfigName);
 
 	/**
 	 * set the new config globally.

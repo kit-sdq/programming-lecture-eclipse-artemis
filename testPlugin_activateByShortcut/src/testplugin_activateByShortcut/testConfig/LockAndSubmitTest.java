@@ -84,7 +84,8 @@ public class LockAndSubmitTest {
 				this.host,
 				this.username,
 				this.password);
-		final String exerciseName = "Final Task 1";
+		final String exerciseConfigShortName = "Final Task 1";
+		final int submissionID = 5;
 
 
 		//THIS ID SEEMS TO BE THE PARTICIPATION ID !!!! It is gotten via LOCKing --> TODO einbauen!
@@ -94,10 +95,10 @@ public class LockAndSubmitTest {
 
 		// add new annotations to the assessmentController
 		int i = 1;
-		for (IMistakeType mistakeType : sysController.getAssessmentController(exerciseName).getMistakes()) {
+		for (IMistakeType mistakeType : sysController.getAssessmentController(submissionID, exerciseConfigShortName).getMistakes()) {
 			if (i >= 10) break;
 			i++;
-			sysController.getAssessmentController(exerciseName).addAnnotation(
+			sysController.getAssessmentController(submissionID, exerciseConfigShortName).addAnnotation(
 					mistakeType,
 					i*2,
 					i*2, "src/edu/kit/informatik/BubbleSort",
@@ -106,11 +107,11 @@ public class LockAndSubmitTest {
 		}
 
 		System.out.println("++++++++++++++  Added the following annotations"
-				+ sysController.getAssessmentController(exerciseName).getAnnotations());
+				+ sysController.getAssessmentController(submissionID, exerciseConfigShortName).getAnnotations());
 
 		//start and submit the assessment
-		sysController.getArtemisGUIController().startAssessment(NOT_THE_submissionId, exerciseName);
-		sysController.getArtemisGUIController().submitAssessment(NOT_THE_submissionId, exerciseName);
+		sysController.getArtemisGUIController().startAssessment(NOT_THE_submissionId);
+		sysController.getArtemisGUIController().submitAssessment(NOT_THE_submissionId);
 
 	}
 }

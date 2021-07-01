@@ -19,9 +19,11 @@ import edu.kit.kastel.sdq.eclipse.grading.core.config.JsonFileConfigDao;
 public class AssessmentController implements IAssessmentController {
 
 	private SystemwideController systemWideController;
-	private String exerciseName;
+	private int submissionID;
 	private JsonFileConfigDao configDao;
 	private AnnotationDao annotationDao;
+
+	private String exerciseConfigShortName;
 	//TODO global List of ASsessmentController in SystemSpecificController
 	//
 	//TODO pull config file up to "global state".
@@ -32,10 +34,12 @@ public class AssessmentController implements IAssessmentController {
 	 * @param configFile path to the config file
 	 * @param exerciseName the shortName of the exercise (must be same in the config file).
 	 */
-	protected AssessmentController(SystemwideController systemWideController, String exerciseName) {
+	protected AssessmentController(SystemwideController systemWideController, int submissionID, String exerciseConfigName) {
 		this.systemWideController = systemWideController;
-		this.exerciseName = exerciseName;
+		this.submissionID = this.submissionID;
 		this.annotationDao = new JsonFileAnnotationDao();
+
+		this.exerciseConfigShortName = exerciseConfigName;
 	}
 
 	@Override
@@ -80,14 +84,18 @@ public class AssessmentController implements IAssessmentController {
 		return this.systemWideController.getConfigDao();
 	}
 
-	public String getExerciseName() {
-		return this.exerciseName;
+	/**
+	 *
+	 * @return the shortName (identifier) used to retrieve the corresponding exercise config from the ConfigDao.
+	 */
+	public String getExerciseConfigShortName() {
+		return this.exerciseConfigShortName;
 	}
 
 	@Override
 	public Collection<IMistakeType> getMistakes() throws IOException {
 		final Optional<ExerciseConfig> exerciseConfigOptional = this.getConfigDao().getExerciseConfigs().stream()
-				.filter(exerciseConfig -> exerciseConfig.getShortName().equals(this.exerciseName))
+				.filter(exerciseConfig -> exerciseConfig.getShortName().equals(this.exerciseConfigShortName))
 				.findFirst();
 		if (exerciseConfigOptional.isPresent()) {
 			return exerciseConfigOptional.get().getIMistakeTypes();
@@ -99,12 +107,16 @@ public class AssessmentController implements IAssessmentController {
 	public Collection<IRatingGroup> getRatingGroups() throws IOException {
 
 		final Optional<ExerciseConfig> exerciseConfigOptional = this.getConfigDao().getExerciseConfigs().stream()
-				.filter(exerciseConfig -> exerciseConfig.getShortName().equals(this.exerciseName))
+				.filter(exerciseConfig -> exerciseConfig.getShortName().equals(this.exerciseConfigShortName))
 				.findFirst();
 		if (exerciseConfigOptional.isPresent()) {
 			return exerciseConfigOptional.get().getIRatingGroups();
 		}
 		throw new IOException("Exercise not found in config!");
+	}
+
+	public int getSubmissionID() {
+		return this.submissionID;
 	}
 
 	/**

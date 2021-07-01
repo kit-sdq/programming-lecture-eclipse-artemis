@@ -12,7 +12,7 @@ import edu.kit.kastel.sdq.eclipse.grading.core.config.JsonFileConfigDao;
 
 public class SystemwideController implements ISystemwideController {
 
-	private final Map<String, IAssessmentController> assessmentControllers;
+	private final Map<Integer, IAssessmentController> assessmentControllers;
 	private final IArtemisGUIController artemisGUIController;
 
 	private ConfigDao configDao;
@@ -30,11 +30,11 @@ public class SystemwideController implements ISystemwideController {
 	}
 
 	@Override
-	public IAssessmentController getAssessmentController(String exerciseName) {
-		if (!this.assessmentControllers.containsKey(exerciseName)) {
-			this.assessmentControllers.put(exerciseName, new AssessmentController(this, exerciseName));
+	public IAssessmentController getAssessmentController(int submissionID, String exerciseConfigName) {
+		if (!this.assessmentControllers.containsKey(submissionID)) {
+			this.assessmentControllers.put(submissionID, new AssessmentController(this, submissionID, exerciseConfigName));
 		}
-		return this.assessmentControllers.get(exerciseName);
+		return this.assessmentControllers.get(submissionID);
 	}
 
 	/**

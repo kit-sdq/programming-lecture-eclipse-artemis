@@ -14,7 +14,7 @@ public class AssessmentControllerTest {
 	private IAssessmentController assessmentController;
 
 	public AssessmentControllerTest(File configFile, String exerciseName) {
-		this.assessmentController = new SystemwideController(configFile, null, null, null).getAssessmentController(exerciseName);
+		this.assessmentController = new SystemwideController(configFile, null, null, null).getAssessmentController(5555, exerciseName);
 	}
 
 	private void printAnnotations(Collection<IAnnotation> annos, String space) {
