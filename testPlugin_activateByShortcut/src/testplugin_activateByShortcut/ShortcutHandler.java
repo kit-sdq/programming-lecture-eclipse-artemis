@@ -46,7 +46,8 @@ public class ShortcutHandler extends AbstractHandler {
 
 
 //			new LockAndSubmitTest(credentials.L, credentials.R, "artemis-test.ipd.kit.edu").test();
-			new LockAndSubmitTest(credentials.L, credentials.R, "artemis-test.ipd.kit.edu").testShowcase();
+//			new LockAndSubmitTest(credentials.L, credentials.R, "artemis-test.ipd.kit.edu").testShowcase();
+			new LockAndSubmitTest(credentials.L, credentials.R, "artemis-test.ipd.kit.edu").testNextAssessment();
 
 
 

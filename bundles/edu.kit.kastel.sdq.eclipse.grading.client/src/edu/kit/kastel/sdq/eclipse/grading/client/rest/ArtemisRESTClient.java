@@ -84,11 +84,6 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 
 	}
 
-	@Override
-	public void downloadExercises(Collection<IExercise> exercises, File directory) {
-		exercises.forEach(exercise -> this.downloadExercise(exercise, new File(directory, exercise.getShortName())));
-	}
-
 	protected void downloadSubmission(ISubmission submission, File directory) {
 		new EgitGitHandler(submission.getRepositoryUrl()).cloneRepo(directory, "master");
 	}
@@ -295,6 +290,24 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 
 		return this.parseLockResult(rsp.readEntity(String.class));
 
+	}
+
+	@Override
+	public ILockResult startNextAssessment(int exerciseID) throws Exception {
+		this.checkAuthentication();
+		System.out.println("###startNextAssessment");
+
+		final Response rsp = this.rootApiTarget
+				.path("exercises")
+				.path(String.valueOf(exerciseID))
+				.path("programming-submission-without-assessment")
+				.queryParam("lock", true)
+				.request().header("Authorization", this.id_token.get().getHeaderString())
+				.buildGet()
+				.invoke(); // synchronous variant
+		this.checkStatusSuccessful(rsp);
+
+		return this.parseLockResult(rsp.readEntity(String.class));
 	}
 
 	@Override

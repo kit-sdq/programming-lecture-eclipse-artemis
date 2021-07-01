@@ -36,20 +36,10 @@ public abstract class AbstractArtemisClient {
 	}
 
 	/**
-	 * Clones Exercise n times for n submissions, like so
-	 * exercise-$EXERCISEID-$EXERCISENAME_submission-$SUBMISSIONID-$SUBMISSIONNAME.
-	 * E.g.: exercise-1-TestExercise_submission-5-HansPeterBaxter
+	 * Clones exercise and a submission into one project.
 	 */
 	public abstract void downloadExerciseAndSubmission(IExercise exercise, ISubmission submission,
 			File directory, IProjectFileNamingStrategy projectFileNamingStrategy);
-
-	/**
-	 * TODO maybe remove
-	 * Using the IExercise instead of exerciseId, because the caller has gotten the IExercise object, already.
-	 * @param exerciss	needed, although submissionIds are unique!
-	 * @param directory the root directory. Exercise dirs are named by Exercise::getShortName
-	 */
-	public abstract void downloadExercises(Collection<IExercise> exercises, File directory);
 
 	protected String getArtemisHostname() {
 		return this.artemisHostname;
@@ -85,7 +75,16 @@ public abstract class AbstractArtemisClient {
 	 *
 	 * @return the data gotten back. Needed for submitting correctly.
 	 */
+
 	public abstract ILockResult startAssessment(int submissionID) throws Exception;
+
+	/**
+	 * Starts an assessment for any submission (determined by artemis). Acquires a lock in the process.
+	 * @throws Exception TODO create an exception type!
+	 *
+	 * @return the data gotten back. Needed for submitting correctly.
+	 */
+	public abstract ILockResult startNextAssessment(int exerciseID) throws Exception;
 
 	/**
 	 * Submit the assessment to Artemis. Must have been started by {@code startAssessment}, before!

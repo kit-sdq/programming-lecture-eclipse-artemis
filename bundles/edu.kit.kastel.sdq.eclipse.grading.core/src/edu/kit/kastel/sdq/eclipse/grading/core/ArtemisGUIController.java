@@ -14,6 +14,8 @@ import edu.kit.kastel.sdq.eclipse.grading.api.IAssessmentController;
 import edu.kit.kastel.sdq.eclipse.grading.api.ICourse;
 import edu.kit.kastel.sdq.eclipse.grading.api.IExercise;
 import edu.kit.kastel.sdq.eclipse.grading.api.ISubmission;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IFeedback;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IFeedback.FeedbackType;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.ILockResult;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IProjectFileNamingStrategy;
 import edu.kit.kastel.sdq.eclipse.grading.client.rest.ArtemisRESTClient;
@@ -104,6 +106,14 @@ public class ArtemisGUIController implements IArtemisGUIController {
 		return filteredExercises.iterator().next();
 	}
 
+	@Override
+	public Collection<IFeedback> getPrecalculatedAutoFeedbacks(int submissionID) {
+		return this.lockResults.get(submissionID)
+				.getPreexistentFeedbacks().stream()
+				.filter(feedback -> feedback.getFeedbackType().equals(FeedbackType.AUTOMATIC))
+				.collect(Collectors.toList());
+	}
+
 	private ISubmission getSubmissionFromExercise(IExercise exercise, int submissionID) throws Exception {
 		final Collection<ISubmission> filteredSubmissions = exercise.getSubmissions().stream()
 				.filter(submission -> (submission.getSubmissionId() == submissionID))
@@ -115,6 +125,14 @@ public class ArtemisGUIController implements IArtemisGUIController {
 	@Override
 	public void startAssessment(int submissionID) throws Exception {
 		this.lockResults.put(submissionID, this.artemisClient.startAssessment(submissionID));
+	}
+
+	@Override
+	public int startNextAssessment(int exerciseID) throws Exception {
+		final ILockResult lockResult = this.artemisClient.startNextAssessment(exerciseID);
+		final int submissionID = lockResult.getSubmissionID();
+		this.lockResults.put(submissionID, lockResult);
+		return submissionID;
 	}
 
 	@Override

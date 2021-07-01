@@ -1,6 +1,7 @@
 package testplugin_activateByShortcut.testConfig;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.LinkedList;
 
@@ -40,6 +41,24 @@ public class LockAndSubmitTest {
 	}
 
 
+	private void addSomeFakeAssessments(ISystemwideController sysController, int submissionID, String exerciseConfigShortName) throws IOException {
+		// add new annotations to the assessmentController
+		int i = 1;
+		for (IMistakeType mistakeType : sysController.getAssessmentController(submissionID, exerciseConfigShortName).getMistakes()) {
+			if (i >= 10) break;
+			i++;
+			sysController.getAssessmentController(submissionID, exerciseConfigShortName).addAnnotation(
+					mistakeType,
+					i*2,
+					i*2, "src/edu/kit/informatik/BubbleSort",
+					null,
+					null);
+		}
+
+		System.out.println("++++++++++++++  Added the following annotations"
+				+ sysController.getAssessmentController(submissionID, exerciseConfigShortName).getAnnotations());
+	}
+
 	private Collection<IAnnotation> getForgedAnnotations(final ExerciseConfig exerciseConfig) {
 		final Collection<IAnnotation> forgedAnnotations = new LinkedList<IAnnotation>();
 		int i = 1;
@@ -78,6 +97,22 @@ public class LockAndSubmitTest {
 
 	}
 
+	public void testNextAssessment() throws Exception {
+		final ISystemwideController sysController = new SystemwideController(
+				new File(this.eclipseWorkspaceRoot, "Lala/src/config_v2.json"),
+				this.host,
+				this.username,
+				this.password);
+		final String exerciseConfigShortName = "Final Task 1";
+		final int exerciseID = 1;
+
+		final int submissionID = sysController.getArtemisGUIController().startNextAssessment(exerciseID);
+
+		this.addSomeFakeAssessments(sysController, submissionID, exerciseConfigShortName);
+
+		sysController.getArtemisGUIController().submitAssessment(submissionID);
+	}
+
 	public void testShowcase() throws Exception {
 		final ISystemwideController sysController = new SystemwideController(
 				new File(this.eclipseWorkspaceRoot, "Lala/src/config_v2.json"),
@@ -93,21 +128,8 @@ public class LockAndSubmitTest {
 		System.out.println("++++++++++++++ Downloaded hardcoded exercise and submission example with id: "
 				+ participationID);
 
-		// add new annotations to the assessmentController
-		int i = 1;
-		for (IMistakeType mistakeType : sysController.getAssessmentController(submissionID, exerciseConfigShortName).getMistakes()) {
-			if (i >= 10) break;
-			i++;
-			sysController.getAssessmentController(submissionID, exerciseConfigShortName).addAnnotation(
-					mistakeType,
-					i*2,
-					i*2, "src/edu/kit/informatik/BubbleSort",
-					null,
-					null);
-		}
 
-		System.out.println("++++++++++++++  Added the following annotations"
-				+ sysController.getAssessmentController(submissionID, exerciseConfigShortName).getAnnotations());
+		this.addSomeFakeAssessments(sysController, submissionID, exerciseConfigShortName);
 
 		//start and submit the assessment
 		sysController.getArtemisGUIController().startAssessment(submissionID);
