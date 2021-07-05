@@ -4,6 +4,8 @@ import java.util.Collection;
 
 public interface ILockResult {
 
+	double getMaxPoints();
+
 	/**
 	 *
 	 * @return the participationID this submissionID belongs to (one participation has one or many submissions).

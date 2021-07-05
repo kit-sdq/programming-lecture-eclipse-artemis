@@ -31,7 +31,7 @@ public interface IAssessmentController {
 	 * @param ratingGroup
 	 * @return
 	 */
-	double calculateCurrentPenaltyForMistakeType(IMistakeType mistakeType);
+	double calculateCurrentPenaltyForMistakeType(IMistakeType mistakeType) throws IOException ;
 
 	/**
 	 * Sum up all penalties of annotations whose mistakeTypes belong to the given rating group.

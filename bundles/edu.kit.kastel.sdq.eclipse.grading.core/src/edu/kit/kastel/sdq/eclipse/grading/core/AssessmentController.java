@@ -50,25 +50,15 @@ public class AssessmentController implements IAssessmentController {
 	}
 
 	@Override
-	public double calculateCurrentPenaltyForMistakeType(IMistakeType mistakeType) {
-		return mistakeType.calculatePenalty(
-			this.getAnnotations().stream()
-				.filter(annotation -> annotation.getMistakeType().equals(mistakeType))
-				.collect(Collectors.toList())
-		);
+	public double calculateCurrentPenaltyForMistakeType(IMistakeType mistakeType) throws IOException {
+		return new DefaultPenaltyCalculationStrategy(this.getAnnotations(), this.getMistakes())
+				.calculatePenaltyForMistakeType(mistakeType);
 	}
 
 	@Override
 	public double calculateCurrentPenaltyForRatingGroup(IRatingGroup ratingGroup) throws IOException {
-		double calculatedPenalty = this.getMistakes().stream()
-				.filter(mistakeType -> mistakeType.getRatingGroup().equals(ratingGroup))
-				.map(this::calculateCurrentPenaltyForMistakeType)
-				.collect(Collectors.summingDouble(Double::doubleValue));
-
-		return ratingGroup.hasPenaltyLimit()
-				//TODO ultra hässlich und Code-Duplikat!
-				? Math.max(calculatedPenalty, -ratingGroup.getPenaltyLimit())
-				: calculatedPenalty;
+		return new DefaultPenaltyCalculationStrategy(this.getAnnotations(), this.getMistakes())
+				.calcultatePenaltyForRatingGroup(ratingGroup);
 	}
 
 	@Override

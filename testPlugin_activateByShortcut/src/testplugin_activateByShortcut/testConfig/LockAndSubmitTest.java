@@ -15,6 +15,7 @@ import edu.kit.kastel.sdq.eclipse.grading.api.ISystemwideController;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IAssessor;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.ILockResult;
 import edu.kit.kastel.sdq.eclipse.grading.client.rest.ArtemisRESTClient;
+import edu.kit.kastel.sdq.eclipse.grading.core.DefaultPenaltyCalculationStrategy;
 import edu.kit.kastel.sdq.eclipse.grading.core.SystemwideController;
 import edu.kit.kastel.sdq.eclipse.grading.core.annotation.Annotation;
 import edu.kit.kastel.sdq.eclipse.grading.core.artemis.AnnotationMapper;
@@ -90,7 +91,8 @@ public class LockAndSubmitTest {
 
 		final Collection<IAnnotation> forgedAnnotations = this.getForgedAnnotations(exerciseConfig);
 
-		String mapped = new AnnotationMapper(forgedAnnotations, exerciseConfig.getIMistakeTypes(), exerciseConfig.getIRatingGroups(), assessor, lockResult)
+		String mapped = new AnnotationMapper(forgedAnnotations, exerciseConfig.getIMistakeTypes(),
+				exerciseConfig.getIRatingGroups(), assessor, lockResult, new DefaultPenaltyCalculationStrategy(forgedAnnotations, exerciseConfig.getIMistakeTypes()))
 				.mapToJsonFormattedString();
 		System.out.println("Got mapped config!\n" + mapped);
 

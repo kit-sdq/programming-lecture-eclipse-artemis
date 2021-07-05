@@ -10,10 +10,12 @@ import java.util.stream.Collectors;
 import org.eclipse.core.resources.ResourcesPlugin;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.AbstractArtemisClient;
+import edu.kit.kastel.sdq.eclipse.grading.api.IAnnotation;
 import edu.kit.kastel.sdq.eclipse.grading.api.IArtemisGUIController;
 import edu.kit.kastel.sdq.eclipse.grading.api.IAssessmentController;
 import edu.kit.kastel.sdq.eclipse.grading.api.ICourse;
 import edu.kit.kastel.sdq.eclipse.grading.api.IExercise;
+import edu.kit.kastel.sdq.eclipse.grading.api.IMistakeType;
 import edu.kit.kastel.sdq.eclipse.grading.api.ISubmission;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IFeedback;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IFeedback.FeedbackType;
@@ -147,12 +149,17 @@ public class ArtemisGUIController implements IArtemisGUIController {
 		final ILockResult lockResult = this.lockResults.get(submissionID);
 		final int participationID = lockResult.getParticipationID();
 
+		final Collection<IAnnotation> annotations = assessmentController.getAnnotations();
+		final Collection<IMistakeType> mistakeTypes = assessmentController.getMistakes();
+
 		this.artemisClient.submitAssessment(participationID,
-			new AnnotationMapper(assessmentController.getAnnotations(),
-					assessmentController.getMistakes(),
+			new AnnotationMapper(
+					annotations,
+					mistakeTypes,
 					assessmentController.getRatingGroups(),
 					this.artemisClient.getAssessor(),
-					lockResult)
+					lockResult,
+					new DefaultPenaltyCalculationStrategy(annotations, mistakeTypes))
 			.mapToJsonFormattedString());
 
 		//TODO only if successful!

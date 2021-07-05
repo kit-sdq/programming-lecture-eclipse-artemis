@@ -36,8 +36,10 @@ public class AssessmentControllerTest {
 			System.out.println("-- Mistakes caluclated Penalties --");
 
 			this.assessmentController.getMistakes().forEach(mistakeType -> {
-				System.out.println( "[" + mistakeType + "]\n   " +
-						this.assessmentController.calculateCurrentPenaltyForMistakeType(mistakeType));
+				try {
+					System.out.println( "[" + mistakeType + "]\n   " +
+							this.assessmentController.calculateCurrentPenaltyForMistakeType(mistakeType));
+				} catch (IOException e) {}
 			});
 		} catch (IOException e) { }
 	}

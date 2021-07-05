@@ -11,10 +11,16 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class ParticipationDummy {
 
 	private int participationID;
+	private double exerciseMaxPoints;
 
 	@JsonCreator
-	public ParticipationDummy(@JsonProperty("id") int participationID) {
+	public ParticipationDummy(@JsonProperty("id") int participationID, @JsonProperty("exercise") ExerciseDummy exerciseDummy) {
 		this.participationID = participationID;
+		this.exerciseMaxPoints = exerciseDummy.getMaxPoints();
+	}
+
+	public double getExerciseMaxPoints() {
+		return this.exerciseMaxPoints;
 	}
 
 	public int getParticipationID() {

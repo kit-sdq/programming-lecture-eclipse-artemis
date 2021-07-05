@@ -17,6 +17,7 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IAssessor;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IFeedback;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IFeedback.FeedbackType;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.ILockResult;
+import edu.kit.kastel.sdq.eclipse.grading.core.IPenaltyCalculationStrategy;
 
 /**
  * Maps Annotations to Artemis-accepted json-formatted strings.
@@ -31,9 +32,10 @@ public class AnnotationMapper {
 
 	private final IAssessor assessor;
 	private final ILockResult lockResult;
+	private final IPenaltyCalculationStrategy penaltyCalculationStrategy;
 
 	public AnnotationMapper(Collection<IAnnotation> annotations, Collection<IMistakeType> mistakeTypes, Collection<IRatingGroup> ratingGroups,
-			IAssessor assessor, ILockResult lockResult) {
+			IAssessor assessor, ILockResult lockResult, IPenaltyCalculationStrategy penaltyCalculationStrategy) {
 		//TODO needs results from LOCK call and from USERS call!
 		this.annotations = annotations;
 		this.mistakeTypes = mistakeTypes;
@@ -41,6 +43,11 @@ public class AnnotationMapper {
 
 		this.assessor = assessor;
 		this.lockResult = lockResult;
+		this.penaltyCalculationStrategy = penaltyCalculationStrategy;
+	}
+
+	private double calculateAbsoluteScore(Collection<IFeedback> allFeedbacks) {
+		return allFeedbacks.stream().map(IFeedback::getCredits).reduce(Double::sum).get();
 	}
 
 	private Collection<IFeedback> calculateAllFeedbacks() {
@@ -50,15 +57,6 @@ public class AnnotationMapper {
 		result.addAll(this.calculateManualFeedbacks());
 
 		return result;
-	}
-
-	private double calculateCurrentPenaltyForMistakeType(IMistakeType mistakeType) {
-		// TODO Auto-generated method stub
-		return mistakeType.calculatePenalty(
-			this.annotations.stream()
-				.filter(annotation -> annotation.getMistakeType().equals(mistakeType))
-				.collect(Collectors.toList())
-		);
 	}
 
 	private Collection<Feedback> calculateManualFeedbacks() {
@@ -92,18 +90,45 @@ public class AnnotationMapper {
 		return manualFeedbacks;
 	}
 
-	private double calculateScore() {
-		//TODO implement
-		return 51;
+	public double calculatePenaltyForMistakeType(IMistakeType mistakeType) {
+		return this.penaltyCalculationStrategy.calculatePenaltyForMistakeType(mistakeType);
+	}
+
+	public double calculatePenaltyForRatingGroup(IRatingGroup ratingGroup) {
+		return this.penaltyCalculationStrategy.calcultatePenaltyForRatingGroup(ratingGroup);
+	}
+
+
+	private double calculateRelativeScore(double absoluteScore) {
+		return (absoluteScore / this.lockResult.getMaxPoints()) * 100D;
+	}
+
+	private String calculateResultString(final Collection<IFeedback> allFeedbacks, final double absoluteScore) {
+		final Collection<IFeedback> autoFeedbacks = allFeedbacks.stream()
+				.filter(feedback -> feedback.getFeedbackType().equals(FeedbackType.AUTOMATIC)).collect(Collectors.toList());
+		long positiveTests = autoFeedbacks.stream()
+			.filter(IFeedback::getPositive).count();
+		long numberOfTests = autoFeedbacks.stream().count();
+		return new StringBuilder()
+				.append(positiveTests)
+				.append(" of ")
+				.append(numberOfTests)
+				.append(" passed, ")
+				.append(absoluteScore)
+				.append(" of ")
+				.append(this.lockResult.getMaxPoints())
+				.append(" points")
+				.toString();
 	}
 
 	private AssessmentResult createAssessmentResult() {
 		// only add preexistent automatic feedback (unit tests etc) and manual feedback.										arTem155
-		final Collection<IFeedback> allFeedbacks = new LinkedList<IFeedback>();
-		allFeedbacks.addAll(this.calculateAllFeedbacks());
+		final Collection<IFeedback> allFeedbacks = this.calculateAllFeedbacks();
+		final double absoluteScore = this.calculateAbsoluteScore(allFeedbacks);
+		final double relativeScore = this.calculateRelativeScore(absoluteScore);
 
-		return new AssessmentResult(this.lockResult.getSubmissionID(), "TODO resultString", "SEMI_AUTOMATIC", this.calculateScore(),
-				true, true, null, this.assessor, allFeedbacks);
+		return new AssessmentResult(this.lockResult.getSubmissionID(), this.calculateResultString(allFeedbacks, absoluteScore), "SEMI_AUTOMATIC",
+				relativeScore, true, true, null, this.assessor, allFeedbacks);
 	}
 
 	private Feedback createNewManualFeedback(IAnnotation annotation) {
@@ -138,18 +163,7 @@ public class AnnotationMapper {
 	}
 
 	private Feedback createNewManualUnreferencedFeedback(IRatingGroup ratingGroup) {
-
-		//TODO here, do the magic (calculation, per rating group)
-		//	new Feedback(FeedbackType.MANUAL_UNREFERENCED.toString(), -1D, null, null, null, null, null, " SENT FROM ZE ECLIPSE CLIENT (Feedback unrefD)")
-
-		double calculatedPenalty = this.mistakeTypes.stream()
-				.filter(mistakeType -> mistakeType.getRatingGroup().equals(ratingGroup))
-				.map(this::calculateCurrentPenaltyForMistakeType)
-				.collect(Collectors.summingDouble(Double::doubleValue));
-		calculatedPenalty = ratingGroup.hasPenaltyLimit()
-				//TODO ultra hässlich und Code-Duplikat! (@See AssessmentController)
-				? Math.max(calculatedPenalty, -ratingGroup.getPenaltyLimit())
-				: calculatedPenalty;
+		final double calculatedPenalty = this.calculatePenaltyForRatingGroup(ratingGroup);
 
 		final StringBuilder detailTextStringBuilder = new StringBuilder()
 				.append(ratingGroup.getDisplayName())
@@ -163,7 +177,7 @@ public class AnnotationMapper {
 		this.mistakeTypes.stream()
 			.filter(mistakeType -> mistakeType.getRatingGroup().equals(ratingGroup))
 			.forEach(mistakeType -> {
-				double currentPenalty = this.calculateCurrentPenaltyForMistakeType(mistakeType);
+				double currentPenalty = this.calculatePenaltyForMistakeType(mistakeType);
 				//TODO make schön!
 				if ( !this.isZero(currentPenalty)) {
 					detailTextStringBuilder
