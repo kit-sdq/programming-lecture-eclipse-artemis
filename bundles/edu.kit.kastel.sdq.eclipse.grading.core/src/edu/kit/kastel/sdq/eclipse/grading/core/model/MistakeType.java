@@ -113,7 +113,7 @@ public class MistakeType implements IMistakeType {
 	@Override
 	public String toString() {
 		return "MistakeType [shortName=" + this.shortName + ", buttonName=" + this.buttonName + ", message=" + this.message
-				+ ", ratingGroup=" + this.ratingGroup.getShortName() + ", penaltyRule=" + this.penaltyRule
+				+ ", ratingGroup=" + this.ratingGroup + ", penaltyRule=" + this.penaltyRule
 				+ "]";
 	}
 }

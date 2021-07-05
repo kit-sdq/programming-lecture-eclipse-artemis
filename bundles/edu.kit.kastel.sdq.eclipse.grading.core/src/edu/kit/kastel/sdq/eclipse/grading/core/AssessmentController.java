@@ -51,7 +51,6 @@ public class AssessmentController implements IAssessmentController {
 
 	@Override
 	public double calculateCurrentPenaltyForMistakeType(IMistakeType mistakeType) {
-		// TODO Auto-generated method stub
 		return mistakeType.calculatePenalty(
 			this.getAnnotations().stream()
 				.filter(annotation -> annotation.getMistakeType().equals(mistakeType))
@@ -61,10 +60,15 @@ public class AssessmentController implements IAssessmentController {
 
 	@Override
 	public double calculateCurrentPenaltyForRatingGroup(IRatingGroup ratingGroup) throws IOException {
-		return this.getMistakes().stream()
+		double calculatedPenalty = this.getMistakes().stream()
 				.filter(mistakeType -> mistakeType.getRatingGroup().equals(ratingGroup))
 				.map(this::calculateCurrentPenaltyForMistakeType)
 				.collect(Collectors.summingDouble(Double::doubleValue));
+
+		return ratingGroup.hasPenaltyLimit()
+				//TODO ultra hässlich und Code-Duplikat!
+				? Math.max(calculatedPenalty, -ratingGroup.getPenaltyLimit())
+				: calculatedPenalty;
 	}
 
 	@Override

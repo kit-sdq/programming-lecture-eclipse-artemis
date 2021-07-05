@@ -142,14 +142,19 @@ public class AnnotationMapper {
 		//TODO here, do the magic (calculation, per rating group)
 		//	new Feedback(FeedbackType.MANUAL_UNREFERENCED.toString(), -1D, null, null, null, null, null, " SENT FROM ZE ECLIPSE CLIENT (Feedback unrefD)")
 
-		double penalty = this.mistakeTypes.stream()
+		double calculatedPenalty = this.mistakeTypes.stream()
 				.filter(mistakeType -> mistakeType.getRatingGroup().equals(ratingGroup))
 				.map(this::calculateCurrentPenaltyForMistakeType)
 				.collect(Collectors.summingDouble(Double::doubleValue));
+		calculatedPenalty = ratingGroup.hasPenaltyLimit()
+				//TODO ultra hässlich und Code-Duplikat! (@See AssessmentController)
+				? Math.max(calculatedPenalty, -ratingGroup.getPenaltyLimit())
+				: calculatedPenalty;
+
 		final StringBuilder detailTextStringBuilder = new StringBuilder()
 				.append(ratingGroup.getDisplayName())
 				.append(" [")
-				.append(penalty)
+				.append(calculatedPenalty)
 				.append(" /")
 				.append("X")
 				.append(" P]");
@@ -171,7 +176,7 @@ public class AnnotationMapper {
 			});
 
 
-		return new Feedback(FeedbackType.MANUAL_UNREFERENCED.toString(), penalty, null, null, null, null, null,
+		return new Feedback(FeedbackType.MANUAL_UNREFERENCED.toString(), calculatedPenalty, null, null, null, null, null,
 				detailTextStringBuilder.toString());
 	}
 

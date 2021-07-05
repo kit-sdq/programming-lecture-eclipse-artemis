@@ -10,16 +10,11 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.jface.text.ITextSelection;
-import org.eclipse.ui.handlers.HandlerUtil;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.AbstractArtemisClient;
 import edu.kit.kastel.sdq.eclipse.grading.api.ICourse;
 import edu.kit.kastel.sdq.eclipse.grading.api.IExercise;
 import edu.kit.kastel.sdq.eclipse.grading.api.ISubmission;
-import edu.kit.kastel.sdq.eclipse.grading.client.git.AbstractGitHandler;
-import edu.kit.kastel.sdq.eclipse.grading.client.git.EgitGitHandler;
-import edu.kit.kastel.sdq.eclipse.grading.client.git.JGitGitHandler;
 import edu.kit.kastel.sdq.eclipse.grading.client.mappings.ArtemisExercise;
 import edu.kit.kastel.sdq.eclipse.grading.client.mappings.ArtemisSubmission;
 import edu.kit.kastel.sdq.eclipse.grading.client.rest.ArtemisRESTClient;
@@ -33,6 +28,8 @@ import testplugin_activateByShortcut.testConfig.LockAndSubmitTest;
 
 
 public class ShortcutHandler extends AbstractHandler {
+
+	public static final String CONFIG_PATH = "Lala/src/config_v3.json";
 
 	public void artemisTest() {
 		Pair<String, String> credentials = CredentialsGetter.getCredentials();
@@ -93,53 +90,19 @@ public class ShortcutHandler extends AbstractHandler {
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		final File eclipseWorkspaceRoot =  ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile();
-		//System.out.println(event.toString());
-		ITextSelection selection = (ITextSelection)HandlerUtil.getActiveSiteChecked(event).getSelectionProvider().getSelection();
-		System.out.println(
-				"  Selection: [startLine, endline, text] = "
-				+ "["
-					+ selection.getStartLine() + ", "
-					+ selection.getEndLine() + ", "
-					+ selection.getText() + ", "
-				+ "]"
-		);
 
-
-		//TEST
-//		gitCloneTestWithoutAuth();
-//		gitCloneWithEgit("https://github.com/RobinRSchulz/sonntagsfrage.git", "testPlugin_bookmarks/target/testEgit");
-//		gitCloneWithEgit("https://github.com/RobinRSchulz/testRepoPrivate.git", "testPlugin_bookmarks/target/testEgitWithAuth");
-//		gitCloneWithJgit("https://github.com/RobinRSchulz/sonntagsfrage.git", "testPlugin_bookmarks/target/testJgit");
-
-
-		this.artemisTest();
 		// you need to import the file into a new Lala-Project.
-//		new ConfigDaoTest(new JsonFileConfigDao(new File(eclipseWorkspaceRoot, "Lala/src/config_v2.json"))).run();
+//		System.out.println("#####-- ConfigDaoTest --#####");
+//		new ConfigDaoTest(new JsonFileConfigDao(new File(eclipseWorkspaceRoot, CONFIG_PATH))).run();
 
-		System.out.println("#####AssessmentControllerTest#####");
-		AssessmentControllerTest act = new AssessmentControllerTest(new File(eclipseWorkspaceRoot, "Lala/src/config_v2.json"), "Final Task 1");
+		System.out.println("##########--[           AssessmentControllerTest           ]--##########");
+		AssessmentControllerTest act = new AssessmentControllerTest(new File(eclipseWorkspaceRoot, CONFIG_PATH), "Final Task 1");
 		act.testConfigLoading();
 		act.testMistakesEtc();
+
+		System.out.println("##########--[                 ArtemisTest                  ]--##########");
+
+		this.artemisTest();
 		return null;
 	}
-
-	public void gitCloneTest(AbstractGitHandler handler, String destination) throws ExecutionException {
-
-		final File gitRepoDirectory = new File(destination);
-//		try {
-//			FileUtils.mkdirs(gitRepoDirectory);
-//		} catch (Exception e) {
-//			throw new ExecutionException(e.getLocalizedMessage());
-//		}
-		handler.cloneRepo(gitRepoDirectory, "master");
-	}
-
-	public void gitCloneWithEgit(String repoURL, String destination) throws ExecutionException {
-		this.gitCloneTest(new EgitGitHandler(repoURL), destination);
-	}
-
-	public void gitCloneWithJgit(String repoURL, String destination) throws ExecutionException {
-		this.gitCloneTest(new JGitGitHandler(repoURL), destination);
-	}
-
 }

@@ -21,6 +21,7 @@ import edu.kit.kastel.sdq.eclipse.grading.core.artemis.AnnotationMapper;
 import edu.kit.kastel.sdq.eclipse.grading.core.config.ConfigDao;
 import edu.kit.kastel.sdq.eclipse.grading.core.config.ExerciseConfig;
 import edu.kit.kastel.sdq.eclipse.grading.core.config.JsonFileConfigDao;
+import testplugin_activateByShortcut.ShortcutHandler;
 
 public class LockAndSubmitTest {
 	final private File eclipseWorkspaceRoot =  ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile();
@@ -34,7 +35,7 @@ public class LockAndSubmitTest {
 
 	public LockAndSubmitTest(String username, String password, String host) {
 		this.artemisClient = new ArtemisRESTClient(username, password, host);
-		this.configDao = new JsonFileConfigDao(new File(this.eclipseWorkspaceRoot, "Lala/src/config_v2.json"));
+		this.configDao = new JsonFileConfigDao(new File(this.eclipseWorkspaceRoot, ShortcutHandler.CONFIG_PATH));
 
 		this.username = username;
 		this.password = password;
@@ -100,7 +101,7 @@ public class LockAndSubmitTest {
 
 	public void testNextAssessment() throws Exception {
 		final ISystemwideController sysController = new SystemwideController(
-				new File(this.eclipseWorkspaceRoot, "Lala/src/config_v2.json"),
+				new File(this.eclipseWorkspaceRoot, ShortcutHandler.CONFIG_PATH),
 				this.host,
 				this.username,
 				this.password);
@@ -121,7 +122,7 @@ public class LockAndSubmitTest {
 
 	public void testShowcase() throws Exception {
 		final ISystemwideController sysController = new SystemwideController(
-				new File(this.eclipseWorkspaceRoot, "Lala/src/config_v2.json"),
+				new File(this.eclipseWorkspaceRoot, ShortcutHandler.CONFIG_PATH),
 				this.host,
 				this.username,
 				this.password);

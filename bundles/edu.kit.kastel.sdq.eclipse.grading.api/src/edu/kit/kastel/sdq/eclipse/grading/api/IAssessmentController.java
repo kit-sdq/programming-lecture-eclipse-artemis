@@ -34,7 +34,8 @@ public interface IAssessmentController {
 	double calculateCurrentPenaltyForMistakeType(IMistakeType mistakeType);
 
 	/**
-	 * Sum up all penalties of annotations whose mistakeTypes belong to the given rating group
+	 * Sum up all penalties of annotations whose mistakeTypes belong to the given rating group.
+	 * Takes into account the penaltyLimit of the given ratingGroup, if defined.
 	 * @param ratingGroup
 	 * @return
 	 */
