@@ -68,6 +68,8 @@ public interface IAssessmentController {
 	 */
 	Collection<IRatingGroup> getRatingGroups() throws IOException;
 
+	String getTooltipForMistakeType();
+
 	/**
 	 * Modify an existent annotation
 	 * @param annatationId	unique annotation identifier

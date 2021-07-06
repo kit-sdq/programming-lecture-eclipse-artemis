@@ -113,6 +113,12 @@ public class AssessmentController implements IAssessmentController {
 		return this.submissionID;
 	}
 
+	@Override
+	public String getTooltipForMistakeType() {
+		// TODO Auto-generated method stub
+		return "TEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEST TODO penalty type specific tooltip ";
+	}
+
 	/**
 	 * TODO null statt optional
 	 */
