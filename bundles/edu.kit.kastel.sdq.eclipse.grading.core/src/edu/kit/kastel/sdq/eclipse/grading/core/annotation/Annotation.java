@@ -2,6 +2,8 @@ package edu.kit.kastel.sdq.eclipse.grading.core.annotation;
 
 import java.util.Optional;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import edu.kit.kastel.sdq.eclipse.grading.api.IAnnotation;
 import edu.kit.kastel.sdq.eclipse.grading.api.IMistakeType;
 
@@ -38,6 +40,11 @@ public class Annotation implements IAnnotation {
 	}
 
 	@Override
+	public String getClassFilePath() {
+		return this.fullyClassifiedClassName;
+	}
+
+	@Override
 	public Optional<String> getCustomMessage() {
 		return (this.customMessage == null) ? Optional.empty() : Optional.of(this.customMessage);
 	}
@@ -53,18 +60,22 @@ public class Annotation implements IAnnotation {
 	}
 
 	@Override
-	public String getClassFilePath() {
-		return this.fullyClassifiedClassName;
-	}
-
-	@Override
 	public int getId() {
 		return this.id;
 	}
 
 	@Override
+	@JsonIgnore
 	public IMistakeType getMistakeType() {
 		return this.mistakeType;
+	}
+
+	/**
+	 *
+	 * @return mistakeType::getButtonName (for serialization to artemis)
+	 */
+	public String getMistakeTypeString() {
+		return this.mistakeType.getButtonName();
 	}
 
 	@Override

@@ -22,8 +22,8 @@ public class AssessmentResult {
 	private boolean rated;
 	private boolean hasFeedback;
 	private String completionDate;
-	private IAssessor assessor;			//TODO create Assessor.java
-	private Collection<IFeedback> feedbacks;		//TODO create Feedback.java
+	private IAssessor assessor;
+	private Collection<IFeedback> feedbacks;
 
 	public AssessmentResult(int id, String resultString, String assessmentType, double score, boolean rated,
 			boolean hasFeedback, String completionDate, IAssessor assessor, Collection<IFeedback> feedbacks) {

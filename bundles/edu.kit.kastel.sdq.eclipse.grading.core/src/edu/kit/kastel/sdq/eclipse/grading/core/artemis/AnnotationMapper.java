@@ -56,20 +56,26 @@ public class AnnotationMapper {
 		result.addAll(this.getFilteredPreexistentFeedbacks(FeedbackType.AUTOMATIC));
 		result.addAll(this.calculateManualFeedbacks());
 
+		//TODO highly experimental!
+		try {
+			result.add(this.calculateAnnotationSerialitationAsFeedback());
+		} catch (JsonProcessingException e) {
+			System.out.println("TODO handle this exception in calculateAllFeedbacks: " + e.getMessage());
+//			e.printStackTrace();
+		}
+
 		return result;
 	}
 
-	private Collection<Feedback> calculateManualFeedbacks() {
-		//TODO dis is just for test
-//		final String text = "File src/edu/kit/informatik/BubbleSort at line 11";
-//		final String reference = "file:src/edu/kit/informatik/BubbleSort.java_line:10";
-//		final String detailText = " SENT FROM ZE ECLIPSE CLIENT (BubbleSort CodeRef)";
-//		return List.of(
-//				new Feedback(FeedbackType.MANUAL.toString(), -1D, null, null, null, text, reference, detailText),
-//				new Feedback(FeedbackType.MANUAL_UNREFERENCED.toString(), -1D, null, null, null, null, null, " SENT FROM ZE ECLIPSE CLIENT (Feedback unrefD)")
-//
-//				);
+	private Feedback calculateAnnotationSerialitationAsFeedback() throws JsonProcessingException {
+		System.out.println("DEBUG in calculateAnnotationSerialitationAsFeedback: BEFORE");
+		final String annotationsJSONString = new ObjectMapper()
+				.writeValueAsString(this.annotations);
+		System.out.println("DEBUG in calculateAnnotationSerialitationAsFeedback:\n" + annotationsJSONString);
+		return new Feedback(FeedbackType.MANUAL_UNREFERENCED.name(), 0D, null, null, "NEVER", "CLIENT_DATA", null, annotationsJSONString);
+	}
 
+	private Collection<Feedback> calculateManualFeedbacks() {
 		Collection<Feedback> manualFeedbacks = new LinkedList<Feedback>();
 		//add the code annotations
 		manualFeedbacks.addAll(
@@ -79,7 +85,6 @@ public class AnnotationMapper {
 		);
 
 		//add the (rated!) rating group annotations
-		//TODO comment in, when createNewManualUnreferencedFeedback is implemented
 		manualFeedbacks.addAll(
 			this.ratingGroups.stream()
 				.map(this::createNewManualUnreferencedFeedback)
