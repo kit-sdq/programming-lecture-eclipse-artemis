@@ -1,7 +1,6 @@
 package testplugin_activateByShortcut.testConfig;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Optional;
@@ -44,13 +43,14 @@ public class LockAndSubmitTest {
 	}
 
 
-	private void addSomeFakeAssessments(ISystemwideController sysController, int submissionID, String exerciseConfigShortName) throws IOException {
+	private void addSomeFakeAssessments(ISystemwideController sysController, int submissionID, String exerciseConfigShortName) throws Exception {
 		// add new annotations to the assessmentController
 		int i = 1;
 		for (IMistakeType mistakeType : sysController.getAssessmentController(submissionID, exerciseConfigShortName).getMistakes()) {
 			if (i >= 10) break;
 			i++;
 			sysController.getAssessmentController(submissionID, exerciseConfigShortName).addAnnotation(
+					i,
 					mistakeType,
 					i*2,
 					i*2, "src/edu/kit/informatik/BubbleSort",

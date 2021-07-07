@@ -18,8 +18,8 @@ public interface AnnotationDao {
 	 *
 	 * @param annotation the annotation to be added
 	 */
-	void addAnnotation(IMistakeType mistakeType, int startLine, int endLine, String fullyClassifiedClassName,
-			String customMessage, Double customPenalty);
+	void addAnnotation(int annotationID, IMistakeType mistakeType, int startLine, int endLine, String fullyClassifiedClassName,
+			String customMessage, Double customPenalty) throws Exception;
 
 	/**
 	 * Get an existent annotation by id

@@ -43,9 +43,9 @@ public class AssessmentController implements IAssessmentController {
 	}
 
 	@Override
-	public void addAnnotation(IMistakeType mistakeType, int startLine, int endLine, String fullyClassifiedClassName,
-			String customMessage, Double customPenalty) {
-		this.annotationDao.addAnnotation(mistakeType, startLine, endLine, fullyClassifiedClassName, customMessage, customPenalty);
+	public void addAnnotation(int annotationID, IMistakeType mistakeType, int startLine, int endLine, String fullyClassifiedClassName,
+			String customMessage, Double customPenalty) throws Exception {
+		this.annotationDao.addAnnotation(annotationID, mistakeType, startLine, endLine, fullyClassifiedClassName, customMessage, customPenalty);
 
 	}
 

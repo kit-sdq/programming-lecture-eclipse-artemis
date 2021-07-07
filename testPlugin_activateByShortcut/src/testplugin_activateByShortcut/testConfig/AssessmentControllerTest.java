@@ -58,12 +58,13 @@ public class AssessmentControllerTest {
 		System.out.println("Testing mistake handling in core");
 		try {
 			Collection<IMistakeType> mistakeTypes = this.assessmentController.getMistakes();
-			mistakeTypes.forEach(mistakeType -> {
-				System.out.println("  Testing mistakeType " + mistakeType.toString());
+			int idcount = 12345;
 
-				this.assessmentController.addAnnotation(mistakeType, 0, 22, "class.name", null, null);
-			});
-		} catch (IOException e) { }
+			for (IMistakeType mistakeType : mistakeTypes) {
+				System.out.println("  Testing mistakeType " + mistakeType.toString());
+				this.assessmentController.addAnnotation(idcount++, mistakeType, 0, 22, "class.name", null, null);
+			}
+		} catch (Exception e) { }
 
 		System.out.println("  Got Annotations: ");
 		this.printAnnotations(this.assessmentController.getAnnotations("class.name"), "    ");
@@ -87,8 +88,8 @@ public class AssessmentControllerTest {
 					.map(mistakeType -> ((MistakeType) mistakeType))
 					.filter(mistakeType -> mistakeType.getShortName().equals("jdEmpty2")).findAny().get();
 			System.out.println("Adding a few annotations for " + jdEmpty);
-			this.assessmentController.addAnnotation(jdEmpty, 0, 44, "class2.name", null, null);
-			this.assessmentController.addAnnotation(jdEmpty2, 45, 46, "class2.name", null, null);
+			this.assessmentController.addAnnotation(123,jdEmpty, 0, 44, "class2.name", null, null);
+			this.assessmentController.addAnnotation(133, jdEmpty2, 45, 46, "class2.name", null, null);
 		} catch (Exception e) {}
 
 		this.printCalculatedPenaltiesForMistakesAndRatingGroups();

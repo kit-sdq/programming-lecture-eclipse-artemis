@@ -20,7 +20,6 @@ public class Annotation implements IAnnotation {
 
 	public Annotation(int id, IMistakeType mistakeType, int startLine, int endLine, String fullyClassifiedClassName,
 			String customMessage, Double customPenalty) {
-		//TODO IDs uniqueness controlled by other class.
 		this.id = id;
 		this.mistakeType = mistakeType;
 		this.startLine = startLine;

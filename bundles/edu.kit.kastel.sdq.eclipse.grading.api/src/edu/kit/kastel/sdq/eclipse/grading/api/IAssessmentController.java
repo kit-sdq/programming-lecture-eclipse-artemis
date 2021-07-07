@@ -16,6 +16,7 @@ public interface IAssessmentController {
 	 * <li> additional param: mistake type!
 	 * <li> maybe return int (id)
 	 *
+	 * @param annotationID a unique annotation ID.
 	 * @param startLine annotation start
 	 * @param endLine	annotation end
 	 * @param className	unique name of the respective Class to be annotated TODO (maybe) path/ "workspace URI"
@@ -24,7 +25,8 @@ public interface IAssessmentController {
 	 * @param customPenalty This may or may not have an effekt, depending on the MistakeType's PenaltyRule!
 	 * E.g. a ThresholdPenaltyRule will not consider custom penalties while a (thinkable) "AggregatedPenaltyThresholdPenaltyRule" would do so.
 	 */
-	void addAnnotation(IMistakeType mistakeType, int startLine, int endLine, String fullyClassifiedClassName, String customMessage, Double customPenalty);
+	void addAnnotation(int annotationID, IMistakeType mistakeType, int startLine, int endLine, String fullyClassifiedClassName,
+			String customMessage, Double customPenalty) throws Exception;
 
 	/**
 	 * Calculate a single penalty for a given mistakeType (uses one or many annotations)

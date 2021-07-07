@@ -11,26 +11,21 @@ import edu.kit.kastel.sdq.eclipse.grading.api.IMistakeType;
 public class JsonFileAnnotationDao implements AnnotationDao {
 
 	private final Set<IAnnotation> annotations;
-	//always contains the newest ID. (-1 == no IDs)
-	private int idCounter;
 
 	//TODO params: File path, ..? Implement serializing stuff
 	public JsonFileAnnotationDao() {
 		this.annotations = new HashSet<>();
-
-		//TODO need to consider starting from a File state, too!
-		this.idCounter = -1;
-
 	}
 
 	@Override
-	public void addAnnotation(IMistakeType mistakeType, int startLine, int endLine, String fullyClassifiedClassName,
-			String customMessage, Double customPenalty) {
+	public void addAnnotation(int annotationID, IMistakeType mistakeType, int startLine, int endLine, String fullyClassifiedClassName,
+			String customMessage, Double customPenalty) throws Exception {
+		if (this.idExists(annotationID)) throw new Exception("ID " + annotationID + " already exists!");
+
 		this.annotations.add(
-				new Annotation(this.getNewId(), mistakeType, startLine, endLine, fullyClassifiedClassName, customMessage, customPenalty));
+				new Annotation(annotationID, mistakeType, startLine, endLine, fullyClassifiedClassName, customMessage, customPenalty));
 
 		this.serialize();
-
 	}
 
 	@Override
@@ -46,9 +41,9 @@ public class JsonFileAnnotationDao implements AnnotationDao {
 		return Collections.unmodifiableSet(this.annotations);
 	}
 
-
-	private int getNewId() {
-		return ++this.idCounter;
+	private boolean idExists(int annotationID) {
+		return this.annotations.stream()
+				.anyMatch(annotation -> annotation.getId() == annotationID);
 	}
 
 	@Override
@@ -75,6 +70,6 @@ public class JsonFileAnnotationDao implements AnnotationDao {
 
 	@Override
 	public void serialize() {
-		// TODO implement
+		// TODO implement (UPDATE: serializing should be done to Artemis!)
 	}
 }
