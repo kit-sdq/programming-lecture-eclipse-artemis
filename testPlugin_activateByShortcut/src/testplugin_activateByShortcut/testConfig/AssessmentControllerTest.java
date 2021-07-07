@@ -58,7 +58,7 @@ public class AssessmentControllerTest {
 		System.out.println("Testing mistake handling in core");
 		try {
 			Collection<IMistakeType> mistakeTypes = this.assessmentController.getMistakes();
-			int idcount = 12345;
+			int idcount = 1;
 
 			for (IMistakeType mistakeType : mistakeTypes) {
 				System.out.println("  Testing mistakeType " + mistakeType.toString());

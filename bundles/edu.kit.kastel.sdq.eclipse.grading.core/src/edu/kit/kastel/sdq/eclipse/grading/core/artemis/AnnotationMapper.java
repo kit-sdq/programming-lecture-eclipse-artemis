@@ -223,8 +223,6 @@ public class AnnotationMapper {
 
 	public String mapToJsonFormattedString() throws JsonProcessingException {
 		return new ObjectMapper()
-//				.configure(SerializationFeature.FAIL, false)
-//				.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 				.writeValueAsString(this.createAssessmentResult());
 	}
 
