@@ -10,7 +10,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.kit.kastel.sdq.eclipse.grading.api.IAnnotation;
 import edu.kit.kastel.sdq.eclipse.grading.api.IMistakeType;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IFeedback;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.ILockResult;
 import edu.kit.kastel.sdq.eclipse.grading.core.annotation.Annotation;
 
 /**
@@ -42,8 +41,8 @@ public class AnnotationDeserializer {
 		return annotation;
 	}
 
-	public Collection<IAnnotation> deserialize(ILockResult lockResult) throws Exception {
-		final List<IFeedback> matchingFeedbacks = lockResult.getPreexistentFeedbacks().stream().filter(feedback -> {
+	public Collection<IAnnotation> deserialize(Collection<IFeedback> feedbacks) throws Exception {
+		final List<IFeedback> matchingFeedbacks = feedbacks.stream().filter(feedback -> {
 			String text = feedback.getText();
 			return (text != null && text.equals(FEEDBACK_TEXT));
 		}).collect(Collectors.toList());

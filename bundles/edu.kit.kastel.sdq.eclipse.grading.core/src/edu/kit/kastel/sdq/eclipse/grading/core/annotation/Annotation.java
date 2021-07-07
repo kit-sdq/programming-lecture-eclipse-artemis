@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.IAnnotation;
 import edu.kit.kastel.sdq.eclipse.grading.api.IMistakeType;
@@ -12,6 +13,7 @@ public class Annotation implements IAnnotation {
 
 	private final int id;
 	private IMistakeType mistakeType;
+	private String mistakeTypeString;
 	private final int startLine;
 	private final int endLine;
 	private final String fullyClassifiedClassName;
@@ -36,12 +38,19 @@ public class Annotation implements IAnnotation {
 	 * This Constructor is ONLY FOR DESERIALIZATION!
 	 */
 	@JsonCreator
-	public Annotation(int id, int startLine, int endLine, String fullyClassifiedClassName,
-			String customMessage, Double customPenalty) {
+	public Annotation(
+			@JsonProperty("id") int id,
+			@JsonProperty("startLine") int startLine,
+			@JsonProperty("endLine") int endLine,
+			@JsonProperty("classFilePath") String classFilePath,
+			@JsonProperty("customMessageForJSON") String customMessage,
+			@JsonProperty("customPenaltyForJSON") Double customPenalty,
+			@JsonProperty("mistakeTypeString") String mistakeTypeString) {
 		this.id = id;
 		this.startLine = startLine;
 		this.endLine = endLine;
-		this.fullyClassifiedClassName = fullyClassifiedClassName;
+		this.fullyClassifiedClassName = classFilePath;
+		this.mistakeTypeString = mistakeTypeString;
 
 		this.customMessage = customMessage;
 		this.customPenalty = customPenalty;
@@ -62,13 +71,23 @@ public class Annotation implements IAnnotation {
 	}
 
 	@Override
+	@JsonIgnore
 	public Optional<String> getCustomMessage() {
 		return (this.customMessage == null) ? Optional.empty() : Optional.of(this.customMessage);
 	}
 
+	public String getCustomMessageForJSON() {
+		return this.customMessage;
+	}
+
 	@Override
+	@JsonIgnore
 	public Optional<Double> getCustomPenalty() {
 		return (this.customPenalty == null) ? Optional.empty() : Optional.of(this.customPenalty);
+	}
+
+	public Double getCustomPenaltyForJSON() {
+		return this.customPenalty;
 	}
 
 	@Override
@@ -92,7 +111,8 @@ public class Annotation implements IAnnotation {
 	 * @return mistakeType::getButtonName (for serialization to artemis)
 	 */
 	public String getMistakeTypeString() {
-		return this.mistakeType.getButtonName();
+		//mistakeTypeString is needed for deserialization
+		return this.mistakeType != null ? this.mistakeType.getButtonName() : this.mistakeTypeString;
 	}
 
 	@Override

@@ -81,6 +81,11 @@ public class ArtemisGUIController implements IArtemisGUIController {
 		return 3;
 	}
 
+	@Override
+	public Collection<IFeedback> getAllFeedbacksGottenFromLocking(int submissionID) {
+		return this.lockResults.get(submissionID).getPreexistentFeedbacks();
+	}
+
 	private ICourse getCourseFromCourses(Collection<ICourse> courses, int courseID) throws Exception {
 		final Collection<ICourse> coursesWithCorrectID = courses.stream()
 				.filter(course -> (course.getCourseId() == courseID)).collect(Collectors.toList());
@@ -111,6 +116,7 @@ public class ArtemisGUIController implements IArtemisGUIController {
 
 	@Override
 	public Collection<IFeedback> getPrecalculatedAutoFeedbacks(int submissionID) {
+		System.out.println("DBUG IN ArtemisGUICONTROLLER::getPrecalculatedAutoFeedbacks: " + this.lockResults.get(submissionID));
 		return this.lockResults.get(submissionID)
 				.getPreexistentFeedbacks().stream()
 				.filter(feedback -> feedback.getFeedbackType().equals(FeedbackType.AUTOMATIC))

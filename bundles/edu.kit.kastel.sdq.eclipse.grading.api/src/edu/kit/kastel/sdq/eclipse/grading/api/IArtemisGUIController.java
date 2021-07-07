@@ -19,6 +19,8 @@ public interface IArtemisGUIController {
 	 */
 	int downloadHardcodedExerciseAndSubmissionExample();
 
+	Collection<IFeedback> getAllFeedbacksGottenFromLocking(int submissionID);
+
 	/**
 	 *
 	 * @return all available courses (contains exercices and available submissions

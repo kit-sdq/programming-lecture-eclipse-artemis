@@ -11,6 +11,7 @@ import edu.kit.kastel.sdq.eclipse.grading.api.IMistakeType;
 import edu.kit.kastel.sdq.eclipse.grading.api.IRatingGroup;
 import edu.kit.kastel.sdq.eclipse.grading.core.annotation.AnnotationDao;
 import edu.kit.kastel.sdq.eclipse.grading.core.annotation.JsonFileAnnotationDao;
+import edu.kit.kastel.sdq.eclipse.grading.core.artemis.AnnotationDeserializer;
 import edu.kit.kastel.sdq.eclipse.grading.core.config.ConfigDao;
 import edu.kit.kastel.sdq.eclipse.grading.core.config.ExerciseConfig;
 import edu.kit.kastel.sdq.eclipse.grading.core.config.JsonFileConfigDao;
@@ -36,10 +37,16 @@ public class AssessmentController implements IAssessmentController {
 	 */
 	protected AssessmentController(SystemwideController systemWideController, int submissionID, String exerciseConfigName) {
 		this.systemWideController = systemWideController;
-		this.submissionID = this.submissionID;
+		this.submissionID = submissionID;
 		this.annotationDao = new JsonFileAnnotationDao();
 
 		this.exerciseConfigShortName = exerciseConfigName;
+
+		try {
+			this.initializeWithDeserializedAnnotations();
+		} catch (Exception e) {
+			System.err.println("Warning: Deserializing Annotations from Artemis failed (most likely none were present)!");
+		}
 	}
 
 	@Override
@@ -117,6 +124,22 @@ public class AssessmentController implements IAssessmentController {
 	public String getTooltipForMistakeType(IMistakeType mistakeType) {
 		// TODO Auto-generated method stub
 		return "TEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEST TODO penalty type specific tooltip ";
+	}
+
+	private void initializeWithDeserializedAnnotations() throws Exception {
+		AnnotationDeserializer annotationDeserializer = new AnnotationDeserializer(this.getMistakes());
+
+		for (IAnnotation annotation : annotationDeserializer.deserialize(this.systemWideController.getArtemisGUIController().getAllFeedbacksGottenFromLocking(this.submissionID))) {
+			this.addAnnotation(
+					annotation.getId(),
+					annotation.getMistakeType(),
+					annotation.getStartLine(),
+					annotation.getEndLine(),
+					annotation.getClassFilePath(),
+					annotation.getCustomMessage().orElse(null),
+					annotation.getCustomPenalty().orElse(null)
+			);
+		}
 	}
 
 	/**

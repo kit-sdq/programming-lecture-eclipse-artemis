@@ -101,7 +101,25 @@ public class LockAndSubmitTest {
 
 	}
 
-	public void testNextAssessment() throws Exception {
+	public LockAndSubmitTest testAnnotationsDeserialized() throws Exception {
+		System.out.println("######################### testAnnotationsDeserialized ####");
+		final ISystemwideController sysController = new SystemwideController(
+				new File(this.eclipseWorkspaceRoot, ShortcutHandler.CONFIG_PATH),
+				this.host,
+				this.username,
+				this.password);
+		final String exerciseConfigShortName = "Final Task 1";
+		final int submissionID = 5;
+
+		sysController.getArtemisGUIController().startAssessment(submissionID);
+
+		System.out.println("Got Annotations from ARTEMIS deserialization\n"
+				+ sysController.getAssessmentController(submissionID, exerciseConfigShortName).getAnnotations());
+
+		return this;
+	}
+
+	public LockAndSubmitTest testNextAssessment() throws Exception {
 		final ISystemwideController sysController = new SystemwideController(
 				new File(this.eclipseWorkspaceRoot, ShortcutHandler.CONFIG_PATH),
 				this.host,
@@ -113,16 +131,18 @@ public class LockAndSubmitTest {
 		final Optional<Integer> submissionIDOptional = sysController.getArtemisGUIController().startNextAssessment(exerciseID);
 		if (submissionIDOptional.isEmpty()) {
 			System.out.println("######################### NO MORE SUBMISSIONS FOUND ####");
-			return;
+			return this;
 		}
 		final int submissionID = submissionIDOptional.get();
 
 		this.addSomeFakeAssessments(sysController, submissionID, exerciseConfigShortName);
 
 		sysController.getArtemisGUIController().submitAssessment(submissionID);
+
+		return this;
 	}
 
-	public void testShowcase() throws Exception {
+	public LockAndSubmitTest testShowcase() throws Exception {
 		final ISystemwideController sysController = new SystemwideController(
 				new File(this.eclipseWorkspaceRoot, ShortcutHandler.CONFIG_PATH),
 				this.host,
@@ -144,5 +164,6 @@ public class LockAndSubmitTest {
 		sysController.getArtemisGUIController().startAssessment(submissionID);
 		sysController.getArtemisGUIController().submitAssessment(submissionID);
 
+		return this;
 	}
 }
