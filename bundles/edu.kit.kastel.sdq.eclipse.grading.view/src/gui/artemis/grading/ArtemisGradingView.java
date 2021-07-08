@@ -1,11 +1,15 @@
 package gui.artemis.grading;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.layout.GridData;
@@ -14,9 +18,12 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.part.ViewPart;
 
+import edu.kit.kastel.sdq.eclipse.grading.api.ICourse;
 import edu.kit.kastel.sdq.eclipse.grading.api.IMistakeType;
 import edu.kit.kastel.sdq.eclipse.grading.api.IRatingGroup;
 import gui.controllers.AssessmentViewController;
@@ -27,12 +34,31 @@ public class ArtemisGradingView extends ViewPart {
 	private final AssessmentViewController viewController;
 	private Collection<IMistakeType> mistakeTypes;
 	private ArrayList<IRatingGroup> ratingGroups;
-	private int showcaseId;
 	private Map<String, Group> ratingGroupViewElements;
+	private int courseID;
+	private int exerciseID;
+	private int submissionID;
+	private boolean errorTypesCreated;
+	private ScrolledComposite scrolledComposite;
 
 	public ArtemisGradingView() {
 		this.viewController = new AssessmentViewController();
 		this.ratingGroupViewElements = new HashMap<String, Group>();
+		this.errorTypesCreated = false;
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		IResourceChangeListener listener = new IResourceChangeListener() {
+			@Override
+			public void resourceChanged(IResourceChangeEvent event) {
+				// Arrays.asList(event.findMarkerDeltas("gui.assessment.marker",
+				// true)).forEach(l -> {
+				// System.out.println("Kind:" + l.getKind());
+				// });
+				// System.out.println("length" + event.findMarkerDeltas("gui.assessment.marker",
+				// true).length);
+			}
+		};
+		workspace.addResourceChangeListener(listener);
+
 	}
 
 	private void createCustomButton(IRatingGroup ratingGroup, Group rgDisplay, Composite parent) {
@@ -49,28 +75,54 @@ public class ArtemisGradingView extends ViewPart {
 		});
 	}
 
-	private void createErrorTypesButtons(Composite parent) {
-		final ScrolledComposite sc2 = new ScrolledComposite(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
-		sc2.setExpandHorizontal(true);
-		sc2.setExpandVertical(true);
-		final Composite child = new Composite(sc2, SWT.NONE);
-		sc2.setContent(child);
-		child.setLayout(new GridLayout(this.ratingGroups.size(), true));
-		Group artemisActionsGroup = new Group(child, SWT.NULL);
-		artemisActionsGroup.setText("Grading Actions");
-		final GridLayout gridLayout2 = new GridLayout();
-		gridLayout2.numColumns = 1;
-		artemisActionsGroup.setLayout(gridLayout2);
-		final GridData gridData2 = new GridData(GridData.VERTICAL_ALIGN_FILL);
-		gridData2.horizontalSpan = 3;
-		artemisActionsGroup.setLayoutData(gridData2);
-		this.createStartAssessmentButton(artemisActionsGroup);
-		this.createSaveAssessmentButton(artemisActionsGroup);
+	private void createCourseAndExerciseListView(Composite composite) {
+		Composite listHolder = new Composite(composite, SWT.NONE);
+		listHolder.setLayout(new GridLayout(2, true));
+		Label courseListLabel = new Label(listHolder, SWT.NONE);
+		courseListLabel.setText("Courses:");
+		final List courseList = new List(listHolder, SWT.SINGLE | SWT.BORDER | SWT.V_SCROLL);
+		Label exerciseListLabel = new Label(listHolder, SWT.NONE);
+		exerciseListLabel.setText("Exercises: ");
+		final List exerciseList = new List(listHolder, SWT.SINGLE | SWT.BORDER | SWT.V_SCROLL);
+		this.viewController.getCourses().forEach(course -> {
+			courseList.add(course.getTitle());
+		});
+		courseList.addListener(SWT.Selection, e -> {
+			this.createExerciseListInput(courseList.getSelection()[0], exerciseList);
+		});
+	}
+
+	private void createExerciseListInput(String courseTitle, List exerciseList) {
+		exerciseList.removeAll();
+		Optional<ICourse> optionalCourse = this.viewController.getCourses().stream()
+				.filter(course -> course.getTitle().equals(courseTitle)).findFirst();
+		if (optionalCourse.isPresent()) {
+			this.courseID = optionalCourse.get().getCourseId();
+			optionalCourse.get().getExercises().forEach(exercise -> {
+				exerciseList.add(exercise.getShortName());
+			});
+		}
+		exerciseList.addListener(SWT.Selection, e -> {
+			optionalCourse.get().getExercises().forEach(exercise -> {
+				if (exercise.getShortName().equals(exerciseList.getSelection()[0])) {
+					this.exerciseID = exercise.getExerciseId();
+				}
+			});
+		});
+	}
+
+	private void createArtemisGradingViewElements(Composite parent) {
+		Composite child = this.createScrolledComposite(parent);
+		this.createCourseAndExerciseListView(child);
+		this.createGradingActionViewElements(child, parent);
+		this.computeSize(this.scrolledComposite, child);
+	}
+
+	private void createAssessmentViewElements(Composite child, Composite parent) {
 		this.ratingGroups.forEach(element -> {
 			final Group rgDisplay = new Group(child, SWT.NULL);
 			this.ratingGroupViewElements.put(element.getDisplayName(), rgDisplay);
-			rgDisplay.setText(element.getDisplayName() + " ("
-					+ this.viewController.getCurrentPenaltyForRatingGroup(element) + " penalty points)");
+			this.updatePenalties(element.getDisplayName());
 			final GridLayout gridLayout = new GridLayout();
 			gridLayout.numColumns = 3;
 			rgDisplay.setLayout(gridLayout);
@@ -94,14 +146,43 @@ public class ArtemisGradingView extends ViewPart {
 			});
 			this.createCustomButton(element, rgDisplay, parent);
 		});
+		this.computeSize(this.scrolledComposite, child);
+	}
+
+	private Composite createScrolledComposite(Composite parent) {
+		this.scrolledComposite = new ScrolledComposite(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
+		this.scrolledComposite.setExpandHorizontal(true);
+		this.scrolledComposite.setExpandVertical(true);
+		final Composite child = new Composite(this.scrolledComposite, SWT.NONE);
+		this.scrolledComposite.setContent(child);
+		child.setLayout(new GridLayout(3, true));
+		this.computeSize(this.scrolledComposite, child);
+		return child;
+	}
+
+	private void computeSize(ScrolledComposite sc2, Composite child) {
+		this.scrolledComposite.setContent(child);
 		sc2.setMinSize(child.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+	}
+
+	private void createGradingActionViewElements(Composite child, Composite parent) {
+		Group artemisActionsGroup = new Group(child, SWT.NULL);
+		artemisActionsGroup.setText("Grading Actions");
+		final GridLayout gridLayout2 = new GridLayout();
+		gridLayout2.numColumns = 1;
+		artemisActionsGroup.setLayout(gridLayout2);
+		final GridData gridData2 = new GridData(GridData.VERTICAL_ALIGN_FILL);
+		gridData2.horizontalSpan = 3;
+		artemisActionsGroup.setLayoutData(gridData2);
+		this.createStartAssessmentButton(artemisActionsGroup, child, parent);
+		this.createSaveAssessmentButton(artemisActionsGroup);
 	}
 
 	protected void updatePenalties(String ratingGroupName) {
 		Group viewElement = this.ratingGroupViewElements.get(ratingGroupName);
 		viewElement.setText(ratingGroupName + " ("
-				+ this.viewController.getCurrentPenaltyForRatingGroup(this.findRatingGroup(ratingGroupName))
-				+ " penalty points)");
+				+ this.viewController.getCurrentPenaltyForRatingGroup(this.findRatingGroup(ratingGroupName)) + "/"
+				+ this.findRatingGroup(ratingGroupName).getPenaltyLimit() + " penalty points)");
 	}
 
 	private IRatingGroup findRatingGroup(String ratingGroupName) {
@@ -115,15 +196,7 @@ public class ArtemisGradingView extends ViewPart {
 
 	@Override
 	public void createPartControl(Composite parent) {
-		try {
-			this.mistakeTypes = this.viewController.getMistakeTypesForButtonView();
-			this.ratingGroups = (ArrayList<IRatingGroup>) this.viewController.getRatingGroups();
-
-		} catch (final IOException e) {
-			e.printStackTrace();
-		} finally {
-			this.createErrorTypesButtons(parent);
-		}
+		this.createArtemisGradingViewElements(parent);
 	}
 
 	@Override
@@ -132,13 +205,13 @@ public class ArtemisGradingView extends ViewPart {
 
 	private void createSaveAssessmentButton(Group artemisActionsGroup) {
 		final Button saveAssessmentButton = new Button(artemisActionsGroup, SWT.PUSH);
-		saveAssessmentButton.setText("Save Assessment");
+		saveAssessmentButton.setText("Save current Assessment");
 		saveAssessmentButton.addListener(SWT.Selection, new Listener() {
 
 			@Override
 			public void handleEvent(Event event) {
 				try {
-					ArtemisGradingView.this.viewController.saveAssessmentShowcase(ArtemisGradingView.this.showcaseId);
+					ArtemisGradingView.this.viewController.submitAssessment(ArtemisGradingView.this.submissionID);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -146,16 +219,26 @@ public class ArtemisGradingView extends ViewPart {
 		});
 	}
 
-	private void createStartAssessmentButton(Group artemisActionsGroup) {
+	private void createStartAssessmentButton(Group artemisActionsGroup, Composite child, Composite parent) {
 		final Button startAssessmentButton = new Button(artemisActionsGroup, SWT.PUSH);
-		startAssessmentButton.setText("Start Assessment");
+		startAssessmentButton.setText("Start next Assessment");
 		startAssessmentButton.addListener(SWT.Selection, new Listener() {
 
 			@Override
 			public void handleEvent(Event event) {
 				try {
-					ArtemisGradingView.this.showcaseId = ArtemisGradingView.this.viewController
-							.startAssessmentShowcase();
+					ArtemisGradingView.this.submissionID = ArtemisGradingView.this.viewController
+							.startAssessment(ArtemisGradingView.this.exerciseID, ArtemisGradingView.this.courseID);
+					if (!ArtemisGradingView.this.errorTypesCreated) {
+						ArtemisGradingView.this.viewController
+								.createAssessmentController(ArtemisGradingView.this.submissionID);
+						ArtemisGradingView.this.mistakeTypes = ArtemisGradingView.this.viewController
+								.getMistakeTypesForButtonView();
+						ArtemisGradingView.this.ratingGroups = (ArrayList<IRatingGroup>) ArtemisGradingView.this.viewController
+								.getRatingGroups();
+						ArtemisGradingView.this.createAssessmentViewElements(child, parent);
+						ArtemisGradingView.this.errorTypesCreated = true;
+					}
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

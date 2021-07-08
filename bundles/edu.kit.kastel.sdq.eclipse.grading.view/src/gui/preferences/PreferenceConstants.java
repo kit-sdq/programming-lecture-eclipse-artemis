@@ -11,5 +11,6 @@ public class PreferenceConstants {
 	public static final String P_ARTEMIS_URL = "artemisUrl";
 	public static final String P_ARTEMIS_USER = "artemisUser";
 	public static final String P_ARTEMIS_PASSWORD = "artemisPassword";
+	public static final String P_CONFIG_NAME = "configName";
 
 }

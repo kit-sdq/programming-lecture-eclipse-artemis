@@ -30,6 +30,7 @@ public class ArtemisGradingPreferencesPage extends FieldEditorPreferencePage imp
 	private StringFieldEditor artemisUrl;
 	private StringFieldEditor artemisUser;
 	private StringFieldEditor artemisPassword;
+	private StringFieldEditor configNameField;
 
 	public ArtemisGradingPreferencesPage() {
 		super(FieldEditorPreferencePage.GRID);
@@ -57,12 +58,16 @@ public class ArtemisGradingPreferencesPage extends FieldEditorPreferencePage imp
 		this.artemisUrl = new StringFieldEditor(PreferenceConstants.P_ARTEMIS_URL, "Artemis URL: ",
 				this.getFieldEditorParent());
 
-		this.artemisUser = new StringFieldEditor(PreferenceConstants.P_ARTEMIS_USER, "Artemis Username: ",
+		this.artemisUser = new StringFieldEditor(PreferenceConstants.P_ARTEMIS_USER, "Artemis username: ",
 				this.getFieldEditorParent());
 
-		this.artemisPassword = new StringFieldEditor(PreferenceConstants.P_ARTEMIS_PASSWORD, "Artemis Password: ",
+		this.artemisPassword = new StringFieldEditor(PreferenceConstants.P_ARTEMIS_PASSWORD, "Artemis password: ",
 				this.getFieldEditorParent());
 
+		this.configNameField = new StringFieldEditor(PreferenceConstants.P_CONFIG_NAME, "Config name: ",
+				this.getFieldEditorParent());
+
+		this.addField(this.absoluteConfigPath);
 		this.addField(this.absoluteConfigPath);
 		this.addField(this.relativeConfigPath);
 		this.addField(this.isRelativeConfigPath);

@@ -3,17 +3,18 @@ package gui.controllers;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Optional;
 
 import javax.management.RuntimeErrorException;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.ITextSelection;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.IArtemisGUIController;
 import edu.kit.kastel.sdq.eclipse.grading.api.IAssessmentController;
+import edu.kit.kastel.sdq.eclipse.grading.api.ICourse;
 import edu.kit.kastel.sdq.eclipse.grading.api.IMistakeType;
 import edu.kit.kastel.sdq.eclipse.grading.api.IRatingGroup;
 import edu.kit.kastel.sdq.eclipse.grading.core.SystemwideController;
@@ -23,9 +24,9 @@ import gui.utilities.AssessmentUtilities;
 
 public class AssessmentViewController {
 
-	private static final String EXERCISE_NAME = "Final Task 1";
 	private static String CONFIG_PATH;
 	private static boolean IS_RELATIVE_PATH;
+	private int submissionID;
 	private IAssessmentController assessmentController;
 	private IArtemisGUIController artemisGUIController;
 	private SystemwideController systemwideController;
@@ -38,7 +39,6 @@ public class AssessmentViewController {
 				store.getDefaultString(PreferenceConstants.P_ARTEMIS_USER),
 				store.getDefaultString(PreferenceConstants.P_ARTEMIS_PASSWORD));
 		this.artemisGUIController = this.systemwideController.getArtemisGUIController();
-		this.assessmentController = this.systemwideController.getAssessmentController(EXERCISE_NAME);
 	}
 
 	public void addAssessmentAnnotaion(IMistakeType mistake, String customMessage, Double customPenalty,
@@ -51,9 +51,6 @@ public class AssessmentViewController {
 		final Integer startLine = textSelection.getStartLine();
 		final Integer endLine = textSelection.getEndLine();
 		final Integer lenght = textSelection.getLength();
-
-		this.assessmentController.addAnnotation(mistake, startLine + 1, endLine + 1,
-				AssessmentUtilities.getPathForAnnotation(), customMessage, customPenalty);
 
 		IMarker marker = null;
 		try {
@@ -82,17 +79,29 @@ public class AssessmentViewController {
 						.createMarkerTooltipForCustomButton(startLine + 1, endLine + 1, customMessage, customPenalty));
 			}
 
-		} catch (final CoreException e) {
+			this.assessmentController.addAnnotation((int) marker.getId(), mistake, startLine + 1, endLine + 1,
+					AssessmentUtilities.getPathForAnnotation(), customMessage, customPenalty);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
 	}
 
-	public void createAssessmentController() {
-		this.setConfigPathFromPreferenceStore();
+	public void createAssessmentController(int submissionID2) {
+		final IPreferenceStore store = Activator.getDefault().getPreferenceStore();
+		this.assessmentController = this.systemwideController.getAssessmentController(submissionID2,
+				store.getString(PreferenceConstants.P_CONFIG_NAME));
 	}
 
 	private File createConfigFile() {
+		final IPreferenceStore store = Activator.getDefault().getPreferenceStore();
+		AssessmentViewController.IS_RELATIVE_PATH = store.getBoolean(PreferenceConstants.P_IS_RELATIVE_CONFIG_PATH);
+
+		AssessmentViewController.CONFIG_PATH = AssessmentViewController.IS_RELATIVE_PATH
+				? store.getString(PreferenceConstants.P_RELATIVE_CONFIG_PATH)
+				: store.getString(PreferenceConstants.P_ABSOLUTE_CONFIG_PATH);
+
 		return AssessmentViewController.IS_RELATIVE_PATH
 				? new File(this.getEclipseWorkspaceRootFile(), AssessmentViewController.CONFIG_PATH)
 				: new File(AssessmentViewController.CONFIG_PATH);
@@ -118,6 +127,10 @@ public class AssessmentViewController {
 		return this.assessmentController.getRatingGroups();
 	}
 
+	public Collection<ICourse> getCourses() {
+		return this.artemisGUIController.getCourses();
+	}
+
 	private void setConfigPathFromPreferenceStore() {
 		final IPreferenceStore store = Activator.getDefault().getPreferenceStore();
 		AssessmentViewController.IS_RELATIVE_PATH = store.getBoolean(PreferenceConstants.P_IS_RELATIVE_CONFIG_PATH);
@@ -127,17 +140,30 @@ public class AssessmentViewController {
 				: store.getString(PreferenceConstants.P_ABSOLUTE_CONFIG_PATH);
 	}
 
-	public int startAssessmentShowcase() throws Exception {
-		int submissonId = this.artemisGUIController.downloadHardcodedExerciseAndSubmissionExample();
-		final String exerciseName = "Final Task 1";
-		this.artemisGUIController.startAssessment(submissonId, exerciseName);
-		return submissonId;
+	public int startAssessment(int exerciseID, int courseID) throws Exception {
+		System.out.println("courseID: " + courseID + " exerciseID: " + exerciseID);
+		Optional<Integer> optionalSubmissonID = this.artemisGUIController.startNextAssessment(exerciseID);
+		if (optionalSubmissonID.isPresent()) {
+			this.artemisGUIController.downloadExerciseAndSubmission(courseID, exerciseID, optionalSubmissonID.get());
+			this.setSubmissionID(optionalSubmissonID.get());
+			return optionalSubmissonID.get();
+		} else {
+			return -1;
+		}
+
 	}
 
-	public void saveAssessmentShowcase(int submissonId) throws Exception {
-		final String exerciseName = "Final Task 1";
+	public void submitAssessment(int submissonId) throws Exception {
 		System.out.println("ANNOTATIONS:" + this.assessmentController.getAnnotations().toString());
-		this.artemisGUIController.submitAssessment(submissonId, exerciseName);
+		this.artemisGUIController.submitAssessment(submissonId);
+	}
+
+	public int getSubmissonID() {
+		return this.submissionID;
+	}
+
+	public void setSubmissionID(int submissionID) {
+		this.submissionID = submissionID;
 	}
 
 }
