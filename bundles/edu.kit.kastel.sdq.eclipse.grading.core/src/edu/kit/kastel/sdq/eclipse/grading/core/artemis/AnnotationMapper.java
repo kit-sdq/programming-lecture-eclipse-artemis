@@ -51,17 +51,14 @@ public class AnnotationMapper {
 	}
 
 	private Collection<IFeedback> calculateAllFeedbacks() {
-		//TODO auslagern in eigene Klasse evlt
 		final List<IFeedback> result = new LinkedList();
 		result.addAll(this.getFilteredPreexistentFeedbacks(FeedbackType.AUTOMATIC));
 		result.addAll(this.calculateManualFeedbacks());
 
-		//TODO highly experimental!
 		try {
 			result.add(this.calculateAnnotationSerialitationAsFeedback());
 		} catch (JsonProcessingException e) {
 			System.out.println("TODO handle this exception in calculateAllFeedbacks: " + e.getMessage());
-//			e.printStackTrace();
 		}
 
 		return result;
@@ -88,19 +85,25 @@ public class AnnotationMapper {
 		manualFeedbacks.addAll(
 			this.ratingGroups.stream()
 				.map(this::createNewManualUnreferencedFeedback)
-				.filter(feedback -> !this.isZero(feedback.getCredits()))
+				.filter(feedback -> !Util.isZero(feedback.getCredits()))
 				.collect(Collectors.toList())
 		);
 
 		return manualFeedbacks;
 	}
 
-	public double calculatePenaltyForMistakeType(IMistakeType mistakeType) {
-		return this.penaltyCalculationStrategy.calculatePenaltyForMistakeType(mistakeType);
+	/**
+	 * Negate what the strategy gives.
+	 */
+	private double calculatePenaltyForMistakeType(IMistakeType mistakeType) {
+		return -1D * this.penaltyCalculationStrategy.calculatePenaltyForMistakeType(mistakeType);
 	}
 
-	public double calculatePenaltyForRatingGroup(IRatingGroup ratingGroup) {
-		return this.penaltyCalculationStrategy.calcultatePenaltyForRatingGroup(ratingGroup);
+	/**
+	 * Negate what the strategy gives.
+	 */
+	private double calculatePenaltyForRatingGroup(IRatingGroup ratingGroup) {
+		return -1D * this.penaltyCalculationStrategy.calcultatePenaltyForRatingGroup(ratingGroup);
 	}
 
 
@@ -119,9 +122,9 @@ public class AnnotationMapper {
 				.append(" of ")
 				.append(numberOfTests)
 				.append(" passed, ")
-				.append(absoluteScore)
+				.append(Util.formatDouble(absoluteScore))
 				.append(" of ")
-				.append(this.lockResult.getMaxPoints())
+				.append(Util.formatDouble(this.lockResult.getMaxPoints()))
 				.append(" points")
 				.toString();
 	}
@@ -170,29 +173,35 @@ public class AnnotationMapper {
 	private Feedback createNewManualUnreferencedFeedback(IRatingGroup ratingGroup) {
 		final double calculatedPenalty = this.calculatePenaltyForRatingGroup(ratingGroup);
 
+
 		final StringBuilder detailTextStringBuilder = new StringBuilder()
 				.append(ratingGroup.getDisplayName())
 				.append(" [")
-				.append(calculatedPenalty)
-				.append(" /")
-				.append("X")
-				.append(" P]");
+				.append(Util.formatDouble(calculatedPenalty));
+		if (ratingGroup.hasPenaltyLimit()) {
+			detailTextStringBuilder
+				.append(" of at most ")
+				.append(Util.formatDouble(-1D * ratingGroup.getPenaltyLimit()));
+		}
+		detailTextStringBuilder
+				.append(" points]");
 
-		// add mistake-specific penalties TODO this is not wanted! just for debug!!!!1
+		// add mistake-specific penalties
 		this.mistakeTypes.stream()
 			.filter(mistakeType -> mistakeType.getRatingGroup().equals(ratingGroup))
 			.forEach(mistakeType -> {
 				double currentPenalty = this.calculatePenaltyForMistakeType(mistakeType);
 				//TODO make schön!
-				if ( !this.isZero(currentPenalty)) {
+				if ( !Util.isZero(currentPenalty)) {
 					detailTextStringBuilder
 						.append("\n  * ")
 						.append(mistakeType.getButtonName())
 						.append(" [")
-						.append(currentPenalty)
+						.append(Util.formatDouble(currentPenalty))
 						.append("]");
 				}
 			});
+		//TODO add Anmerkung "penalty limit reached
 
 
 		return new Feedback(FeedbackType.MANUAL_UNREFERENCED.toString(), calculatedPenalty, null, null, null, null, null,
@@ -215,10 +224,6 @@ public class AnnotationMapper {
 			if (currentId > greatestId) greatestId = currentId;
 		}
 		return greatestId;
-	}
-
-	private boolean isZero(double d) {
-		return  (0D + Math.abs(d)) < 0.001D;
 	}
 
 	public String mapToJsonFormattedString() throws JsonProcessingException {

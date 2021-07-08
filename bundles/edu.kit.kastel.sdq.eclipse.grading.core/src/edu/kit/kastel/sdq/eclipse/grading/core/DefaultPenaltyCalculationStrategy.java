@@ -34,8 +34,8 @@ public class DefaultPenaltyCalculationStrategy implements IPenaltyCalculationStr
 				.collect(Collectors.summingDouble(Double::doubleValue));
 
 		return ratingGroup.hasPenaltyLimit()
-				//TODO geht schon auch schöner...
-				? Math.max(calculatedPenalty, -ratingGroup.getPenaltyLimit())
+				//both are positive
+				? Math.min(calculatedPenalty, ratingGroup.getPenaltyLimit())
 				: calculatedPenalty;
 
 	}
