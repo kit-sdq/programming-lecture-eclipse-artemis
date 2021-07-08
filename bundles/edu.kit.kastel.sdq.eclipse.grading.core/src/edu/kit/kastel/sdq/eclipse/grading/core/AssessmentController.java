@@ -24,6 +24,9 @@ public class AssessmentController implements IAssessmentController {
 	private JsonFileConfigDao configDao;
 	private AnnotationDao annotationDao;
 
+	private final int courseID;
+	private final int exerciseID;
+
 	private String exerciseConfigShortName;
 	//TODO global List of ASsessmentController in SystemSpecificController
 	//
@@ -35,10 +38,12 @@ public class AssessmentController implements IAssessmentController {
 	 * @param configFile path to the config file
 	 * @param exerciseName the shortName of the exercise (must be same in the config file).
 	 */
-	protected AssessmentController(SystemwideController systemWideController, int submissionID, String exerciseConfigName) {
+	protected AssessmentController(SystemwideController systemWideController, int courseID, int exerciseID, int submissionID,String exerciseConfigName) {
 		this.systemWideController = systemWideController;
 		this.submissionID = submissionID;
 		this.annotationDao = new JsonFileAnnotationDao();
+		this.exerciseID = exerciseID;
+		this.courseID = courseID;
 
 		this.exerciseConfigShortName = exerciseConfigName;
 
@@ -85,12 +90,22 @@ public class AssessmentController implements IAssessmentController {
 		return this.systemWideController.getConfigDao();
 	}
 
+	@Override
+	public int getCourseID() {
+		return this.courseID;
+	}
+
 	/**
 	 *
 	 * @return the shortName (identifier) used to retrieve the corresponding exercise config from the ConfigDao.
 	 */
 	public String getExerciseConfigShortName() {
 		return this.exerciseConfigShortName;
+	}
+
+	@Override
+	public int getExerciseID() {
+		return this.exerciseID;
 	}
 
 	@Override

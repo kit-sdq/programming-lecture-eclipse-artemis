@@ -56,6 +56,10 @@ public interface IAssessmentController {
 	 */
 	Collection<IAnnotation> getAnnotations(String className);
 
+	int getCourseID();
+
+	int getExerciseID();
+
 	/**
 	 *
 	 * @return all mistake types.
@@ -86,6 +90,5 @@ public interface IAssessmentController {
 	 * @param annotationId	unique annotation identifier
 	 */
 	void removeAnnotation(int annotationId);
-
 
 }
