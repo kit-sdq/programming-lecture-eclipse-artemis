@@ -190,19 +190,35 @@ public class AnnotationMapper {
 		this.mistakeTypes.stream()
 			.filter(mistakeType -> mistakeType.getRatingGroup().equals(ratingGroup))
 			.forEach(mistakeType -> {
-				double currentPenalty = this.calculatePenaltyForMistakeType(mistakeType);
-				//TODO make schön!
+				final double currentPenalty = this.calculatePenaltyForMistakeType(mistakeType);
+				final Collection<IAnnotation> currentAnnotations = this.annotations.stream()
+						.filter(annotation -> annotation.getMistakeType().equals(mistakeType))
+						.collect(Collectors.toList());
+
 				if ( !Util.isZero(currentPenalty)) {
 					detailTextStringBuilder
-						.append("\n  * ")
+						.append("\n    * \"")
 						.append(mistakeType.getButtonName())
-						.append(" [")
+						.append("\" [")
 						.append(Util.formatDouble(currentPenalty))
-						.append("]");
+						.append("]:");
+
+					currentAnnotations.forEach(annotation ->  {
+						detailTextStringBuilder
+						.append("\n        * ")
+						.append(annotation.getClassFilePath())
+						.append(" at line ")
+						.append(annotation.getStartLine());
+					});
 				}
 			});
-		//TODO add Anmerkung "penalty limit reached
 
+		//TODO add Anmerkung "penalty limit reached"
+		if (this.penaltyCalculationStrategy.penaltyLimitIsHitForRatingGroup(ratingGroup)) {
+			detailTextStringBuilder
+				.append("\n    * ")
+				.append("Note: The sum of penalties hit the penalty limit for this rating group.");
+		}
 
 		return new Feedback(FeedbackType.MANUAL_UNREFERENCED.toString(), calculatedPenalty, null, null, null, null, null,
 				detailTextStringBuilder.toString());

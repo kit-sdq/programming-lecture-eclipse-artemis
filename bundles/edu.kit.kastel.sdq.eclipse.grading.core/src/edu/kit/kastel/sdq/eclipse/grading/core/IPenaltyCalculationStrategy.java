@@ -9,4 +9,6 @@ public interface IPenaltyCalculationStrategy {
 
 	double calcultatePenaltyForRatingGroup(IRatingGroup ratingGroup);
 
+	boolean penaltyLimitIsHitForRatingGroup(IRatingGroup ratingGroup);
+
 }

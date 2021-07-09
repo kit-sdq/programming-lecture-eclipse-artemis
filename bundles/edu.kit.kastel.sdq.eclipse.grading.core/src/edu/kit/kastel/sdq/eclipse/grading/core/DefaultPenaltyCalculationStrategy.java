@@ -26,18 +26,27 @@ public class DefaultPenaltyCalculationStrategy implements IPenaltyCalculationStr
 		);
 	}
 
+	private double calculatePenaltyForRatingGroupWithoutLimit(IRatingGroup ratingGroup) {
+		return this.mistakeTypes.stream()
+			.filter(mistakeType -> mistakeType.getRatingGroup().equals(ratingGroup))
+			.map(this::calculatePenaltyForMistakeType)
+			.collect(Collectors.summingDouble(Double::doubleValue));
+	}
+
 	@Override
 	public double calcultatePenaltyForRatingGroup(IRatingGroup ratingGroup) {
-		double calculatedPenalty = this.mistakeTypes.stream()
-				.filter(mistakeType -> mistakeType.getRatingGroup().equals(ratingGroup))
-				.map(this::calculatePenaltyForMistakeType)
-				.collect(Collectors.summingDouble(Double::doubleValue));
+		double calculatedPenalty = this.calculatePenaltyForRatingGroupWithoutLimit(ratingGroup);
 
 		return ratingGroup.hasPenaltyLimit()
 				//both are positive
 				? Math.min(calculatedPenalty, ratingGroup.getPenaltyLimit())
 				: calculatedPenalty;
 
+	}
+
+	@Override
+	public boolean penaltyLimitIsHitForRatingGroup(IRatingGroup ratingGroup) {
+		return (this.calculatePenaltyForRatingGroupWithoutLimit(ratingGroup) > ratingGroup.getPenaltyLimit());
 	}
 
 }
