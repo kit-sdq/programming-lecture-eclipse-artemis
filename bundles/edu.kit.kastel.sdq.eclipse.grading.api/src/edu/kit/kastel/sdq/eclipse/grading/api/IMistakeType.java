@@ -22,4 +22,6 @@ public interface IMistakeType {
 	IRatingGroup getRatingGroup();
 
 	String getRatingGroupName();
+
+	String getTooltip(List<IAnnotation> annotations);
 }

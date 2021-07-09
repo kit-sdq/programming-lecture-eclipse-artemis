@@ -136,9 +136,11 @@ public class AssessmentController implements IAssessmentController {
 	}
 
 	@Override
-	public String getTooltipForMistakeType(IMistakeType mistakeType) {
-		// TODO Auto-generated method stub
-		return "TEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEST TODO penalty type specific tooltip ";
+	public String getTooltipForMistakeType(IMistakeType mistakeType) throws IOException {
+		return mistakeType.getTooltip(this.getAnnotations().stream()
+				.filter(annotation -> annotation.getMistakeType().equals(mistakeType))
+				.collect(Collectors.toList())
+		);
 	}
 
 	private void initializeWithDeserializedAnnotations() throws Exception {

@@ -100,6 +100,11 @@ public class MistakeType implements IMistakeType {
 		return this.shortName;
 	}
 
+	@Override
+	public String getTooltip(List<IAnnotation> annotations) {
+		return this.penaltyRule.getTooltip(annotations);
+	}
+
 	/**
 	 * Sets a new rating group if there ain't already one. (Used for deserialization).
 	 * @param ratingGroup the new rating group

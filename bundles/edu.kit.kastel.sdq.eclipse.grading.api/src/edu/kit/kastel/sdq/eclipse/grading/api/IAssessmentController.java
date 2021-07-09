@@ -74,7 +74,7 @@ public interface IAssessmentController {
 	 */
 	Collection<IRatingGroup> getRatingGroups() throws IOException;
 
-	String getTooltipForMistakeType(IMistakeType mistakeType);
+	String getTooltipForMistakeType(IMistakeType mistakeType) throws IOException;
 
 	/**
 	 * Modify an existent annotation

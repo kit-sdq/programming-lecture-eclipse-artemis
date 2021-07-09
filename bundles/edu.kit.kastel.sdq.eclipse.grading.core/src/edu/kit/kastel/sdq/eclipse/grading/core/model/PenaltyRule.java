@@ -48,4 +48,6 @@ public abstract class PenaltyRule {
 	public abstract String getDisplayName();
 
 	public abstract String getShortName();
+
+	public abstract String getTooltip(List<IAnnotation> annotations);
 }
