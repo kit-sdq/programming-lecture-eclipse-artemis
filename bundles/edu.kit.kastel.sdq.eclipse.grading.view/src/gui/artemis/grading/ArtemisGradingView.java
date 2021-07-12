@@ -246,9 +246,18 @@ public class ArtemisGradingView extends ViewPart {
 						ArtemisGradingView.this.createAssessmentViewElements(child, parent);
 						ArtemisGradingView.this.errorTypesCreated = true;
 					}
+					if (ArtemisGradingView.this.submissionID == -1) {
+						this.openNoFurtherAssessmentDialog();
+					}
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
+			}
+
+			private void openNoFurtherAssessmentDialog() {
+				ExerciseCompletedDialog exerciseCompletedDialog = new ExerciseCompletedDialog(
+						AssessmentUtilities.getWindowsShell());
+				exerciseCompletedDialog.open();
 			}
 		});
 
