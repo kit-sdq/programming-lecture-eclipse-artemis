@@ -10,6 +10,7 @@ import java.util.Optional;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.layout.GridData;
@@ -129,7 +130,7 @@ public class ArtemisGradingView extends ViewPart {
 		this.ratingGroups.forEach(element -> {
 			final Group rgDisplay = new Group(child, SWT.NULL);
 			this.ratingGroupViewElements.put(element.getDisplayName(), rgDisplay);
-			this.updatePenalties(element.getDisplayName());
+			this.updatePenalties(element.getDisplayName(), false);
 			final GridLayout gridLayout = new GridLayout();
 			gridLayout.numColumns = 3;
 			rgDisplay.setLayout(gridLayout);
@@ -146,7 +147,7 @@ public class ArtemisGradingView extends ViewPart {
 						public void handleEvent(Event event) {
 							ArtemisGradingView.this.viewController.addAssessmentAnnotaion(mistake, null, null,
 									mistake.getRatingGroupName());
-							ArtemisGradingView.this.updatePenalties(mistake.getRatingGroupName());
+							ArtemisGradingView.this.updatePenalties(mistake.getRatingGroupName(), false);
 						}
 					});
 				}
@@ -185,11 +186,18 @@ public class ArtemisGradingView extends ViewPart {
 		this.createSaveAssessmentButton(artemisActionsGroup);
 	}
 
-	protected void updatePenalties(String ratingGroupName) {
+	protected void updatePenalties(String ratingGroupName, boolean reset) {
 		Group viewElement = this.ratingGroupViewElements.get(ratingGroupName);
-		viewElement.setText(ratingGroupName + " ("
-				+ this.viewController.getCurrentPenaltyForRatingGroup(this.findRatingGroup(ratingGroupName)) + "/"
-				+ this.findRatingGroup(ratingGroupName).getPenaltyLimit() + " penalty points)");
+		IRatingGroup ratingGroup = this.findRatingGroup(ratingGroupName);
+		StringBuilder builder = new StringBuilder(ratingGroupName);
+		builder.append("(");
+		builder.append(reset ? 0 : this.viewController.getCurrentPenaltyForRatingGroup(ratingGroup));
+		if (ratingGroup.hasPenaltyLimit()) {
+			builder.append("/");
+			builder.append(ratingGroup.getPenaltyLimit());
+		}
+		builder.append(" penalty points");
+		viewElement.setText(builder.toString());
 	}
 
 	private IRatingGroup findRatingGroup(String ratingGroupName) {
@@ -247,19 +255,26 @@ public class ArtemisGradingView extends ViewPart {
 						ArtemisGradingView.this.errorTypesCreated = true;
 					}
 					if (ArtemisGradingView.this.submissionID == -1) {
-						this.openNoFurtherAssessmentDialog();
+						this.openExerciseCompletedDialog();
+					} else {
+						ArtemisGradingView.this.prepareNewAssessment();
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 
-			private void openNoFurtherAssessmentDialog() {
-				ExerciseCompletedDialog exerciseCompletedDialog = new ExerciseCompletedDialog(
-						AssessmentUtilities.getWindowsShell());
-				exerciseCompletedDialog.open();
+			private void openExerciseCompletedDialog() {
+				MessageDialog.openInformation(AssessmentUtilities.getWindowsShell(), "Exercise Completed!",
+						"No further assessment for current selected exercise.");
 			}
 		});
 
+	}
+
+	private void prepareNewAssessment() {
+		this.ratingGroups.forEach(ratingGroup -> {
+			this.updatePenalties(ratingGroup.getDisplayName(), true);
+		});
 	}
 }
