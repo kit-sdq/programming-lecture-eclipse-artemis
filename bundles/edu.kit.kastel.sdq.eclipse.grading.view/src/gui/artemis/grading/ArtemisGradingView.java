@@ -1,6 +1,7 @@
 package gui.artemis.grading;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -9,7 +10,6 @@ import java.util.Optional;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.layout.GridData;
@@ -40,25 +40,31 @@ public class ArtemisGradingView extends ViewPart {
 	private int submissionID;
 	private boolean errorTypesCreated;
 	private ScrolledComposite scrolledComposite;
+	private final String MARKER_NAME = "gui.assessment.marker";
 
 	public ArtemisGradingView() {
 		this.viewController = new AssessmentViewController();
 		this.ratingGroupViewElements = new HashMap<String, Group>();
 		this.errorTypesCreated = false;
-		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		this.addListenerForDeleteMarker();
+	}
+
+	private void addListenerForDeleteMarker() {
+		IWorkspace workspace = AssessmentUtilities.getWorkspace();
 		IResourceChangeListener listener = new IResourceChangeListener() {
+
 			@Override
 			public void resourceChanged(IResourceChangeEvent event) {
-				// Arrays.asList(event.findMarkerDeltas("gui.assessment.marker",
-				// true)).forEach(l -> {
-				// System.out.println("Kind:" + l.getKind());
-				// });
-				// System.out.println("length" + event.findMarkerDeltas("gui.assessment.marker",
-				// true).length);
+				Arrays.asList(event.findMarkerDeltas(ArtemisGradingView.this.MARKER_NAME, true)).forEach(marker -> {
+					if (marker.getKind() == 2) {
+						ArtemisGradingView.this.viewController.deleteAnnotation(marker.getId());
+					}
+				});
+
 			}
 		};
-		workspace.addResourceChangeListener(listener);
 
+		workspace.addResourceChangeListener(listener);
 	}
 
 	private void createCustomButton(IRatingGroup ratingGroup, Group rgDisplay, Composite parent) {

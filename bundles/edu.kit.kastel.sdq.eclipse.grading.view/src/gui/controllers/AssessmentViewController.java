@@ -166,4 +166,8 @@ public class AssessmentViewController {
 		this.submissionID = submissionID;
 	}
 
+	public void deleteAnnotation(long id) {
+		this.assessmentController.removeAnnotation((int) id);
+	}
+
 }
