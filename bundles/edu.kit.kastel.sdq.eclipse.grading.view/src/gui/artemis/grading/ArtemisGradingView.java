@@ -15,11 +15,11 @@ import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.part.ViewPart;
 
@@ -86,19 +86,20 @@ public class ArtemisGradingView extends ViewPart {
 		listHolder.setLayout(new GridLayout(2, true));
 		Label courseListLabel = new Label(listHolder, SWT.NONE);
 		courseListLabel.setText("Courses:");
-		final List courseList = new List(listHolder, SWT.SINGLE | SWT.BORDER | SWT.V_SCROLL);
+		final Combo courseList = new Combo(listHolder, SWT.SINGLE | SWT.BORDER | SWT.V_SCROLL);
 		Label exerciseListLabel = new Label(listHolder, SWT.NONE);
 		exerciseListLabel.setText("Exercises: ");
-		final List exerciseList = new List(listHolder, SWT.SINGLE | SWT.BORDER | SWT.V_SCROLL);
+		final Combo exerciseList = new Combo(listHolder, SWT.SINGLE | SWT.BORDER | SWT.V_SCROLL);
+		exerciseList.add("-placeholder-");
 		this.viewController.getCourses().forEach(course -> {
 			courseList.add(course.getTitle());
 		});
 		courseList.addListener(SWT.Selection, e -> {
-			this.createExerciseListInput(courseList.getSelection()[0], exerciseList);
+			this.createExerciseListInput(courseList.getItem(courseList.getSelectionIndex()), exerciseList);
 		});
 	}
 
-	private void createExerciseListInput(String courseTitle, List exerciseList) {
+	private void createExerciseListInput(String courseTitle, Combo exerciseList) {
 		exerciseList.removeAll();
 		Optional<ICourse> optionalCourse = this.viewController.getCourses().stream()
 				.filter(course -> course.getTitle().equals(courseTitle)).findFirst();
@@ -110,7 +111,7 @@ public class ArtemisGradingView extends ViewPart {
 		}
 		exerciseList.addListener(SWT.Selection, e -> {
 			optionalCourse.get().getExercises().forEach(exercise -> {
-				if (exercise.getShortName().equals(exerciseList.getSelection()[0])) {
+				if (exercise.getShortName().equals(exerciseList.getItem(exerciseList.getSelectionIndex()))) {
 					this.exerciseID = exercise.getExerciseId();
 				}
 			});
