@@ -8,14 +8,16 @@ import java.util.Collection;
  *
  */
 public interface ICourse {
-	//TODO noch id, name usw 
-	
-	public int getCourseId();
-	
-	public String getTitle();
-	
-	public String getShortName();
-	
-	public Collection<IExercise> getExercises();
+	//TODO noch id, name usw
+
+	int getCourseId();
+
+	Collection<IExam> getExams();
+
+	Collection<IExercise> getExercises();
+
+	String getShortName();
+
+	String getTitle();
 
 }

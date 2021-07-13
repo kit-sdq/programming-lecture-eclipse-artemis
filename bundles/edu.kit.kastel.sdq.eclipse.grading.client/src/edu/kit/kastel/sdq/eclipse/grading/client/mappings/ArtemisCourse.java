@@ -3,6 +3,7 @@ package edu.kit.kastel.sdq.eclipse.grading.client.mappings;
 import java.util.Collection;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.ICourse;
+import edu.kit.kastel.sdq.eclipse.grading.api.IExam;
 import edu.kit.kastel.sdq.eclipse.grading.api.IExercise;
 
 public class ArtemisCourse implements ICourse {
@@ -11,43 +12,44 @@ public class ArtemisCourse implements ICourse {
 	private String title;
 	private String shortName;
 	private Collection<IExercise> exercises;
-	
-	public ArtemisCourse(int courseId, String title, String shortName, Collection<IExercise> exercises) {
+	private Collection<IExam> exams;
+
+	public ArtemisCourse(int courseId, String title, String shortName, Collection<IExercise> exercises, Collection<IExam> exams) {
 		this.courseId = courseId;
 		this.title = title;
 		this.shortName = shortName;
 		this.exercises = exercises;
+		this.exams = exams;
 	}
-	
+
 	@Override
 	public int getCourseId() {
-		// TODO Auto-generated method stub
-		return courseId;
+		return this.courseId;
 	}
 
 	@Override
-	public String getTitle() {
-		// TODO Auto-generated method stub
-		return title;
-	}
-
-	@Override
-	public String getShortName() {
-		// TODO Auto-generated method stub
-		return shortName;
+	public Collection<IExam> getExams() {
+		return this.exams;
 	}
 
 	@Override
 	public Collection<IExercise> getExercises() {
-		// TODO Auto-generated method stub
-		return exercises;
+		return this.exercises;
+	}
+
+	@Override
+	public String getShortName() {
+		return this.shortName;
+	}
+
+	@Override
+	public String getTitle() {
+		return this.title;
 	}
 
 	@Override
 	public String toString() {
-		return "ArtemisCourse [courseId=" + courseId + ", title=" + title + ", shortName=" + shortName + ", exercises="
-				+ exercises + "]";
+		return "ArtemisCourse [courseId=" + this.courseId + ", title=" + this.title + ", shortName=" + this.shortName + ", exercises="
+				+ this.exercises + ", exams=" + this.exams + "]";
 	}
-	
-
 }

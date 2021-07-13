@@ -21,6 +21,7 @@ import edu.kit.kastel.sdq.eclipse.grading.client.rest.ArtemisRESTClient;
 import edu.kit.kastel.sdq.eclipse.grading.core.artemis.DefaultProjectFileNamingStrategy;
 import edu.kit.kastel.sdq.eclipse.grading.core.artemis.WorkspaceUtil;
 import testplugin_activateByShortcut.testConfig.AssessmentControllerTest;
+import testplugin_activateByShortcut.testConfig.CoursesTest;
 import testplugin_activateByShortcut.testConfig.LockAndSubmitTest;
 
 //import org.glassfish.jersey.jackson.
@@ -92,10 +93,14 @@ public class ShortcutHandler extends AbstractHandler {
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		final File eclipseWorkspaceRoot =  ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile();
-
+		final File configFile = new File(eclipseWorkspaceRoot, CONFIG_PATH);
 		// you need to import the file into a new Lala-Project.
-//		System.out.println("#####-- ConfigDaoTest --#####");
-//		new ConfigDaoTest(new JsonFileConfigDao(new File(eclipseWorkspaceRoot, CONFIG_PATH))).run();
+		System.out.println("##########--[                 CoursesTest                  ]--##########");
+		System.out.println(
+				new CoursesTest(configFile, "artemis-test.ipd.kit.edu", "uyduk", "arTem155").getCoursesTest()
+		);
+
+
 
 		System.out.println("##########--[           AssessmentControllerTest           ]--##########");
 		AssessmentControllerTest act = new AssessmentControllerTest(new File(eclipseWorkspaceRoot, CONFIG_PATH), "Final Task 1");
