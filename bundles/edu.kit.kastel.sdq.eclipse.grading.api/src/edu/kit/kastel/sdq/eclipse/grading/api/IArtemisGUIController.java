@@ -40,13 +40,23 @@ public interface IArtemisGUIController {
 	void startAssessment(int submissionID) throws Exception;
 
 	/**
-	 * Starts the next assessment. Which one is smh determined by artemis.
+	 * Starts the next assessment. Which one is smh determined by artemis. Correction Round is set to 0.
 	 * @param exerciseID the exerciseID (found in your ICourse-Collection gotten via IArtemisGUIController::getCourses())
 	 * @return
 	 * 		<li> the submissionID which defines what is assessed.
 	 * 		<li> Optional.empty(), if no assessment is left!
 	 */
 	Optional<Integer> startNextAssessment(int exerciseID) throws Exception;
+
+	/**
+	 * Starts the next assessment of the given correction round. Which one is smh determined by artemis.
+	 * @param exerciseID the exerciseID (found in your ICourse-Collection gotten via IArtemisGUIController::getCourses())
+	 * @param correctionRound for non-exams: 0. For exams: either 0 or 1 (TODO really? or (1,2) or (0,2)?? ==> find out..
+	 * @return
+	 * 		<li> the submissionID which defines what is assessed.
+	 * 		<li> Optional.empty(), if no assessment is left!
+	 */
+	Optional<Integer> startNextAssessment(int exerciseID, int correctionRound) throws Exception;
 
 	/**
 	 * Submit the assessment to Artemis. Must have been started by {@code startAssessment}, before.

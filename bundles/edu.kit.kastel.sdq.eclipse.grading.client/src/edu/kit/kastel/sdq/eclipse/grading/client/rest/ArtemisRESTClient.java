@@ -369,7 +369,7 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 	}
 
 	@Override
-	public Optional<ILockResult> startNextAssessment(int exerciseID) throws Exception {
+	public Optional<ILockResult> startNextAssessment(int exerciseID, int correctionRound) throws Exception {
 		this.checkAuthentication();
 		System.out.println("###startNextAssessment");
 
@@ -377,6 +377,7 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 				.path("exercises")
 				.path(String.valueOf(exerciseID))
 				.path("programming-submission-without-assessment")
+				.queryParam("correction-round", correctionRound)
 				.queryParam("lock", true)
 				.request().header("Authorization", this.id_token.get().getHeaderString())
 				.buildGet()

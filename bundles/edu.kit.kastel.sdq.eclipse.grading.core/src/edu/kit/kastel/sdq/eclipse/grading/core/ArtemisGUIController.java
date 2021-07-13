@@ -138,7 +138,12 @@ public class ArtemisGUIController implements IArtemisGUIController {
 
 	@Override
 	public Optional<Integer> startNextAssessment(int exerciseID) throws Exception {
-		final Optional<ILockResult> lockResultOptional = this.artemisClient.startNextAssessment(exerciseID);
+		return this.startNextAssessment(exerciseID, 0);
+	}
+
+	@Override
+	public Optional<Integer> startNextAssessment(int exerciseID, int correctionRound) throws Exception {
+		final Optional<ILockResult> lockResultOptional = this.artemisClient.startNextAssessment(exerciseID, correctionRound);
 		if (lockResultOptional.isEmpty()) return Optional.empty();
 		final ILockResult lockResult = lockResultOptional.get();
 
