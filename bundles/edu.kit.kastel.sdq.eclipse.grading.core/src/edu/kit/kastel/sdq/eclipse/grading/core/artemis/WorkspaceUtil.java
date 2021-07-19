@@ -43,5 +43,9 @@ public class WorkspaceUtil {
 		}
 	}
 
+	public static final void deleteEclipseProject(final String projectName) throws CoreException {
+		ResourcesPlugin.getWorkspace().getRoot().getProject(projectName).delete(true, null);
+	}
+
 	private WorkspaceUtil() {}
 }

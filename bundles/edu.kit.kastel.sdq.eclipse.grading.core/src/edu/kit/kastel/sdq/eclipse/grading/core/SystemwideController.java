@@ -5,12 +5,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import org.eclipse.core.runtime.CoreException;
+
 import edu.kit.kastel.sdq.eclipse.grading.api.IArtemisGUIController;
 import edu.kit.kastel.sdq.eclipse.grading.api.IAssessmentController;
 import edu.kit.kastel.sdq.eclipse.grading.api.ICourse;
 import edu.kit.kastel.sdq.eclipse.grading.api.IExercise;
 import edu.kit.kastel.sdq.eclipse.grading.api.ISubmission;
 import edu.kit.kastel.sdq.eclipse.grading.api.ISystemwideController;
+import edu.kit.kastel.sdq.eclipse.grading.core.artemis.WorkspaceUtil;
 import edu.kit.kastel.sdq.eclipse.grading.core.config.ConfigDao;
 import edu.kit.kastel.sdq.eclipse.grading.core.config.JsonFileConfigDao;
 
@@ -29,9 +32,21 @@ public class SystemwideController implements ISystemwideController {
 	}
 
 	@Override
+	public void deleteEclipseProject(String projectName) {
+		try {
+			WorkspaceUtil.deleteEclipseProject(projectName);
+		} catch (CoreException e) {
+			throw new RuntimeException(e.getMessage());
+			//TODO handle
+		}
+
+	}
+
+	@Override
 	public IArtemisGUIController getArtemisGUIController() {
 		return this.artemisGUIController;
 	}
+
 
 	@Override
 	public IAssessmentController getAssessmentController(int submissionID, String exerciseConfigName) {
@@ -50,7 +65,6 @@ public class SystemwideController implements ISystemwideController {
 
 		return this.getAssessmentController(submissionID, exerciseConfigName, courseID, exerciseID);
 	}
-
 
 	@Override
 	public IAssessmentController getAssessmentController(int submissionID, String exerciseConfigName, int courseID,
