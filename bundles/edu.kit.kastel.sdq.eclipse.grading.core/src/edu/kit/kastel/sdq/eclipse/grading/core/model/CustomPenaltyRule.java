@@ -4,29 +4,21 @@ import java.util.List;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.IAnnotation;
 
-/**
- * A Penalty which returns only one Annotation.
- *
- */
-public class ThresholdPenaltyRule extends PenaltyRule {
+public class CustomPenaltyRule extends PenaltyRule {
 
-	private static final String DISPLAY_NAME = "Threshold Penalty";
-	public static final String SHORT_NAME = "thresholdPenalty";
+	private static final String DISPLAY_NAME = "Custom Penalty";
+	public static final String SHORT_NAME = "customPenalty";
 
-	private int threshold;
-	private double penalty;
-
-
-	public ThresholdPenaltyRule(int threshold, double penalty) {
-		this.threshold = threshold;
-		this.penalty = penalty;
-	}
+	public CustomPenaltyRule() { }
 
 	@Override
 	public double calculatePenalty(List<IAnnotation> annotations) {
-		return Math.abs((annotations.size() >= this.threshold)
-			? this.penalty
-			: 0.D);
+		if (annotations != null) {
+			return annotations.stream()
+					.map(annotation -> annotation.getCustomPenalty().orElseGet(() -> 0.D))
+					.reduce(0.D, Double::sum);
+		}
+		return 0.D;
 	}
 
 	@Override
@@ -45,16 +37,15 @@ public class ThresholdPenaltyRule extends PenaltyRule {
 				.append(this.calculatePenalty(annotations))
 				.append(" points [")
 				.append(annotations.size())
-				.append(" of at least ")
-				.append(this.threshold)
 				.append(" annotations made]")
 				.toString();
 	}
 
 	@Override
 	public String toString() {
-		return "ThresholdPenaltyRule [threshold=" + this.threshold + ", penalty=" + this.penalty + "]";
+		return "CustomPenaltyRule";
 	}
+
 
 
 }

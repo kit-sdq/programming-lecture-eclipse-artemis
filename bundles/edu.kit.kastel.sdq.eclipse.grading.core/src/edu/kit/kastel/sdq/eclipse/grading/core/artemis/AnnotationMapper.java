@@ -5,6 +5,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -157,9 +158,7 @@ public class AnnotationMapper {
 
 	private Feedback createNewManualFeedback(IAnnotation annotation) {
 		// manual feedbacks do not have no credits!
-//		final String text = "File src/edu/kit/informatik/BubbleSort at line 11";
-//		final String reference = "file:src/edu/kit/informatik/BubbleSort.java_line:10";
-//		final String detailText = " SENT FROM ZE ECLIPSE CLIENT (BubbleSort CodeRef)";
+		final Optional<String> customMessageOptional = annotation.getCustomMessage();
 		final String text = new StringBuilder()
 				.append("File ")
 				.append(annotation.getClassFilePath())
@@ -179,8 +178,7 @@ public class AnnotationMapper {
 				.append(annotation.getMistakeType().getButtonName())
 				.append("] ")
 				.append(annotation.getMistakeType().getMessage())
-				.append("\n")
-				.append(annotation.getCustomMessage().orElse(""))
+				.append(annotation.getCustomMessage().orElse(""))	//assuming mistake type has no message in custom case!
 				.toString();
 
 		return new Feedback(FeedbackType.MANUAL.toString(), 0D, null, null, null, text, reference, detailText);

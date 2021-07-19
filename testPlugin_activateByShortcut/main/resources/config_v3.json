@@ -24,6 +24,24 @@
         ],
         "mistakeTypes": [
             {
+                "shortName": "custom_understandability",
+                "button": "Custom Penalty",
+                "message": "",
+                "penaltyRule": {
+                    "shortName": "customPenalty"
+                },
+                "appliesTo": "understandability"
+            },
+            {
+                "shortName": "custom_style",
+                "button": "Custom Penalty",
+                "message": "",
+                "penaltyRule": {
+                    "shortName": "customPenalty"
+                },
+                "appliesTo": "style"
+            },
+            {
                 "shortName": "mixedAlgo",
                 "button": "Algorithmus/Datenstruktur",
                 "message": "Graphstrukturen und Algorithmus sind stark vermischt",
@@ -93,6 +111,15 @@
             }
         ],
         "mistakeTypes": [
+            {
+                "shortName": "custom",
+                "button": "Custom Penalty",
+                "message": "",
+                "penaltyRule": {
+                    "shortName": "customPenalty"
+                },
+                "appliesTo": "style"
+            },
             {
                 "shortName": "jdEmpty",
                 "button": "JavaDoc Leer",

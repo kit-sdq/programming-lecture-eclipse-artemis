@@ -21,7 +21,6 @@ import edu.kit.kastel.sdq.eclipse.grading.client.rest.ArtemisRESTClient;
 import edu.kit.kastel.sdq.eclipse.grading.core.artemis.DefaultProjectFileNamingStrategy;
 import edu.kit.kastel.sdq.eclipse.grading.core.artemis.WorkspaceUtil;
 import testplugin_activateByShortcut.testConfig.AssessmentControllerTest;
-import testplugin_activateByShortcut.testConfig.CoursesTest;
 import testplugin_activateByShortcut.testConfig.LockAndSubmitTest;
 
 //import org.glassfish.jersey.jackson.
@@ -39,15 +38,11 @@ public class ShortcutHandler extends AbstractHandler {
 		submissionIds.add(79);
 		try {
 			Collection<ICourse> courses = artemisClient.getCourses();
-//			this.coursesTest(courses);
-//			this.downloadExerciseTest(artemisClient, courses, 1, 1);
 
-
-//			new LockAndSubmitTest(credentials.L, credentials.R, "artemis-test.ipd.kit.edu").test();
-//			new LockAndSubmitTest(credentials.L, credentials.R, "artemis-test.ipd.kit.edu").testShowcase();
 			new LockAndSubmitTest(credentials.L, credentials.R, "artemis-test.ipd.kit.edu")
 				.testNextAssessment()
-				.testAnnotationsDeserialized();
+//				.testAnnotationsDeserialized()
+				;
 
 
 
@@ -97,18 +92,17 @@ public class ShortcutHandler extends AbstractHandler {
 		// you need to import the file into a new Lala-Project.
 		System.out.println("##########--[                 CoursesTest                  ]--##########");
 		System.out.println(
-				new CoursesTest(configFile, "artemis-test.ipd.kit.edu", "uyduk", "arTem155").getCoursesTest()
+//				new CoursesTest(configFile, "artemis-test.ipd.kit.edu", "uyduk", "arTem155").getCoursesTest()
 		);
 
 
 
 		System.out.println("##########--[           AssessmentControllerTest           ]--##########");
 		AssessmentControllerTest act = new AssessmentControllerTest(new File(eclipseWorkspaceRoot, CONFIG_PATH), "Final Task 1");
-		act.testConfigLoading();
-		act.testMistakesEtc();
+//		act.testConfigLoading();
+//		act.testMistakesEtc();
 
 		System.out.println("##########--[                 ArtemisTest                  ]--##########");
-
 		this.artemisTest();
 		return null;
 	}

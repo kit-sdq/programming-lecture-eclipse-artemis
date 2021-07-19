@@ -62,7 +62,12 @@ public class AssessmentControllerTest {
 
 			for (IMistakeType mistakeType : mistakeTypes) {
 				System.out.println("  Testing mistakeType " + mistakeType.toString());
-				this.assessmentController.addAnnotation(idcount++, mistakeType, 0, 22, "class.name", null, null);
+				//todo add custom shit
+				if (mistakeType.getButtonName().equals("Custom Penalty")) {
+					this.assessmentController.addAnnotation(idcount++, mistakeType, 0, 22, "class.name", "myCustomMessage", 25D);
+				} else {
+					this.assessmentController.addAnnotation(idcount++, mistakeType, 0, 22, "class.name", null, null);
+				}
 			}
 		} catch (Exception e) { }
 

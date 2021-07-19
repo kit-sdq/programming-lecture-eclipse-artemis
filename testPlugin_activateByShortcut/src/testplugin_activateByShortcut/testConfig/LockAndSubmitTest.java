@@ -49,13 +49,20 @@ public class LockAndSubmitTest {
 		for (IMistakeType mistakeType : sysController.getAssessmentController(submissionID, exerciseConfigShortName).getMistakes()) {
 			if (i >= 10) break;
 			i++;
+			String customMsg = null;
+			Double customPenalty = null;
+			if (mistakeType.getButtonName().equals("Custom Penalty")) {
+				customMsg = "my_CUSTOM_MESSAGE";
+				customPenalty = 25D;
+			}
+
 			sysController.getAssessmentController(submissionID, exerciseConfigShortName).addAnnotation(
 					i,
 					mistakeType,
 					i*2,
 					i*2, "src/edu/kit/informatik/BubbleSort",
-					null,
-					null);
+					customMsg,
+					customPenalty);
 		}
 
 		System.out.println("++++++++++++++  Added the following annotations"
