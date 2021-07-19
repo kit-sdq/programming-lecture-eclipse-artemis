@@ -70,6 +70,14 @@ public abstract class AbstractArtemisClient {
 	public abstract Collection<ICourse> getCourses() throws Exception;
 
 	/**
+	 * Submit the assessment to Artemis. Must have been started by {@code startAssessment}, before!
+	 * @param participationID THOU SHALT NOT PROVIDE THE SUBMISSIONID, HERE!
+ * 							The participationID can be gotten from the ILockResult (AbstractArtemisClient::startAssessment)!
+	 * @param payload the payload formatted correctly.
+	 */
+	public abstract void saveAssessment(int participationID, boolean submit, String payload) throws AuthenticationException;
+
+	/**
 	 * Starts an assessment for the given submission. Acquires a lock in the process.
 	 * @param submissionID
 	 * @throws Exception TODO create an exception type!
@@ -90,12 +98,4 @@ public abstract class AbstractArtemisClient {
 	 * 		<li> null, if no submission left to correct
 	 */
 	public abstract Optional<ILockResult> startNextAssessment(int exerciseID, int correctionRound) throws Exception;
-
-	/**
-	 * Submit the assessment to Artemis. Must have been started by {@code startAssessment}, before!
-	 * @param participationID THOU SHALT NOT PROVIDE THE SUBMISSIONID, HERE!
- * 							The participationID can be gotten from the ILockResult (AbstractArtemisClient::startAssessment)!
-	 * @param payload the payload formatted correctly.
-	 */
-	public abstract void submitAssessment(int participationID, String payload) throws AuthenticationException;
 }

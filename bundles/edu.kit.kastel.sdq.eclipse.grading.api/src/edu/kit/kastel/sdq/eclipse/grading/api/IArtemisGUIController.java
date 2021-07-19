@@ -34,6 +34,15 @@ public interface IArtemisGUIController {
 	Collection<IFeedback> getPrecalculatedAutoFeedbacks(int submissionID);
 
 	/**
+	 * Submit the assessment to Artemis. Must have been started by {@code startAssessment}, before.
+	 * @param submissionID
+	 * @param submit should the assessment be submitted or merely saved to artemis?
+	 * @param invalidSubmission is the submission invalid? Will return 0 points.
+	 * @param exerciseName the exercise name is used to internally identify which annotations should be sent.
+	 */
+	void saveAssessment(int submissionID, boolean submit, boolean invalidSubmission) throws Exception;
+
+	/**
 	 * Starts an assessment for the given submission
 	 * @param submissionID
 	 */
@@ -57,11 +66,4 @@ public interface IArtemisGUIController {
 	 * 		<li> Optional.empty(), if no assessment is left!
 	 */
 	Optional<Integer> startNextAssessment(int exerciseID, int correctionRound) throws Exception;
-
-	/**
-	 * Submit the assessment to Artemis. Must have been started by {@code startAssessment}, before.
-	 * @param submissionID
-	 * @param exerciseName the exercise name is used to internally identify which annotations should be sent.
-	 */
-	void submitAssessment(int submissionID) throws Exception;
 }

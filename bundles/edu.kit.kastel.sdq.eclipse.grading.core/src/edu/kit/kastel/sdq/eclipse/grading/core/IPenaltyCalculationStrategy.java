@@ -11,4 +11,6 @@ public interface IPenaltyCalculationStrategy {
 
 	boolean penaltyLimitIsHitForRatingGroup(IRatingGroup ratingGroup);
 
+	boolean submissionIsInvalid();
+
 }

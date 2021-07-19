@@ -51,9 +51,11 @@ public class AnnotationMapper {
 	}
 
 	private Collection<IFeedback> calculateAllFeedbacks() {
+		final boolean submissionIsInvalid = this.penaltyCalculationStrategy.submissionIsInvalid();
+
 		final List<IFeedback> result = new LinkedList();
 		result.addAll(this.getFilteredPreexistentFeedbacks(FeedbackType.AUTOMATIC));
-		result.addAll(this.calculateManualFeedbacks());
+		result.addAll( submissionIsInvalid ? this.calculateInvalidManualFeedback() : this.calculateManualFeedbacks());
 
 		try {
 			result.add(this.calculateAnnotationSerialitationAsFeedback());
@@ -70,6 +72,16 @@ public class AnnotationMapper {
 				.writeValueAsString(this.annotations);
 		System.out.println("DEBUG in calculateAnnotationSerialitationAsFeedback:\n" + annotationsJSONString);
 		return new Feedback(FeedbackType.MANUAL_UNREFERENCED.name(), 0D, null, null, "NEVER", "CLIENT_DATA", null, annotationsJSONString);
+	}
+
+	private Collection<Feedback> calculateInvalidManualFeedback() {
+		final Collection<Feedback> manualFeedbacks = new LinkedList<Feedback>();
+		manualFeedbacks.add(
+				new Feedback(IFeedback.FeedbackType.MANUAL_UNREFERENCED.name(),
+						0.D,
+						null, null, null, null, null, "Invalid Submission.")
+		);
+		return manualFeedbacks;
 	}
 
 	private Collection<Feedback> calculateManualFeedbacks() {
@@ -130,12 +142,16 @@ public class AnnotationMapper {
 	}
 
 	private AssessmentResult createAssessmentResult() {
+		final boolean submissionIsInvalid = this.penaltyCalculationStrategy.submissionIsInvalid();
 		// only add preexistent automatic feedback (unit tests etc) and manual feedback.										arTem155
+		//this should work indepently of invalid or not. if invalid, there should just be no feedbacks.
 		final Collection<IFeedback> allFeedbacks = this.calculateAllFeedbacks();
-		final double absoluteScore = this.calculateAbsoluteScore(allFeedbacks);
-		final double relativeScore = this.calculateRelativeScore(absoluteScore);
+		final double absoluteScore = submissionIsInvalid ? 0.D : this.calculateAbsoluteScore(allFeedbacks);
+		final double relativeScore = submissionIsInvalid ? 0.D : this.calculateRelativeScore(absoluteScore);
 
-		return new AssessmentResult(this.lockResult.getSubmissionID(), this.calculateResultString(allFeedbacks, absoluteScore), "SEMI_AUTOMATIC",
+		return new AssessmentResult(
+				this.lockResult.getSubmissionID(),
+				this.calculateResultString(allFeedbacks, absoluteScore), "SEMI_AUTOMATIC",
 				relativeScore, true, true, null, this.assessor, allFeedbacks);
 	}
 

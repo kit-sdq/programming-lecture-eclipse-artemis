@@ -49,4 +49,9 @@ public class DefaultPenaltyCalculationStrategy implements IPenaltyCalculationStr
 		return (this.calculatePenaltyForRatingGroupWithoutLimit(ratingGroup) > ratingGroup.getPenaltyLimit());
 	}
 
+	@Override
+	public boolean submissionIsInvalid() {
+		return false;
+	}
+
 }

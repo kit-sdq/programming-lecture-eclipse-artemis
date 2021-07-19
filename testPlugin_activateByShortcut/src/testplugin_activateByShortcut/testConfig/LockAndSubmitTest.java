@@ -96,7 +96,7 @@ public class LockAndSubmitTest {
 				.mapToJsonFormattedString();
 		System.out.println("Got mapped config!\n" + mapped);
 
-		this.artemisClient.submitAssessment(3, mapped);
+		this.artemisClient.saveAssessment(3, true, mapped);
 
 
 	}
@@ -137,7 +137,7 @@ public class LockAndSubmitTest {
 
 		this.addSomeFakeAssessments(sysController, submissionID, exerciseConfigShortName);
 
-		sysController.getArtemisGUIController().submitAssessment(submissionID);
+		sysController.getArtemisGUIController().saveAssessment(submissionID, true, false);
 
 		return this;
 	}
@@ -162,7 +162,7 @@ public class LockAndSubmitTest {
 
 		//start and submit the assessment
 		sysController.getArtemisGUIController().startAssessment(submissionID);
-		sysController.getArtemisGUIController().submitAssessment(submissionID);
+		sysController.getArtemisGUIController().saveAssessment(submissionID, true, false);
 
 		return this;
 	}

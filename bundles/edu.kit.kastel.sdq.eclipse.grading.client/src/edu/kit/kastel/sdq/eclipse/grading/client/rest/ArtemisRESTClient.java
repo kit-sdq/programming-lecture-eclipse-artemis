@@ -352,6 +352,25 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 	}
 
 	@Override
+	public void saveAssessment(int participationID, boolean submit, String payload) throws AuthenticationException {
+		this.checkAuthentication();
+
+		System.out.println("######################################################SUBMIT ASSESSMAENT DEBUG with\n" + payload);
+
+
+		// /api/users/{login}
+		final Response rsp = this.rootApiTarget
+				.path("participations")
+				.path(Integer.toString(participationID))
+				.path("manual-results")
+				.queryParam("submit", submit)
+				.request().header("Authorization", this.id_token.get().getHeaderString())
+				.buildPut(this.toJsonStringEntity(payload))
+				.invoke(); // synchronous variant
+		this.throwIfStatusUnsuccessful(rsp);
+	}
+
+	@Override
 	public ILockResult startAssessment(int submissionID) throws Exception {
 		this.checkAuthentication();
 
@@ -388,25 +407,6 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 		}
 
 		return Optional.of(this.parseLockResult(rsp.readEntity(String.class)));
-	}
-
-	@Override
-	public void submitAssessment(int participationID, String payload) throws AuthenticationException {
-		this.checkAuthentication();
-
-		System.out.println("######################################################SUBMIT ASSESSMAENT DEBUG with\n" + payload);
-
-
-		// /api/users/{login}
-		final Response rsp = this.rootApiTarget
-				.path("participations")
-				.path(Integer.toString(participationID))
-				.path("manual-results")
-				.queryParam("submit", true)
-				.request().header("Authorization", this.id_token.get().getHeaderString())
-				.buildPut(this.toJsonStringEntity(payload))
-				.invoke(); // synchronous variant
-		this.throwIfStatusUnsuccessful(rsp);
 	}
 
 	private void throwIfStatusUnsuccessful(final Response response) throws AuthenticationException {

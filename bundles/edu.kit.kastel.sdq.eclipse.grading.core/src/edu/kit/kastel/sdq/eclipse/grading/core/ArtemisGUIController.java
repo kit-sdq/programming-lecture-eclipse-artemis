@@ -132,6 +132,37 @@ public class ArtemisGUIController implements IArtemisGUIController {
 	}
 
 	@Override
+	public void saveAssessment(int submissionID, boolean submit, boolean invalidSubmission) throws Exception {
+		final IAssessmentController assessmentController = this.systemwideController.getAssessmentController(submissionID, null);
+		if (!this.lockResults.containsKey(submissionID))
+			throw new IllegalStateException("Assessment not started, yet!");
+		final ILockResult lockResult = this.lockResults.get(submissionID);
+		final int participationID = lockResult.getParticipationID();
+
+		final Collection<IAnnotation> annotations = assessmentController.getAnnotations();
+		final Collection<IMistakeType> mistakeTypes = assessmentController.getMistakes();
+
+		this.artemisClient.saveAssessment(
+			participationID,
+			submit,
+			new AnnotationMapper(
+					annotations,
+					mistakeTypes,
+					assessmentController.getRatingGroups(),
+					this.artemisClient.getAssessor(),
+					lockResult,
+					invalidSubmission
+						? new ZeroedPenaltyCalculationStrategy()
+						: new DefaultPenaltyCalculationStrategy(annotations, mistakeTypes))
+			.mapToJsonFormattedString()
+		);
+
+		if (submit) {
+			this.lockResults.remove(submissionID);
+		}
+	}
+
+	@Override
 	public void startAssessment(int submissionID) throws Exception {
 		this.lockResults.put(submissionID, this.artemisClient.startAssessment(submissionID));
 	}
@@ -150,30 +181,5 @@ public class ArtemisGUIController implements IArtemisGUIController {
 		final int submissionID = lockResult.getSubmissionID();
 		this.lockResults.put(submissionID, lockResult);
 		return Optional.of(submissionID);
-	}
-
-	@Override
-	public void submitAssessment(int submissionID) throws Exception {
-		final IAssessmentController assessmentController = this.systemwideController.getAssessmentController(submissionID, null);
-		if (!this.lockResults.containsKey(submissionID))
-			throw new IllegalStateException("Assessment not started, yet!");
-		final ILockResult lockResult = this.lockResults.get(submissionID);
-		final int participationID = lockResult.getParticipationID();
-
-		final Collection<IAnnotation> annotations = assessmentController.getAnnotations();
-		final Collection<IMistakeType> mistakeTypes = assessmentController.getMistakes();
-
-		this.artemisClient.submitAssessment(participationID,
-			new AnnotationMapper(
-					annotations,
-					mistakeTypes,
-					assessmentController.getRatingGroups(),
-					this.artemisClient.getAssessor(),
-					lockResult,
-					new DefaultPenaltyCalculationStrategy(annotations, mistakeTypes))
-			.mapToJsonFormattedString());
-
-		//TODO only if successful!
-		this.lockResults.remove(submissionID);
 	}
 }
