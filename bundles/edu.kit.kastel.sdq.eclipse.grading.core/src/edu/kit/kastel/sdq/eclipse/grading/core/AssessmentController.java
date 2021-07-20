@@ -244,7 +244,8 @@ public class AssessmentController implements IAssessmentController {
 		try {
 			this.initializeWithDeserializedAnnotations();
 		} catch (IOException e) {
-			this.alertObservable.warn("Deserializing Annotations from Artemis failed (most likely none were present)!");
+			this.alertObservable.warn("Deserializing Annotations from Artemis failed: " + e.getMessage());
+			e.printStackTrace();
 		}
 	}
 }
