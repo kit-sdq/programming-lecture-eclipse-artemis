@@ -9,7 +9,10 @@ import edu.kit.kastel.sdq.eclipse.grading.api.IAnnotation;
 import edu.kit.kastel.sdq.eclipse.grading.api.IAssessmentController;
 import edu.kit.kastel.sdq.eclipse.grading.api.IMistakeType;
 import edu.kit.kastel.sdq.eclipse.grading.api.IRatingGroup;
+import edu.kit.kastel.sdq.eclipse.grading.api.alerts.IAlertObservable;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IFeedback;
 import edu.kit.kastel.sdq.eclipse.grading.core.annotation.AnnotationDao;
+import edu.kit.kastel.sdq.eclipse.grading.core.annotation.AnnotationException;
 import edu.kit.kastel.sdq.eclipse.grading.core.annotation.JsonFileAnnotationDao;
 import edu.kit.kastel.sdq.eclipse.grading.core.artemis.AnnotationDeserializer;
 import edu.kit.kastel.sdq.eclipse.grading.core.config.ConfigDao;
@@ -23,6 +26,8 @@ public class AssessmentController implements IAssessmentController {
 	private int submissionID;
 	private JsonFileConfigDao configDao;
 	private AnnotationDao annotationDao;
+
+	private AlertObservable alertObservable;
 
 	private final int courseID;
 	private final int exerciseID;
@@ -42,6 +47,9 @@ public class AssessmentController implements IAssessmentController {
 		this.systemWideController = systemWideController;
 		this.submissionID = submissionID;
 		this.annotationDao = new JsonFileAnnotationDao();
+
+		this.alertObservable = new AlertObservable();
+
 		this.exerciseID = exerciseID;
 		this.courseID = courseID;
 
@@ -49,28 +57,37 @@ public class AssessmentController implements IAssessmentController {
 
 		try {
 			this.initializeWithDeserializedAnnotations();
-		} catch (Exception e) {
-			System.err.println("Warning: Deserializing Annotations from Artemis failed (most likely none were present)!");
+		} catch (IOException e) {
+			this.alertObservable.warn("Deserializing Annotations from Artemis failed (most likely none were present)!");
 		}
 	}
 
 	@Override
 	public void addAnnotation(int annotationID, IMistakeType mistakeType, int startLine, int endLine, String fullyClassifiedClassName,
-			String customMessage, Double customPenalty) throws Exception {
-		this.annotationDao.addAnnotation(annotationID, mistakeType, startLine, endLine, fullyClassifiedClassName, customMessage, customPenalty);
+			String customMessage, Double customPenalty) {
+		try {
+			this.annotationDao.addAnnotation(annotationID, mistakeType, startLine, endLine, fullyClassifiedClassName, customMessage, customPenalty);
+		} catch (AnnotationException e) {
+			this.alertObservable.error(e.getMessage(), e);
+		}
 
 	}
 
 	@Override
-	public double calculateCurrentPenaltyForMistakeType(IMistakeType mistakeType) throws IOException {
+	public double calculateCurrentPenaltyForMistakeType(IMistakeType mistakeType) {
 		return new DefaultPenaltyCalculationStrategy(this.getAnnotations(), this.getMistakes())
 				.calculatePenaltyForMistakeType(mistakeType);
 	}
 
 	@Override
-	public double calculateCurrentPenaltyForRatingGroup(IRatingGroup ratingGroup) throws IOException {
+	public double calculateCurrentPenaltyForRatingGroup(IRatingGroup ratingGroup) {
 		return new DefaultPenaltyCalculationStrategy(this.getAnnotations(), this.getMistakes())
 				.calcultatePenaltyForRatingGroup(ratingGroup);
+	}
+
+	@Override
+	public IAlertObservable getAlertObservable() {
+		return this.alertObservable;
 	}
 
 	@Override
@@ -109,26 +126,41 @@ public class AssessmentController implements IAssessmentController {
 	}
 
 	@Override
-	public Collection<IMistakeType> getMistakes() throws IOException {
-		final Optional<ExerciseConfig> exerciseConfigOptional = this.getConfigDao().getExerciseConfigs().stream()
-				.filter(exerciseConfig -> exerciseConfig.getShortName().equals(this.exerciseConfigShortName))
-				.findFirst();
+	public Collection<IMistakeType> getMistakes(){
+		Optional<ExerciseConfig> exerciseConfigOptional;
+		try {
+			exerciseConfigOptional = this.getConfigDao().getExerciseConfigs().stream()
+					.filter(exerciseConfig -> exerciseConfig.getShortName().equals(this.exerciseConfigShortName))
+					.findFirst();
+		} catch (IOException e) {
+			this.alertObservable.error(e.getMessage(), e);
+			return null;
+		}
+
 		if (exerciseConfigOptional.isPresent()) {
 			return exerciseConfigOptional.get().getIMistakeTypes();
 		}
-		throw new IOException("Exercise not found in config!");
+		this.alertObservable.error("ExerciseConfigShortName " + this.exerciseConfigShortName + " not found in config!", null);
+		return null;
 	}
 
 	@Override
-	public Collection<IRatingGroup> getRatingGroups() throws IOException {
+	public Collection<IRatingGroup> getRatingGroups() {
 
-		final Optional<ExerciseConfig> exerciseConfigOptional = this.getConfigDao().getExerciseConfigs().stream()
-				.filter(exerciseConfig -> exerciseConfig.getShortName().equals(this.exerciseConfigShortName))
-				.findFirst();
+		Optional<ExerciseConfig> exerciseConfigOptional;
+		try {
+			exerciseConfigOptional = this.getConfigDao().getExerciseConfigs().stream()
+					.filter(exerciseConfig -> exerciseConfig.getShortName().equals(this.exerciseConfigShortName))
+					.findFirst();
+		} catch (IOException e) {
+			this.alertObservable.error(e.getMessage(), e);
+			return null;
+		}
 		if (exerciseConfigOptional.isPresent()) {
 			return exerciseConfigOptional.get().getIRatingGroups();
 		}
-		throw new IOException("Exercise not found in config!");
+		this.alertObservable.error("ExerciseConfigShortName " + this.exerciseConfigShortName + " not found in config!", null);
+		return null;
 	}
 
 	public int getSubmissionID() {
@@ -136,17 +168,21 @@ public class AssessmentController implements IAssessmentController {
 	}
 
 	@Override
-	public String getTooltipForMistakeType(IMistakeType mistakeType) throws IOException {
+	public String getTooltipForMistakeType(IMistakeType mistakeType) {
 		return mistakeType.getTooltip(this.getAnnotations().stream()
 				.filter(annotation -> annotation.getMistakeType().equals(mistakeType))
 				.collect(Collectors.toList())
 		);
 	}
 
-	private void initializeWithDeserializedAnnotations() throws Exception {
-		AnnotationDeserializer annotationDeserializer = new AnnotationDeserializer(this.getMistakes());
+	private void initializeWithDeserializedAnnotations() throws IOException {
+		final AnnotationDeserializer annotationDeserializer = new AnnotationDeserializer(this.getMistakes());
+		final Collection<IFeedback> allFeedbacksGottenFromLocking = this.systemWideController.getArtemisGUIController().getAllFeedbacksGottenFromLocking(this.submissionID);
+		if (allFeedbacksGottenFromLocking == null) {
+			throw new IOException("No feedbacks gotten from locking could be acquired.");
+		}
 
-		for (IAnnotation annotation : annotationDeserializer.deserialize(this.systemWideController.getArtemisGUIController().getAllFeedbacksGottenFromLocking(this.submissionID))) {
+		for (IAnnotation annotation : annotationDeserializer.deserialize(allFeedbacksGottenFromLocking)) {
 			this.addAnnotation(
 					annotation.getId(),
 					annotation.getMistakeType(),

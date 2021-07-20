@@ -47,7 +47,6 @@ public class SystemwideController implements ISystemwideController {
 		return this.artemisGUIController;
 	}
 
-
 	@Override
 	public IAssessmentController getAssessmentController(int submissionID, String exerciseConfigName) {
 		Integer courseID = null;

@@ -1,21 +1,43 @@
 package testplugin_activateByShortcut.testConfig;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Collection;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.IAnnotation;
 import edu.kit.kastel.sdq.eclipse.grading.api.IAssessmentController;
 import edu.kit.kastel.sdq.eclipse.grading.api.IMistakeType;
+import edu.kit.kastel.sdq.eclipse.grading.api.alerts.IAlertObserver;
 import edu.kit.kastel.sdq.eclipse.grading.core.SystemwideController;
 import edu.kit.kastel.sdq.eclipse.grading.core.model.MistakeType;
 
 public class AssessmentControllerTest {
 
 	private IAssessmentController assessmentController;
+	private IAlertObserver myAlertObserver = new IAlertObserver() {
+
+		String prefix = "[MyAlertObserver] ";
+		@Override
+		public void error(String errorMsg, Throwable cause) {
+			System.out.println(this.prefix + errorMsg);
+			if (cause != null) cause.printStackTrace();
+		}
+
+		@Override
+		public void info(String infoMsg) {
+			System.out.println(this.prefix + infoMsg);
+		}
+
+		@Override
+		public void warn(String warningMsg) {
+			System.out.println(this.prefix + warningMsg);
+		}
+	};
 
 	public AssessmentControllerTest(File configFile, String exerciseName) {
-		this.assessmentController = new SystemwideController(configFile, null, null, null).getAssessmentController(5555, exerciseName, -1, -1);
+		SystemwideController sysC = new SystemwideController(configFile, null, null, null);
+		this.assessmentController = sysC.getAssessmentController(5555, exerciseName, -1, -1);
+		this.assessmentController.getAlertObservable().addAlertObserver(this.myAlertObserver);
+		sysC.getArtemisGUIController().getAlertObservable().addAlertObserver(this.myAlertObserver);
 	}
 
 	private void printAnnotations(Collection<IAnnotation> annos, String space) {
@@ -23,35 +45,22 @@ public class AssessmentControllerTest {
 	}
 
 	private void printCalculatedPenaltiesForMistakesAndRatingGroups() {
-		try {
-			System.out.println("-- Rating Groups caluclated Penalties --");
-			this.assessmentController.getRatingGroups()
-			.forEach(ratingGroup -> {
-					try {
-						System.out.println( "[" + ratingGroup + "]\n    " +
-								this.assessmentController.calculateCurrentPenaltyForRatingGroup(ratingGroup));
-					} catch (IOException e) {}
-				});
+		System.out.println("-- Rating Groups caluclated Penalties --");
+		this.assessmentController.getRatingGroups()
+		.forEach(ratingGroup -> {
+			System.out.println( "[" + ratingGroup + "]\n    " +
+					this.assessmentController.calculateCurrentPenaltyForRatingGroup(ratingGroup));
+		});
+		System.out.println("-- Mistakes caluclated Penalties --");
 
-			System.out.println("-- Mistakes caluclated Penalties --");
-
-			this.assessmentController.getMistakes().forEach(mistakeType -> {
-				try {
-					System.out.println( "[" + mistakeType + "]\n   " +
-							this.assessmentController.calculateCurrentPenaltyForMistakeType(mistakeType));
-				} catch (IOException e) {}
-			});
-		} catch (IOException e) { }
+		this.assessmentController.getMistakes().forEach(mistakeType -> {
+			System.out.println( "[" + mistakeType + "]\n   " +
+					this.assessmentController.calculateCurrentPenaltyForMistakeType(mistakeType));
+		});
 	}
 
 	public void testConfigLoading() {
-		// test config stuf
-		try {
-			System.out.println("mistakes from ass controller: " +this.assessmentController.getMistakes());
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		System.out.println("mistakes from ass controller: " +this.assessmentController.getMistakes());
 	}
 
 	public void testMistakesEtc() {

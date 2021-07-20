@@ -19,8 +19,8 @@ public class JsonFileAnnotationDao implements AnnotationDao {
 
 	@Override
 	public void addAnnotation(int annotationID, IMistakeType mistakeType, int startLine, int endLine, String fullyClassifiedClassName,
-			String customMessage, Double customPenalty) throws Exception {
-		if (this.idExists(annotationID)) throw new Exception("ID " + annotationID + " already exists!");
+			String customMessage, Double customPenalty) throws AnnotationException {
+		if (this.idExists(annotationID)) throw new AnnotationException("ID " + annotationID + " already exists!");
 
 		this.annotations.add(
 				new Annotation(annotationID, mistakeType, startLine, endLine, fullyClassifiedClassName, customMessage, customPenalty));

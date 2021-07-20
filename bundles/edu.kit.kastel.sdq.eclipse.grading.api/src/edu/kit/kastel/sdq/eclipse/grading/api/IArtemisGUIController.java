@@ -3,6 +3,7 @@ package edu.kit.kastel.sdq.eclipse.grading.api;
 import java.util.Collection;
 import java.util.Optional;
 
+import edu.kit.kastel.sdq.eclipse.grading.api.alerts.IAlertObservable;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IFeedback;
 
 public interface IArtemisGUIController {
@@ -11,13 +12,19 @@ public interface IArtemisGUIController {
 	 * Download submissions defined by the given submissionIds
 	 * @param submissionIds
 	 */
-	void downloadExerciseAndSubmission(int courseID, int exerciseID, int submissionID) throws Exception;
+	void downloadExerciseAndSubmission(int courseID, int exerciseID, int submissionID);
 
 	/**
 	 * TODO hardcoded download of some exercise and submission, also project-making so that it's all ready to work on.
 	 * @return submissionID (later this is gotten via IArtemisGUIController::getCourses)
 	 */
 	int downloadHardcodedExerciseAndSubmissionExample();
+
+	/**
+	 *
+	 * @return this ArtemisGUIController's Alert Handler (Observer/ Observable pattern)
+	 */
+	IAlertObservable getAlertObservable();
 
 	Collection<IFeedback> getAllFeedbacksGottenFromLocking(int submissionID);
 
@@ -40,13 +47,13 @@ public interface IArtemisGUIController {
 	 * @param invalidSubmission is the submission invalid? Will return 0 points.
 	 * @param exerciseName the exercise name is used to internally identify which annotations should be sent.
 	 */
-	void saveAssessment(int submissionID, boolean submit, boolean invalidSubmission) throws Exception;
+	void saveAssessment(int submissionID, boolean submit, boolean invalidSubmission);
 
 	/**
 	 * Starts an assessment for the given submission
 	 * @param submissionID
 	 */
-	void startAssessment(int submissionID) throws Exception;
+	void startAssessment(int submissionID);
 
 	/**
 	 * Starts the next assessment. Which one is smh determined by artemis. Correction Round is set to 0.
@@ -55,7 +62,7 @@ public interface IArtemisGUIController {
 	 * 		<li> the submissionID which defines what is assessed.
 	 * 		<li> Optional.empty(), if no assessment is left!
 	 */
-	Optional<Integer> startNextAssessment(int exerciseID) throws Exception;
+	Optional<Integer> startNextAssessment(int exerciseID);
 
 	/**
 	 * Starts the next assessment of the given correction round. Which one is smh determined by artemis.
@@ -65,5 +72,5 @@ public interface IArtemisGUIController {
 	 * 		<li> the submissionID which defines what is assessed.
 	 * 		<li> Optional.empty(), if no assessment is left!
 	 */
-	Optional<Integer> startNextAssessment(int exerciseID, int correctionRound) throws Exception;
+	Optional<Integer> startNextAssessment(int exerciseID, int correctionRound);
 }

@@ -1,5 +1,6 @@
 package edu.kit.kastel.sdq.eclipse.grading.core.artemis;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -41,14 +42,14 @@ public class AnnotationDeserializer {
 		return annotation;
 	}
 
-	public Collection<IAnnotation> deserialize(Collection<IFeedback> feedbacks) throws Exception {
+	public Collection<IAnnotation> deserialize(Collection<IFeedback> feedbacks) throws IOException {
 		final List<IFeedback> matchingFeedbacks = feedbacks.stream().filter(feedback -> {
 			String text = feedback.getText();
 			return (text != null && text.equals(FEEDBACK_TEXT));
 		}).collect(Collectors.toList());
 
 		if (matchingFeedbacks.size() != 1) {
-			throw new Exception("Annotation Deserialization not possible: Found " + matchingFeedbacks.size() + " feedbacks containing data instead of 1.");
+			throw new IOException("Annotation Deserialization not possible: Found " + matchingFeedbacks.size() + " feedbacks containing data instead of 1.");
 		}
 		final String jsonBlob = matchingFeedbacks.get(0).getDetailText();
 

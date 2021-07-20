@@ -3,6 +3,8 @@ package edu.kit.kastel.sdq.eclipse.grading.api;
 import java.io.IOException;
 import java.util.Collection;
 
+import edu.kit.kastel.sdq.eclipse.grading.api.alerts.IAlertObservable;
+
 /**
  * TODO Zwischenberechnung der mistakes (pro Klasse e.g.) zurück an die GUI.
  *
@@ -26,14 +28,14 @@ public interface IAssessmentController {
 	 * E.g. a ThresholdPenaltyRule will not consider custom penalties while a (thinkable) "AggregatedPenaltyThresholdPenaltyRule" would do so.
 	 */
 	void addAnnotation(int annotationID, IMistakeType mistakeType, int startLine, int endLine, String fullyClassifiedClassName,
-			String customMessage, Double customPenalty) throws Exception;
+			String customMessage, Double customPenalty);
 
 	/**
 	 * Calculate a single penalty for a given mistakeType (uses one or many annotations)
 	 * @param ratingGroup
 	 * @return
 	 */
-	double calculateCurrentPenaltyForMistakeType(IMistakeType mistakeType) throws IOException ;
+	double calculateCurrentPenaltyForMistakeType(IMistakeType mistakeType);
 
 	/**
 	 * Sum up all penalties of annotations whose mistakeTypes belong to the given rating group.
@@ -41,7 +43,13 @@ public interface IAssessmentController {
 	 * @param ratingGroup
 	 * @return
 	 */
-	double calculateCurrentPenaltyForRatingGroup(IRatingGroup ratingGroup) throws IOException ;
+	double calculateCurrentPenaltyForRatingGroup(IRatingGroup ratingGroup);
+
+	/**
+	 *
+	 * @return this AssessmentControllers Alert Handler (Observer/ Observable pattern)
+	 */
+	IAlertObservable getAlertObservable();
 
 	/**
 	 *
@@ -65,16 +73,16 @@ public interface IAssessmentController {
 	 * @return all mistake types.
 	 * @throws IOException
 	 */
-	Collection<IMistakeType> getMistakes() throws IOException;
+	Collection<IMistakeType> getMistakes();
 
 	/**
 	 *
 	 * @return all rating groups.
 	 * @throws IOException
 	 */
-	Collection<IRatingGroup> getRatingGroups() throws IOException;
+	Collection<IRatingGroup> getRatingGroups();
 
-	String getTooltipForMistakeType(IMistakeType mistakeType) throws IOException;
+	String getTooltipForMistakeType(IMistakeType mistakeType);
 
 	/**
 	 * Modify an existent annotation

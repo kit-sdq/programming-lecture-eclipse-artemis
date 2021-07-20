@@ -7,7 +7,11 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import javax.security.sasl.AuthenticationException;
+
 import org.eclipse.core.resources.ResourcesPlugin;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.AbstractArtemisClient;
 import edu.kit.kastel.sdq.eclipse.grading.api.IAnnotation;
@@ -17,6 +21,7 @@ import edu.kit.kastel.sdq.eclipse.grading.api.ICourse;
 import edu.kit.kastel.sdq.eclipse.grading.api.IExercise;
 import edu.kit.kastel.sdq.eclipse.grading.api.IMistakeType;
 import edu.kit.kastel.sdq.eclipse.grading.api.ISubmission;
+import edu.kit.kastel.sdq.eclipse.grading.api.alerts.IAlertObservable;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IFeedback;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IFeedback.FeedbackType;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.ILockResult;
@@ -34,19 +39,19 @@ public class ArtemisGUIController implements IArtemisGUIController {
 
 	private final Map<Integer, ILockResult> lockResults;
 
+	private AlertObservable alertObservable;
+
 	protected ArtemisGUIController(final SystemwideController systemwideController, final String host, final String username, final String password) {
 		this.host = host;
 		this.artemisClient = new ArtemisRESTClient(username, password, host);
 		this.systemwideController = systemwideController;
 		this.lockResults = new HashMap<Integer, ILockResult>();
-	}
 
-	private void checkOneElementInCollection(Collection collection) throws Exception {
-		if (collection.size() != 1) throw new Exception("More ore less than one element: " + collection);
+		this.alertObservable = new AlertObservable();
 	}
 
 	@Override
-	public void downloadExerciseAndSubmission(int courseID, int exerciseID, int submissionID) throws Exception {
+	public void downloadExerciseAndSubmission(int courseID, int exerciseID, int submissionID) {
 		final File eclipseWorkspaceRoot =  ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile();
 		final IProjectFileNamingStrategy defaultProjectFileNamingStrategy = new DefaultProjectFileNamingStrategy();
 
@@ -82,14 +87,31 @@ public class ArtemisGUIController implements IArtemisGUIController {
 	}
 
 	@Override
-	public Collection<IFeedback> getAllFeedbacksGottenFromLocking(int submissionID) {
-		return this.lockResults.get(submissionID).getPreexistentFeedbacks();
+	public IAlertObservable getAlertObservable() {
+		return this.alertObservable;
 	}
 
-	private ICourse getCourseFromCourses(Collection<ICourse> courses, int courseID) throws Exception {
+	@Override
+	public Collection<IFeedback> getAllFeedbacksGottenFromLocking(int submissionID) {
+		ILockResult lockResult = this.lockResults.get(submissionID);
+		if (lockResult == null) {
+			this.alertObservable.error("No Lock found for submissionID=" + submissionID, null);
+			return null;
+		}
+		return lockResult.getPreexistentFeedbacks();
+	}
+
+	private ICourse getCourseFromCourses(Collection<ICourse> courses, int courseID) {
 		final Collection<ICourse> coursesWithCorrectID = courses.stream()
 				.filter(course -> (course.getCourseId() == courseID)).collect(Collectors.toList());
-		this.checkOneElementInCollection(coursesWithCorrectID);
+		if (coursesWithCorrectID.isEmpty()) {
+			this.alertObservable.error("No course found for courseID=" + courseID, null);
+			return null;
+		}
+		if (coursesWithCorrectID.size() > 1) {
+			this.alertObservable.error("Multiple courses found for courseID=" + courseID, null);
+			return null;
+		}
 		return coursesWithCorrectID.iterator().next();
 
 	}
@@ -99,18 +121,23 @@ public class ArtemisGUIController implements IArtemisGUIController {
 		try {
 			return this.artemisClient.getCourses();
 		} catch (final Exception e) {
-			//TODO exception handling!
-			e.printStackTrace();
-			throw new RuntimeException("Underlying " + e.getClass() + ": " + e.getMessage());
-
+			this.alertObservable.error(e.getMessage(), e);
+			return null;
 		}
 	}
 
-	private IExercise getExerciseFromCourses(Collection<ICourse> courses, int courseID, int exerciseID) throws Exception {
+	private IExercise getExerciseFromCourses(Collection<ICourse> courses, int courseID, int exerciseID) {
 		final Collection<IExercise> filteredExercises = this.getCourseFromCourses(courses, courseID).getExercises().stream()
 				.filter(exercise -> (exercise.getExerciseId() == exerciseID))
 				.collect(Collectors.toList());
-		this.checkOneElementInCollection(filteredExercises);
+		if (filteredExercises.isEmpty()) {
+			this.alertObservable.error("No exercise found for courseID=" + courseID + " and exerciseID=" + exerciseID, null);
+			return null;
+		}
+		if (filteredExercises.size() > 1) {
+			this.alertObservable.error("Multiple submissions found for courseID=" + courseID + " and exerciseID=" + exerciseID, null);
+			return null;
+		}
 		return filteredExercises.iterator().next();
 	}
 
@@ -123,16 +150,23 @@ public class ArtemisGUIController implements IArtemisGUIController {
 				.collect(Collectors.toList());
 	}
 
-	private ISubmission getSubmissionFromExercise(IExercise exercise, int submissionID) throws Exception {
+	private ISubmission getSubmissionFromExercise(IExercise exercise, int submissionID) {
 		final Collection<ISubmission> filteredSubmissions = exercise.getSubmissions().stream()
 				.filter(submission -> (submission.getSubmissionId() == submissionID))
 				.collect(Collectors.toList());
-		this.checkOneElementInCollection(filteredSubmissions);
+		if (filteredSubmissions.isEmpty()) {
+			this.alertObservable.error("No submission found for exercise=" + exercise + " and submissionID=" + submissionID, null);
+			return null;
+		}
+		if (filteredSubmissions.size() > 1) {
+			this.alertObservable.error("Multiple submissions found for exercise=" + exercise + " and submissionID=" + submissionID, null);
+			return null;
+		}
 		return filteredSubmissions.iterator().next();
 	}
 
 	@Override
-	public void saveAssessment(int submissionID, boolean submit, boolean invalidSubmission) throws Exception {
+	public void saveAssessment(int submissionID, boolean submit, boolean invalidSubmission) {
 		final IAssessmentController assessmentController = this.systemwideController.getAssessmentController(submissionID, null);
 		if (!this.lockResults.containsKey(submissionID))
 			throw new IllegalStateException("Assessment not started, yet!");
@@ -142,20 +176,28 @@ public class ArtemisGUIController implements IArtemisGUIController {
 		final Collection<IAnnotation> annotations = assessmentController.getAnnotations();
 		final Collection<IMistakeType> mistakeTypes = assessmentController.getMistakes();
 
-		this.artemisClient.saveAssessment(
-			participationID,
-			submit,
-			new AnnotationMapper(
-					annotations,
-					mistakeTypes,
-					assessmentController.getRatingGroups(),
-					this.artemisClient.getAssessor(),
-					lockResult,
-					invalidSubmission
-						? new ZeroedPenaltyCalculationStrategy()
-						: new DefaultPenaltyCalculationStrategy(annotations, mistakeTypes))
-			.mapToJsonFormattedString()
-		);
+		try {
+			this.artemisClient.saveAssessment(
+				participationID,
+				submit,
+				new AnnotationMapper(
+						annotations,
+						mistakeTypes,
+						assessmentController.getRatingGroups(),
+						this.artemisClient.getAssessor(),
+						lockResult,
+						invalidSubmission
+							? new ZeroedPenaltyCalculationStrategy()
+							: new DefaultPenaltyCalculationStrategy(annotations, mistakeTypes))
+				.mapToJsonFormattedString()
+			);
+		} catch (AuthenticationException e) {
+			this.alertObservable.error("Authentication to Artemis failed.", e);
+		} catch (JsonProcessingException e) {
+			this.alertObservable.error("Local backend failed to format the annotations.", e);
+		} catch (Exception e) {
+			this.alertObservable.error("Assessor could not be retrieved from Artemis.", e);
+		}
 
 		if (submit) {
 			this.lockResults.remove(submissionID);
@@ -163,18 +205,33 @@ public class ArtemisGUIController implements IArtemisGUIController {
 	}
 
 	@Override
-	public void startAssessment(int submissionID) throws Exception {
-		this.lockResults.put(submissionID, this.artemisClient.startAssessment(submissionID));
+	public void startAssessment(int submissionID) {
+		try {
+			this.lockResults.put(submissionID, this.artemisClient.startAssessment(submissionID));
+		} catch (Exception e) {
+			this.alertObservable.error("Assessment could not be started: " + e.getMessage(), e);
+		}
 	}
 
 	@Override
-	public Optional<Integer> startNextAssessment(int exerciseID) throws Exception {
-		return this.startNextAssessment(exerciseID, 0);
+	public Optional<Integer> startNextAssessment(int exerciseID) {
+		try {
+			return this.startNextAssessment(exerciseID, 0);
+		} catch (Exception e) {
+			this.alertObservable.error("Assessment could not be started: " + e.getMessage(), e);
+			return Optional.empty();
+		}
 	}
 
 	@Override
-	public Optional<Integer> startNextAssessment(int exerciseID, int correctionRound) throws Exception {
-		final Optional<ILockResult> lockResultOptional = this.artemisClient.startNextAssessment(exerciseID, correctionRound);
+	public Optional<Integer> startNextAssessment(int exerciseID, int correctionRound) {
+		Optional<ILockResult> lockResultOptional;
+		try {
+			lockResultOptional = this.artemisClient.startNextAssessment(exerciseID, correctionRound);
+		} catch (Exception e) {
+			this.alertObservable.error("Assessment could not be started: " + e.getMessage(), e);
+			return Optional.empty();
+		}
 		if (lockResultOptional.isEmpty()) return Optional.empty();
 		final ILockResult lockResult = lockResultOptional.get();
 
