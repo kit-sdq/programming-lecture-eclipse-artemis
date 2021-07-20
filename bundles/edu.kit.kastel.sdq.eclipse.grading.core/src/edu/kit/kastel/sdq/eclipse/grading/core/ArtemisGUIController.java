@@ -126,7 +126,8 @@ public class ArtemisGUIController implements IArtemisGUIController {
 		}
 	}
 
-	private IExercise getExerciseFromCourses(Collection<ICourse> courses, int courseID, int exerciseID) {
+	@Override
+	public IExercise getExerciseFromCourses(Collection<ICourse> courses, int courseID, int exerciseID) {
 		final Collection<IExercise> filteredExercises = this.getCourseFromCourses(courses, courseID).getExercises().stream()
 				.filter(exercise -> (exercise.getExerciseId() == exerciseID))
 				.collect(Collectors.toList());
@@ -150,7 +151,8 @@ public class ArtemisGUIController implements IArtemisGUIController {
 				.collect(Collectors.toList());
 	}
 
-	private ISubmission getSubmissionFromExercise(IExercise exercise, int submissionID) {
+	@Override
+	public ISubmission getSubmissionFromExercise(IExercise exercise, int submissionID) {
 		final Collection<ISubmission> filteredSubmissions = exercise.getSubmissions().stream()
 				.filter(submission -> (submission.getSubmissionId() == submissionID))
 				.collect(Collectors.toList());

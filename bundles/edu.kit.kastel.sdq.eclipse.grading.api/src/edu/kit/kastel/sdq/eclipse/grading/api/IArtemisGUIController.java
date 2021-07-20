@@ -34,11 +34,15 @@ public interface IArtemisGUIController {
 	 */
 	Collection<ICourse> getCourses();
 
+	IExercise getExerciseFromCourses(Collection<ICourse> courses, int courseID, int exerciseID);
+
 	/**
 	 * Pre-condition: You need to have called startAssessment or startNextAssessment prior to calling this method!
 	 * @return all auto feedbacks gotten by starting the assessment (junit test results).
 	 */
 	Collection<IFeedback> getPrecalculatedAutoFeedbacks(int submissionID);
+
+	ISubmission getSubmissionFromExercise(IExercise exercise, int submissionID);
 
 	/**
 	 * Submit the assessment to Artemis. Must have been started by {@code startAssessment}, before.

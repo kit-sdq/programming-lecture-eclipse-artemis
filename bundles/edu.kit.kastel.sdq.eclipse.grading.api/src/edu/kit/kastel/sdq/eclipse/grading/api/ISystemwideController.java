@@ -4,8 +4,6 @@ import java.io.File;
 
 public interface ISystemwideController {
 
-	void deleteEclipseProject(String projectName);
-
 	/**
 	 *
 	 * @return the one artemis gui controller.

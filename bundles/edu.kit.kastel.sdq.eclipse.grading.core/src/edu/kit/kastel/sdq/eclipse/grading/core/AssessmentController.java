@@ -5,16 +5,25 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+
 import edu.kit.kastel.sdq.eclipse.grading.api.IAnnotation;
+import edu.kit.kastel.sdq.eclipse.grading.api.IArtemisGUIController;
 import edu.kit.kastel.sdq.eclipse.grading.api.IAssessmentController;
+import edu.kit.kastel.sdq.eclipse.grading.api.ICourse;
+import edu.kit.kastel.sdq.eclipse.grading.api.IExercise;
 import edu.kit.kastel.sdq.eclipse.grading.api.IMistakeType;
 import edu.kit.kastel.sdq.eclipse.grading.api.IRatingGroup;
+import edu.kit.kastel.sdq.eclipse.grading.api.ISubmission;
 import edu.kit.kastel.sdq.eclipse.grading.api.alerts.IAlertObservable;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IFeedback;
 import edu.kit.kastel.sdq.eclipse.grading.core.annotation.AnnotationDao;
 import edu.kit.kastel.sdq.eclipse.grading.core.annotation.AnnotationException;
 import edu.kit.kastel.sdq.eclipse.grading.core.annotation.JsonFileAnnotationDao;
 import edu.kit.kastel.sdq.eclipse.grading.core.artemis.AnnotationDeserializer;
+import edu.kit.kastel.sdq.eclipse.grading.core.artemis.DefaultProjectFileNamingStrategy;
+import edu.kit.kastel.sdq.eclipse.grading.core.artemis.WorkspaceUtil;
 import edu.kit.kastel.sdq.eclipse.grading.core.config.ConfigDao;
 import edu.kit.kastel.sdq.eclipse.grading.core.config.ExerciseConfig;
 import edu.kit.kastel.sdq.eclipse.grading.core.config.JsonFileConfigDao;
@@ -83,6 +92,26 @@ public class AssessmentController implements IAssessmentController {
 	public double calculateCurrentPenaltyForRatingGroup(IRatingGroup ratingGroup) {
 		return new DefaultPenaltyCalculationStrategy(this.getAnnotations(), this.getMistakes())
 				.calcultatePenaltyForRatingGroup(ratingGroup);
+	}
+
+	@Override
+	public void deleteEclipseProject() {
+		IArtemisGUIController guiController =  this.systemWideController.getArtemisGUIController();
+		final Collection<ICourse> courses = guiController.getCourses();
+		final IExercise exercise = guiController.getExerciseFromCourses(courses, this.courseID, this.exerciseID);
+		final ISubmission submission = guiController.getSubmissionFromExercise(exercise, this.submissionID);
+
+		final String projectName = new DefaultProjectFileNamingStrategy().getProjectFileInWorkspace(
+				ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile(),
+				exercise,
+				submission
+			).getName();
+		try {
+			WorkspaceUtil.deleteEclipseProject(projectName);
+		} catch (CoreException e) {
+			this.alertObservable.error("Eclipse Exception occurred while trying to delete project: " + e.getMessage(), e);
+		}
+
 	}
 
 	@Override

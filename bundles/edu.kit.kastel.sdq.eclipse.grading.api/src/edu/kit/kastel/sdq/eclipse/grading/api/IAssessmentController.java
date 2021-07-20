@@ -45,6 +45,11 @@ public interface IAssessmentController {
 	double calculateCurrentPenaltyForRatingGroup(IRatingGroup ratingGroup);
 
 	/**
+	 * Deletes the eclipse project this assessment belongs to.
+	 */
+	void deleteEclipseProject();
+
+	/**
 	 *
 	 * @return this AssessmentControllers Alert Handler (Observer/ Observable pattern)
 	 */
