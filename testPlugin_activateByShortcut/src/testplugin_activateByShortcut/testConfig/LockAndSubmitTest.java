@@ -62,7 +62,9 @@ public class LockAndSubmitTest {
 					i*2,
 					i*2, "src/edu/kit/informatik/BubbleSort",
 					customMsg,
-					customPenalty);
+					customPenalty,
+					2000,
+					2082);
 		}
 
 		System.out.println("++++++++++++++  Added the following annotations"
@@ -75,7 +77,7 @@ public class LockAndSubmitTest {
 		for (IMistakeType mistakeType : exerciseConfig.getMistakeTypes()) {
 			if (i >= 10) break;
 			i++;
-			forgedAnnotations.add(new Annotation(i, mistakeType, i*2, i*2, "src/edu/kit/informatik/BubbleSort", null, null));
+			forgedAnnotations.add(new Annotation(i, mistakeType, i*2, i*2, "src/edu/kit/informatik/BubbleSort", null, null, 2000, 2082));
 		}
 		return forgedAnnotations;
 	}

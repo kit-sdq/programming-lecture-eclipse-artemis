@@ -20,14 +20,15 @@ public interface IAssessmentController {
 	 * @param annotationID a unique annotation ID.
 	 * @param startLine annotation start
 	 * @param endLine	annotation end
-	 * @param className	unique name of the respective Class to be annotated TODO (maybe) path/ "workspace URI"
-	 * 		 instead of class name (other langs etc)
+	 * @param fullyClassifiedClassName	fully classified class name of the respective Class to be annotated
 	 * @param customMessage	custom message set by tutor
 	 * @param customPenalty This may or may not have an effekt, depending on the MistakeType's PenaltyRule!
+	 * @param marker_char_start additional encoding of the start (counts from file start, eclipse GUI requires this)
+	 * @param marker_char_end additional encoding of the start (counts from file start, eclipse GUI requires this)
 	 * E.g. a ThresholdPenaltyRule will not consider custom penalties while a (thinkable) "AggregatedPenaltyThresholdPenaltyRule" would do so.
 	 */
 	void addAnnotation(int annotationID, IMistakeType mistakeType, int startLine, int endLine, String fullyClassifiedClassName,
-			String customMessage, Double customPenalty);
+			String customMessage, Double customPenalty, int markerCharStart, int markerCharEnd);
 
 	/**
 	 * Calculate a single penalty for a given mistakeType (uses one or many annotations)

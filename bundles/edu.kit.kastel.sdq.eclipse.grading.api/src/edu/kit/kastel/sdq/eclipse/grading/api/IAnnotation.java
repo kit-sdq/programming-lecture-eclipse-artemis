@@ -30,6 +30,18 @@ public interface IAnnotation {
 
 	int getId();
 
+	/**
+	 *
+	 * @return additional encoding of the start (counts from file start, eclipse GUI requires this)
+	 */
+	int getMarkerCharEnd();
+
+	/**
+	 *
+	 * @return additional encoding of the start (counts from file start, eclipse GUI requires this)
+	 */
+	int getMarkerCharStart();
+
 	IMistakeType getMistakeType();
 
 	/**

@@ -73,9 +73,9 @@ public class AssessmentControllerTest {
 				System.out.println("  Testing mistakeType " + mistakeType.toString());
 				//todo add custom shit
 				if (mistakeType.getButtonName().equals("Custom Penalty")) {
-					this.assessmentController.addAnnotation(idcount++, mistakeType, 0, 22, "class.name", "myCustomMessage", 25D);
+					this.assessmentController.addAnnotation(idcount++, mistakeType, 0, 22, "class.name", "myCustomMessage", 25D, 2000, 2082);
 				} else {
-					this.assessmentController.addAnnotation(idcount++, mistakeType, 0, 22, "class.name", null, null);
+					this.assessmentController.addAnnotation(idcount++, mistakeType, 0, 22, "class.name", null, null, 2000, 2082);
 				}
 			}
 		} catch (Exception e) { }
@@ -102,8 +102,8 @@ public class AssessmentControllerTest {
 					.map(mistakeType -> ((MistakeType) mistakeType))
 					.filter(mistakeType -> mistakeType.getShortName().equals("jdEmpty2")).findAny().get();
 			System.out.println("Adding a few annotations for " + jdEmpty);
-			this.assessmentController.addAnnotation(123,jdEmpty, 0, 44, "class2.name", null, null);
-			this.assessmentController.addAnnotation(133, jdEmpty2, 45, 46, "class2.name", null, null);
+			this.assessmentController.addAnnotation(123,jdEmpty, 0, 44, "class2.name", null, null, 2000, 2082);
+			this.assessmentController.addAnnotation(133, jdEmpty2, 45, 46, "class2.name", null, null, 2000, 2082);
 		} catch (Exception e) {}
 
 		this.printCalculatedPenaltiesForMistakesAndRatingGroups();

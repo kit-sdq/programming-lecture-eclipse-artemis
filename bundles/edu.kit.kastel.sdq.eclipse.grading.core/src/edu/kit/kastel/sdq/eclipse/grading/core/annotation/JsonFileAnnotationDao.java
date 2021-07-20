@@ -19,11 +19,11 @@ public class JsonFileAnnotationDao implements AnnotationDao {
 
 	@Override
 	public void addAnnotation(int annotationID, IMistakeType mistakeType, int startLine, int endLine, String fullyClassifiedClassName,
-			String customMessage, Double customPenalty) throws AnnotationException {
+			String customMessage, Double customPenalty, int markerCharStart, int markerCharEnd) throws AnnotationException {
 		if (this.idExists(annotationID)) throw new AnnotationException("ID " + annotationID + " already exists!");
 
 		this.annotations.add(
-				new Annotation(annotationID, mistakeType, startLine, endLine, fullyClassifiedClassName, customMessage, customPenalty));
+				new Annotation(annotationID, mistakeType, startLine, endLine, fullyClassifiedClassName, customMessage, customPenalty, markerCharStart, markerCharEnd));
 
 		this.serialize();
 	}
@@ -53,7 +53,8 @@ public class JsonFileAnnotationDao implements AnnotationDao {
 				oldAnnotation.getId(), oldAnnotation.getMistakeType(),
 				oldAnnotation.getStartLine(), oldAnnotation.getEndLine(),
 				oldAnnotation.getClassFilePath(),
-				customMessage, customPenalty);
+				customMessage, customPenalty,
+				oldAnnotation.getMarkerCharStart(), oldAnnotation.getMarkerCharEnd());
 
 		this.annotations.remove(oldAnnotation);
 		this.annotations.add(newAnnotation);

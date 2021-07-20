@@ -73,9 +73,9 @@ public class AssessmentController implements IAssessmentController {
 
 	@Override
 	public void addAnnotation(int annotationID, IMistakeType mistakeType, int startLine, int endLine, String fullyClassifiedClassName,
-			String customMessage, Double customPenalty) {
+			String customMessage, Double customPenalty, int markerCharStart, int markerCharEnd) {
 		try {
-			this.annotationDao.addAnnotation(annotationID, mistakeType, startLine, endLine, fullyClassifiedClassName, customMessage, customPenalty);
+			this.annotationDao.addAnnotation(annotationID, mistakeType, startLine, endLine, fullyClassifiedClassName, customMessage, customPenalty, markerCharStart, markerCharEnd);
 		} catch (AnnotationException e) {
 			this.alertObservable.error(e.getMessage(), e);
 		}
@@ -219,7 +219,9 @@ public class AssessmentController implements IAssessmentController {
 					annotation.getEndLine(),
 					annotation.getClassFilePath(),
 					annotation.getCustomMessage().orElse(null),
-					annotation.getCustomPenalty().orElse(null)
+					annotation.getCustomPenalty().orElse(null),
+					annotation.getMarkerCharStart(),
+					annotation.getMarkerCharEnd()
 			);
 		}
 	}

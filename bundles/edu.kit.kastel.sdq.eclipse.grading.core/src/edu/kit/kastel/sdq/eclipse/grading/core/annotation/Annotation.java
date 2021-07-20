@@ -21,8 +21,11 @@ public class Annotation implements IAnnotation {
 	private String customMessage;
 	private Double customPenalty;
 
+	private final int markerCharStart;
+	private final int markerCharEnd;
+
 	public Annotation(int id, IMistakeType mistakeType, int startLine, int endLine, String fullyClassifiedClassName,
-			String customMessage, Double customPenalty) {
+			String customMessage, Double customPenalty, int markerCharStart, int markerCharEnd) {
 		this.id = id;
 		this.mistakeType = mistakeType;
 		this.startLine = startLine;
@@ -32,6 +35,8 @@ public class Annotation implements IAnnotation {
 		this.customMessage = customMessage;
 		this.customPenalty = customPenalty;
 
+		this.markerCharStart = markerCharStart;
+		this.markerCharEnd = markerCharEnd;
 	}
 
 	/**
@@ -45,7 +50,9 @@ public class Annotation implements IAnnotation {
 			@JsonProperty("classFilePath") String classFilePath,
 			@JsonProperty("customMessageForJSON") String customMessage,
 			@JsonProperty("customPenaltyForJSON") Double customPenalty,
-			@JsonProperty("mistakeTypeString") String mistakeTypeString) {
+			@JsonProperty("mistakeTypeString") String mistakeTypeString,
+			@JsonProperty("markerCharStart") int markerCharStart,
+			@JsonProperty("markerCharEnd") int markerCharEnd) {
 		this.id = id;
 		this.startLine = startLine;
 		this.endLine = endLine;
@@ -55,6 +62,8 @@ public class Annotation implements IAnnotation {
 		this.customMessage = customMessage;
 		this.customPenalty = customPenalty;
 
+		this.markerCharStart = markerCharStart;
+		this.markerCharEnd = markerCharEnd;
 	}
 
 
@@ -98,6 +107,16 @@ public class Annotation implements IAnnotation {
 	@Override
 	public int getId() {
 		return this.id;
+	}
+
+	@Override
+	public int getMarkerCharEnd() {
+		return this.markerCharEnd;
+	}
+
+	@Override
+	public int getMarkerCharStart() {
+		return this.markerCharStart;
 	}
 
 	@Override
