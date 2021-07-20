@@ -18,7 +18,7 @@ Karlsruhe Institute of Technology (KIT), Software Design and Quality, Karlsruhe,
    </configIni>
 
    <launcherArgs>
-      <programArgs>-consoleLog -console -perspective org.palladiosimulator.pcmbench.perspectives.palladio
+      <programArgs>-consoleLog -console
       </programArgs>
       <vmArgs>--add-modules=ALL-SYSTEM -Dosgi.requiredJavaVersion=11 -Xms512m -Xmx2048m
       </vmArgs>
