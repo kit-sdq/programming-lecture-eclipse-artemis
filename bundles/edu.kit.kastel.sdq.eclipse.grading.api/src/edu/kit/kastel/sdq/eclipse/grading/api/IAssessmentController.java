@@ -101,4 +101,9 @@ public interface IAssessmentController {
 	 */
 	void removeAnnotation(int annotationId);
 
+	/**
+	 * Reset annotations by reloading from Artemis state.
+	 */
+	void resetAndReload();
+
 }

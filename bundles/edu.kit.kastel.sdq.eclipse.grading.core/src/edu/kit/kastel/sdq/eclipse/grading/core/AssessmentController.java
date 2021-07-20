@@ -236,4 +236,15 @@ public class AssessmentController implements IAssessmentController {
 	public void removeAnnotation(int annotationId) {
 		this.annotationDao.removeAnnotation(annotationId);
 	}
+
+	@Override
+	public void resetAndReload() {
+		this.annotationDao = new JsonFileAnnotationDao();
+
+		try {
+			this.initializeWithDeserializedAnnotations();
+		} catch (IOException e) {
+			this.alertObservable.warn("Deserializing Annotations from Artemis failed (most likely none were present)!");
+		}
+	}
 }
