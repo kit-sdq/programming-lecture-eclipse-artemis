@@ -1,6 +1,5 @@
 package edu.kit.kastel.sdq.eclipse.grading.api;
 
-import java.io.IOException;
 import java.util.Collection;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.alerts.IAlertObservable;
@@ -71,14 +70,12 @@ public interface IAssessmentController {
 	/**
 	 *
 	 * @return all mistake types.
-	 * @throws IOException
 	 */
 	Collection<IMistakeType> getMistakes();
 
 	/**
 	 *
 	 * @return all rating groups.
-	 * @throws IOException
 	 */
 	Collection<IRatingGroup> getRatingGroups();
 
