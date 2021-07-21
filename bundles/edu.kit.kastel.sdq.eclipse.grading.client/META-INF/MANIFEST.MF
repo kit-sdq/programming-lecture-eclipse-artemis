@@ -1,24 +1,21 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Eclipse_Artemis_Grading_RESTClient
-Bundle-SymbolicName: Eclipse_Artemis_Grading_RESTClient;singleton:=true
+Bundle-Name: edu.kit.kastel.sdq.eclipse.grading.client
+Bundle-SymbolicName: edu.kit.kastel.sdq.eclipse.grading.client;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Automatic-Module-Name: Eclipse.Artemis.Grading.RESTClient
 Bundle-RequiredExecutionEnvironment: JavaSE-11
-Import-Package: com.fasterxml.jackson.annotation;version="2.12.1",
- javax.ws.rs.client;version="2.0.0",
- javax.ws.rs.core;version="2.0.0",
- org.glassfish.jersey.client;version="2.22.2",
- org.glassfish.jersey.client.internal;version="2.22.2",
- org.glassfish.jersey.jackson;version="2.22.2",
- org.glassfish.jersey.jackson.internal;version="2.22.2"
-Require-Bundle: org.eclipse.core.commands;bundle-version="3.9.800",
- com.fasterxml.jackson.core.jackson-databind;bundle-version="2.12.1",
- com.fasterxml.jackson.core.jackson-core;bundle-version="2.12.1",
- ArtemisPluginInnerAPIPlugin;bundle-version="1.0.0",
- org.eclipse.core.runtime;bundle-version="3.20.100",
- org.eclipse.egit.core;bundle-version="5.11.0",
- org.eclipse.jgit;bundle-version="5.11.0"
+Require-Bundle: com.fasterxml.jackson.core.jackson-core,
+ com.fasterxml.jackson.core.jackson-databind,
+ com.fasterxml.jackson.core.jackson-annotations,
+ org.eclipse.core.commands,
+ org.eclipse.core.runtime,
+ org.eclipse.egit.core,
+ org.eclipse.jgit,
+ javax.ws.rs,
+ org.glassfish.jersey.core.jersey-common,
+ org.glassfish.jersey.core.jersey-client,
+ edu.kit.kastel.sdq.eclipse.grading.api
 Export-Package: edu.kit.kastel.sdq.eclipse.grading.client.git,
  edu.kit.kastel.sdq.eclipse.grading.client.mappings,
  edu.kit.kastel.sdq.eclipse.grading.client.rest

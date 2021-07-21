@@ -16,47 +16,56 @@
    <license url="%licenseURL">
       %license
    </license>
-   
+
    <requires>
+      <import plugin="com.fasterxml.jackson.core.jackson-core" version="2.12.1.v20210128-1726" match="compatible"/>
+      <import plugin="com.fasterxml.jackson.core.jackson-databind" version="2.12.1.v20210128-1726" match="compatible"/>
+      <import plugin="com.fasterxml.jackson.core.jackson-annotations" version="2.12.1.v20210128-1726" match="compatible"/>
+      <import plugin="javax.ws.rs" version="2.1.6.v20200505-2127" match="compatible"/>
+      <import plugin="org.glassfish.jersey.core.jersey-client"/>
       <import feature="org.eclipse.platform" version="4.19.0" match="compatible"/>
-      <import plugin="org.eclipse.sdk" version="4.19.0" match="compatible"/>
-      <import plugin="org.eclipse.jdt.feature.group" match="compatible"/>
-      <import plugin="org.eclipse.egit.feature.group" match="compatible"/>
-      <import plugin="org.eclipse.m2e.feature.feature.group" match="compatible"/>
-      <import plugin="com.fasterxml.jackson.core.jackson-annotations" version="2.12.1.v20210128-1726" match="compatible" />
-      <import plugin="com.fasterxml.jackson.core.jackson-core" version="2.12.1.v20210128-1726" match="compatible" />
-      <import plugin="com.fasterxml.jackson.core.jackson-databind" version="2.12.1.v20210128-1726" match="compatible" />
-      <import plugin="javax.ws.rs" version="2.1.6.v20200505-2127" match="compatible" />
-      <!-- required plugins need to be provided by update sites -->
-      <!-- <import plugin="edu.kit.kastel.sdq.artemis.special" version="3.10.0" match="greaterOrEqual"/>-->
+      <import plugin="org.eclipse.core.commands"/>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.eclipse.egit.core"/>
+      <import plugin="org.eclipse.jgit"/>
+      <import plugin="org.eclipse.core.resources"/>
+      <import plugin="org.eclipse.m2e.core"/>
+      <import plugin="org.eclipse.jdt.core"/>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.ui.ide"/>
+      <import plugin="org.eclipse.ui.editors"/>
+      <import plugin="org.eclipse.swt"/>
+      <import plugin="org.eclipse.egit"/>
+      <import plugin="jakarta.activation"/>
+      <import plugin="org.eclipse.jface.text"/>
    </requires>
-   
+
    <plugin
-         id="ArtemisPluginInnerAPIPlugin"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-   
-   <plugin
-         id="Eclipse_Artemis_Grading_Core"
+         id="edu.kit.kastel.sdq.eclipse.grading.api"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="Eclipse_Artemis_Grading_RESTClient"
+         id="edu.kit.kastel.sdq.eclipse.grading.client"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
+
    <plugin
-         id="gui"
+         id="edu.kit.kastel.sdq.eclipse.grading.core"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-   
+
+   <plugin
+         id="edu.kit.kastel.sdq.eclipse.grading.view"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
 
 </feature>
