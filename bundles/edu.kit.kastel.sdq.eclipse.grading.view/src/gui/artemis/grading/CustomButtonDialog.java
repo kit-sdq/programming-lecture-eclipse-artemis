@@ -6,6 +6,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Spinner;
@@ -21,10 +22,13 @@ public class CustomButtonDialog extends Dialog {
 	private Double customPenalty;
 	private final AssessmentViewController viewController;
 	private final String ratingGroupName;
+	private Group ratingGroupViewElement;
 
-	public CustomButtonDialog(Shell parentShell, AssessmentViewController viewController, String ratingGroupName) {
+	public CustomButtonDialog(Shell parentShell, AssessmentViewController viewController, String ratingGroupName,
+			Group ratingGroupViewElement) {
 		super(parentShell);
 		this.viewController = viewController;
+		this.ratingGroupViewElement = ratingGroupViewElement;
 		this.ratingGroupName = ratingGroupName;
 	}
 
@@ -75,8 +79,8 @@ public class CustomButtonDialog extends Dialog {
 
 	@Override
 	protected void okPressed() {
-		this.customMessage = this.customMessageInputField.getText().replace(",", ".");
-		this.customPenalty = Double.parseDouble(this.customPenaltyInputField.getText());
+		this.customMessage = this.customMessageInputField.getText();
+		this.customPenalty = Double.parseDouble(this.customPenaltyInputField.getText().replace(',', '.'));
 		this.viewController.addAssessmentAnnotaion(null, this.customMessage, this.customPenalty, this.ratingGroupName);
 		super.okPressed();
 	}

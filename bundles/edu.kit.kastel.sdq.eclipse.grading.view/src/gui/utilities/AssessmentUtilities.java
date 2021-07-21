@@ -4,6 +4,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
@@ -21,6 +22,8 @@ import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 public class AssessmentUtilities {
+
+	public static final String MARKER_NAME = "gui.assessment.marker";
 
 	public static String createMarkerTooltip(int startLine, int endline, String errorTypeName, String ratingGroupName,
 			String message) {
@@ -49,6 +52,10 @@ public class AssessmentUtilities {
 		builder.append(customPenalty);
 		builder.append(",");
 		return builder.toString();
+	}
+
+	public static IFile getFile(String path) {
+		return ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(new Path(path));
 	}
 
 	public static String getClassNameForAnnotation() {
@@ -97,6 +104,7 @@ public class AssessmentUtilities {
 
 		final IEditorInput input = editor == null ? null : editor.getEditorInput();
 		final IPath path = input instanceof FileEditorInput ? ((FileEditorInput) input).getPath() : null;
+		// Null Pointer Execption
 		int srcIndex = 0;
 		for (int i = 0; i < path.segments().length; i++) {
 			if (path.segments()[i].equals("src")) {
