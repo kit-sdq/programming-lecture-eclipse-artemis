@@ -23,6 +23,10 @@
       <import plugin="org.eclipse.jdt.feature.group" match="compatible"/>
       <import plugin="org.eclipse.egit.feature.group" match="compatible"/>
       <import plugin="org.eclipse.m2e.feature.feature.group" match="compatible"/>
+      <import plugin="com.fasterxml.jackson.core.jackson-annotations" version="2.12.1.v20210128-1726" match="compatible" />
+      <import plugin="com.fasterxml.jackson.core.jackson-core" version="2.12.1.v20210128-1726" match="compatible" />
+      <import plugin="com.fasterxml.jackson.core.jackson-databind" version="2.12.1.v20210128-1726" match="compatible" />
+      <import plugin="javax.ws.rs" version="2.1.6.v20200505-2127" match="compatible" />
       <!-- required plugins need to be provided by update sites -->
       <!-- <import plugin="edu.kit.kastel.sdq.artemis.special" version="3.10.0" match="greaterOrEqual"/>-->
    </requires>
