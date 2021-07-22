@@ -37,7 +37,6 @@
       <import plugin="org.eclipse.ui.editors"/>
       <import plugin="org.eclipse.swt"/>
       <import plugin="org.eclipse.egit"/>
-      <import plugin="jakarta.activation"/>
       <import plugin="org.eclipse.jface.text"/>
       <import feature="org.eclipse.platform" version="4.19.0" match="compatible"/>
    </requires>
