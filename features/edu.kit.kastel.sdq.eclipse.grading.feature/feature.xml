@@ -18,16 +18,17 @@
    </license>
 
    <requires>
-      <import plugin="com.fasterxml.jackson.core.jackson-core" version="2.12.1.v20210128-1726" match="compatible"/>
-      <import plugin="com.fasterxml.jackson.core.jackson-databind" version="2.12.1.v20210128-1726" match="compatible"/>
-      <import plugin="com.fasterxml.jackson.core.jackson-annotations" version="2.12.1.v20210128-1726" match="compatible"/>
-      <import plugin="javax.ws.rs" version="2.1.6.v20200505-2127" match="compatible"/>
-      <import plugin="org.glassfish.jersey.core.jersey-client"/>
-      <import feature="org.eclipse.platform" version="4.19.0" match="compatible"/>
+      <import plugin="com.fasterxml.jackson.core.jackson-core"/>
+      <import plugin="com.fasterxml.jackson.core.jackson-databind"/>
+      <import plugin="com.fasterxml.jackson.core.jackson-annotations"/>
       <import plugin="org.eclipse.core.commands"/>
       <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.egit.core"/>
       <import plugin="org.eclipse.jgit"/>
+      <import plugin="javax.ws.rs"/>
+      <import plugin="org.glassfish.jersey.core.jersey-common"/>
+      <import plugin="org.glassfish.jersey.core.jersey-client"/>
+      <import plugin="org.glassfish.jersey.inject.jersey-hk2" match="greaterOrEqual"/>
       <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.eclipse.m2e.core"/>
       <import plugin="org.eclipse.jdt.core"/>
@@ -38,6 +39,7 @@
       <import plugin="org.eclipse.egit"/>
       <import plugin="jakarta.activation"/>
       <import plugin="org.eclipse.jface.text"/>
+      <import feature="org.eclipse.platform" version="4.19.0" match="compatible"/>
    </requires>
 
    <plugin
