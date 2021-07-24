@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         id="ArtemisGradingEclipse"
+         point="org.eclipse.core.runtime.products">
+      <product
+            name="Eclipse Artemis Grading"
+            application="org.eclipse.ui.ide.workbench">
+         <property
+               name="aboutText"
+               value="Artemis Eclipse Grading&#x0A;&#x0A;Version: Eclipse Grading 1.0&#x0A;&#x0A;Copyright 2021,&#x0A;Karlsruhe Institute of Technology (KIT), Software Design and Quality, Karlsruhe, Germany">
+         </property>
+         <property
+               name="appName"
+               value="Eclipse Artemis Grading">
+         </property>
+      </product>
+   </extension>
+
+</plugin>

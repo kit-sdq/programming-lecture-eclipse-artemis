@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: ArtemisPluginInnerAPIPlugin
-Bundle-SymbolicName: ArtemisPluginInnerAPIPlugin
+Bundle-Name: edu.kit.kastel.sdq.eclipse.grading.api
+Bundle-SymbolicName: edu.kit.kastel.sdq.eclipse.grading.api
 Bundle-Version: 1.0.0.qualifier
 Automatic-Module-Name: ArtemisPluginInnerAPIPlugin
 Bundle-RequiredExecutionEnvironment: JavaSE-11
