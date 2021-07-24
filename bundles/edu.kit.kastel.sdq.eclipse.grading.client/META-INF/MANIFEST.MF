@@ -3,7 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: edu.kit.kastel.sdq.eclipse.grading.client
 Bundle-SymbolicName: edu.kit.kastel.sdq.eclipse.grading.client;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Automatic-Module-Name: Eclipse.Artemis.Grading.RESTClient
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Require-Bundle: com.fasterxml.jackson.core.jackson-core,
  com.fasterxml.jackson.core.jackson-databind,
@@ -20,3 +19,4 @@ Require-Bundle: com.fasterxml.jackson.core.jackson-core,
 Export-Package: edu.kit.kastel.sdq.eclipse.grading.client.git,
  edu.kit.kastel.sdq.eclipse.grading.client.mappings,
  edu.kit.kastel.sdq.eclipse.grading.client.rest
+Automatic-Module-Name: edu.kit.kastel.sdq.eclipse.grading.client

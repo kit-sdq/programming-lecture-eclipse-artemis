@@ -3,7 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: edu.kit.kastel.sdq.eclipse.grading.core
 Bundle-SymbolicName: edu.kit.kastel.sdq.eclipse.grading.core
 Bundle-Version: 1.0.0.qualifier
-Automatic-Module-Name: Eclipse.Artemis.Grading.Core
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Export-Package: edu.kit.kastel.sdq.eclipse.grading.core,
  edu.kit.kastel.sdq.eclipse.grading.core.annotation,
@@ -19,3 +18,4 @@ Require-Bundle: com.fasterxml.jackson.core.jackson-databind,
  org.eclipse.jdt.core,
  edu.kit.kastel.sdq.eclipse.grading.api,
  edu.kit.kastel.sdq.eclipse.grading.client
+Automatic-Module-Name: edu.kit.kastel.sdq.eclipse.grading.core

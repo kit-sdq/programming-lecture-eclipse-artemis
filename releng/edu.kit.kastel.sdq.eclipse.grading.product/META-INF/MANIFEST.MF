@@ -3,7 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: edu.kit.kastel.sdq.eclipse.grading.eclipse
 Bundle-SymbolicName: edu.kit.kastel.sdq.eclipse.grading.eclipse;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Automatic-Module-Name: ArtemisPluginInnerAPIPlugin
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Require-Bundle: edu.kit.kastel.sdq.eclipse.grading.api;bundle-version="1.0.0",
  edu.kit.kastel.sdq.eclipse.grading.client;bundle-version="1.0.0",

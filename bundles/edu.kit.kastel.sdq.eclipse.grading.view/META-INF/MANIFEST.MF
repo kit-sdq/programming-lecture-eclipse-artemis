@@ -16,7 +16,7 @@ Require-Bundle: org.eclipse.ui,
  edu.kit.kastel.sdq.eclipse.grading.api,
  edu.kit.kastel.sdq.eclipse.grading.client,
  edu.kit.kastel.sdq.eclipse.grading.core
-Automatic-Module-Name: gui
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: gui.activator.Activator
+Automatic-Module-Name: edu.kit.kastel.sdq.eclipse.grading.view
