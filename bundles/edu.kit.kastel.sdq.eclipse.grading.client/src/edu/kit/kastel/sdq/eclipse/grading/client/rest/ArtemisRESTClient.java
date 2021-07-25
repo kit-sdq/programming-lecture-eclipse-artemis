@@ -122,7 +122,6 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 	}
 
 	private ICourse getCoursefromJsonNode(JsonNode courseJsonNode) throws Exception {
-		System.out.println("IN getCoursefromJsonNode:");
 		final int courseId = courseJsonNode.get("id").intValue();
 		final String title = courseJsonNode.get("title").textValue();
 		final String shortName = courseJsonNode.get("shortName").textValue();
@@ -140,7 +139,7 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 		//handle exercises TODO --> new method
 		final JsonNode exercisesAndParticipationsJsonNode = new ObjectMapper()
 				.readTree(exercisesAndParticipationsRsp.readEntity(String.class));
-		System.out.println("  Read jsonNode from exercisesAndParticipations response entity: \n  " + exercisesAndParticipationsJsonNode.toString());
+//		System.out.println("  Read jsonNode from exercisesAndParticipations response entity: \n  " + exercisesAndParticipationsJsonNode.toString());
 		JsonNode exercisesJsonArray = exercisesAndParticipationsJsonNode.get("exercises");
 		if (!exercisesJsonArray.isArray()) throw new Exception("Error parsing json.");
 
@@ -164,7 +163,7 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 		this.throwIfStatusUnsuccessful(examsRsp);
 		final JsonNode examsJsonArray = new ObjectMapper()
 				.readTree(examsRsp.readEntity(String.class));
-		System.out.println("  Read jsonNode from exams-for-user response entity: \n  " + examsJsonArray.toString());
+//		System.out.println("  Read jsonNode from exams-for-user response entity: \n  " + examsJsonArray.toString());
 		if (!examsJsonArray.isArray()) throw new Exception("Error parsing json.");
 
 		Collection<IExam> exams = new LinkedList<IExam>();
@@ -191,11 +190,10 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 //				.submit(); // asynchronous variant
 		this.throwIfStatusUnsuccessful(rsp);
 		String rspString = rsp.readEntity(String.class);
-		System.out.println("Got entity from rest call: " + rspString );
 		try {
 			// Put the result into a JsonNode -> No need for java objects, but bad style.
 			JsonNode jsonNode = new ObjectMapper().readTree(rspString);
-			System.out.println("Read jsonNode from response entity: \n" + jsonNode.toString());
+//			System.out.println("Read jsonNode from response entity: \n" + jsonNode.toString());
 			if (!jsonNode.isArray()) throw new Exception("Error parsing json.");
 
 			Collection<ICourse> courses = new LinkedList();
@@ -216,7 +214,6 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 	}
 
 	private IExam getExamFromJsonNode(JsonNode examJsonNode, int courseId) throws Exception {
-		System.out.println("TODO implement. Got examJsonNode = \n" + examJsonNode.toString());
 
 		final int examId = examJsonNode.get("id").intValue();
 		final String title = examJsonNode.get("title").textValue();
@@ -234,7 +231,7 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 		this.throwIfStatusUnsuccessful(rsp);
 
 		JsonNode detailledExamJsonNode = new ObjectMapper().readTree(rsp.readEntity(String.class));
-		System.out.println("  Read jsonNode from exam response entity: \n  " + detailledExamJsonNode.toString());
+//		System.out.println("  Read jsonNode from exam response entity: \n  " + detailledExamJsonNode.toString());
 
 		JsonNode exerciseGroupsJsonArray = detailledExamJsonNode.get("exerciseGroups");
 		if (!exerciseGroupsJsonArray.isArray()) throw new Exception("Error parsing json.");
@@ -253,7 +250,7 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 	}
 
 	private IExercise getExercisefromJsonNode(JsonNode exerciseJsonNode) throws Exception {
-		System.out.println("IN getExercisefromJsonNode:");
+//		System.out.println("IN getExercisefromJsonNode:");
 
 		final int exerciseId = exerciseJsonNode.get("id").intValue();
 		final String title = exerciseJsonNode.get("title").textValue();
@@ -272,7 +269,7 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 		this.throwIfStatusUnsuccessful(rsp);
 
 		JsonNode submissionsArrayJsonNode = new ObjectMapper().readTree(rsp.readEntity(String.class));
-		System.out.println("  Read jsonNode from response entity: \n  " + submissionsArrayJsonNode.toString());
+//		System.out.println("  Read jsonNode from response entity: \n  " + submissionsArrayJsonNode.toString());
 
 		final Collection<ISubmission> submissions = new LinkedList<ISubmission>();
 		submissionsArrayJsonNode.forEach(submission -> {
@@ -305,7 +302,6 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 	}
 
 	private ISubmission getSubmissionFromJsonNode(JsonNode submissionJsonNode) {
-		System.out.println("IN getSubmissionFromJsonNode:");
 		final JsonNode participationJsonNode = submissionJsonNode.get("participation");
 
 		final int submissionId = submissionJsonNode.get("id").intValue();
@@ -314,8 +310,37 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 		final String repositoryUrl = participationJsonNode.get("repositoryUrl").textValue();
 		final String commitHash = submissionJsonNode.get("commitHash").textValue();
 
-		System.out.println("COMPLETED getSubmissionFromJsonNode:");
-		return new ArtemisSubmission(submissionId, participantIdentifier, participantName, repositoryUrl, commitHash);
+		final JsonNode resultsJsonNode = submissionJsonNode.get("results");
+		final JsonNode lastResultJsonNode = resultsJsonNode.get(resultsJsonNode.size()-1);
+
+		boolean hasSubmittedAssessment = lastResultJsonNode.get("completionDate") != null;
+
+		return new ArtemisSubmission(submissionId, participantIdentifier, participantName, repositoryUrl, commitHash,
+				hasSubmittedAssessment);
+	}
+
+	@Override
+	public Collection<ISubmission> getSubmissions(int exerciseID, boolean assessedByTutor) throws Exception {
+		this.checkAuthentication();
+		final Response rsp = this.rootApiTarget
+				.path("exercises")
+				.path(String.valueOf(exerciseID))
+				.path("programming-submissions")
+//				.queryParam("submittedOnly", submittedOnly) TODO change to true
+				.queryParam("assessedByTutor", assessedByTutor)
+				.request().header("Authorization", this.id_token.get().getHeaderString())
+				.buildGet()
+				.invoke(); // synchronous variant
+		this.throwIfStatusUnsuccessful(rsp);
+
+		JsonNode submissionsArrayJsonNode = new ObjectMapper().readTree(rsp.readEntity(String.class));
+		final Collection<ISubmission> submissions = new LinkedList<ISubmission>();
+		submissionsArrayJsonNode.forEach(submission -> {
+			submissions.add(this.getSubmissionFromJsonNode(submission));
+		});
+
+		return submissions;
+
 	}
 
 	private boolean isStatusSuccessful(final Response response) {
@@ -328,7 +353,7 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 				.invoke();
 
 		this.throwIfStatusUnsuccessful(authenticationResponse);
-		System.out.println("Tried to authenticate with status " + authenticationResponse.getStatus());
+//		System.out.println("Tried to authenticate with status " + authenticationResponse.getStatus());
 		final String authRspEntity = authenticationResponse.readEntity(String.class);
 		try {
 			this.id_token = Optional.of(new IDToken(new ObjectMapper().readTree(authRspEntity).get("id_token").asText()));
@@ -345,7 +370,7 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 
 	private ILockResult parseLockResult(final String jsonString) throws JsonMappingException, JsonProcessingException {
 		//TODO impl
-		System.out.println("######DEBUG(ArtemisRESTClient::parseLockResult): " + jsonString);
+		System.out.println("######ArtemisRESTClient::parseLockResult DEBUG: " + jsonString);
 		return new ObjectMapper()
 				.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 				.readValue(jsonString, LockResult.class);
@@ -355,7 +380,7 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 	public void saveAssessment(int participationID, boolean submit, String payload) throws AuthenticationException {
 		this.checkAuthentication();
 
-		System.out.println("######################################################SUBMIT ASSESSMAENT DEBUG with\n" + payload);
+		System.out.println("######ArtemisRESTClient::saveAssessment DEBUG: " + payload);
 
 
 		// /api/users/{login}
@@ -390,7 +415,6 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 	@Override
 	public Optional<ILockResult> startNextAssessment(int exerciseID, int correctionRound) throws Exception {
 		this.checkAuthentication();
-		System.out.println("###startNextAssessment");
 
 		final Response rsp = this.rootApiTarget
 				.path("exercises")

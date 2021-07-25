@@ -22,6 +22,8 @@ public interface IArtemisGUIController {
 
 	Collection<IFeedback> getAllFeedbacksGottenFromLocking(int submissionID);
 
+	Collection<Integer> getAssessedSubmissions(int exerciseID, boolean unsubmittedOnly);
+
 	/**
 	 *
 	 * @return all available courses (contains exercices and available submissions

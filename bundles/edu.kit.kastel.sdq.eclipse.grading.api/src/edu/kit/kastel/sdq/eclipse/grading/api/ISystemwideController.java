@@ -16,6 +16,13 @@ public interface ISystemwideController {
 	IArtemisGUIController getArtemisGUIController();
 
 	/**
+	 * Get all submissionIDs which were already assessed by the calling tutor.
+	 * @param unsubmittedOnly only get those submissions of which the assessment was not submitted. includes started and started+saved assessments.
+	 * @return
+	 */
+	Collection<Integer> getAssessedSubmissions(boolean unsubmittedOnly);
+
+	/**
 	 *
 	 *  Get assessment controller for current state (courseID, exerciseID, submissionID, exerciseConfig).
 	 */

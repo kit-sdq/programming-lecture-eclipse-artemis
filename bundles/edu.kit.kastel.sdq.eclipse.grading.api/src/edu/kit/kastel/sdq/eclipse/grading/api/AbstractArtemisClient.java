@@ -69,6 +69,9 @@ public abstract class AbstractArtemisClient {
 	 */
 	public abstract Collection<ICourse> getCourses() throws Exception;
 
+	public abstract Collection<ISubmission> getSubmissions(int exerciseID, boolean assessedByTutor)
+			throws Exception;
+
 	/**
 	 * Submit the assessment to Artemis. Must have been started by {@code startAssessment}, before!
 	 * @param participationID THOU SHALT NOT PROVIDE THE SUBMISSIONID, HERE!

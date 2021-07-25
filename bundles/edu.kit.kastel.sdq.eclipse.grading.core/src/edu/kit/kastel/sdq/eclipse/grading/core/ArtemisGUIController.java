@@ -85,6 +85,25 @@ public class ArtemisGUIController implements IArtemisGUIController {
 		return lockResult.getPreexistentFeedbacks();
 	}
 
+	@Override
+	public Collection<Integer> getAssessedSubmissions(int exerciseID, boolean unsubmittedOnly) {
+		try {
+			Collection<ISubmission> submissions = this.artemisClient.getSubmissions(exerciseID, true);
+			if (unsubmittedOnly) {
+				submissions = submissions.stream()
+						.filter(submission -> !submission.hasSubmittedAssessment())
+						.collect(Collectors.toList());
+			}
+
+			return submissions.stream()
+					.map(ISubmission::getSubmissionId)
+					.collect(Collectors.toList());
+		} catch (Exception e) {
+			this.alertObservable.error(e.getMessage(), e);
+			return List.of();
+		}
+	}
+
 	private ICourse getCourseByShortName(final String courseShortName) {
 
 		Collection<ICourse> filteredCourses = this.getCourses().stream()
@@ -122,7 +141,7 @@ public class ArtemisGUIController implements IArtemisGUIController {
 			return this.artemisClient.getCourses();
 		} catch (final Exception e) {
 			this.alertObservable.error(e.getMessage(), e);
-			return null;
+			return List.of();
 		}
 	}
 

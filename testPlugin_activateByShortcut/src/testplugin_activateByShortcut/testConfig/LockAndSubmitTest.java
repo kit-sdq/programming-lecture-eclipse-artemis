@@ -120,6 +120,8 @@ public class LockAndSubmitTest {
 		final int exerciseID = 1;
 		sysController.setCourseIdAndGetExerciseTitles("praktikum21");
 		sysController.setExerciseId("testAufgabe1");
+
+		System.out.println("Assessed, but unsubmitted submissions before assessment start " + sysController.getAssessedSubmissions(true));
 		boolean startSuccessful = sysController.onStartAssessmentButton();
 
 		if (!startSuccessful) {
@@ -129,7 +131,13 @@ public class LockAndSubmitTest {
 
 		this.addSomeFakeAssessments(sysController);
 
+		System.out.println("Assessed, but unsubmitted submissions before save" + sysController.getAssessedSubmissions(true));
 		sysController.onSaveAssessmentButton();
+		System.out.println("Assessed, but unsubmitted submissions before submit" + sysController.getAssessedSubmissions(true));
+		sysController.onSubmitAssessmentButton();
+		System.out.println("Assessed, but unsubmitted submissions after submit" + sysController.getAssessedSubmissions(true));
+
+
 		return this;
 	}
 

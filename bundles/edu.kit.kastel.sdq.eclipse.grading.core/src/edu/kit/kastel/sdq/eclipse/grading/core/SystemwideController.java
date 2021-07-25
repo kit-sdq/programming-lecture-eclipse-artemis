@@ -52,6 +52,11 @@ public class SystemwideController implements ISystemwideController {
 		return this.artemisGUIController;
 	}
 
+	@Override
+	public Collection<Integer> getAssessedSubmissions(boolean unsubmittedOnly) {
+		return this.artemisGUIController.getAssessedSubmissions(this.exerciseID, unsubmittedOnly);
+	}
+
 	protected IAssessmentController getAssessmentController(int submissionID, String exerciseConfigName) {
 		Integer courseID = null;
 		Integer exerciseID = null;
