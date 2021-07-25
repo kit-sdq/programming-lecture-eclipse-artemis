@@ -1,6 +1,12 @@
 package edu.kit.kastel.sdq.eclipse.grading.core.artemis;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -43,8 +49,31 @@ public class WorkspaceUtil {
 		}
 	}
 
-	public static final void deleteEclipseProject(final String projectName) throws CoreException {
-		ResourcesPlugin.getWorkspace().getRoot().getProject(projectName).delete(true, null);
+	private static final void deleteDirectoryRecursively(final Path directory) throws IOException {
+		Files.walkFileTree(directory, new SimpleFileVisitor<Path>() {
+		   @Override
+		   public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+		       Files.delete(dir);
+		       return FileVisitResult.CONTINUE;
+		   }
+
+		   @Override
+		   public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+		       Files.delete(file);
+		       return FileVisitResult.CONTINUE;
+		   }
+		});
+	}
+
+	public static final void deleteEclipseProject(final String projectName) throws CoreException, IOException {
+		final IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
+		File projectLocation =	project.getLocation().toFile();
+
+		project.delete(true, null);
+
+		if (projectLocation.exists()) {
+			deleteDirectoryRecursively(projectLocation.toPath());
+		}
 	}
 
 	private WorkspaceUtil() {}

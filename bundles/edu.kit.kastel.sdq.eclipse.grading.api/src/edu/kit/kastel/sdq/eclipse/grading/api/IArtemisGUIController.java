@@ -15,12 +15,6 @@ public interface IArtemisGUIController {
 	void downloadExerciseAndSubmission(int courseID, int exerciseID, int submissionID);
 
 	/**
-	 * TODO hardcoded download of some exercise and submission, also project-making so that it's all ready to work on.
-	 * @return submissionID (later this is gotten via IArtemisGUIController::getCourses)
-	 */
-	int downloadHardcodedExerciseAndSubmissionExample();
-
-	/**
 	 *
 	 * @return this ArtemisGUIController's Alert Handler (Observer/ Observable pattern)
 	 */
@@ -34,7 +28,13 @@ public interface IArtemisGUIController {
 	 */
 	Collection<ICourse> getCourses();
 
+	Collection<String> getCourseShortNames();
+
+	Collection<String> getExamTitles(String courseShortName);
+
 	IExercise getExerciseFromCourses(Collection<ICourse> courses, int courseID, int exerciseID);
+
+	Collection<String> getExerciseShortNames(String courseShortName);
 
 	/**
 	 * Pre-condition: You need to have called startAssessment or startNextAssessment prior to calling this method!

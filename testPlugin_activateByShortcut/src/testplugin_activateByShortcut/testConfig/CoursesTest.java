@@ -12,7 +12,7 @@ public class CoursesTest {
 	private IArtemisGUIController guiController;
 
 	public CoursesTest(File configFile, String artemisHost, String username, String password) {
-		this.guiController = new SystemwideController(configFile, artemisHost, username, password).getArtemisGUIController();
+		this.guiController = new SystemwideController(configFile, null, artemisHost, username, password).getArtemisGUIController();
 	}
 
 	public Collection<ICourse> getCoursesTest() {

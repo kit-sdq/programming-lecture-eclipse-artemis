@@ -3,7 +3,6 @@ package testplugin_activateByShortcut.testConfig;
 import java.io.File;
 import java.util.Collection;
 import java.util.LinkedList;
-import java.util.Optional;
 
 import org.eclipse.core.resources.ResourcesPlugin;
 
@@ -43,10 +42,10 @@ public class LockAndSubmitTest {
 	}
 
 
-	private void addSomeFakeAssessments(ISystemwideController sysController, int submissionID, String exerciseConfigShortName) throws Exception {
+	private void addSomeFakeAssessments(ISystemwideController sysController) throws Exception {
 		// add new annotations to the assessmentController
 		int i = 1;
-		for (IMistakeType mistakeType : sysController.getAssessmentController(submissionID, exerciseConfigShortName).getMistakes()) {
+		for (IMistakeType mistakeType : sysController.getCurrentAssessmentController().getMistakes()) {
 			if (i >= 10) break;
 			i++;
 			String customMsg = null;
@@ -56,7 +55,7 @@ public class LockAndSubmitTest {
 				customPenalty = 25D;
 			}
 
-			sysController.getAssessmentController(submissionID, exerciseConfigShortName).addAnnotation(
+			sysController.getCurrentAssessmentController().addAnnotation(
 					i,
 					mistakeType,
 					i*2,
@@ -68,7 +67,7 @@ public class LockAndSubmitTest {
 		}
 
 		System.out.println("++++++++++++++  Added the following annotations"
-				+ sysController.getAssessmentController(submissionID, exerciseConfigShortName).getAnnotations());
+				+ sysController.getCurrentAssessmentController().getAnnotations());
 	}
 
 	private Collection<IAnnotation> getForgedAnnotations(final ExerciseConfig exerciseConfig) {
@@ -110,69 +109,29 @@ public class LockAndSubmitTest {
 
 	}
 
-	public LockAndSubmitTest testAnnotationsDeserialized() throws Exception {
-		System.out.println("######################### testAnnotationsDeserialized ####");
-		final ISystemwideController sysController = new SystemwideController(
-				new File(this.eclipseWorkspaceRoot, ShortcutHandler.CONFIG_PATH),
-				this.host,
-				this.username,
-				this.password);
-		final String exerciseConfigShortName = "Final Task 1";
-		final int submissionID = 5;
-
-		sysController.getArtemisGUIController().startAssessment(submissionID);
-
-		System.out.println("Got Annotations from ARTEMIS deserialization\n"
-				+ sysController.getAssessmentController(submissionID, exerciseConfigShortName).getAnnotations());
-
-		return this;
-	}
-
 	public LockAndSubmitTest testNextAssessment() throws Exception {
+		final String exerciseConfigShortName = "Final Task 1";
 		final ISystemwideController sysController = new SystemwideController(
 				new File(this.eclipseWorkspaceRoot, ShortcutHandler.CONFIG_PATH),
+				exerciseConfigShortName,
 				this.host,
 				this.username,
 				this.password);
-		final String exerciseConfigShortName = "Final Task 1";
 		final int exerciseID = 1;
+		sysController.setCourseIdAndGetExerciseTitles("praktikum21");
+		sysController.setExerciseId("testAufgabe1");
+		boolean startSuccessful = sysController.onStartAssessmentButton();
 
-		final Optional<Integer> submissionIDOptional = sysController.getArtemisGUIController().startNextAssessment(exerciseID);
-		if (submissionIDOptional.isEmpty()) {
+		if (!startSuccessful) {
 			System.out.println("######################### NO MORE SUBMISSIONS FOUND ####");
 			return this;
 		}
-		final int submissionID = submissionIDOptional.get();
 
-		this.addSomeFakeAssessments(sysController, submissionID, exerciseConfigShortName);
+		this.addSomeFakeAssessments(sysController);
 
-		sysController.getArtemisGUIController().saveAssessment(submissionID, true, false);
-
+		sysController.onSaveAssessmentButton();
 		return this;
 	}
 
-	public LockAndSubmitTest testShowcase() throws Exception {
-		final ISystemwideController sysController = new SystemwideController(
-				new File(this.eclipseWorkspaceRoot, ShortcutHandler.CONFIG_PATH),
-				this.host,
-				this.username,
-				this.password);
-		final String exerciseConfigShortName = "Final Task 1";
-		final int submissionID = 5;
 
-
-		//THIS ID SEEMS TO BE THE PARTICIPATION ID !!!! It is gotten via LOCKing --> TODO einbauen!
-		final int participationID = sysController.getArtemisGUIController().downloadHardcodedExerciseAndSubmissionExample();
-		System.out.println("++++++++++++++ Downloaded hardcoded exercise and submission example with id: "
-				+ participationID);
-
-
-		this.addSomeFakeAssessments(sysController, submissionID, exerciseConfigShortName);
-
-		//start and submit the assessment
-		sysController.getArtemisGUIController().startAssessment(submissionID);
-		sysController.getArtemisGUIController().saveAssessment(submissionID, true, false);
-
-		return this;
-	}
 }

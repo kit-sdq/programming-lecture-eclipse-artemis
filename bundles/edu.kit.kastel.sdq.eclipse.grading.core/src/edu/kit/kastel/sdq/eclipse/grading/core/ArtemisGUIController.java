@@ -3,6 +3,8 @@ package edu.kit.kastel.sdq.eclipse.grading.core;
 import java.io.File;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -18,7 +20,9 @@ import edu.kit.kastel.sdq.eclipse.grading.api.IAnnotation;
 import edu.kit.kastel.sdq.eclipse.grading.api.IArtemisGUIController;
 import edu.kit.kastel.sdq.eclipse.grading.api.IAssessmentController;
 import edu.kit.kastel.sdq.eclipse.grading.api.ICourse;
+import edu.kit.kastel.sdq.eclipse.grading.api.IExam;
 import edu.kit.kastel.sdq.eclipse.grading.api.IExercise;
+import edu.kit.kastel.sdq.eclipse.grading.api.IExerciseGroup;
 import edu.kit.kastel.sdq.eclipse.grading.api.IMistakeType;
 import edu.kit.kastel.sdq.eclipse.grading.api.ISubmission;
 import edu.kit.kastel.sdq.eclipse.grading.api.alerts.IAlertObservable;
@@ -66,26 +70,6 @@ public class ArtemisGUIController implements IArtemisGUIController {
 
 	}
 
-	//TODO hardcoded download of exercise and submission (and maybe give back submissionID)
-	@Override
-	public int downloadHardcodedExerciseAndSubmissionExample() {
-
-		final File eclipseWorkspaceRoot =  ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile();
-		final Collection<ICourse> courses = this.getCourses();
-		final int exerciseId = 1;
-		final int courseId = 1;
-		final int submissionId = 5;
-
-		try {
-			this.downloadExerciseAndSubmission(courseId, exerciseId, submissionId);
-		} catch (Exception e) {
-			System.out.println("Caught exception in downloadHardcodedExerciseAndSubmissionExample: ");
-			e.printStackTrace();
-		}
-		System.out.println("Download Done!");
-		return 3;
-	}
-
 	@Override
 	public IAlertObservable getAlertObservable() {
 		return this.alertObservable;
@@ -99,6 +83,22 @@ public class ArtemisGUIController implements IArtemisGUIController {
 			return null;
 		}
 		return lockResult.getPreexistentFeedbacks();
+	}
+
+	private ICourse getCourseByShortName(final String courseShortName) {
+
+		Collection<ICourse> filteredCourses = this.getCourses().stream()
+				.filter(course -> course.getShortName().equals(courseShortName))
+				.collect(Collectors.toList());
+		if (filteredCourses.isEmpty()) {
+			this.alertObservable.error("No course found for courseShortName=" + courseShortName, null);
+			return null;
+		}
+		if (filteredCourses.size() > 1) {
+			this.alertObservable.error("Multiple courses found for courseShortName=" + courseShortName, null);
+			return null;
+		}
+		return filteredCourses.iterator().next();
 	}
 
 	private ICourse getCourseFromCourses(Collection<ICourse> courses, int courseID) {
@@ -127,6 +127,22 @@ public class ArtemisGUIController implements IArtemisGUIController {
 	}
 
 	@Override
+	public Collection<String> getCourseShortNames() {
+		return this.getCourses().stream().map(ICourse::getShortName).collect(Collectors.toList());
+	}
+
+	@Override
+	public Collection<String> getExamTitles(final String courseShortName) {
+
+		ICourse course = this.getCourseByShortName(courseShortName);
+		if (course == null) return List.of();
+
+		return course.getExams().stream()
+				.map(IExam::getTitle)
+				.collect(Collectors.toList());
+	}
+
+	@Override
 	public IExercise getExerciseFromCourses(Collection<ICourse> courses, int courseID, int exerciseID) {
 		final Collection<IExercise> filteredExercises = this.getCourseFromCourses(courses, courseID).getExercises().stream()
 				.filter(exercise -> (exercise.getExerciseId() == exerciseID))
@@ -140,6 +156,47 @@ public class ArtemisGUIController implements IArtemisGUIController {
 			return null;
 		}
 		return filteredExercises.iterator().next();
+	}
+
+	@Override
+	public Collection<String> getExerciseShortNames(final String courseShortName) {
+		ICourse course = this.getCourseByShortName(courseShortName);
+		if (course == null) return List.of();
+
+		return course.getExercises().stream()
+				.map(IExercise::getShortName)
+				.collect(Collectors.toList());
+	}
+
+	public Collection<String> getExerciseShortNamesFromExam(final String examTitle) {
+		IExam foundExam = null;
+		for (ICourse course : this.getCourses()) {
+			final Collection<IExam> filteredExams = course.getExams().stream()
+				.filter(exam -> exam.getTitle().equals(examTitle))
+				.collect(Collectors.toList());
+			if (filteredExams.size() == 1) {
+				IExam exam = filteredExams.iterator().next();
+				if (exam.getTitle().equals(examTitle)) {
+					foundExam = exam;
+				}
+			}
+		}
+		if (foundExam == null) {
+			this.alertObservable.error("No exam found for examTitle=" + examTitle, null);
+			return List.of();
+		}
+		return foundExam.getExerciseGroups().stream()
+			.map(IExerciseGroup::getExercises)
+			.reduce((list1, list2) -> {
+				List<IExercise> exercises = new LinkedList<IExercise>();
+				exercises.addAll(list1);
+				exercises.addAll(list2);
+				return exercises;
+			}).get()
+			.stream()
+			.map(IExercise::getShortName)
+			.collect(Collectors.toList());
+
 	}
 
 	@Override

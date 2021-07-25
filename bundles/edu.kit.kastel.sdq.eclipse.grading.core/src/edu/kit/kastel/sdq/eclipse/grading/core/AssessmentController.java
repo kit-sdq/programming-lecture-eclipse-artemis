@@ -108,7 +108,7 @@ public class AssessmentController implements IAssessmentController {
 			).getName();
 		try {
 			WorkspaceUtil.deleteEclipseProject(projectName);
-		} catch (CoreException e) {
+		} catch (CoreException | IOException e) {
 			this.alertObservable.error("Eclipse Exception occurred while trying to delete project: " + e.getMessage(), e);
 		}
 
