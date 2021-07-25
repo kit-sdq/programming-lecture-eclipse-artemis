@@ -80,7 +80,7 @@ public class ArtemisGUIController implements IArtemisGUIController {
 		ILockResult lockResult = this.lockResults.get(submissionID);
 		if (lockResult == null) {
 			this.alertObservable.error("No Lock found for submissionID=" + submissionID, null);
-			return null;
+			return List.of();
 		}
 		return lockResult.getPreexistentFeedbacks();
 	}
