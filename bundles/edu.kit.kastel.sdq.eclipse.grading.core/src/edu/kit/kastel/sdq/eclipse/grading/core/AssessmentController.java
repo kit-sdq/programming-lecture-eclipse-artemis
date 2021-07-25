@@ -2,6 +2,7 @@ package edu.kit.kastel.sdq.eclipse.grading.core;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -163,14 +164,14 @@ public class AssessmentController implements IAssessmentController {
 					.findFirst();
 		} catch (IOException e) {
 			this.alertObservable.error(e.getMessage(), e);
-			return null;
+			return List.of();
 		}
 
 		if (exerciseConfigOptional.isPresent()) {
 			return exerciseConfigOptional.get().getIMistakeTypes();
 		}
 		this.alertObservable.error("ExerciseConfigShortName " + this.exerciseConfigShortName + " not found in config!", null);
-		return null;
+		return List.of();
 	}
 
 	@Override
@@ -183,13 +184,13 @@ public class AssessmentController implements IAssessmentController {
 					.findFirst();
 		} catch (IOException e) {
 			this.alertObservable.error(e.getMessage(), e);
-			return null;
+			return List.of();
 		}
 		if (exerciseConfigOptional.isPresent()) {
 			return exerciseConfigOptional.get().getIRatingGroups();
 		}
 		this.alertObservable.error("ExerciseConfigShortName " + this.exerciseConfigShortName + " not found in config!", null);
-		return null;
+		return List.of();
 	}
 
 	public int getSubmissionID() {
