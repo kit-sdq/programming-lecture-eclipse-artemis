@@ -37,6 +37,8 @@ public interface ISystemwideController {
 
 	boolean onStartCorrectionRound2Button();
 
+	void onSubmitAssessmentButton();
+
 	/**
 	 * set the new config globally.
 	 * @param newConfigFile

@@ -126,6 +126,7 @@ public class SystemwideController implements ISystemwideController {
 		return this.startAssessment(1);
 	}
 
+	@Override
 	public void onSubmitAssessmentButton() {
 		this.artemisGUIController.saveAssessment(this.submissionID, true, false);
 
