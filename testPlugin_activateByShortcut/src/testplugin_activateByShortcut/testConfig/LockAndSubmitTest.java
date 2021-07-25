@@ -42,7 +42,7 @@ public class LockAndSubmitTest {
 	}
 
 
-	private void addSomeFakeAssessments(ISystemwideController sysController) throws Exception {
+	private void addSomeFakeAssessments(ISystemwideController sysController)  {
 		// add new annotations to the assessmentController
 		int i = 1;
 		for (IMistakeType mistakeType : sysController.getCurrentAssessmentController().getMistakes()) {
@@ -109,7 +109,7 @@ public class LockAndSubmitTest {
 
 	}
 
-	public LockAndSubmitTest testNextAssessment() throws Exception {
+	public LockAndSubmitTest testNextAssessment() {
 		final String exerciseConfigShortName = "Final Task 1";
 		final ISystemwideController sysController = new SystemwideController(
 				new File(this.eclipseWorkspaceRoot, ShortcutHandler.CONFIG_PATH),

@@ -35,20 +35,22 @@ public class ShortcutHandler extends AbstractHandler {
 		AbstractArtemisClient artemisClient = new ArtemisRESTClient(credentials.L, credentials.R, "artemis-test.ipd.kit.edu");
 		List<Integer> submissionIds = new LinkedList<Integer>();
 		submissionIds.add(79);
+
 		try {
 			Collection<ICourse> courses = artemisClient.getCourses();
-
-			new LockAndSubmitTest(credentials.L, credentials.R, "artemis-test.ipd.kit.edu")
-				.testNextAssessment()
-//				.testAnnotationsDeserialized()
-				;
-
-
-
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
-			throw new RuntimeException(e);
+			System.out.println("Got exception in getCourses: " + e.getMessage());
+			return;
 		}
+
+		new LockAndSubmitTest(credentials.L, credentials.R, "artemis-test.ipd.kit.edu")
+			.testNextAssessment()
+//				.testAnnotationsDeserialized()
+			;
+
+
+
+
 	}
 
 	public void coursesTest(Collection<ICourse> courses) {
