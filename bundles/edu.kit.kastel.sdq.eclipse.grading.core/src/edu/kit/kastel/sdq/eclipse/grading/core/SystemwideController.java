@@ -99,6 +99,12 @@ public class SystemwideController implements ISystemwideController {
 	}
 
 	@Override
+	public void onLoadAgainButton() {
+		this.getArtemisGUIController().startAssessment(this.submissionID);
+		this.getArtemisGUIController().downloadExerciseAndSubmission(this.courseID, this.exerciseID, this.submissionID);
+	}
+
+	@Override
 	public void onReloadAssessmentButton() {
 		if (this.submissionID == null) {
 			this.alertObservable.warn("Could not reload. No assessment was started, yet! (No submissionID is set)");
@@ -146,6 +152,11 @@ public class SystemwideController implements ISystemwideController {
 		//TODO do this only if no submitting was successful
 		this.getCurrentAssessmentController().deleteEclipseProject();
 		this.submissionID = null;
+	}
+
+	@Override
+	public void setAssessedSubmission(int submissionID) {
+		this.submissionID = submissionID;
 	}
 
 	@Override

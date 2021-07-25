@@ -16,6 +16,7 @@ public interface ISystemwideController {
 	IArtemisGUIController getArtemisGUIController();
 
 	/**
+	 * BACKLOG TAB.
 	 * Get all submissionIDs which were already assessed by the calling tutor.
 	 * @param unsubmittedOnly only get those submissions of which the assessment was not submitted. includes started and started+saved assessments.
 	 * @return
@@ -27,6 +28,12 @@ public interface ISystemwideController {
 	 *  Get assessment controller for current state (courseID, exerciseID, submissionID, exerciseConfig).
 	 */
 	IAssessmentController getCurrentAssessmentController();
+
+	/**
+	 * BACKLOG TAB.
+	 * You need to select a submission via setAssessedSubmission(), first!
+	 */
+	void onLoadAgainButton();
 
 	void onReloadAssessmentButton();
 
@@ -45,6 +52,11 @@ public interface ISystemwideController {
 	boolean onStartCorrectionRound2Button();
 
 	void onSubmitAssessmentButton();
+
+	/**
+	 * BACKLOG TAB.
+	 */
+	void setAssessedSubmission(int submissionID);
 
 	/**
 	 * set the new config globally.
