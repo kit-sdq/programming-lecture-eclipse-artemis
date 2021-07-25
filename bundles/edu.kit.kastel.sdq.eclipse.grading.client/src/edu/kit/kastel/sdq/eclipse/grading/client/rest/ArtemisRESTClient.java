@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
 
 import javax.security.sasl.AuthenticationException;
@@ -210,7 +211,7 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 			e.printStackTrace();
 		}
 
-		return null;
+		return List.of();
 	}
 
 	private IExam getExamFromJsonNode(JsonNode examJsonNode, int courseId) throws Exception {
