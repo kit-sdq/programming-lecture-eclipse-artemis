@@ -11,11 +11,8 @@ Require-Bundle: com.fasterxml.jackson.core.jackson-core,
  org.eclipse.core.runtime,
  org.eclipse.egit.core,
  org.eclipse.jgit,
- javax.ws.rs,
- org.glassfish.jersey.core.jersey-common,
- org.glassfish.jersey.core.jersey-client,
- org.glassfish.jersey.inject.jersey-hk2,
- edu.kit.kastel.sdq.eclipse.grading.api
+ edu.kit.kastel.sdq.eclipse.grading.api,
+ com.eclipsesource.jaxrs.jersey-min
 Export-Package: edu.kit.kastel.sdq.eclipse.grading.client.git,
  edu.kit.kastel.sdq.eclipse.grading.client.mappings,
  edu.kit.kastel.sdq.eclipse.grading.client.rest
