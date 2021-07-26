@@ -93,8 +93,7 @@ public class AssessmentViewController {
 
 	public void createAssessmentController(int submissionID2) {
 		final IPreferenceStore store = Activator.getDefault().getPreferenceStore();
-		this.assessmentController = this.systemwideController.getAssessmentController(submissionID2,
-				store.getString(PreferenceConstants.P_CONFIG_NAME));
+		this.assessmentController = this.systemwideController.getCurrentAssessmentController();
 	}
 
 	private File createConfigFile() {
