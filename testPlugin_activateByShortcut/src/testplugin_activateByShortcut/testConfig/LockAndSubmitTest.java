@@ -9,6 +9,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import edu.kit.kastel.sdq.eclipse.grading.api.AbstractArtemisClient;
 import edu.kit.kastel.sdq.eclipse.grading.api.IAnnotation;
 import edu.kit.kastel.sdq.eclipse.grading.api.IMistakeType;
+import edu.kit.kastel.sdq.eclipse.grading.api.ISubmission.Filter;
 import edu.kit.kastel.sdq.eclipse.grading.api.ISystemwideController;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IAssessor;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.ILockResult;
@@ -81,6 +82,17 @@ public class LockAndSubmitTest {
 		return forgedAnnotations;
 	}
 
+	private void printBegunSubmissionState(ISystemwideController sysController, String text) {
+		System.out.println("Begun Submissions [" + text + "]");
+		System.out.println(" -- All submission: " +
+				sysController.getBegunSubmissions(Filter.ALL));
+		System.out.println(" -- Saved, but not submitted: " +
+				sysController.getBegunSubmissions(Filter.SAVED_BUT_NOT_SUBMITTED));
+		System.out.println(" -- Saved and submitted: " +
+				sysController.getBegunSubmissions(Filter.SAVED_AND_SUBMITTED));
+
+	}
+
 	public void test() throws Exception {
 
 		ILockResult lockResult = this.artemisClient.startAssessment(3);
@@ -121,7 +133,7 @@ public class LockAndSubmitTest {
 		sysController.setCourseIdAndGetExerciseTitles("praktikum21");
 		sysController.setExerciseId("testAufgabe1");
 
-		System.out.println("Assessed, but unsubmitted submissions before assessment start " + sysController.getAssessedSubmissions(true));
+		this.printBegunSubmissionState(sysController, "before assessment start");
 		boolean startSuccessful = sysController.onStartAssessmentButton();
 
 		if (!startSuccessful) {
@@ -131,12 +143,11 @@ public class LockAndSubmitTest {
 
 		this.addSomeFakeAssessments(sysController);
 
-		System.out.println("Assessed, but unsubmitted submissions before save" + sysController.getAssessedSubmissions(true));
+		this.printBegunSubmissionState(sysController, "before save");
 		sysController.onSaveAssessmentButton();
-		System.out.println("Assessed, but unsubmitted submissions before submit" + sysController.getAssessedSubmissions(true));
+		this.printBegunSubmissionState(sysController, "before submit");
 		sysController.onSubmitAssessmentButton();
-		System.out.println("Assessed, but unsubmitted submissions after submit" + sysController.getAssessedSubmissions(true));
-
+		this.printBegunSubmissionState(sysController, "after submit");
 
 		return this;
 	}

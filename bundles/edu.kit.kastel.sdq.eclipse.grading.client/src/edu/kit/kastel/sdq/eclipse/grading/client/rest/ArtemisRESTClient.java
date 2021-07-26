@@ -311,13 +311,24 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 		final String repositoryUrl = participationJsonNode.get("repositoryUrl").textValue();
 		final String commitHash = submissionJsonNode.get("commitHash").textValue();
 
+		// get info about whether this submission has an assessment which was submitted already
 		final JsonNode resultsJsonNode = submissionJsonNode.get("results");
-		final JsonNode lastResultJsonNode = resultsJsonNode.get(resultsJsonNode.size()-1);
 
-		boolean hasSubmittedAssessment = lastResultJsonNode.get("completionDate") != null;
+		boolean hasSubmittedAssessment = false;
+		boolean hasSavedAssessment = false;
+
+		if (resultsJsonNode.size() > 0) {
+			final JsonNode lastResultJsonNode = resultsJsonNode.get(resultsJsonNode.size()-1);
+			hasSubmittedAssessment = lastResultJsonNode.get("completionDate") != null;
+			hasSavedAssessment = lastResultJsonNode.get("assessmentType").asText().equals("SEMI_AUTOMATIC");
+		}
+
+		//TODO has savedAssessment (weaker than hasSubmittedAssessment!)
+
+
 
 		return new ArtemisSubmission(submissionId, participantIdentifier, participantName, repositoryUrl, commitHash,
-				hasSubmittedAssessment);
+				hasSubmittedAssessment, hasSavedAssessment);
 	}
 
 	@Override

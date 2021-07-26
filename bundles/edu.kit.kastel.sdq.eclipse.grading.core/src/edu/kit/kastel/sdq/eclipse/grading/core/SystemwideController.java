@@ -52,11 +52,6 @@ public class SystemwideController implements ISystemwideController {
 		return this.artemisGUIController;
 	}
 
-	@Override
-	public Collection<Integer> getAssessedSubmissions(boolean unsubmittedOnly) {
-		return this.artemisGUIController.getAssessedSubmissions(this.exerciseID, unsubmittedOnly);
-	}
-
 	protected IAssessmentController getAssessmentController(int submissionID, String exerciseConfigName) {
 		Integer courseID = null;
 		Integer exerciseID = null;
@@ -83,6 +78,14 @@ public class SystemwideController implements ISystemwideController {
 			this.assessmentControllers.put(submissionID, new AssessmentController(this, courseID, exerciseID, submissionID, exerciseConfigName));
 		}
 		return this.assessmentControllers.get(submissionID);
+	}
+
+
+	@Override
+	public Collection<Integer> getBegunSubmissions(ISubmission.Filter submissionFilter) {
+		return this.getArtemisGUIController().getBegunSubmissions(this.exerciseID).stream()
+				.filter(submissionFilter.getFilterPredicate())
+				.map(ISubmission::getSubmissionId).collect(Collectors.toList());
 	}
 
 	/**

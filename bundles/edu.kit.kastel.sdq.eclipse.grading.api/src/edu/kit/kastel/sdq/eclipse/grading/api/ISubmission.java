@@ -1,8 +1,25 @@
 package edu.kit.kastel.sdq.eclipse.grading.api;
 
+import java.util.function.Predicate;
+
 public interface ISubmission {
 
 	//TODO define
+
+	enum Filter {
+		SAVED_BUT_NOT_SUBMITTED(submission -> submission.hasSavedAssessment() && !submission.hasSubmittedAssessment()),
+		SAVED_AND_SUBMITTED(submission -> submission.hasSavedAssessment() && submission.hasSubmittedAssessment()),
+		ALL(submission -> true);
+
+		private Predicate<ISubmission> filterPredicate;
+		Filter(Predicate<ISubmission> filterPredicate) {
+			this.filterPredicate = filterPredicate;
+		}
+
+		public Predicate<ISubmission> getFilterPredicate() {
+			return this.filterPredicate;
+		}
+	}
 
 	String getParticipantIdentifier();
 
@@ -12,5 +29,15 @@ public interface ISubmission {
 
 	int getSubmissionId();
 
+	/**
+	 *
+	 * @return whether this submission has an assessment known to artemis which is "saved" or "submitted".
+	 */
+	boolean hasSavedAssessment();
+
+	/**
+	 *
+	 * @return whether this submission has an assessment known to artemis which is "submitted".
+	 */
 	boolean hasSubmittedAssessment();
 }

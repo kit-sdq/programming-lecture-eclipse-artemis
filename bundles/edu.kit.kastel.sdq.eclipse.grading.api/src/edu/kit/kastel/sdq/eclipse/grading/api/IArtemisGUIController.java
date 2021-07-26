@@ -22,7 +22,7 @@ public interface IArtemisGUIController {
 
 	Collection<IFeedback> getAllFeedbacksGottenFromLocking(int submissionID);
 
-	Collection<Integer> getAssessedSubmissions(int exerciseID, boolean unsubmittedOnly);
+	Collection<ISubmission> getBegunSubmissions(int exerciseID);
 
 	/**
 	 *

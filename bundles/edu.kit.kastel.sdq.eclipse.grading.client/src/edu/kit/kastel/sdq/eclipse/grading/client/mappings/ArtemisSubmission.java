@@ -12,9 +12,10 @@ public class ArtemisSubmission implements ISubmission {
 	private String commitHash;
 
 	private boolean hasSubmittedAssessment;
+	private boolean hasSavedAssessment;
 
 	public ArtemisSubmission(int submissionId, String participantIdentifier, String participantName,
-			String repositoryUrl, String commitHash, boolean hasSubmittedAssessment) {
+			String repositoryUrl, String commitHash, boolean hasSubmittedAssessment, boolean hasSavedAssessment) {
 		super();
 		this.submissionId = submissionId;
 		this.participantIdentifier = participantIdentifier;
@@ -22,6 +23,7 @@ public class ArtemisSubmission implements ISubmission {
 		this.repositoryUrl = repositoryUrl;
 		this.commitHash = commitHash;
 		this.hasSubmittedAssessment = hasSubmittedAssessment;
+		this.hasSavedAssessment = hasSavedAssessment;
 	}
 
 	protected String getCommitHash() {
@@ -46,6 +48,11 @@ public class ArtemisSubmission implements ISubmission {
 	@Override
 	public int getSubmissionId() {
 		return this.submissionId;
+	}
+
+	@Override
+	public boolean hasSavedAssessment() {
+		return this.hasSavedAssessment;
 	}
 
 	@Override

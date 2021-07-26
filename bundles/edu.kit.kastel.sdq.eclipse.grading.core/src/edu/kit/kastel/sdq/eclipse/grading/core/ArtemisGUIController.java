@@ -86,18 +86,9 @@ public class ArtemisGUIController implements IArtemisGUIController {
 	}
 
 	@Override
-	public Collection<Integer> getAssessedSubmissions(int exerciseID, boolean unsubmittedOnly) {
+	public Collection<ISubmission> getBegunSubmissions(int exerciseID) {
 		try {
-			Collection<ISubmission> submissions = this.artemisClient.getSubmissions(exerciseID, true);
-			if (unsubmittedOnly) {
-				submissions = submissions.stream()
-						.filter(submission -> !submission.hasSubmittedAssessment())
-						.collect(Collectors.toList());
-			}
-
-			return submissions.stream()
-					.map(ISubmission::getSubmissionId)
-					.collect(Collectors.toList());
+			return this.artemisClient.getSubmissions(exerciseID, true);
 		} catch (Exception e) {
 			this.alertObservable.error(e.getMessage(), e);
 			return List.of();

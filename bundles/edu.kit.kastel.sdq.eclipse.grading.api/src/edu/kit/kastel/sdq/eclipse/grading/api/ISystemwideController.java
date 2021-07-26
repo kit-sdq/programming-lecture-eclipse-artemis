@@ -17,11 +17,13 @@ public interface ISystemwideController {
 
 	/**
 	 * BACKLOG TAB.
-	 * Get all submissionIDs which were already assessed by the calling tutor.
-	 * @param unsubmittedOnly only get those submissions of which the assessment was not submitted. includes started and started+saved assessments.
+	 * Get all submissionIDs which were sometime started by the calling tutor. Based on current exercise.
+	 * ISystemwideController::setExerciseId() must have been called before!
+	 *
+	 * @param filter determine which kinds of submissions should be filtered (= be in the result)
 	 * @return
 	 */
-	Collection<Integer> getAssessedSubmissions(boolean unsubmittedOnly);
+	Collection<Integer> getBegunSubmissions(ISubmission.Filter filter);
 
 	/**
 	 *
