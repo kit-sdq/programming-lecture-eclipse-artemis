@@ -320,10 +320,10 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 		if (resultsJsonNode.size() > 0) {
 			final JsonNode lastResultJsonNode = resultsJsonNode.get(resultsJsonNode.size()-1);
 			hasSubmittedAssessment = lastResultJsonNode.get("completionDate") != null;
-			hasSavedAssessment = lastResultJsonNode.get("assessmentType").asText().equals("SEMI_AUTOMATIC");
-		}
 
-		//TODO has savedAssessment (weaker than hasSubmittedAssessment!)
+			final JsonNode lastResultHasFeedbackJsonNode = lastResultJsonNode.get("hasFeedback");
+			hasSavedAssessment = lastResultHasFeedbackJsonNode != null && lastResultHasFeedbackJsonNode.asBoolean();
+		}
 
 
 
