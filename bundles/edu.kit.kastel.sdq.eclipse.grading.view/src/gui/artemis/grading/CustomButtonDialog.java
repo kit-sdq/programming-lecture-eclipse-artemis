@@ -22,13 +22,11 @@ public class CustomButtonDialog extends Dialog {
 	private Double customPenalty;
 	private final AssessmentViewController viewController;
 	private final String ratingGroupName;
-	private Group ratingGroupViewElement;
 
 	public CustomButtonDialog(Shell parentShell, AssessmentViewController viewController, String ratingGroupName,
 			Group ratingGroupViewElement) {
 		super(parentShell);
 		this.viewController = viewController;
-		this.ratingGroupViewElement = ratingGroupViewElement;
 		this.ratingGroupName = ratingGroupName;
 	}
 

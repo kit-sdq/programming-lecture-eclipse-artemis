@@ -55,7 +55,12 @@ public class AssessmentUtilities {
 	}
 
 	public static IFile getFile(String path) {
-		return ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(new Path(path));
+		System.out.println("FILE"
+				+ ResourcesPlugin.getWorkspace().getRoot().getProjects()[0].getFile("assignment/" + path).toString());
+		System.out.println(ResourcesPlugin.getWorkspace().getRoot().getProjects()[0].getFullPath());
+		IPath test = new Path(ResourcesPlugin.getWorkspace().getRoot().getLocation().toString() + path);
+		System.out.println("PATH" + test);
+		return ResourcesPlugin.getWorkspace().getRoot().getProjects()[0].getFile("assignment/" + path);
 	}
 
 	public static String getClassNameForAnnotation() {

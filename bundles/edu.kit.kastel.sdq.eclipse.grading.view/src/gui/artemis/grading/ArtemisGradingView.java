@@ -5,12 +5,10 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.layout.GridData;
@@ -27,9 +25,6 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.part.ViewPart;
 
-import edu.kit.kastel.sdq.eclipse.grading.api.ICourse;
-import edu.kit.kastel.sdq.eclipse.grading.api.IExam;
-import edu.kit.kastel.sdq.eclipse.grading.api.IExercise;
 import edu.kit.kastel.sdq.eclipse.grading.api.IMistakeType;
 import edu.kit.kastel.sdq.eclipse.grading.api.IRatingGroup;
 import gui.controllers.AssessmentViewController;
@@ -41,27 +36,16 @@ public class ArtemisGradingView extends ViewPart {
 	private Collection<IMistakeType> mistakeTypes;
 	private ArrayList<IRatingGroup> ratingGroups;
 	private Map<String, Group> ratingGroupViewElements;
-	private int courseID;
-	private int exerciseID;
-	private int submissionID;
-	private boolean errorTypesCreated;
 	private final String MARKER_NAME = "gui.assessment.marker";
 	private HashMap<String, Button> mistakeButtons;
-	private String currentExerciseName;
-	private Combo examExerciseCombo;
 	private Combo backlogCombo;
 	private ScrolledComposite scrolledComposite_grading;
 	private Composite gradingComposite;
-	private int examCourseID;
-	private int examExerciseID;
-	private int examID;
-	private Optional<Integer> examSubmissionID;
 
 	public ArtemisGradingView() {
 		this.viewController = new AssessmentViewController();
 		this.ratingGroupViewElements = new HashMap<String, Group>();
 		this.mistakeButtons = new HashMap<String, Button>();
-		this.errorTypesCreated = false;
 		this.addListenerForMarkerDeletion();
 	}
 
@@ -126,23 +110,13 @@ public class ArtemisGradingView extends ViewPart {
 		});
 	}
 
-	private void createExerciseListInput(String courseTitle, Combo exerciseList) {
+	private void createExerciseListInput(String courseShortName, Combo exerciseList) {
 		exerciseList.removeAll();
-		Optional<ICourse> optionalCourse = this.viewController.getCourses().stream()
-				.filter(course -> course.getTitle().equals(courseTitle)).findFirst();
-		if (optionalCourse.isPresent()) {
-			this.courseID = optionalCourse.get().getCourseId();
-			optionalCourse.get().getExercises().forEach(exercise -> {
-				exerciseList.add(exercise.getShortName());
-			});
-		}
+		this.viewController.getExerciseShortNames(courseShortName).forEach(exerciseShortName -> {
+			exerciseList.add(courseShortName);
+		});
 		exerciseList.addListener(SWT.Selection, e -> {
-			optionalCourse.get().getExercises().forEach(exercise -> {
-				if (exercise.getShortName().equals(exerciseList.getItem(exerciseList.getSelectionIndex()))) {
-					this.exerciseID = exercise.getExerciseId();
-					this.currentExerciseName = exerciseList.getItem(exerciseList.getSelectionIndex());
-				}
-			});
+			this.viewController.setExerciseID(exerciseList.getItem(exerciseList.getSelectionIndex()));
 		});
 	}
 
@@ -270,22 +244,21 @@ public class ArtemisGradingView extends ViewPart {
 		Button btnReloadA = new Button(assessmentComposite, SWT.NONE);
 		btnReloadA.setText("Reload");
 
-		this.addSelectionListenerForReloadAssessmentButton(btnReloadA);
+		this.addSelectionListenerForReloadButton(btnReloadA);
 
 		Button btnSaveAssessment = new Button(assessmentComposite, SWT.NONE);
 		btnSaveAssessment.setText("Save ");
 
-		this.addSelectionListenerForSaveAssessmentButton(btnSaveAssessment);
+		this.addSelectionListenerForSaveButton(btnSaveAssessment);
 
 		Button btnSubmitAssessment = new Button(assessmentComposite, SWT.NONE);
 		btnSubmitAssessment.setText("Submit");
 
-		this.addSelectionListenerForSubmitAssessment(btnSubmitAssessment);
+		this.addSelectionListenerForSubmitButton(btnSubmitAssessment);
 
 		scrolledComposite_assessment.setContent(assessmentComposite);
 		scrolledComposite_assessment.setMinSize(assessmentComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 
-		// TODO: Refactor names and implement selection listeners
 		TabItem tbtmExam = new TabItem(tabFolder, SWT.NONE);
 		tbtmExam.setText("Exam");
 
@@ -324,12 +297,12 @@ public class ArtemisGradingView extends ViewPart {
 		Button btnReloadExam = new Button(examComposite, SWT.NONE);
 		btnReloadExam.setText("Reload");
 
-		this.addSelectionListenerForReloadExamButton(btnReloadExam);
+		this.addSelectionListenerForReloadButton(btnReloadExam);
 
 		Button btnSaveExam = new Button(examComposite, SWT.NONE);
 		btnSaveExam.setText("Save");
 
-		this.addSelectionListenerForSaveExamButton(btnSaveExam);
+		this.addSelectionListenerForSaveButton(btnSaveExam);
 
 		Button btnStartFirstRound = new Button(examComposite, SWT.NONE);
 		btnStartFirstRound.setText("Start Correction Round 1");
@@ -344,7 +317,7 @@ public class ArtemisGradingView extends ViewPart {
 		Button btnSubmitExam = new Button(examComposite, SWT.NONE);
 		btnSubmitExam.setText("Submit");
 
-		this.addSelectionListenerForSubmitExamButton(btnSubmitExam);
+		this.addSelectionListenerForSubmitButton(btnSubmitExam);
 
 		scrolledComposite_exam.setContent(examComposite);
 		scrolledComposite_exam.setMinSize(examComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
@@ -370,6 +343,8 @@ public class ArtemisGradingView extends ViewPart {
 		gd_combo_4.widthHint = 152;
 		this.backlogCombo.setLayoutData(gd_combo_4);
 
+		this.initializeBacklogCombo(this.backlogCombo);
+
 		Button btnLoadAgain = new Button(backlogComposite, SWT.NONE);
 		btnLoadAgain.setText("Load again");
 
@@ -380,9 +355,13 @@ public class ArtemisGradingView extends ViewPart {
 
 	}
 
+	private void initializeBacklogCombo(Combo backlogCombo2) {
+		this.viewController.getSubmissionsForBacklog();
+	}
+
 	private void loadExamComboEntries(Combo examCourseCombo, Combo examCombo, Combo examExerciseCombo) {
-		this.viewController.getCourses().forEach(course -> {
-			examCourseCombo.add(course.getTitle());
+		this.viewController.getCourseShortNames().forEach(courseShortName -> {
+			examCourseCombo.add(courseShortName);
 		});
 		examCourseCombo.addListener(SWT.Selection, e -> {
 			this.createExamComboList(examCourseCombo.getItem(examCourseCombo.getSelectionIndex()), examCombo,
@@ -392,140 +371,62 @@ public class ArtemisGradingView extends ViewPart {
 
 	private void createExamComboList(String courseTitle, Combo examCombo, Combo examExerciseCombo) {
 		examCombo.removeAll();
-		Optional<ICourse> optionalCourse = this.viewController.getCourses().stream()
-				.filter(course -> course.getTitle().equals(courseTitle)).findFirst();
-		if (optionalCourse.isPresent()) {
-			this.examCourseID = optionalCourse.get().getCourseId();
-			optionalCourse.get().getExams().forEach(exam -> {
-				examCombo.add(exam.getTitle());
-			});
-		}
+		this.viewController.getExamShortNames(courseTitle).forEach(examShortName -> {
+			examCombo.add(examShortName);
+		});
 		examCombo.addListener(SWT.Selection, e -> {
-			Optional<IExam> optionalExam = optionalCourse.get().getExams().stream()
-					.filter(exam -> exam.getTitle().equals(examCombo.getItem(examCombo.getSelectionIndex())))
-					.findFirst();
-			if (optionalExam.isPresent()) {
-				optionalExam.get().getExerciseGroups().forEach(exerciseGroup -> {
-					exerciseGroup.getExercises().forEach(exercise -> {
-						examExerciseCombo.add(exercise.getTitle());
+			this.viewController.getExercisesShortNamesForExam(examCombo.getItem(examCombo.getSelectionIndex()))
+					.forEach(exerciseShortName -> {
+						examExerciseCombo.add(exerciseShortName);
 					});
-				});
-			}
 		});
 		examExerciseCombo.addListener(SWT.Selection, e -> {
-			Optional<IExam> optionalExam = optionalCourse.get().getExams().stream()
-					.filter(exam -> exam.getTitle().equals(examCombo.getItem(examCombo.getSelectionIndex())))
-					.findFirst();
-			if (optionalExam.isPresent()) {
-				this.examID = optionalExam.get().getExamId();
-				optionalExam.get().getExerciseGroups().forEach(exerciseGroup -> {
-					Optional<IExercise> optionalExercise = exerciseGroup.getExercises().stream()
-							.filter(exercise -> exercise.getTitle()
-									.equals(examExerciseCombo.getItem(examExerciseCombo.getSelectionIndex())))
-							.findFirst();
-					if (optionalExercise.isPresent()) {
-						this.examExerciseID = optionalExercise.get().getExerciseId();
-					}
-				});
-			}
+			this.viewController.setExerciseID(examExerciseCombo.getItem(examExerciseCombo.getSelectionIndex()));
 		});
 	}
 
 	private void addSelectionListenerForLoadFromBacklogButton(Button btnLoadAgain) {
-		// TODO Auto-generated method stub
-
-	}
-
-	private void addSelectionListenerForSaveExamButton(Button btnSave) {
-		btnSave.addListener(SWT.Selection, e -> {
-		});
+		this.viewController.onLoadAgain();
 	}
 
 	private void addSelectionListenerForStartSecondRound(Button btnStartRound2) {
 		btnStartRound2.addListener(SWT.Selection, e -> {
-			this.examSubmissionID = this.viewController.startNextAssessment(this.examExerciseID, 1, this.examCourseID);
-			if (this.examSubmissionID.isPresent()) {
-				this.prepareNewAssessment();
-			}
+			this.viewController.onStartCorrectionRound2();
+			this.prepareNewAssessment();
 		});
-	}
-
-	private void addSelectionListenerForReloadExamButton(Button btnReload) {
-		// TODO Auto-generated method stub
-
 	}
 
 	private void addSelectionListenerForStartFirstRound(Button btnStartRound1) {
 		btnStartRound1.addListener(SWT.Selection, e -> {
-			this.examSubmissionID = this.viewController.startNextAssessment(this.examExerciseID, 0, this.examCourseID);
-			if (this.examSubmissionID.isPresent()) {
-				this.prepareNewAssessment();
-			}
+			this.viewController.onStartCorrectionRound1();
+			this.prepareNewAssessment();
 		});
 	}
 
-	private void addSelectionListenerForSubmitExamButton(Button btnSubmitExam) {
-
-	}
-
-	private void addSelectionListenerForSubmitAssessment(Button btnSubmitAssessment) {
-		btnSubmitAssessment.addListener(SWT.Selection, e -> {
-			this.viewController.submitAssessment(this.submissionID);
-			this.backlogCombo.add(this.currentExerciseName + " (submissionID= " + this.submissionID + ")");
+	private void addSelectionListenerForSubmitButton(Button btnSubmit) {
+		btnSubmit.addListener(SWT.Selection, e -> {
+			this.viewController.onSubmitAssessment();
 		});
 	}
 
-	private void addSelectionListenerForSaveAssessmentButton(Button btnSaveAssessment) {
-		btnSaveAssessment.addListener(SWT.Selection, e -> {
-			ArtemisGradingView.this.viewController.saveAssessment(ArtemisGradingView.this.submissionID);
+	private void addSelectionListenerForSaveButton(Button btnSave) {
+		btnSave.addListener(SWT.Selection, e -> {
+			this.viewController.onSaveAssessment();
 		});
 	}
 
-	private void addSelectionListenerForReloadAssessmentButton(Button btnReloadA) {
+	private void addSelectionListenerForReloadButton(Button btnReloadA) {
 		btnReloadA.addListener(SWT.Selection, e -> {
-			ArtemisGradingView.this.viewController.reloadAssessment(ArtemisGradingView.this.courseID,
-					ArtemisGradingView.this.exerciseID, ArtemisGradingView.this.submissionID);
-			this.viewController.startAssessment(this.submissionID);
-			this.viewController.createAnnotationsMarkers();
+			this.viewController.onReloadAssessment();
 		});
 	}
 
 	private void addSelectionListenerForStartAssessmentButton(Button startAssessmentButton) {
-		startAssessmentButton.addListener(SWT.Selection, new Listener() {
-
-			@Override
-			public void handleEvent(Event event) {
-				try {
-					ArtemisGradingView.this.submissionID = ArtemisGradingView.this.viewController
-							.startAssessment(ArtemisGradingView.this.exerciseID, ArtemisGradingView.this.courseID);
-					if (!ArtemisGradingView.this.errorTypesCreated) {
-						ArtemisGradingView.this.viewController
-								.createAssessmentController(ArtemisGradingView.this.submissionID);
-						ArtemisGradingView.this.mistakeTypes = ArtemisGradingView.this.viewController
-								.getMistakeTypesForButtonView();
-						ArtemisGradingView.this.ratingGroups = (ArrayList<IRatingGroup>) ArtemisGradingView.this.viewController
-								.getRatingGroups();
-						ArtemisGradingView.this.createAssessmentViewElements();
-						ArtemisGradingView.this.errorTypesCreated = true;
-						ArtemisGradingView.this.scrolledComposite_grading
-								.setContent(ArtemisGradingView.this.gradingComposite);
-						ArtemisGradingView.this.scrolledComposite_grading.setMinSize(
-								ArtemisGradingView.this.gradingComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-					}
-					if (ArtemisGradingView.this.submissionID == -1) {
-						this.openExerciseCompletedDialog();
-					} else {
-						ArtemisGradingView.this.prepareNewAssessment();
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-
-			private void openExerciseCompletedDialog() {
-				MessageDialog.openInformation(AssessmentUtilities.getWindowsShell(), "Exercise Completed!",
-						"No further assessment for current selected exercise.");
-			}
+		startAssessmentButton.addListener(SWT.Selection, e -> {
+			this.viewController.onStartAssessment();
+			// TODO: clean up and new generation
+			this.createAssessmentViewElements();
+			this.prepareNewAssessment();
 		});
 	}
 
@@ -534,8 +435,8 @@ public class ArtemisGradingView extends ViewPart {
 	}
 
 	public void createCourseListForAssessmentTabItem(Combo courseCombo, Combo exerciseCombo) {
-		this.viewController.getCourses().forEach(course -> {
-			courseCombo.add(course.getTitle());
+		this.viewController.getCourseShortNames().forEach(courseShortName -> {
+			courseCombo.add(courseShortName);
 		});
 		courseCombo.addListener(SWT.Selection, e -> {
 			this.createExerciseListInput(courseCombo.getItem(courseCombo.getSelectionIndex()), exerciseCombo);

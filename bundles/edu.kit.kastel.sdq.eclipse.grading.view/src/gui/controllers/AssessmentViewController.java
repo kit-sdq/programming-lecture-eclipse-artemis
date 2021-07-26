@@ -37,9 +37,9 @@ public class AssessmentViewController {
 		final IPreferenceStore store = Activator.getDefault().getPreferenceStore();
 		this.systemwideController = new SystemwideController(
 				new File(store.getString(PreferenceConstants.P_ABSOLUTE_CONFIG_PATH)),
-				store.getDefaultString(PreferenceConstants.P_ARTEMIS_URL),
-				store.getDefaultString(PreferenceConstants.P_ARTEMIS_USER),
-				store.getDefaultString(PreferenceConstants.P_ARTEMIS_PASSWORD));
+				store.getString(PreferenceConstants.P_CONFIG_NAME), store.getString(PreferenceConstants.P_ARTEMIS_URL),
+				store.getString(PreferenceConstants.P_ARTEMIS_USER),
+				store.getString(PreferenceConstants.P_ARTEMIS_PASSWORD));
 		this.artemisGUIController = this.systemwideController.getArtemisGUIController();
 	}
 
@@ -80,9 +80,10 @@ public class AssessmentViewController {
 				marker.setAttribute(IMarker.MESSAGE, AssessmentUtilities
 						.createMarkerTooltipForCustomButton(startLine + 1, endLine + 1, customMessage, customPenalty));
 			}
-			// TODO: Dummy Values at the end,
 			this.assessmentController.addAnnotation((int) marker.getId(), mistake, startLine + 1, endLine + 1,
-					AssessmentUtilities.getPathForAnnotation(), customMessage, customPenalty, 0, 0);
+					AssessmentUtilities.getPathForAnnotation(), customMessage, customPenalty,
+					AssessmentUtilities.getLineOffSet(startLine),
+					AssessmentUtilities.getLineOffSet(startLine) + lenght + 10);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -186,10 +187,10 @@ public class AssessmentViewController {
 	}
 
 	public void createAnnotationsMarkers() {
-		this.assessmentController.resetAndReload();
 		this.getAnnotations().forEach(this::createMarkerForAnnotation);
 	}
 
+	// TODO: handle customs annotations
 	private void createMarkerForAnnotation(IAnnotation annotation) {
 
 		int startLine = annotation.getStartLine();
@@ -197,28 +198,18 @@ public class AssessmentViewController {
 		IMistakeType mistake = annotation.getMistakeType();
 		// String customMessage = annotation.getCustomMessage().orElse("");
 		// Double customPenalty = annotation.getCustomPenalty().orElse(0.0);
-		// Integer dummy = AssessmentUtilities.getLineOffSet(endLine) -
-		// AssessmentUtilities.getLineOffSet(startLine);
 		IMarker marker = null;
 		try {
-			// System.out.println("FILE" +
-			// AssessmentUtilities.getFile(annotation.getClassFilePath().toString()));
-			// marker =
-			AssessmentUtilities.getFile(annotation.getClassFilePath()).createMarker("gui.assessment.marker");
-			marker.setAttribute(IMarker.CHAR_START, 30);
-			// marker.setAttribute(IMarker.CHAR_START,
-			// AssessmentUtilities.getLineOffSet(startLine));
-			// Integer lenght = dummy;
-			// marker.setAttribute(IMarker.CHAR_END,
-			// AssessmentUtilities.getLineOffSet(startLine) + lenght + 10);
-			marker.setAttribute(IMarker.CHAR_END, 300);
+			marker = AssessmentUtilities.getFile(annotation.getClassFilePath()).createMarker("gui.assessment.marker");
+			marker.setAttribute(IMarker.CHAR_START, annotation.getMarkerCharStart());
+			marker.setAttribute(IMarker.CHAR_END, annotation.getMarkerCharEnd());
 			if (mistake != null) {
 				marker.setAttribute("errorTypeDescription", mistake.getMessage());
 				marker.setAttribute("errorType", mistake.getButtonName());
 			}
 			marker.setAttribute("start", startLine + 1);
 			marker.setAttribute("end", endLine + 1);
-			marker.setAttribute("className", AssessmentUtilities.getClassNameForAnnotation());
+			marker.setAttribute("className", annotation.getClassFilePath());
 			marker.setAttribute("ratingGroup", mistake.getRatingGroupName());
 			// if (customMessage != null) {
 			// marker.setAttribute("customMessage", customMessage);
@@ -265,6 +256,59 @@ public class AssessmentViewController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	public void onStartAssessment() {
+		this.systemwideController.onStartAssessmentButton();
+	}
+
+	public Collection<String> getCourseShortNames() {
+		return this.artemisGUIController.getCourseShortNames();
+	}
+
+	public Collection<String> getExerciseShortNames(String courseName) {
+		return this.artemisGUIController.getExerciseShortNames(courseName);
+	}
+
+	public void onReloadAssessment() {
+		this.systemwideController.onReloadAssessmentButton();
+		this.getAnnotations().forEach(this::createMarkerForAnnotation);
+	}
+
+	public void onSaveAssessment() {
+		this.systemwideController.onSaveAssessmentButton();
+	}
+
+	public void onSubmitAssessment() {
+		this.systemwideController.onSubmitAssessmentButton();
+	}
+
+	public void onStartCorrectionRound1() {
+		this.systemwideController.onStartCorrectionRound1Button();
+	}
+
+	public void onStartCorrectionRound2() {
+		this.systemwideController.onStartCorrectionRound2Button();
+	}
+
+	public void setExerciseID(String exerciseShortName) {
+		this.systemwideController.setExerciseId(exerciseShortName);
+	}
+
+	public Collection<String> getExamShortNames(String courseTitle) {
+		return this.artemisGUIController.getExamTitles(courseTitle);
+	}
+
+	public Collection<String> getExercisesShortNamesForExam(String examShortName) {
+		return this.artemisGUIController.getExerciseShortNamesFromExam(examShortName);
+	}
+
+	public void getSubmissionsForBacklog() {
+		// this.systemwideController.getBegunSubmissions()
+	}
+
+	public void onLoadAgain() {
+		this.systemwideController.onLoadAgainButton();
 	}
 
 }
