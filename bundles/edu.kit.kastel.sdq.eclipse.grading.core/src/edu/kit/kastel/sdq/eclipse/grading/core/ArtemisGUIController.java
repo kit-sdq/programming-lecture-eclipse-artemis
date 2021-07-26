@@ -178,6 +178,7 @@ public class ArtemisGUIController implements IArtemisGUIController {
 				.collect(Collectors.toList());
 	}
 
+	@Override
 	public Collection<String> getExerciseShortNamesFromExam(final String examTitle) {
 		IExam foundExam = null;
 		for (ICourse course : this.getCourses()) {

@@ -52,16 +52,22 @@ public interface IArtemisGUIController {
 
 	/**
 	 *
-	 * @return the {@link IExercise#getShortName()} of the given {@link ICourse}
+	 * @return the {@link IExercise#getShortName()}s of the given {@link ICourse}
 	 */
 	Collection<String> getExerciseShortNames(String courseShortName);
+
+	/**
+	 *
+	 * @return the {@link IExercise#getShortName()}s of the given {@link IExam}
+	 */
+	Collection<String> getExerciseShortNamesFromExam(String examTitle);
+
 
 	/**
 	 * Pre-condition: You need to have called startAssessment or startNextAssessment prior to calling this method!
 	 * @return all auto feedbacks gotten by starting the assessment (junit test results).
 	 */
 	Collection<IFeedback> getPrecalculatedAutoFeedbacks(int submissionID);
-
 
 	ISubmission getSubmissionFromExercise(IExercise exercise, int submissionID);
 
