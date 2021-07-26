@@ -56,36 +56,43 @@ public abstract class AbstractArtemisClient {
 
 	/**
 	 *
-	 * @return the artemis "assessor" (needed for submitting the assessment).
-	 * @throws Exception
+	 * @return the artemis "assessor" object (needed for submitting the assessment).
+	 * @throws Exception TODO create an exception type!
 	 */
 	public abstract IAssessor getAssessor() throws Exception;
 
 
 	/**
 	 *
-	 * @return all available courses (contains exercises and available submissions
+	 * @return all available courses, containing exercises and available submissions
 	 * @throws Exception TODO create an exception type!
 	 */
 	public abstract Collection<ICourse> getCourses() throws Exception;
 
+	/**
+	 *
+	 * @param exerciseID
+	 * @param assessedByTutor only return those submissions on which the caller has (started, saved or submitted) the assessment.
+	 * @return submissions for the given exerciseID, filterable.
+	 * @throws Exception TODO create an exception type!
+	 */
 	public abstract Collection<ISubmission> getSubmissions(int exerciseID, boolean assessedByTutor)
 			throws Exception;
 
 	/**
-	 * Submit the assessment to Artemis. Must have been started by {@code startAssessment}, before!
+	 * Submit the assessment to Artemis. Must have been started by {@link #startAssessment(int)} or {@link #startNextAssessment(int, int)} before!
 	 * @param participationID THOU SHALT NOT PROVIDE THE SUBMISSIONID, HERE!
- * 							The participationID can be gotten from the ILockResult (AbstractArtemisClient::startAssessment)!
+ * 							The participationID can be gotten from the {@link ILockResult}, via {@link #startAssessment(int)} or {@link #startNextAssessment(int, int)}!
 	 * @param payload the payload formatted correctly.
 	 */
 	public abstract void saveAssessment(int participationID, boolean submit, String payload) throws AuthenticationException;
 
 	/**
 	 * Starts an assessment for the given submission. Acquires a lock in the process.
-	 * @param submissionID
-	 * @throws Exception TODO create an exception type!
 	 *
-	 * @return the data gotten back. Needed for submitting correctly.
+	 * @param submissionID
+	 * @return the data gotten back. Needed for submitting correctly.	 *
+	 * @throws Exception TODO create an exception type!
 	 */
 
 	public abstract ILockResult startAssessment(int submissionID) throws Exception;
@@ -94,11 +101,11 @@ public abstract class AbstractArtemisClient {
 	 * Starts an assessment for any submission (determined by artemis). Acquires a lock in the process.
 	 * @throws Exception TODO create an exception type!
 	 *
-	 * @param correctionRound relevant for exams!
+	 * @param correctionRound relevant for exams! may be 0 or 1
 	 *
 	 * @return
 	 * 		<li> the data gotten back. Needed for submitting correctly.
-	 * 		<li> null, if no submission left to correct
+	 * 		<li> <b>null</b> if there is no submission left to correct
 	 */
 	public abstract Optional<ILockResult> startNextAssessment(int exerciseID, int correctionRound) throws Exception;
 }

@@ -46,13 +46,13 @@ public interface IAssessmentController {
 	double calculateCurrentPenaltyForRatingGroup(IRatingGroup ratingGroup);
 
 	/**
-	 * Deletes the eclipse project this assessment belongs to.
+	 * Deletes the eclipse project this assessment belongs to. Also deletes it on file system.
 	 */
 	void deleteEclipseProject();
 
 	/**
 	 *
-	 * @return this AssessmentControllers Alert Handler (Observer/ Observable pattern)
+	 * @return this AssessmentControllers {@link IAlertObservable} (Observer/ Observable pattern). This object replaces Exceptions.
 	 */
 	IAlertObservable getAlertObservable();
 
@@ -85,6 +85,8 @@ public interface IAssessmentController {
 	 */
 	Collection<IRatingGroup> getRatingGroups();
 
+	int getSubmissionID();
+
 	String getTooltipForMistakeType(IMistakeType mistakeType);
 
 	/**
@@ -103,8 +105,8 @@ public interface IAssessmentController {
 	void removeAnnotation(int annotationId);
 
 	/**
-	 * Reset annotations by reloading from Artemis state.
+	 * Reset annotations by reloading from Artemis state. You need to RE-LOCK, for this to have any effect!
+	 * Do so with {@link IArtemisGUIController#startAssessment(int)}, with this {@link IAssessmentController#getSubmissionID()} as param.
 	 */
 	void resetAndReload();
-
 }

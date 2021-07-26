@@ -16,12 +16,18 @@ public interface IArtemisGUIController {
 
 	/**
 	 *
-	 * @return this ArtemisGUIController's Alert Handler (Observer/ Observable pattern)
+	 * @return this AssessmentControllers {@link IAlertObservable} (Observer/ Observable pattern). This object replaces Exceptions.
 	 */
 	IAlertObservable getAlertObservable();
 
+
 	Collection<IFeedback> getAllFeedbacksGottenFromLocking(int submissionID);
 
+	/**
+	 *
+	 * @param exerciseID
+	 * @return all submissions of the given @link {@link IExercise}, that have been started, saved or submitted by the caller.
+	 */
 	Collection<ISubmission> getBegunSubmissions(int exerciseID);
 
 	/**
@@ -30,12 +36,24 @@ public interface IArtemisGUIController {
 	 */
 	Collection<ICourse> getCourses();
 
+	/**
+	 *
+	 * @return the {@link ICourse#getShortName()} of all available courses
+	 */
 	Collection<String> getCourseShortNames();
 
+	/**
+	 *
+	 * @return the {@link IExam#getTitle()} of all available exams in the given {@link ICourse}
+	 */
 	Collection<String> getExamTitles(String courseShortName);
 
 	IExercise getExerciseFromCourses(Collection<ICourse> courses, int courseID, int exerciseID);
 
+	/**
+	 *
+	 * @return the {@link IExercise#getShortName()} of the given {@link ICourse}
+	 */
 	Collection<String> getExerciseShortNames(String courseShortName);
 
 	/**
@@ -44,10 +62,12 @@ public interface IArtemisGUIController {
 	 */
 	Collection<IFeedback> getPrecalculatedAutoFeedbacks(int submissionID);
 
+
 	ISubmission getSubmissionFromExercise(IExercise exercise, int submissionID);
 
 	/**
-	 * Submit the assessment to Artemis. Must have been started by {@code startAssessment}, before.
+	 * Submit the assessment to Artemis. Must have been started by {@link #startAssessment(int)}, {@link #startNextAssessment(int)}
+	 * 		or {@link #startNextAssessment(int, int)}, before!
 	 * @param submissionID
 	 * @param submit should the assessment be submitted or merely saved to artemis?
 	 * @param invalidSubmission is the submission invalid? Will return 0 points.
@@ -56,7 +76,7 @@ public interface IArtemisGUIController {
 	void saveAssessment(int submissionID, boolean submit, boolean invalidSubmission);
 
 	/**
-	 * Starts an assessment for the given submission
+	 * Starts an assessment for the given submission. Acquires a lock in the process.
 	 * @param submissionID
 	 */
 	void startAssessment(int submissionID);

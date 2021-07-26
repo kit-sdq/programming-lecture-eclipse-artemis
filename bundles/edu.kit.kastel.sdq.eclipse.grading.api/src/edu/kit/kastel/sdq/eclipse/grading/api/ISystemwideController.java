@@ -33,12 +33,19 @@ public interface ISystemwideController {
 
 	/**
 	 * BACKLOG TAB.
-	 * You need to select a submission via setAssessedSubmission(), first!
+	 * You need to select a submission via {@link #setAssessedSubmission(int)}, first!
+	 * Has the same effect as {@link #onStartAssessmentButton()} otherwise.
 	 */
 	void onLoadAgainButton();
 
+	/**
+	 * Deletes local project. Renews the lock and downloads the submission project again.
+	 */
 	void onReloadAssessmentButton();
 
+	/**
+	 * Saves the assessment to Artemis.
+	 */
 	void onSaveAssessmentButton();
 
 	/**
@@ -49,10 +56,21 @@ public interface ISystemwideController {
 	 */
 	boolean onStartAssessmentButton();
 
+	/**
+	 * The same as {@link #onStartAssessmentButton()}.
+	 * @return whether a new assessment was started or not, depending on whether there was a submission available.
+	 */
 	boolean onStartCorrectionRound1Button();
 
+	/**
+	 * Like {@link #onStartAssessmentButton()}, but with correction round 2 as a parameter.
+	 * @return whether a new assessment was started or not, depending on whether there was a submission available.
+	 */
 	boolean onStartCorrectionRound2Button();
 
+	/**
+	 * Saves and submits the assessment to Artemis. Deletes project (in eclipse and on files system) thereafter.
+	 */
 	void onSubmitAssessmentButton();
 
 	/**
@@ -65,6 +83,7 @@ public interface ISystemwideController {
 	 * @param newConfigFile
 	 */
 	void setConfigFile(File newConfigFile);
+
 
 	Collection<String> setCourseIdAndGetExerciseTitles(String courseShortName);
 

@@ -6,6 +6,10 @@ public interface ISubmission {
 
 	//TODO define
 
+	/**
+	 *
+	 * Used to be able to discriminate submissions.
+	 */
 	enum Filter {
 		SAVED_BUT_NOT_SUBMITTED(submission -> submission.hasSavedAssessment() && !submission.hasSubmittedAssessment()),
 		SAVED_AND_SUBMITTED(submission -> submission.hasSavedAssessment() && submission.hasSubmittedAssessment()),

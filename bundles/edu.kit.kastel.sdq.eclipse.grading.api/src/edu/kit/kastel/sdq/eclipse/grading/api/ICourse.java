@@ -16,6 +16,10 @@ public interface ICourse {
 
 	Collection<IExercise> getExercises();
 
+	/**
+	 *
+	 * @return the unique shortName of this course.
+	 */
 	String getShortName();
 
 	String getTitle();

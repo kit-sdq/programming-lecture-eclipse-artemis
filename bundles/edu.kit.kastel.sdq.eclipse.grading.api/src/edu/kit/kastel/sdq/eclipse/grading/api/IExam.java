@@ -4,7 +4,6 @@ import java.util.Collection;
 
 public interface IExam {
 
-
 	int getExamId();
 
 	Collection<IExerciseGroup> getExerciseGroups();

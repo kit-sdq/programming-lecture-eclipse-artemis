@@ -6,7 +6,7 @@ import edu.kit.kastel.sdq.eclipse.grading.api.IExercise;
 import edu.kit.kastel.sdq.eclipse.grading.api.ISubmission;
 
 /**
- *
+ * Strategy to determine how the downloaded projects (containing submission + test code) are named.
  *
  */
 public interface IProjectFileNamingStrategy {
