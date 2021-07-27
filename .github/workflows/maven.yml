@@ -56,7 +56,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: updatesite
-        path: releng/edu.kit.kastel.sdq.eclipse.grading.updatesite/target/
+        path: releng/edu.kit.kastel.sdq.eclipse.grading.updatesite/target/repository/
   
     - name: Checkout
       uses: actions/checkout@v2.3.1
