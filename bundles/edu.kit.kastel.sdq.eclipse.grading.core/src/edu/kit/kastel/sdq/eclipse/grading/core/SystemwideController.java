@@ -90,10 +90,7 @@ public class SystemwideController implements ISystemwideController {
 
 
 	private Collection<ISubmission> getBegunSubmissions(ISubmission.Filter submissionFilter) {
-		if (this.exerciseID == null) {
-			this.alertObservable.warn("exerciseID not initialized.");
-			return List.of();
-		}
+		if (this.nullCheckMembersAndNotify(true, true, true)) return List.of();
 
 		return this.getArtemisGUIController().getBegunSubmissions(this.exerciseID).stream()
 				.filter(submissionFilter.getFilterPredicate())
@@ -121,25 +118,52 @@ public class SystemwideController implements ISystemwideController {
 
 	@Override
 	public IAssessmentController getCurrentAssessmentController() {
+		if (this.nullCheckMembersAndNotify(true, true, true)) return null;
 		return this.getAssessmentController(this.submissionID, this.exerciseConfigName, this.courseID, this.exerciseID);
 	}
 
 	private IExercise getCurrentExercise() {
+		if (this.nullCheckMembersAndNotify(true, true, false)) return null;
 		return this.getArtemisGUIController()
 				.getExerciseFromCourses(this.getArtemisGUIController().getCourses(), this.courseID, this.exerciseID);
 	}
 
+	/**
+	 *
+	 * @return true if at least one of those three is null
+	 */
+	private boolean nullCheckMembersAndNotify(boolean checkCourseID, boolean checkExerciseID, boolean checkSubmissionID) {
+		final StringBuilder alertMessageBuilder = new StringBuilder("[");
+		boolean somethingNull = false;
+		if (checkCourseID && this.courseID == null) {
+			alertMessageBuilder.append("Course is not set ");
+			somethingNull = true;
+		}
+		if (checkExerciseID && this.exerciseID == null) {
+			alertMessageBuilder.append("Exercise is not set ");
+			somethingNull = true;
+		}
+		if (checkSubmissionID && this.submissionID == null) {
+			alertMessageBuilder.append("Submission is not set ");
+			somethingNull = true;
+		}
+		if (somethingNull) {
+			this.alertObservable.warn(alertMessageBuilder.append("]").toString());
+		}
+		return somethingNull;
+	}
+
 	@Override
 	public void onLoadAgainButton() {
+		if (this.nullCheckMembersAndNotify(true, true, true)) return;
 		this.getArtemisGUIController().startAssessment(this.submissionID);
 		this.getArtemisGUIController().downloadExerciseAndSubmission(this.courseID, this.exerciseID, this.submissionID);
 	}
 
 	@Override
 	public void onReloadAssessmentButton() {
-		if (this.submissionID == null) {
-			this.alertObservable.warn("Could not reload. No assessment was started, yet! (No submissionID is set)");
-		}
+		if (this.nullCheckMembersAndNotify(true, true, true)) return;
+
 		this.getCurrentAssessmentController().deleteEclipseProject();
 
 		this.getArtemisGUIController().startAssessment(this.submissionID);
@@ -150,6 +174,7 @@ public class SystemwideController implements ISystemwideController {
 
 	@Override
 	public void onSaveAssessmentButton() {
+		if (this.nullCheckMembersAndNotify(true, true, true)) return;
 		this.artemisGUIController.saveAssessment(this.submissionID, false, false);
 	}
 
@@ -170,6 +195,7 @@ public class SystemwideController implements ISystemwideController {
 
 	@Override
 	public void onSubmitAssessmentButton() {
+		if (this.nullCheckMembersAndNotify(true, true, true)) return;
 		this.artemisGUIController.saveAssessment(this.submissionID, true, false);
 
 		//TODO do this only if no submitting was successful
@@ -232,6 +258,7 @@ public class SystemwideController implements ISystemwideController {
 	}
 
 	private boolean startAssessment(int correctionRound) {
+		if (this.nullCheckMembersAndNotify(true, true, false)) return false;
 		Optional<Integer> optionalSubmissionID = this.getArtemisGUIController().startNextAssessment(this.exerciseID, correctionRound);
 		if (optionalSubmissionID.isEmpty()) {
 			return false;
