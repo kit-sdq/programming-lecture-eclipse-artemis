@@ -80,7 +80,8 @@ public class AnnotationMapper {
 		manualFeedbacks.add(
 				new Feedback(IFeedback.FeedbackType.MANUAL_UNREFERENCED.name(),
 						0.D,
-						null, null, null, null, null, "Invalid Submission.")
+						// TODO check visibility
+						null, null, "", null, null, "Invalid Submission.")
 		);
 		return manualFeedbacks;
 	}

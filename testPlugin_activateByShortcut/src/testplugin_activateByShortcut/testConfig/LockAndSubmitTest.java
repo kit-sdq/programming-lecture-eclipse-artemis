@@ -85,11 +85,11 @@ public class LockAndSubmitTest {
 	private void printBegunSubmissionState(ISystemwideController sysController, String text) {
 		System.out.println("Begun Submissions [" + text + "]");
 		System.out.println(" -- All submission: " +
-				sysController.getBegunSubmissions(Filter.ALL));
+				sysController.getBegunSubmissionsProjectNames(Filter.ALL));
 		System.out.println(" -- Saved, but not submitted: " +
-				sysController.getBegunSubmissions(Filter.SAVED_BUT_NOT_SUBMITTED));
+				sysController.getBegunSubmissionsProjectNames(Filter.SAVED_BUT_NOT_SUBMITTED));
 		System.out.println(" -- Saved and submitted: " +
-				sysController.getBegunSubmissions(Filter.SAVED_AND_SUBMITTED));
+				sysController.getBegunSubmissionsProjectNames(Filter.SAVED_AND_SUBMITTED));
 
 	}
 
@@ -146,8 +146,8 @@ public class LockAndSubmitTest {
 		this.printBegunSubmissionState(sysController, "before save");
 		sysController.onSaveAssessmentButton();
 		this.printBegunSubmissionState(sysController, "before submit");
-		sysController.onSubmitAssessmentButton();
-		this.printBegunSubmissionState(sysController, "after submit");
+//		sysController.onSubmitAssessmentButton();
+//		this.printBegunSubmissionState(sysController, "after submit");
 
 		return this;
 	}

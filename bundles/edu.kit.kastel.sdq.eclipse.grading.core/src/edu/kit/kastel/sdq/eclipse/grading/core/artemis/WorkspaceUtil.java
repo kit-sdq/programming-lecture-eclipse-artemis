@@ -13,6 +13,7 @@ import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.m2e.core.MavenPlugin;
 import org.eclipse.m2e.core.internal.IMavenConstants;
 
 public class WorkspaceUtil {
@@ -47,6 +48,10 @@ public class WorkspaceUtil {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
+
+		//TODO testarea
+		MavenPlugin.getMavenProjectRegistry().create(project, null);
 	}
 
 	private static final void deleteDirectoryRecursively(final Path directory) throws IOException {
