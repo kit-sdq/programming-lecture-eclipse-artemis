@@ -1,7 +1,6 @@
 package gui.controllers;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -19,10 +18,12 @@ import edu.kit.kastel.sdq.eclipse.grading.api.IAssessmentController;
 import edu.kit.kastel.sdq.eclipse.grading.api.ICourse;
 import edu.kit.kastel.sdq.eclipse.grading.api.IMistakeType;
 import edu.kit.kastel.sdq.eclipse.grading.api.IRatingGroup;
+import edu.kit.kastel.sdq.eclipse.grading.api.ISubmission.Filter;
 import edu.kit.kastel.sdq.eclipse.grading.core.SystemwideController;
 import gui.activator.Activator;
 import gui.preferences.PreferenceConstants;
 import gui.utilities.AssessmentUtilities;
+import observers.ViewAlertObserver;
 
 public class AssessmentViewController {
 
@@ -41,6 +42,8 @@ public class AssessmentViewController {
 				store.getString(PreferenceConstants.P_ARTEMIS_USER),
 				store.getString(PreferenceConstants.P_ARTEMIS_PASSWORD));
 		this.artemisGUIController = this.systemwideController.getArtemisGUIController();
+		this.systemwideController.getAlertObservable().addAlertObserver(new ViewAlertObserver());
+		this.artemisGUIController.getAlertObservable().addAlertObserver(new ViewAlertObserver());
 	}
 
 	public void addAssessmentAnnotaion(IMistakeType mistake, String customMessage, Double customPenalty,
@@ -91,9 +94,9 @@ public class AssessmentViewController {
 
 	}
 
-	public void createAssessmentController(int submissionID2) {
-		final IPreferenceStore store = Activator.getDefault().getPreferenceStore();
+	public void createAssessmentController() {
 		this.assessmentController = this.systemwideController.getCurrentAssessmentController();
+		this.assessmentController.getAlertObservable().addAlertObserver(new ViewAlertObserver());
 	}
 
 	private File createConfigFile() {
@@ -117,11 +120,11 @@ public class AssessmentViewController {
 		return ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile();
 	}
 
-	public Collection<IMistakeType> getMistakeTypesForButtonView() throws IOException {
+	public Collection<IMistakeType> getMistakeTypesForButtonView() {
 		return this.assessmentController.getMistakes();
 	}
 
-	public Collection<IRatingGroup> getRatingGroups() throws IOException {
+	public Collection<IRatingGroup> getRatingGroups() {
 		return this.assessmentController.getRatingGroups();
 	}
 
@@ -257,8 +260,8 @@ public class AssessmentViewController {
 		}
 	}
 
-	public void onStartAssessment() {
-		this.systemwideController.onStartAssessmentButton();
+	public boolean onStartAssessment() {
+		return this.systemwideController.onStartAssessmentButton();
 	}
 
 	public Collection<String> getCourseShortNames() {
@@ -266,7 +269,7 @@ public class AssessmentViewController {
 	}
 
 	public Collection<String> getExerciseShortNames(String courseName) {
-		return this.artemisGUIController.getExerciseShortNames(courseName);
+		return this.systemwideController.setCourseIdAndGetExerciseTitles(courseName);
 	}
 
 	public void onReloadAssessment() {
@@ -302,12 +305,16 @@ public class AssessmentViewController {
 		return this.artemisGUIController.getExerciseShortNamesFromExam(examShortName);
 	}
 
-	public void getSubmissionsForBacklog() {
-		// this.systemwideController.getBegunSubmissions()
+	public Collection<String> getSubmissionsForBacklog() {
+		return this.systemwideController.getBegunSubmissionsProjectNames(Filter.ALL);
 	}
 
 	public void onLoadAgain() {
 		this.systemwideController.onLoadAgainButton();
+	}
+
+	public void setAssessedSubmission(String projectName) {
+		this.systemwideController.setAssessedSubmissionByProjectName(projectName);
 	}
 
 }

@@ -68,7 +68,7 @@ public class ArtemisGradingPreferencesPage extends FieldEditorPreferencePage imp
 				this.getFieldEditorParent());
 
 		this.addField(this.absoluteConfigPath);
-		this.addField(this.absoluteConfigPath);
+		this.addField(this.configNameField);
 		this.addField(this.relativeConfigPath);
 		this.addField(this.isRelativeConfigPath);
 		this.addField(this.artemisUrl);

@@ -2,7 +2,6 @@ package gui.artemis.grading;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,20 +32,19 @@ import gui.utilities.AssessmentUtilities;
 public class ArtemisGradingView extends ViewPart {
 
 	private final AssessmentViewController viewController;
-	private Collection<IMistakeType> mistakeTypes;
-	private ArrayList<IRatingGroup> ratingGroups;
 	private Map<String, Group> ratingGroupViewElements;
 	private final String MARKER_NAME = "gui.assessment.marker";
 	private HashMap<String, Button> mistakeButtons;
-	private Combo backlogCombo;
 	private ScrolledComposite scrolledComposite_grading;
 	private Composite gradingComposite;
+	private boolean created;
 
 	public ArtemisGradingView() {
 		this.viewController = new AssessmentViewController();
 		this.ratingGroupViewElements = new HashMap<String, Group>();
 		this.mistakeButtons = new HashMap<String, Button>();
 		this.addListenerForMarkerDeletion();
+		this.created = false;
 	}
 
 	private void addListenerForMarkerDeletion() {
@@ -87,33 +85,15 @@ public class ArtemisGradingView extends ViewPart {
 	}
 
 	private void updatePenalties() {
-		this.ratingGroups.forEach(ratingGroup -> {
+		this.viewController.getRatingGroups().forEach(ratingGroup -> {
 			this.updatePenalties(ratingGroup.getDisplayName(), false);
-		});
-	}
-
-	private void createCourseAndExerciseListView(Composite composite) {
-		Composite listHolder = new Composite(composite, SWT.NONE);
-		listHolder.setLayout(new GridLayout(2, true));
-		Label courseListLabel = new Label(listHolder, SWT.NONE);
-		courseListLabel.setText("Courses:");
-		final Combo courseList = new Combo(listHolder, SWT.SINGLE | SWT.BORDER | SWT.V_SCROLL);
-		Label exerciseListLabel = new Label(listHolder, SWT.NONE);
-		exerciseListLabel.setText("Exercises: ");
-		final Combo exerciseList = new Combo(listHolder, SWT.SINGLE | SWT.BORDER | SWT.V_SCROLL);
-		exerciseList.add("-placeholder-");
-		this.viewController.getCourses().forEach(course -> {
-			courseList.add(course.getTitle());
-		});
-		courseList.addListener(SWT.Selection, e -> {
-			this.createExerciseListInput(courseList.getItem(courseList.getSelectionIndex()), exerciseList);
 		});
 	}
 
 	private void createExerciseListInput(String courseShortName, Combo exerciseList) {
 		exerciseList.removeAll();
 		this.viewController.getExerciseShortNames(courseShortName).forEach(exerciseShortName -> {
-			exerciseList.add(courseShortName);
+			exerciseList.add(exerciseShortName);
 		});
 		exerciseList.addListener(SWT.Selection, e -> {
 			this.viewController.setExerciseID(exerciseList.getItem(exerciseList.getSelectionIndex()));
@@ -121,8 +101,10 @@ public class ArtemisGradingView extends ViewPart {
 	}
 
 	private void createAssessmentViewElements() {
+		this.created = true;
+		this.viewController.createAssessmentController();
 		this.gradingComposite.setLayout(new GridLayout(3, true));
-		this.ratingGroups.forEach(element -> {
+		this.viewController.getRatingGroups().forEach(element -> {
 			final Group rgDisplay = new Group(this.gradingComposite, SWT.NONE);
 			this.ratingGroupViewElements.put(element.getDisplayName(), rgDisplay);
 			this.updatePenalties(element.getDisplayName(), false);
@@ -132,7 +114,7 @@ public class ArtemisGradingView extends ViewPart {
 			final GridData gridData = new GridData(GridData.VERTICAL_ALIGN_FILL);
 			gridData.horizontalSpan = 3;
 			rgDisplay.setLayoutData(gridData);
-			this.mistakeTypes.forEach(mistake -> {
+			this.viewController.getMistakeTypesForButtonView().forEach(mistake -> {
 				if (mistake.getRatingGroup().getDisplayName().equals(element.getDisplayName())) {
 					final Button mistakeButton = new Button(rgDisplay, SWT.PUSH);
 					mistakeButton.setText(mistake.getButtonName());
@@ -180,9 +162,10 @@ public class ArtemisGradingView extends ViewPart {
 	}
 
 	private IRatingGroup findRatingGroup(String ratingGroupName) {
-		for (int i = 0; i < this.ratingGroups.size(); i++) {
-			if (this.ratingGroups.get(i).getDisplayName().equals(ratingGroupName)) {
-				return this.ratingGroups.get(i);
+		for (int i = 0; i < this.viewController.getRatingGroups().size(); i++) {
+			if (((ArrayList<IRatingGroup>) this.viewController.getRatingGroups()).get(i).getDisplayName()
+					.equals(ratingGroupName)) {
+				return ((ArrayList<IRatingGroup>) this.viewController.getRatingGroups()).get(i);
 			}
 		}
 		return null;
@@ -338,12 +321,17 @@ public class ArtemisGradingView extends ViewPart {
 		lblSubmitted.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblSubmitted.setText("Submitted");
 
-		this.backlogCombo = new Combo(backlogComposite, SWT.READ_ONLY);
+		Combo backlogCombo = new Combo(backlogComposite, SWT.READ_ONLY);
 		GridData gd_combo_4 = new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1);
 		gd_combo_4.widthHint = 152;
-		this.backlogCombo.setLayoutData(gd_combo_4);
+		backlogCombo.setLayoutData(gd_combo_4);
 
-		this.initializeBacklogCombo(this.backlogCombo);
+		this.initializeBacklogCombo(backlogCombo);
+
+		Button refreshButton = new Button(backlogComposite, SWT.NONE);
+		refreshButton.setText("Refresh Submitted");
+
+		this.addSelectionListenerForRefreshButton(refreshButton, backlogCombo);
 
 		Button btnLoadAgain = new Button(backlogComposite, SWT.NONE);
 		btnLoadAgain.setText("Load again");
@@ -355,8 +343,26 @@ public class ArtemisGradingView extends ViewPart {
 
 	}
 
-	private void initializeBacklogCombo(Combo backlogCombo2) {
-		this.viewController.getSubmissionsForBacklog();
+	private void addSelectionListenerForRefreshButton(Button refreshButton, Combo backlogCombo) {
+		refreshButton.addListener(SWT.Selection, e -> {
+			this.fillBacklogComboWithData(backlogCombo);
+		});
+
+	}
+
+	private void initializeBacklogCombo(Combo backlogCombo) {
+		this.fillBacklogComboWithData(backlogCombo);
+
+		backlogCombo.addListener(SWT.Selection, e -> {
+			this.viewController.setAssessedSubmission(backlogCombo.getItem(backlogCombo.getSelectionIndex()));
+		});
+	}
+
+	private void fillBacklogComboWithData(Combo backlogCombo) {
+		backlogCombo.removeAll();
+		this.viewController.getSubmissionsForBacklog().forEach(project -> {
+			backlogCombo.add(project);
+		});
 	}
 
 	private void loadExamComboEntries(Combo examCourseCombo, Combo examCombo, Combo examExerciseCombo) {
@@ -425,10 +431,12 @@ public class ArtemisGradingView extends ViewPart {
 
 	private void addSelectionListenerForStartAssessmentButton(Button startAssessmentButton) {
 		startAssessmentButton.addListener(SWT.Selection, e -> {
-			this.viewController.onStartAssessment();
+			boolean started = this.viewController.onStartAssessment();
 			// TODO: clean up and new generation
-			this.createAssessmentViewElements();
-			this.prepareNewAssessment();
+			if (started && !this.created) {
+				this.createAssessmentViewElements();
+				this.prepareNewAssessment();
+			}
 		});
 	}
 
@@ -447,7 +455,7 @@ public class ArtemisGradingView extends ViewPart {
 
 	private void prepareNewAssessment() {
 		this.loadAnnotationMarkers();
-		this.ratingGroups.forEach(ratingGroup -> {
+		this.viewController.getRatingGroups().forEach(ratingGroup -> {
 			this.updatePenalties(ratingGroup.getDisplayName(), false);
 		});
 	}
