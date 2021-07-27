@@ -13,6 +13,7 @@ public interface ISubmission {
 	enum Filter {
 		SAVED_BUT_NOT_SUBMITTED(submission -> submission.hasSavedAssessment() && !submission.hasSubmittedAssessment()),
 		SAVED_AND_SUBMITTED(submission -> submission.hasSavedAssessment() && submission.hasSubmittedAssessment()),
+		NOT_SUBMITTED(submission -> !submission.hasSubmittedAssessment()),
 		ALL(submission -> true);
 
 		private Predicate<ISubmission> filterPredicate;
