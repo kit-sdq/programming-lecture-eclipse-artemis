@@ -13,8 +13,12 @@ import edu.kit.kastel.sdq.eclipse.grading.api.IAssessmentController;
 import edu.kit.kastel.sdq.eclipse.grading.api.ICourse;
 import edu.kit.kastel.sdq.eclipse.grading.api.IExercise;
 import edu.kit.kastel.sdq.eclipse.grading.api.ISubmission;
+import edu.kit.kastel.sdq.eclipse.grading.api.ISubmission.Filter;
 import edu.kit.kastel.sdq.eclipse.grading.api.ISystemwideController;
 import edu.kit.kastel.sdq.eclipse.grading.api.alerts.IAlertObservable;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IProjectFileNamingStrategy;
+import edu.kit.kastel.sdq.eclipse.grading.core.artemis.DefaultProjectFileNamingStrategy;
+import edu.kit.kastel.sdq.eclipse.grading.core.artemis.WorkspaceUtil;
 import edu.kit.kastel.sdq.eclipse.grading.core.config.ConfigDao;
 import edu.kit.kastel.sdq.eclipse.grading.core.config.JsonFileConfigDao;
 
@@ -32,6 +36,8 @@ public class SystemwideController implements ISystemwideController {
 
 	private AlertObservable alertObservable;
 
+	private IProjectFileNamingStrategy projectFileNamingStrategy;
+
 	public SystemwideController(final File configFile, final String exerciseConfigName, final String artemisHost, final String username, final String password) {
 		this.setConfigFile(configFile);
 		this.exerciseConfigName = exerciseConfigName;
@@ -40,6 +46,8 @@ public class SystemwideController implements ISystemwideController {
 		this.alertObservable = new AlertObservable();
 
 		this.artemisGUIController = new ArtemisGUIController(this, artemisHost, username, password);
+
+		this.projectFileNamingStrategy = new DefaultProjectFileNamingStrategy();
 	}
 
 	@Override
@@ -81,11 +89,26 @@ public class SystemwideController implements ISystemwideController {
 	}
 
 
-	@Override
-	public Collection<Integer> getBegunSubmissions(ISubmission.Filter submissionFilter) {
+	private Collection<ISubmission> getBegunSubmissions(ISubmission.Filter submissionFilter) {
+		if (this.exerciseID == null) {
+			this.alertObservable.warn("exerciseID not initialized.");
+			return List.of();
+		}
+
 		return this.getArtemisGUIController().getBegunSubmissions(this.exerciseID).stream()
 				.filter(submissionFilter.getFilterPredicate())
-				.map(ISubmission::getSubmissionId).collect(Collectors.toList());
+				.collect(Collectors.toList());
+	}
+
+	@Override
+	public Collection<String> getBegunSubmissionsProjectNames(ISubmission.Filter submissionFilter) {
+		return this.getBegunSubmissions(submissionFilter)
+				.stream()
+				.map(submission -> this.projectFileNamingStrategy.getProjectFileInWorkspace(
+						WorkspaceUtil.getWorkspaceFile(),
+						this.getCurrentExercise(),
+						submission).getName())
+				.collect(Collectors.toList());
 	}
 
 	/**
@@ -99,6 +122,11 @@ public class SystemwideController implements ISystemwideController {
 	@Override
 	public IAssessmentController getCurrentAssessmentController() {
 		return this.getAssessmentController(this.submissionID, this.exerciseConfigName, this.courseID, this.exerciseID);
+	}
+
+	private IExercise getCurrentExercise() {
+		return this.getArtemisGUIController()
+				.getExerciseFromCourses(this.getArtemisGUIController().getCourses(), this.courseID, this.exerciseID);
 	}
 
 	@Override
@@ -158,8 +186,19 @@ public class SystemwideController implements ISystemwideController {
 	}
 
 	@Override
-	public void setAssessedSubmission(int submissionID) {
-		this.submissionID = submissionID;
+	public void setAssessedSubmissionByProjectName(String projectName) {
+		this.getBegunSubmissions(Filter.ALL).forEach(submission -> {
+			String currentProjectName = this.projectFileNamingStrategy.getProjectFileInWorkspace(
+					WorkspaceUtil.getWorkspaceFile(),
+					this.getCurrentExercise(),
+					submission).getName();
+			if (currentProjectName.equals(projectName)) {
+				this.submissionID = submission.getSubmissionId();
+				return;
+			}
+		});
+
+		this.alertObservable.error("Assessed submission with projectName=\"" + projectName +  "\" not found!", null);
 	}
 
 	@Override

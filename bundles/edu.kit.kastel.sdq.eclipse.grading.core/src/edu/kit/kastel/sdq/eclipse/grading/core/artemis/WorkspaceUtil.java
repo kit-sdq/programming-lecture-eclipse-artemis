@@ -76,5 +76,11 @@ public class WorkspaceUtil {
 		}
 	}
 
+	public static final File getWorkspaceFile() {
+		return ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile();
+
+
+	}
+
 	private WorkspaceUtil() {}
 }

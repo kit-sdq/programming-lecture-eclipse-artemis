@@ -17,13 +17,13 @@ public interface ISystemwideController {
 
 	/**
 	 * BACKLOG TAB.
-	 * Get all submissionIDs which were sometime started by the calling tutor. Based on current exercise.
+	 * Get all submissions (their project names) which were sometime started by the calling tutor. Based on current exercise.
 	 * ISystemwideController::setExerciseId() must have been called before!
 	 *
 	 * @param filter determine which kinds of submissions should be filtered (= be in the result)
-	 * @return
+	 * @return the respective project Names (unique).
 	 */
-	Collection<Integer> getBegunSubmissions(ISubmission.Filter filter);
+	Collection<String> getBegunSubmissionsProjectNames(ISubmission.Filter filter);
 
 	/**
 	 *
@@ -75,8 +75,10 @@ public interface ISystemwideController {
 
 	/**
 	 * BACKLOG TAB.
+	 * You want to have called {@link #getBegunSubmissions(edu.kit.kastel.sdq.eclipse.grading.api.ISubmission.Filter)}, first!
+	 *
 	 */
-	void setAssessedSubmission(int submissionID);
+	void setAssessedSubmissionByProjectName(String projectName);
 
 	/**
 	 * set the new config globally.
