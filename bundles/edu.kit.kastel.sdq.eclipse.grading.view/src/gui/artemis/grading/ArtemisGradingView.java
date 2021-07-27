@@ -386,7 +386,9 @@ public class ArtemisGradingView extends ViewPart {
 	}
 
 	private void addSelectionListenerForLoadFromBacklogButton(Button btnLoadAgain) {
-		this.viewController.onLoadAgain();
+		btnLoadAgain.addListener(SWT.Selection, e -> {
+			this.viewController.onLoadAgain();
+		});
 	}
 
 	private void addSelectionListenerForStartSecondRound(Button btnStartRound2) {
