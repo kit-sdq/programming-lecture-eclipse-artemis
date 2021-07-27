@@ -8,8 +8,8 @@ on:
     branches: [ main ]
     paths-ignore:
       - '**.md'
-  pull_request:
-    branches: [ main ]
+#  pull_request: # TODO: Split actions
+#    branches: [ main ]
   workflow_dispatch:
 
 jobs:
