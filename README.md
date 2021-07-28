@@ -1,6 +1,10 @@
 # programming-lecture-eclipse-artemis-grading
 Eclipse-Plugin for grading with the [Artemis project](https://github.com/ls1intum/Artemis)
 
+## Update Site
+The Update Site is located here: https://kit-sdq.github.io/programming-lecture-eclipse-artemis-grading/
+
+
 ## Working with the plugin
 
 ## Configuration File
