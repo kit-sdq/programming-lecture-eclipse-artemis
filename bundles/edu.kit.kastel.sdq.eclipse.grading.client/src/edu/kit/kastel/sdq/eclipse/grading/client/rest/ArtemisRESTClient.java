@@ -41,6 +41,10 @@ import edu.kit.kastel.sdq.eclipse.grading.client.mappings.exam.ArtemisExerciseGr
 
 public class ArtemisRESTClient extends AbstractArtemisClient  {
 
+	/**
+	 * TODO review this. Dont know what usernames are to be expected...
+	 */
+	private static final String USERNAME_REGEX = "[0-9A-Za-z.\\-]+";
 
 	private WebTarget rootApiTarget;
 	private Optional<IDToken> id_token;
@@ -64,6 +68,19 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 		if (this.id_token.isEmpty()) this.login();
 	}
 
+	/**
+	 * Example:
+	 * https://test-student@artemis-test-git.ipd.kit.edu/PRAKTIKUM21TESTAUFGABE1/praktikum21testaufgabe1-test-student.git
+	 * ==>
+	 * https://artemis-test-git.ipd.kit.edu/PRAKTIKUM21TESTAUFGABE1/praktikum21testaufgabe1-test-student.git
+	 *
+	 * @param repositoryURLWithStudentName
+	 * @return
+	 */
+	private String convertRepositoryUrl(String repositoryURLWithStudentName) {
+		return repositoryURLWithStudentName.replaceFirst("https://" + USERNAME_REGEX + "@", "https://");
+	}
+
 	private void downloadExercise(IExercise exercise, File directory) {
 		//TODO remove hardcoded
 		new EgitGitHandler(exercise.getTestRepositoryUrl()).cloneRepo(directory, "master");
@@ -82,7 +99,7 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 	}
 
 	protected void downloadSubmission(ISubmission submission, File directory) {
-		new EgitGitHandler(submission.getRepositoryUrl()).cloneRepo(directory, "master");
+		new EgitGitHandler(this.convertRepositoryUrl(submission.getRepositoryUrl())).cloneRepo(directory, "master");
 	}
 
 	private String getApiRoot() {
