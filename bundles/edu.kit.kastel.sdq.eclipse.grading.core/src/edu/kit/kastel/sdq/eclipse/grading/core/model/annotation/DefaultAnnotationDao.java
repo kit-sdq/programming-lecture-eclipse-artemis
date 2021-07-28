@@ -8,12 +8,11 @@ import java.util.Set;
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IAnnotation;
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IMistakeType;
 
-public class JsonFileAnnotationDao implements AnnotationDao {
+public class DefaultAnnotationDao implements IAnnotationDao {
 
 	private final Set<IAnnotation> annotations;
 
-	//TODO params: File path, ..? Implement serializing stuff
-	public JsonFileAnnotationDao() {
+	public DefaultAnnotationDao() {
 		this.annotations = new HashSet<>();
 	}
 
@@ -24,8 +23,6 @@ public class JsonFileAnnotationDao implements AnnotationDao {
 
 		this.annotations.add(
 				new Annotation(annotationID, mistakeType, startLine, endLine, fullyClassifiedClassName, customMessage, customPenalty, markerCharStart, markerCharEnd));
-
-		this.serialize();
 	}
 
 	@Override
@@ -58,19 +55,12 @@ public class JsonFileAnnotationDao implements AnnotationDao {
 
 		this.annotations.remove(oldAnnotation);
 		this.annotations.add(newAnnotation);
-		this.serialize();
 	}
 
 	@Override
 	public void removeAnnotation(int annotationId) {
 		final IAnnotation foundAnnotation = this.getAnnotation(annotationId);
 		this.annotations.remove(foundAnnotation);
-
-		this.serialize();
 	}
 
-	@Override
-	public void serialize() {
-		// TODO implement (UPDATE: serializing should be done to Artemis!)
-	}
 }

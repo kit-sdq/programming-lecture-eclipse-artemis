@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 import javax.security.sasl.AuthenticationException;
 
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
@@ -65,8 +66,12 @@ public class ArtemisGUIController implements IArtemisGUIController {
 
 		this.artemisClient.downloadExerciseAndSubmission(exercise, submission, eclipseWorkspaceRoot,
 				defaultProjectFileNamingStrategy);
+		try {
 		WorkspaceUtil.createEclipseProject(
 				defaultProjectFileNamingStrategy.getProjectFileInWorkspace(eclipseWorkspaceRoot, exercise, submission));
+		} catch (CoreException e) {
+			this.alertObservable.error("Project could not be created: " + e.getMessage(), null);
+		}
 
 	}
 
@@ -241,8 +246,8 @@ public class ArtemisGUIController implements IArtemisGUIController {
 	}
 
 	@Override
-	public void saveAssessment(int submissionID, boolean submit, boolean invalidSubmission) {
-		final IAssessmentController assessmentController = this.systemwideController.getAssessmentController(submissionID, null);
+	public boolean saveAssessment(int submissionID, boolean submit, boolean invalidSubmission) {
+		final IAssessmentController assessmentController = this.systemwideController.getCurrentAssessmentController();
 		if (!this.lockResults.containsKey(submissionID))
 			throw new IllegalStateException("Assessment not started, yet!");
 		final ILockResult lockResult = this.lockResults.get(submissionID);
@@ -268,15 +273,19 @@ public class ArtemisGUIController implements IArtemisGUIController {
 			);
 		} catch (AuthenticationException e) {
 			this.alertObservable.error("Authentication to Artemis failed: " + e.getMessage(), e);
+			return false;
 		} catch (JsonProcessingException e) {
 			this.alertObservable.error("Local backend failed to format the annotations: " + e.getMessage(), e);
+			return false;
 		} catch (Exception e) {
 			this.alertObservable.error("Assessor could not be retrieved from Artemis: " + e.getMessage(), e);
+			return false;
 		}
 
 		if (submit) {
 			this.lockResults.remove(submissionID);
 		}
+		return true;
 	}
 
 	@Override

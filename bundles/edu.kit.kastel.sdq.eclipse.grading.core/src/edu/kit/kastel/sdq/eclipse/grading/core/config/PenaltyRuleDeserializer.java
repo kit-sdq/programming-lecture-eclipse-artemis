@@ -3,7 +3,6 @@ package edu.kit.kastel.sdq.eclipse.grading.core.config;
 import java.io.IOException;
 
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
@@ -27,9 +26,8 @@ public class PenaltyRuleDeserializer extends StdDeserializer<PenaltyRule> {
 	 */
 	public enum PenaltyRuleType {
 		//Need to add a new enum value with a short Name (that must be used in the config file) and a constructor based on the json node.
-		ThresholdPenaltyRuleType (ThresholdPenaltyRule.SHORT_NAME, penaltyRuleNode -> new ThresholdPenaltyRule(penaltyRuleNode.get("threshold").asInt(), penaltyRuleNode.get("penalty").asDouble())),
-		CustomPenaltyRuleType (CustomPenaltyRule.SHORT_NAME, penaltyRuleNode -> new CustomPenaltyRule()),
-		NULLRule ("NullRule", penaltyRuleNode -> null);
+		THRESHOLD_PENALTY_RULE_TYPE (ThresholdPenaltyRule.SHORT_NAME, penaltyRuleNode -> new ThresholdPenaltyRule(penaltyRuleNode.get("threshold").asInt(), penaltyRuleNode.get("penalty").asDouble())),
+		CUSTOM_PENALTY_RULE_TYPE (CustomPenaltyRule.SHORT_NAME, penaltyRuleNode -> new CustomPenaltyRule());
 
 		interface Constructor {
 			PenaltyRule construct(final JsonNode penaltyRuleNode);
@@ -67,7 +65,7 @@ public class PenaltyRuleDeserializer extends StdDeserializer<PenaltyRule> {
 
 	@Override
 	public PenaltyRule deserialize(JsonParser parser, DeserializationContext ctxt)
-			throws IOException, JsonProcessingException {
+			throws IOException {
 
 		final JsonNode penaltyRuleNode = parser.getCodec().readTree(parser);
 		final String penaltyRuleShortName = penaltyRuleNode.get("shortName").asText();

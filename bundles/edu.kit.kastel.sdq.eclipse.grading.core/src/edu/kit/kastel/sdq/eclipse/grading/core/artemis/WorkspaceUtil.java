@@ -13,27 +13,28 @@ import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.m2e.core.MavenPlugin;
 import org.eclipse.m2e.core.internal.IMavenConstants;
 
 public class WorkspaceUtil {
-
 
 	/**
 	 * Create a new eclipse project given a projectName which corresponds to an EXISTING project in the workspace.
 	 * Natures are Maven and Java
 	 * @param projectDirectory
+	 * @throws CoreException
 	 */
-	public static final void createEclipseProject(final File projectDirectory) {
+	public static final void createEclipseProject(final File projectDirectory) throws CoreException {
 		createEclipseProject(projectDirectory.getName());
 	}
+
+
 
 	/**
 	 * Create a new eclipse project given a projectName which corresponds to an EXISTING project in the workspace.
 	 * Natures are Maven and Java
 	 * @param projectName
 	 */
-	public static final void createEclipseProject(final String projectName) {
+	public static final void createEclipseProject(final String projectName) throws CoreException {
 		final IProjectDescription description = ResourcesPlugin.getWorkspace().newProjectDescription(projectName);
 
 		final String[] natures = {JavaCore.NATURE_ID, IMavenConstants.NATURE_ID};
@@ -41,17 +42,10 @@ public class WorkspaceUtil {
 
 		// and save it
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
-		try {
-			project.create(description, null);
-			project.open(null);
-		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 
+		project.create(null);
 
-		//TODO testarea
-		MavenPlugin.getMavenProjectRegistry().create(project, null);
+		project.open(null);
 	}
 
 	private static final void deleteDirectoryRecursively(final Path directory) throws IOException {

@@ -7,11 +7,8 @@ import edu.kit.kastel.sdq.eclipse.grading.api.model.IMistakeType;
 
 /**
  * Holder of Annotation State.
- * Writes to DB on each method call.
- * TODO read from file? Extra Method for that?
- *
  */
-public interface AnnotationDao {
+public interface IAnnotationDao {
 
 	/**
 	 * Add an annotation to the current assessment.
@@ -48,10 +45,4 @@ public interface AnnotationDao {
 	 * @param annotationId	unique annotation identifier
 	 */
 	void removeAnnotation(int annotationId);
-
-	/**
-	 * Write current state to disk. This is to be called upon each of the other methods calls!
-	 * (Explicit serialization needs to be done by the caller if they change Annotations) TODO maybe not the best style..
-	 */
-	void serialize();
 }

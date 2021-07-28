@@ -22,6 +22,9 @@ public class MistakeType implements IMistakeType {
 
 	/**
 	 * This Constructor is used by Deserialization!
+	 * Using this Constructor means having to add
+	 * <li> the rating group
+	 * <li> this object to the rating Group
 	 */
 	@JsonCreator
 	public MistakeType(@JsonProperty("shortName") String shortName,
@@ -36,10 +39,6 @@ public class MistakeType implements IMistakeType {
 		this.penaltyRule = penaltyRule;
 
 		this.appliesTo = appliesTo;
-
-		//TODO using this constructor means having to add
-		// the rating group,
-		// this object in the rating group!
 	}
 
 	public MistakeType(String shortName,

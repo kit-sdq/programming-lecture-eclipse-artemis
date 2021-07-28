@@ -82,8 +82,10 @@ public interface IArtemisGUIController {
 	 * @param submit should the assessment be submitted or merely saved to artemis?
 	 * @param invalidSubmission is the submission invalid? Will return 0 points.
 	 * @param exerciseName the exercise name is used to internally identify which annotations should be sent.
+	 *
+	 * @return whether the operation was successful.
 	 */
-	void saveAssessment(int submissionID, boolean submit, boolean invalidSubmission);
+	boolean saveAssessment(int submissionID, boolean submit, boolean invalidSubmission);
 
 	/**
 	 * Starts an assessment for the given submission. Acquires a lock in the process.

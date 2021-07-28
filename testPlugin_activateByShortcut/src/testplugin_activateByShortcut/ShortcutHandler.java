@@ -10,6 +10,7 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.AbstractArtemisClient;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ICourse;
@@ -77,11 +78,15 @@ public class ShortcutHandler extends AbstractHandler {
 
 		artemisClient.downloadExerciseAndSubmission(exercise, exercise.getSubmissions().iterator().next(),
 				eclipseWorkspaceRoot, new DefaultProjectFileNamingStrategy());
-		WorkspaceUtil.createEclipseProject(new DefaultProjectFileNamingStrategy().getProjectFileInWorkspace(
-				eclipseWorkspaceRoot,
-				exercise,
-				exercise.getSubmissions().iterator().next()
-		));
+		try {
+			WorkspaceUtil.createEclipseProject(new DefaultProjectFileNamingStrategy().getProjectFileInWorkspace(
+					eclipseWorkspaceRoot,
+					exercise,
+					exercise.getSubmissions().iterator().next()
+			));
+		} catch (CoreException e) {
+			e.printStackTrace();
+		}
 
 		System.out.println("Download Done!");
 	}

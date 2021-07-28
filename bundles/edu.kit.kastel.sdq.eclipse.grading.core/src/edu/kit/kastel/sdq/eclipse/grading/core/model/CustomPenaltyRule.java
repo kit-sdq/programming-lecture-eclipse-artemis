@@ -9,7 +9,9 @@ public class CustomPenaltyRule extends PenaltyRule {
 	private static final String DISPLAY_NAME = "Custom Penalty";
 	public static final String SHORT_NAME = "customPenalty";
 
-	public CustomPenaltyRule() { }
+	public CustomPenaltyRule() {
+		// a comment explaining why this method is empty
+	}
 
 	@Override
 	public double calculatePenalty(List<IAnnotation> annotations) {

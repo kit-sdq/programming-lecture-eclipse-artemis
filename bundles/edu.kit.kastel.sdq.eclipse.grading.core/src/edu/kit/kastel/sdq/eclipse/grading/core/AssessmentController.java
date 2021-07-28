@@ -25,16 +25,16 @@ import edu.kit.kastel.sdq.eclipse.grading.core.artemis.DefaultProjectFileNamingS
 import edu.kit.kastel.sdq.eclipse.grading.core.artemis.WorkspaceUtil;
 import edu.kit.kastel.sdq.eclipse.grading.core.config.ConfigDao;
 import edu.kit.kastel.sdq.eclipse.grading.core.config.ExerciseConfig;
-import edu.kit.kastel.sdq.eclipse.grading.core.model.annotation.AnnotationDao;
+import edu.kit.kastel.sdq.eclipse.grading.core.model.annotation.IAnnotationDao;
 import edu.kit.kastel.sdq.eclipse.grading.core.model.annotation.AnnotationException;
-import edu.kit.kastel.sdq.eclipse.grading.core.model.annotation.JsonFileAnnotationDao;
+import edu.kit.kastel.sdq.eclipse.grading.core.model.annotation.DefaultAnnotationDao;
 
 
 public class AssessmentController implements IAssessmentController {
 
 	private SystemwideController systemWideController;
 	private int submissionID;
-	private AnnotationDao annotationDao;
+	private IAnnotationDao annotationDao;
 
 	private AlertObservable alertObservable;
 
@@ -52,7 +52,7 @@ public class AssessmentController implements IAssessmentController {
 	protected AssessmentController(SystemwideController systemWideController, int courseID, int exerciseID, int submissionID,String exerciseConfigName) {
 		this.systemWideController = systemWideController;
 		this.submissionID = submissionID;
-		this.annotationDao = new JsonFileAnnotationDao();
+		this.annotationDao = new DefaultAnnotationDao();
 
 		this.alertObservable = new AlertObservable();
 
@@ -236,7 +236,7 @@ public class AssessmentController implements IAssessmentController {
 
 	@Override
 	public void resetAndReload() {
-		this.annotationDao = new JsonFileAnnotationDao();
+		this.annotationDao = new DefaultAnnotationDao();
 
 		try {
 			this.initializeWithDeserializedAnnotations();

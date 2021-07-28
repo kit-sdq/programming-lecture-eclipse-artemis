@@ -14,14 +14,14 @@ import edu.kit.kastel.sdq.eclipse.grading.core.model.RatingGroup;
 
 @JsonDeserialize(converter = ExerciseConfigConverter.class) //used for adding associations between mistakeType and RatingGroup
 public class ExerciseConfig {
-	
+
 	private String shortName;
 	private Collection<RatingGroup> ratingGroups;
 	private Collection<MistakeType> mistakeTypes;
-	
-	@JsonCreator	
+
+	@JsonCreator
 	public ExerciseConfig(
-			@JsonProperty("shortName") String shortName, 
+			@JsonProperty("shortName") String shortName,
 			@JsonProperty("ratingGroups") Collection<RatingGroup> ratingGroups,
 			@JsonProperty("mistakeTypes") Collection<MistakeType> mistakeTypes) {
 		this.shortName = shortName;
@@ -29,29 +29,29 @@ public class ExerciseConfig {
 		this.mistakeTypes = mistakeTypes;
 	}
 
-	public String getShortName() {
-		return shortName;
-	}
-
-	public Collection<RatingGroup> getRatingGroups() {
-		return ratingGroups;
+	public Collection<IMistakeType> getIMistakeTypes() {
+		return this.mistakeTypes.stream().map(IMistakeType.class::cast).collect(Collectors.toList());
 	}
 
 	public Collection<IRatingGroup> getIRatingGroups() {
-		return ratingGroups.stream().map(ratingGroup -> (IRatingGroup) ratingGroup).collect(Collectors.toList());
+		return this.ratingGroups.stream().map(IRatingGroup.class::cast).collect(Collectors.toList());
 	}
-
 
 	public Collection<MistakeType> getMistakeTypes() {
-		return mistakeTypes;
+		return this.mistakeTypes;
 	}
-	public Collection<IMistakeType> getIMistakeTypes() {
-		return mistakeTypes.stream().map(mistakeType -> (IMistakeType) mistakeType).collect(Collectors.toList());
+
+
+	public Collection<RatingGroup> getRatingGroups() {
+		return this.ratingGroups;
+	}
+	public String getShortName() {
+		return this.shortName;
 	}
 
 	@Override
 	public String toString() {
-		return "ExerciseConfig [shortName=" + shortName + ", ratingGroupsSize=" + ratingGroups.size() + ", mistakeTypesSize="
-				+ mistakeTypes.size() + "]";
+		return "ExerciseConfig [shortName=" + this.shortName + ", ratingGroupsSize=" + this.ratingGroups.size() + ", mistakeTypesSize="
+				+ this.mistakeTypes.size() + "]";
 	}
 }

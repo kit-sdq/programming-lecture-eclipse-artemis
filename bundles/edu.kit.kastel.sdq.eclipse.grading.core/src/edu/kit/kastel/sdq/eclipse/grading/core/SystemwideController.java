@@ -60,31 +60,11 @@ public class SystemwideController implements ISystemwideController {
 		return this.artemisGUIController;
 	}
 
-	protected IAssessmentController getAssessmentController(int submissionID, String exerciseConfigName) {
-		Integer courseID = null;
-		Integer exerciseID = null;
-		for (ICourse course : this.getArtemisGUIController().getCourses()) {
-			for (IExercise exercise : course.getExercises()) {
-				Optional<ISubmission> submissionOptional = exercise.getSubmissions().stream().filter(submission -> submission.getSubmissionId() == submissionID).findAny();
-				if (submissionOptional.isPresent()) {
-					courseID = course.getCourseId();
-					exerciseID = exercise.getExerciseId();
-				}
-			}
-		}
-		if (courseID == null) {
-			this.alertObservable.error("No course found with the submissionID \"" + submissionID + "\".", null);
-			return null;
-		}
-
-		return this.getAssessmentController(submissionID, exerciseConfigName, courseID, exerciseID);
-	}
-
 	private IAssessmentController getAssessmentController(int submissionID, String exerciseConfigName, int courseID,
 			int exerciseID) {
-		if (!this.assessmentControllers.containsKey(submissionID)) {
-			this.assessmentControllers.put(submissionID, new AssessmentController(this, courseID, exerciseID, submissionID, exerciseConfigName));
-		}
+		this.assessmentControllers.putIfAbsent(
+				submissionID,
+				new AssessmentController(this, courseID, exerciseID, submissionID, exerciseConfigName));
 		return this.assessmentControllers.get(submissionID);
 	}
 
@@ -196,19 +176,17 @@ public class SystemwideController implements ISystemwideController {
 	@Override
 	public void onSubmitAssessmentButton() {
 		if (this.nullCheckMembersAndNotify(true, true, true)) return;
-		this.artemisGUIController.saveAssessment(this.submissionID, true, false);
-
-		//TODO do this only if no submitting was successful
-		this.getCurrentAssessmentController().deleteEclipseProject();
-		this.submissionID = null;
+		if (this.artemisGUIController.saveAssessment(this.submissionID, true, false)) {
+			this.getCurrentAssessmentController().deleteEclipseProject();
+			this.submissionID = null;
+		}
 	}
 
 	public void onZeroPointsForAssessment() {
-		this.artemisGUIController.saveAssessment(this.submissionID, true, true);
-
-		//TODO do this only if no submitting was successful
-		this.getCurrentAssessmentController().deleteEclipseProject();
-		this.submissionID = null;
+		if (this.artemisGUIController.saveAssessment(this.submissionID, true, true)) {
+			this.getCurrentAssessmentController().deleteEclipseProject();
+			this.submissionID = null;
+		}
 	}
 
 	@Override

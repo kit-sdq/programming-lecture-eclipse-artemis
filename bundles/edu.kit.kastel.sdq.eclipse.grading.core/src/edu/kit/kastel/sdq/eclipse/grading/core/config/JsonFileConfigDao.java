@@ -12,19 +12,18 @@ public class JsonFileConfigDao implements ConfigDao {
 
 	private File configFile;
 	private Collection<ExerciseConfig> exerciseConfigs;
-	
+
 	public JsonFileConfigDao(File configFile) {
 		this.configFile = configFile;
 	}
 
 	@Override
 	public Collection<ExerciseConfig> getExerciseConfigs() throws IOException {
-		// TODO Auto-generated method stub
-		parseIfNotAlreadyParsed();
+		this.parseIfNotAlreadyParsed();
 		return this.exerciseConfigs;
 	}
 
-	
+
 	private void parseIfNotAlreadyParsed() throws IOException {
 		if (this.exerciseConfigs != null) {
 			return;
@@ -32,7 +31,7 @@ public class JsonFileConfigDao implements ConfigDao {
 
 		ExerciseConfig[] configs = new ObjectMapper()
 				.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-				.readValue(configFile, ExerciseConfig[].class);
+				.readValue(this.configFile, ExerciseConfig[].class);
 		this.exerciseConfigs = Arrays.asList(configs);
 	}
 }
