@@ -1,7 +1,6 @@
 package edu.kit.kastel.sdq.eclipse.grading.core.config;
 
 import java.util.Collection;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonCreator;

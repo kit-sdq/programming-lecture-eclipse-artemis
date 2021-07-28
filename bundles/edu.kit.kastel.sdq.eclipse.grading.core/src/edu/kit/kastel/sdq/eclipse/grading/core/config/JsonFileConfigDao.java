@@ -2,7 +2,6 @@ package edu.kit.kastel.sdq.eclipse.grading.core.config;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 

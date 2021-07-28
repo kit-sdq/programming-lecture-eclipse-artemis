@@ -240,7 +240,7 @@ public class AnnotationMapper {
 	}
 
 	private String getCurrentTimestamp() {
-		return LocalDateTime.now().format(DateTimeFormatter.ofPattern(this.DATE_FORMAT_STRING));
+		return LocalDateTime.now().format(DateTimeFormatter.ofPattern(AnnotationMapper.DATE_FORMAT_STRING));
 	}
 
 	private Collection<IFeedback> getFilteredPreexistentFeedbacks(FeedbackType feedbackType) {
