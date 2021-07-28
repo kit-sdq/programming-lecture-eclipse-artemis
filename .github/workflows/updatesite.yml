@@ -32,34 +32,12 @@ jobs:
 
     - name: Build with Maven
       run: mvn -U -B package --file pom.xml
-        
-    - name: Upload UpdateSite
-      uses: actions/upload-artifact@v2
+
+    - name: Deploy GH Pages
+      uses: JamesIves/github-pages-deploy-action@4.1.4
       with:
-        name: updatesite
-        path: releng/edu.kit.kastel.sdq.eclipse.grading.updatesite/target/repository/
-  
-    - name: Checkout GH Pages
-      uses: actions/checkout@v2.3.1
-      with:
-        ref: gh-pages
-
-    - run: rm -rf updatesite/
-
-    - name: Download UpdateSite
-      uses: actions/download-artifact@v2
-      with:
-        name: updatesite
-        path: updatesite/
-        
-    - run: echo "You will find the update site at: https://kit-sdq.github.io/programming-lecture-eclipse-artemis-grading/updatesite/" > index.html
-
-    - name: Commit
-      uses: zwaldowski/git-commit-action@v1
-
-    - name: Push
-      uses: ad-m/github-push-action@master
-      with:
-        branch: gh-pages
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        BRANCH: gh-pages 
+        FOLDER: releng/edu.kit.kastel.sdq.eclipse.grading.updatesite/target/repository
+        CLEAN: true 
+   
