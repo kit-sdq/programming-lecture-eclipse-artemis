@@ -3,12 +3,9 @@ package edu.kit.kastel.sdq.eclipse.grading.client.git;
 import java.io.File;
 import java.io.IOException;
 
-import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.jgit.api.CloneCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
-import org.eclipse.jgit.api.errors.InvalidRemoteException;
-import org.eclipse.jgit.api.errors.TransportException;
 import org.eclipse.jgit.util.FileUtils;
 
 public class JGitGitHandler extends AbstractGitHandler {

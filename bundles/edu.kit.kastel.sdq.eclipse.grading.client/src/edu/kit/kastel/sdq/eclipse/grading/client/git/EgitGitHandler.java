@@ -1,17 +1,9 @@
 package edu.kit.kastel.sdq.eclipse.grading.client.git;
 
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
-import java.net.MalformedURLException;
 import java.net.URISyntaxException;
-import java.net.URL;
-
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.egit.core.EclipseGitProgressTransformer;
 import org.eclipse.egit.core.op.CloneOperation;
-import org.eclipse.jgit.lib.TextProgressMonitor;
 import org.eclipse.jgit.transport.URIish;
-import org.eclipse.jgit.util.FileUtils;
 
 public class EgitGitHandler extends AbstractGitHandler {
 
