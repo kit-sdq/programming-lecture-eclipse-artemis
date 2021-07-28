@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IFeedback;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IFeedback;
 
 public class LockCallAssessmentResult {
 

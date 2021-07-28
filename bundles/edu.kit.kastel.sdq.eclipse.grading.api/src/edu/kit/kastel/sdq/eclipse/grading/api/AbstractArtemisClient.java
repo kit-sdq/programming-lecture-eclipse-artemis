@@ -6,9 +6,12 @@ import java.util.Optional;
 
 import javax.security.sasl.AuthenticationException;
 
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IAssessor;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.ILockResult;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IProjectFileNamingStrategy;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IAssessor;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ICourse;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
 
 /**
  * Defines interface between "backend" and e.g. ArtemisRestClient. The latter implements this interface.

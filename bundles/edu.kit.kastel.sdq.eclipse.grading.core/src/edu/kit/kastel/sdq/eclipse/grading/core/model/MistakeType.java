@@ -5,9 +5,9 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import edu.kit.kastel.sdq.eclipse.grading.api.IAnnotation;
-import edu.kit.kastel.sdq.eclipse.grading.api.IMistakeType;
-import edu.kit.kastel.sdq.eclipse.grading.api.IRatingGroup;
+import edu.kit.kastel.sdq.eclipse.grading.api.model.IAnnotation;
+import edu.kit.kastel.sdq.eclipse.grading.api.model.IMistakeType;
+import edu.kit.kastel.sdq.eclipse.grading.api.model.IRatingGroup;
 
 public class MistakeType implements IMistakeType {
 	private String shortName;

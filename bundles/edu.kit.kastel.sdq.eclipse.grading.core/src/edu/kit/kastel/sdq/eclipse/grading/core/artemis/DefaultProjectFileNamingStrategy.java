@@ -2,9 +2,9 @@ package edu.kit.kastel.sdq.eclipse.grading.core.artemis;
 
 import java.io.File;
 
-import edu.kit.kastel.sdq.eclipse.grading.api.IExercise;
-import edu.kit.kastel.sdq.eclipse.grading.api.ISubmission;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IProjectFileNamingStrategy;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
 
 public class DefaultProjectFileNamingStrategy implements IProjectFileNamingStrategy {
 

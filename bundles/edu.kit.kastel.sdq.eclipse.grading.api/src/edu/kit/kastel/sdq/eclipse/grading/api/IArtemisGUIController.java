@@ -4,7 +4,11 @@ import java.util.Collection;
 import java.util.Optional;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.alerts.IAlertObservable;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IFeedback;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ICourse;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExam;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IFeedback;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
 
 public interface IArtemisGUIController {
 

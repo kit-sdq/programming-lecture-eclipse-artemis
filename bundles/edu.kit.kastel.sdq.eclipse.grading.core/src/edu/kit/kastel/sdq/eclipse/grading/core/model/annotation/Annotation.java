@@ -1,4 +1,4 @@
-package edu.kit.kastel.sdq.eclipse.grading.core.annotation;
+package edu.kit.kastel.sdq.eclipse.grading.core.model.annotation;
 
 import java.util.Optional;
 
@@ -6,8 +6,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import edu.kit.kastel.sdq.eclipse.grading.api.IAnnotation;
-import edu.kit.kastel.sdq.eclipse.grading.api.IMistakeType;
+import edu.kit.kastel.sdq.eclipse.grading.api.model.IAnnotation;
+import edu.kit.kastel.sdq.eclipse.grading.api.model.IMistakeType;
 
 public class Annotation implements IAnnotation {
 

@@ -1,4 +1,4 @@
-package edu.kit.kastel.sdq.eclipse.grading.api;
+package edu.kit.kastel.sdq.eclipse.grading.api.model;
 
 /**
  * {@link IMistakeType}s belong to a {@link IRatingGroup}. Rating Groups may introduce penalty limits for calculation, capping the maximum penalty that

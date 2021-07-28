@@ -11,14 +11,13 @@ import java.util.stream.Collectors;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import edu.kit.kastel.sdq.eclipse.grading.api.IAnnotation;
-import edu.kit.kastel.sdq.eclipse.grading.api.IMistakeType;
-import edu.kit.kastel.sdq.eclipse.grading.api.IRatingGroup;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IAssessor;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IFeedback;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IFeedback.FeedbackType;
+import edu.kit.kastel.sdq.eclipse.grading.api.model.IAnnotation;
+import edu.kit.kastel.sdq.eclipse.grading.api.model.IMistakeType;
+import edu.kit.kastel.sdq.eclipse.grading.api.model.IRatingGroup;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.ILockResult;
-import edu.kit.kastel.sdq.eclipse.grading.core.IPenaltyCalculationStrategy;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IAssessor;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IFeedback;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IFeedback.FeedbackType;
 
 /**
  * Maps Annotations to Artemis-accepted json-formatted strings.

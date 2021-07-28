@@ -2,6 +2,8 @@ package edu.kit.kastel.sdq.eclipse.grading.api.artemis;
 
 import java.util.Collection;
 
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IFeedback;
+
 /**
  * This is gotten from acquiring a lock (no matter if the lock is already held by the caller or not).
  * It is used to calculate the assessment result.

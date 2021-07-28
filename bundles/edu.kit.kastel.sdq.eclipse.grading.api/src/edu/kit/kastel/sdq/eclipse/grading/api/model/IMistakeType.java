@@ -1,4 +1,4 @@
-package edu.kit.kastel.sdq.eclipse.grading.api;
+package edu.kit.kastel.sdq.eclipse.grading.api.model;
 
 import java.util.List;
 

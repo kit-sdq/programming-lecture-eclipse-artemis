@@ -1,6 +1,6 @@
 package edu.kit.kastel.sdq.eclipse.grading.client.mappings;
 
-import edu.kit.kastel.sdq.eclipse.grading.api.ISubmission;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
 
 public class ArtemisSubmission implements ISubmission {
 

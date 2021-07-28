@@ -1,4 +1,4 @@
-package edu.kit.kastel.sdq.eclipse.grading.core.annotation;
+package edu.kit.kastel.sdq.eclipse.grading.core.model.annotation;
 
 public class AnnotationException extends Exception {
 

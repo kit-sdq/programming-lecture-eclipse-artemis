@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IFeedback;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IFeedback;
 
 @JsonInclude(Include.NON_NULL)
 public class Feedback implements IFeedback {

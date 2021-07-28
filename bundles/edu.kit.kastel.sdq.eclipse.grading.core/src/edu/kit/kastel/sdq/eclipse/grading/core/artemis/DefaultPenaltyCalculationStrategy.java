@@ -1,11 +1,11 @@
-package edu.kit.kastel.sdq.eclipse.grading.core;
+package edu.kit.kastel.sdq.eclipse.grading.core.artemis;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
 
-import edu.kit.kastel.sdq.eclipse.grading.api.IAnnotation;
-import edu.kit.kastel.sdq.eclipse.grading.api.IMistakeType;
-import edu.kit.kastel.sdq.eclipse.grading.api.IRatingGroup;
+import edu.kit.kastel.sdq.eclipse.grading.api.model.IAnnotation;
+import edu.kit.kastel.sdq.eclipse.grading.api.model.IMistakeType;
+import edu.kit.kastel.sdq.eclipse.grading.api.model.IRatingGroup;
 
 public class DefaultPenaltyCalculationStrategy implements IPenaltyCalculationStrategy {
 

@@ -7,8 +7,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-import edu.kit.kastel.sdq.eclipse.grading.api.IMistakeType;
-import edu.kit.kastel.sdq.eclipse.grading.api.IRatingGroup;
+import edu.kit.kastel.sdq.eclipse.grading.api.model.IMistakeType;
+import edu.kit.kastel.sdq.eclipse.grading.api.model.IRatingGroup;
 import edu.kit.kastel.sdq.eclipse.grading.core.model.MistakeType;
 import edu.kit.kastel.sdq.eclipse.grading.core.model.RatingGroup;
 

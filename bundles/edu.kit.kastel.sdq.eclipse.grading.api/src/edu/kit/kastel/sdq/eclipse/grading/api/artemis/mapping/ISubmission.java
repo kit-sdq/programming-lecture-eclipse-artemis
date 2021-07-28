@@ -1,4 +1,4 @@
-package edu.kit.kastel.sdq.eclipse.grading.api;
+package edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping;
 
 import java.util.function.Predicate;
 

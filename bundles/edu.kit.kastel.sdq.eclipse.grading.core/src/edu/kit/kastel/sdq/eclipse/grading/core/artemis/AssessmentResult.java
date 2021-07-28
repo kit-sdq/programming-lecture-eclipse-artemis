@@ -5,8 +5,8 @@ import java.util.Collection;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IAssessor;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IFeedback;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IAssessor;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IFeedback;
 
 /**
  *

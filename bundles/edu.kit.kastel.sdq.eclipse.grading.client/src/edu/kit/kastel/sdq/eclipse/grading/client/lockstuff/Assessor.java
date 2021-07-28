@@ -3,7 +3,7 @@ package edu.kit.kastel.sdq.eclipse.grading.client.lockstuff;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IAssessor;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IAssessor;
 
 public class Assessor implements IAssessor {
 

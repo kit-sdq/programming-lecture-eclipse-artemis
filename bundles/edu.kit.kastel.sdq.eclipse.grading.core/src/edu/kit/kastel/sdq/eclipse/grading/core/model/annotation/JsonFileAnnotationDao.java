@@ -1,12 +1,12 @@
-package edu.kit.kastel.sdq.eclipse.grading.core.annotation;
+package edu.kit.kastel.sdq.eclipse.grading.core.model.annotation;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import edu.kit.kastel.sdq.eclipse.grading.api.IAnnotation;
-import edu.kit.kastel.sdq.eclipse.grading.api.IMistakeType;
+import edu.kit.kastel.sdq.eclipse.grading.api.model.IAnnotation;
+import edu.kit.kastel.sdq.eclipse.grading.api.model.IMistakeType;
 
 public class JsonFileAnnotationDao implements AnnotationDao {
 

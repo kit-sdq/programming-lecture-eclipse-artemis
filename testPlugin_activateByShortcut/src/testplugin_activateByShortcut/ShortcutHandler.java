@@ -12,9 +12,9 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.ResourcesPlugin;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.AbstractArtemisClient;
-import edu.kit.kastel.sdq.eclipse.grading.api.ICourse;
-import edu.kit.kastel.sdq.eclipse.grading.api.IExercise;
-import edu.kit.kastel.sdq.eclipse.grading.api.ISubmission;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ICourse;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
 import edu.kit.kastel.sdq.eclipse.grading.client.mappings.ArtemisExercise;
 import edu.kit.kastel.sdq.eclipse.grading.client.mappings.ArtemisSubmission;
 import edu.kit.kastel.sdq.eclipse.grading.client.rest.ArtemisRESTClient;

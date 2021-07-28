@@ -1,7 +1,7 @@
-package edu.kit.kastel.sdq.eclipse.grading.core;
+package edu.kit.kastel.sdq.eclipse.grading.core.artemis;
 
-import edu.kit.kastel.sdq.eclipse.grading.api.IMistakeType;
-import edu.kit.kastel.sdq.eclipse.grading.api.IRatingGroup;
+import edu.kit.kastel.sdq.eclipse.grading.api.model.IMistakeType;
+import edu.kit.kastel.sdq.eclipse.grading.api.model.IRatingGroup;
 
 public class ZeroedPenaltyCalculationStrategy implements IPenaltyCalculationStrategy {
 

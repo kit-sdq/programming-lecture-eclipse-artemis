@@ -16,24 +16,26 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.AbstractArtemisClient;
-import edu.kit.kastel.sdq.eclipse.grading.api.IAnnotation;
 import edu.kit.kastel.sdq.eclipse.grading.api.IArtemisGUIController;
 import edu.kit.kastel.sdq.eclipse.grading.api.IAssessmentController;
-import edu.kit.kastel.sdq.eclipse.grading.api.ICourse;
-import edu.kit.kastel.sdq.eclipse.grading.api.IExam;
-import edu.kit.kastel.sdq.eclipse.grading.api.IExercise;
-import edu.kit.kastel.sdq.eclipse.grading.api.IExerciseGroup;
-import edu.kit.kastel.sdq.eclipse.grading.api.IMistakeType;
-import edu.kit.kastel.sdq.eclipse.grading.api.ISubmission;
 import edu.kit.kastel.sdq.eclipse.grading.api.alerts.IAlertObservable;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IFeedback;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IFeedback.FeedbackType;
+import edu.kit.kastel.sdq.eclipse.grading.api.model.IAnnotation;
+import edu.kit.kastel.sdq.eclipse.grading.api.model.IMistakeType;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.ILockResult;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IProjectFileNamingStrategy;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ICourse;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExam;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExerciseGroup;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IFeedback;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IFeedback.FeedbackType;
 import edu.kit.kastel.sdq.eclipse.grading.client.rest.ArtemisRESTClient;
 import edu.kit.kastel.sdq.eclipse.grading.core.artemis.AnnotationMapper;
+import edu.kit.kastel.sdq.eclipse.grading.core.artemis.DefaultPenaltyCalculationStrategy;
 import edu.kit.kastel.sdq.eclipse.grading.core.artemis.DefaultProjectFileNamingStrategy;
 import edu.kit.kastel.sdq.eclipse.grading.core.artemis.WorkspaceUtil;
+import edu.kit.kastel.sdq.eclipse.grading.core.artemis.ZeroedPenaltyCalculationStrategy;
 
 public class ArtemisGUIController implements IArtemisGUIController {
 

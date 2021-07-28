@@ -2,8 +2,8 @@ package edu.kit.kastel.sdq.eclipse.grading.api.artemis;
 
 import java.io.File;
 
-import edu.kit.kastel.sdq.eclipse.grading.api.IExercise;
-import edu.kit.kastel.sdq.eclipse.grading.api.ISubmission;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
 
 /**
  * Strategy to determine how the downloaded projects (containing submission + test code) are named.

@@ -3,6 +3,9 @@ package edu.kit.kastel.sdq.eclipse.grading.api;
 import java.util.Collection;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.alerts.IAlertObservable;
+import edu.kit.kastel.sdq.eclipse.grading.api.model.IAnnotation;
+import edu.kit.kastel.sdq.eclipse.grading.api.model.IMistakeType;
+import edu.kit.kastel.sdq.eclipse.grading.api.model.IRatingGroup;
 
 /**
  * TODO Zwischenberechnung der mistakes (pro Klasse e.g.) zurück an die GUI.

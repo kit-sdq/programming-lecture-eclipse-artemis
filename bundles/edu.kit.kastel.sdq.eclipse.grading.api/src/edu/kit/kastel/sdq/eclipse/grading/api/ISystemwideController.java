@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.Collection;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.alerts.IAlertObservable;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
 
 public interface ISystemwideController {
 
@@ -75,7 +76,7 @@ public interface ISystemwideController {
 
 	/**
 	 * BACKLOG TAB.
-	 * You want to have called {@link #getBegunSubmissions(edu.kit.kastel.sdq.eclipse.grading.api.ISubmission.Filter)}, first!
+	 * You want to have called {@link #getBegunSubmissions(edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission.Filter)}, first!
 	 *
 	 */
 	void setAssessedSubmissionByProjectName(String projectName);

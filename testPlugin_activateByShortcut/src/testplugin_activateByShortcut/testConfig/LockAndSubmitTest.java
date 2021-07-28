@@ -7,20 +7,20 @@ import java.util.LinkedList;
 import org.eclipse.core.resources.ResourcesPlugin;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.AbstractArtemisClient;
-import edu.kit.kastel.sdq.eclipse.grading.api.IAnnotation;
-import edu.kit.kastel.sdq.eclipse.grading.api.IMistakeType;
-import edu.kit.kastel.sdq.eclipse.grading.api.ISubmission.Filter;
 import edu.kit.kastel.sdq.eclipse.grading.api.ISystemwideController;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IAssessor;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.ILockResult;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IAssessor;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission.Filter;
+import edu.kit.kastel.sdq.eclipse.grading.api.model.IAnnotation;
+import edu.kit.kastel.sdq.eclipse.grading.api.model.IMistakeType;
 import edu.kit.kastel.sdq.eclipse.grading.client.rest.ArtemisRESTClient;
-import edu.kit.kastel.sdq.eclipse.grading.core.DefaultPenaltyCalculationStrategy;
 import edu.kit.kastel.sdq.eclipse.grading.core.SystemwideController;
-import edu.kit.kastel.sdq.eclipse.grading.core.annotation.Annotation;
 import edu.kit.kastel.sdq.eclipse.grading.core.artemis.AnnotationMapper;
+import edu.kit.kastel.sdq.eclipse.grading.core.artemis.DefaultPenaltyCalculationStrategy;
 import edu.kit.kastel.sdq.eclipse.grading.core.config.ConfigDao;
 import edu.kit.kastel.sdq.eclipse.grading.core.config.ExerciseConfig;
 import edu.kit.kastel.sdq.eclipse.grading.core.config.JsonFileConfigDao;
+import edu.kit.kastel.sdq.eclipse.grading.core.model.annotation.Annotation;
 import testplugin_activateByShortcut.ShortcutHandler;
 
 public class LockAndSubmitTest {

@@ -1,4 +1,4 @@
-package edu.kit.kastel.sdq.eclipse.grading.api.artemis;
+package edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping;
 
 /**
  * Artemis Object Mapping:
@@ -9,7 +9,7 @@ package edu.kit.kastel.sdq.eclipse.grading.api.artemis;
  * 		<li>{@link FeedbackType#AUTOMATIC} represents e.g. unit test results</li>
  * </ul>
  *
- * Whether a method returns null or not depends on the FeedbackType {@link edu.kit.kastel.sdq.eclipse.grading.api.artemis.IFeedback#getFeedbackType() }!
+ * Whether a method returns null or not depends on the FeedbackType {@link edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IFeedback#getFeedbackType() }!
  *
  */
 public interface IFeedback {

@@ -6,7 +6,7 @@ import java.util.Map;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-import edu.kit.kastel.sdq.eclipse.grading.api.IAnnotation;
+import edu.kit.kastel.sdq.eclipse.grading.api.model.IAnnotation;
 import edu.kit.kastel.sdq.eclipse.grading.core.config.PenaltyRuleDeserializer;
 
 /**

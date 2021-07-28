@@ -3,10 +3,10 @@ package testplugin_activateByShortcut.testConfig;
 import java.io.File;
 import java.util.Collection;
 
-import edu.kit.kastel.sdq.eclipse.grading.api.IAnnotation;
 import edu.kit.kastel.sdq.eclipse.grading.api.IAssessmentController;
-import edu.kit.kastel.sdq.eclipse.grading.api.IMistakeType;
 import edu.kit.kastel.sdq.eclipse.grading.api.alerts.IAlertObserver;
+import edu.kit.kastel.sdq.eclipse.grading.api.model.IAnnotation;
+import edu.kit.kastel.sdq.eclipse.grading.api.model.IMistakeType;
 import edu.kit.kastel.sdq.eclipse.grading.core.SystemwideController;
 import edu.kit.kastel.sdq.eclipse.grading.core.model.MistakeType;
 

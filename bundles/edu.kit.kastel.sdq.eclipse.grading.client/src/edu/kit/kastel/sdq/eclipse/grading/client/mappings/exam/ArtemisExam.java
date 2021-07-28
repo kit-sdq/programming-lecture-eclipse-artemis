@@ -2,8 +2,8 @@ package edu.kit.kastel.sdq.eclipse.grading.client.mappings.exam;
 
 import java.util.Collection;
 
-import edu.kit.kastel.sdq.eclipse.grading.api.IExam;
-import edu.kit.kastel.sdq.eclipse.grading.api.IExerciseGroup;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExam;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExerciseGroup;
 
 public class ArtemisExam implements IExam {
 

@@ -6,7 +6,7 @@ import java.util.LinkedList;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import edu.kit.kastel.sdq.eclipse.grading.api.IRatingGroup;
+import edu.kit.kastel.sdq.eclipse.grading.api.model.IRatingGroup;
 
 public class RatingGroup implements IRatingGroup {
 

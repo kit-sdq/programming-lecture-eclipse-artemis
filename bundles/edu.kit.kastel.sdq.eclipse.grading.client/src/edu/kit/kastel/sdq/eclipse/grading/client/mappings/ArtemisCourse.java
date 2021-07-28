@@ -2,9 +2,9 @@ package edu.kit.kastel.sdq.eclipse.grading.client.mappings;
 
 import java.util.Collection;
 
-import edu.kit.kastel.sdq.eclipse.grading.api.ICourse;
-import edu.kit.kastel.sdq.eclipse.grading.api.IExam;
-import edu.kit.kastel.sdq.eclipse.grading.api.IExercise;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ICourse;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExam;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
 
 public class ArtemisCourse implements ICourse {
 

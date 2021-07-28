@@ -2,7 +2,7 @@ package edu.kit.kastel.sdq.eclipse.grading.core.model;
 
 import java.util.List;
 
-import edu.kit.kastel.sdq.eclipse.grading.api.IAnnotation;
+import edu.kit.kastel.sdq.eclipse.grading.api.model.IAnnotation;
 
 /**
  * A Penalty which returns only one Annotation.

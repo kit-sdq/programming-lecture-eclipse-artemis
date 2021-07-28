@@ -1,4 +1,4 @@
-package edu.kit.kastel.sdq.eclipse.grading.api.artemis;
+package edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping;
 
 /**
  * Artemis Object Mapping: Maps some values of the Artemis Assessor object

@@ -1,9 +1,9 @@
-package edu.kit.kastel.sdq.eclipse.grading.core.annotation;
+package edu.kit.kastel.sdq.eclipse.grading.core.model.annotation;
 
 import java.util.Collection;
 
-import edu.kit.kastel.sdq.eclipse.grading.api.IAnnotation;
-import edu.kit.kastel.sdq.eclipse.grading.api.IMistakeType;
+import edu.kit.kastel.sdq.eclipse.grading.api.model.IAnnotation;
+import edu.kit.kastel.sdq.eclipse.grading.api.model.IMistakeType;
 
 /**
  * Holder of Annotation State.
