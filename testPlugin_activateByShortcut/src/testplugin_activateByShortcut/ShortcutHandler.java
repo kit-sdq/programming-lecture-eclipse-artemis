@@ -13,6 +13,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.AbstractArtemisClient;
+import edu.kit.kastel.sdq.eclipse.grading.api.ArtemisClientException;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ICourse;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
@@ -38,9 +39,10 @@ public class ShortcutHandler extends AbstractHandler {
 		submissionIds.add(79);
 
 		try {
-			Collection<ICourse> courses = artemisClient.getCourses();
+			artemisClient.getCourses();
 		} catch (Exception e) {
-			System.out.println("Got exception in getCourses: " + e.getMessage());
+			System.out.println("Got" + e.getClass() +"in getCourses: " + e.getMessage());
+			e.printStackTrace();
 			return;
 		}
 
@@ -68,7 +70,7 @@ public class ShortcutHandler extends AbstractHandler {
 		}
 	}
 
-	public void downloadExerciseTest(AbstractArtemisClient artemisClient, Collection<ICourse> courses, int courseId, int exerciseId) {
+	public void downloadExerciseTest(AbstractArtemisClient artemisClient, Collection<ICourse> courses, int courseId, int exerciseId) throws ArtemisClientException {
 		final File eclipseWorkspaceRoot =  ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile();
 
 		Collection<IExercise> exercises = courses.stream().filter(course -> (course.getCourseId() == courseId)).findAny().get()

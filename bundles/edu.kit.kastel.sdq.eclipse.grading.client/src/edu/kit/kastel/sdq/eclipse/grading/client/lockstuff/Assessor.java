@@ -44,61 +44,51 @@ public class Assessor implements IAssessor {
 
 	@Override
 	public boolean getActivated() {
-		// TODO Auto-generated method stub
 		return this.activated;
 	}
 
 	@Override
 	public String getEmail() {
-		// TODO Auto-generated method stub
 		return this.email;
 	}
 
 	@Override
 	public String getFirstName() {
-		// TODO Auto-generated method stub
 		return this.firstName;
 	}
 
 	@Override
 	public int getId() {
-		// TODO Auto-generated method stub
 		return this.id;
 	}
 
 	@Override
 	public String getLangKey() {
-		// TODO Auto-generated method stub
 		return this.langKey;
 	}
 
 	@Override
 	public String getLastName() {
-		// TODO Auto-generated method stub
 		return this.lastName;
 	}
 
 	@Override
 	public String getLastNotificationRead() {
-		// TODO Auto-generated method stub
 		return this.lastNotificationRead;
 	}
 
 	@Override
 	public String getLogin() {
-		// TODO Auto-generated method stub
 		return this.login;
 	}
 
 	@Override
 	public String getName() {
-		// TODO Auto-generated method stub
 		return this.name;
 	}
 
 	@Override
 	public String getParticipantIdentifier() {
-		// TODO Auto-generated method stub
 		return this.participantIdentifier;
 	}
 

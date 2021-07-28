@@ -43,7 +43,7 @@ public abstract class AbstractArtemisClient {
 	 * Clones exercise and a submission into one project.
 	 */
 	public abstract void downloadExerciseAndSubmission(IExercise exercise, ISubmission submission,
-			File directory, IProjectFileNamingStrategy projectFileNamingStrategy);
+			File directory, IProjectFileNamingStrategy projectFileNamingStrategy) throws ArtemisClientException;
 
 	protected String getArtemisHostname() {
 		return this.artemisHostname;
@@ -62,7 +62,7 @@ public abstract class AbstractArtemisClient {
 	 * @return the artemis "assessor" object (needed for submitting the assessment).
 	 * @throws Exception TODO create an exception type!
 	 */
-	public abstract IAssessor getAssessor() throws Exception;
+	public abstract IAssessor getAssessor() throws ArtemisClientException, AuthenticationException;
 
 
 	/**
@@ -70,7 +70,7 @@ public abstract class AbstractArtemisClient {
 	 * @return all available courses, containing exercises and available submissions
 	 * @throws Exception TODO create an exception type!
 	 */
-	public abstract Collection<ICourse> getCourses() throws Exception;
+	public abstract Collection<ICourse> getCourses() throws ArtemisClientException, AuthenticationException;
 
 	/**
 	 *
@@ -98,7 +98,7 @@ public abstract class AbstractArtemisClient {
 	 * @throws Exception TODO create an exception type!
 	 */
 
-	public abstract ILockResult startAssessment(int submissionID) throws Exception;
+	public abstract ILockResult startAssessment(int submissionID) throws AuthenticationException, ArtemisClientException;
 
 	/**
 	 * Starts an assessment for any submission (determined by artemis). Acquires a lock in the process.
@@ -110,5 +110,5 @@ public abstract class AbstractArtemisClient {
 	 * 		<li> the data gotten back. Needed for submitting correctly.
 	 * 		<li> <b>null</b> if there is no submission left to correct
 	 */
-	public abstract Optional<ILockResult> startNextAssessment(int exerciseID, int correctionRound) throws Exception;
+	public abstract Optional<ILockResult> startNextAssessment(int exerciseID, int correctionRound)  throws AuthenticationException, ArtemisClientException;
 }

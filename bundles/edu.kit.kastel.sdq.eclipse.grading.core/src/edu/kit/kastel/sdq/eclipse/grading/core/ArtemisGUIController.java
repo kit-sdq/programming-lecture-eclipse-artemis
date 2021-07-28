@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.CoreException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.AbstractArtemisClient;
+import edu.kit.kastel.sdq.eclipse.grading.api.ArtemisClientException;
 import edu.kit.kastel.sdq.eclipse.grading.api.IArtemisGUIController;
 import edu.kit.kastel.sdq.eclipse.grading.api.IAssessmentController;
 import edu.kit.kastel.sdq.eclipse.grading.api.alerts.IAlertObservable;
@@ -64,8 +65,13 @@ public class ArtemisGUIController implements IArtemisGUIController {
 		final IExercise exercise = this.getExerciseFromCourses(courses, courseID, exerciseID);
 		final ISubmission submission = this.getSubmissionFromExercise(exercise, submissionID);
 
+		try {
 		this.artemisClient.downloadExerciseAndSubmission(exercise, submission, eclipseWorkspaceRoot,
 				defaultProjectFileNamingStrategy);
+		} catch (ArtemisClientException e) {
+			this.alertObservable.error(e.getMessage(), e);
+			return;
+		}
 		try {
 		WorkspaceUtil.createEclipseProject(
 				defaultProjectFileNamingStrategy.getProjectFileInWorkspace(eclipseWorkspaceRoot, exercise, submission));

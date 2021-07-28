@@ -26,15 +26,12 @@ public class LockResult implements ILockResult {
 		this.participationID = participationDummy.getParticipationID();
 		this.maxPoints = participationDummy.getExerciseMaxPoints();
 
-		//TODO should be only one, right? Get the last, for now...
-		this.preexistentFeedbacks = new LinkedList();
+		this.preexistentFeedbacks = new LinkedList<>();
 		previousAssessmentresults.stream().forEach(prevAssessment -> this.preexistentFeedbacks.addAll(prevAssessment.getFeedbacks()));
-//		this.preexistentFeedbacks = previousAssessmentresults.get(0).getFeedbacks();
 	}
 
 	@Override
 	public double getMaxPoints() {
-		// TODO Auto-generated method stub
 		return this.maxPoints;
 	}
 

@@ -22,8 +22,8 @@ public class LockCallAssessmentResult {
 	public Collection<IFeedback> getFeedbacks() {
 		if (this.feedbacks != null) {
 			return this.feedbacks.stream()
-				.map(feedback -> ((IFeedback) feedback))
-				.collect(Collectors.toList());
+					.map(IFeedback.class::cast)
+					.collect(Collectors.toList());
 		}
 		return List.of();
 	}

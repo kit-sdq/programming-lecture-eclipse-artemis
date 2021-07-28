@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Optional;
 
 import javax.security.sasl.AuthenticationException;
@@ -17,11 +16,11 @@ import javax.ws.rs.core.Response.Status.Family;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.AbstractArtemisClient;
+import edu.kit.kastel.sdq.eclipse.grading.api.ArtemisClientException;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.ILockResult;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IProjectFileNamingStrategy;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IAssessor;
@@ -31,6 +30,7 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExerciseGroup;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
 import edu.kit.kastel.sdq.eclipse.grading.client.git.EgitGitHandler;
+import edu.kit.kastel.sdq.eclipse.grading.client.git.GitException;
 import edu.kit.kastel.sdq.eclipse.grading.client.lockstuff.Assessor;
 import edu.kit.kastel.sdq.eclipse.grading.client.lockstuff.LockResult;
 import edu.kit.kastel.sdq.eclipse.grading.client.mappings.ArtemisCourse;
@@ -46,8 +46,21 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 	 */
 	private static final String USERNAME_REGEX = "[0-9A-Za-z.\\-]+";
 
+	//json fields
+	private static final String TITLE_FIELD = "title";
+
+	//paths
+	private static final String PROGRAMMING_SUBMISSION_PATHPART = "programming-submissions";
+	private static final String EXERCISES_PATHPART = "exercises";
+	private static final String COURSES_PATHPART = "courses";
+	private static final String EXAMS_PATHPART = "exams";
+
+	private static final String AUTHORIZATION_NAME = "Authorization";
+
+	private static final String JSON_PARSE_ERROR_MESSAGE = "Error parsing json: ";
+
 	private WebTarget rootApiTarget;
-	private Optional<IDToken> id_token;
+	private Optional<IDToken> idToken;
 
 	/**
 	 *
@@ -61,11 +74,11 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 		this.rootApiTarget = ClientBuilder.newBuilder()
 			.build()
 			.target(this.getApiRoot());
-		this.id_token = Optional.empty();
+		this.idToken = Optional.empty();
 	}
 
 	private void checkAuthentication() throws AuthenticationException {
-		if (this.id_token.isEmpty()) this.login();
+		if (this.idToken.isEmpty()) this.login();
 	}
 
 	/**
@@ -81,24 +94,28 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 		return repositoryURLWithStudentName.replaceFirst("https://" + USERNAME_REGEX + "@", "https://");
 	}
 
-	private void downloadExercise(IExercise exercise, File directory) {
+	private void downloadExercise(IExercise exercise, File directory) throws GitException {
 		//TODO remove hardcoded
 		new EgitGitHandler(exercise.getTestRepositoryUrl()).cloneRepo(directory, "master");
 	}
 
 	@Override
 	public void downloadExerciseAndSubmission(IExercise exercise, ISubmission submission,
-			File directory, IProjectFileNamingStrategy projectFileNamingStrategy) {
+			File directory, IProjectFileNamingStrategy projectFileNamingStrategy) throws ArtemisClientException {
 
 		final File projectDirectory = projectFileNamingStrategy.getProjectFileInWorkspace(directory, exercise, submission);
-		this.downloadExercise(exercise, projectDirectory);
+		try {
+			this.downloadExercise(exercise, projectDirectory);
+			//download submission inside the exercise project directory
+			this.downloadSubmission(submission, projectFileNamingStrategy.getAssignmentFileInProjectDirectory(projectDirectory));
+		} catch (GitException e) {
+			throw new ArtemisClientException("Unable to download exercise and submission: " + e.getMessage(), e);
+		}
 
-		//download submission inside the exercise project directory
-		this.downloadSubmission(submission, projectFileNamingStrategy.getAssignmentFileInProjectDirectory(projectDirectory));
 
 	}
 
-	protected void downloadSubmission(ISubmission submission, File directory) {
+	protected void downloadSubmission(ISubmission submission, File directory) throws GitException {
 		new EgitGitHandler(this.convertRepositoryUrl(submission.getRepositoryUrl())).cloneRepo(directory, "master");
 	}
 
@@ -107,19 +124,22 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 	}
 
 	@Override
-	public IAssessor getAssessor() throws Exception {
+	public IAssessor getAssessor() throws ArtemisClientException, AuthenticationException {
 		this.checkAuthentication();
 
-		// /api/users/{login}
 		final Response rsp = this.rootApiTarget
 				.path("users")
 				.path(this.getArtemisUsername())
-				.request().header("Authorization", this.id_token.get().getHeaderString())
+				.request().header(AUTHORIZATION_NAME, this.idToken.get().getHeaderString())
 				.buildGet()
 				.invoke(); // synchronous variant
 		this.throwIfStatusUnsuccessful(rsp);
 
-		return this.parseAssessorResult(rsp.readEntity(String.class));
+		try {
+			return this.parseAssessorResult(rsp.readEntity(String.class));
+		} catch (JsonProcessingException e) {
+			throw new ArtemisClientException("Error parsing assessor json: " + e.getMessage(), e);
+		}
 	}
 
 
@@ -131,190 +151,170 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 				.append("\"rememberMe\":true")
 				.append("}")
 				.toString();
-		//TODO remove that!
-//		System.out.println("Trying to authenticate with entity " + entityString);
 
 		return Entity.entity(
 				entityString,
 				MediaType.APPLICATION_JSON_TYPE);
 	}
 
-	private ICourse getCoursefromJsonNode(JsonNode courseJsonNode) throws Exception {
+	private ICourse getCoursefromJsonNode(JsonNode courseJsonNode) throws AuthenticationException, JsonProcessingException, ArtemisClientException  {
 		final int courseId = courseJsonNode.get("id").intValue();
-		final String title = courseJsonNode.get("title").textValue();
+		final String title = courseJsonNode.get(TITLE_FIELD).textValue();
 		final String shortName = courseJsonNode.get("shortName").textValue();
 
 		this.checkAuthentication();
 		final Response exercisesAndParticipationsRsp = this.rootApiTarget
-				.path("courses")
+				.path(COURSES_PATHPART)
 				.path(String.valueOf(courseId))
 				.path("with-exercises-and-relevant-participations")
-				.request().header("Authorization", this.id_token.get().getHeaderString())
+				.request().header(AUTHORIZATION_NAME, this.idToken.get().getHeaderString())
 				.buildGet()
 				.invoke(); // synchronous call
 		this.throwIfStatusUnsuccessful(exercisesAndParticipationsRsp);
 
-		//handle exercises TODO --> new method
 		final JsonNode exercisesAndParticipationsJsonNode = new ObjectMapper()
 				.readTree(exercisesAndParticipationsRsp.readEntity(String.class));
-//		System.out.println("  Read jsonNode from exercisesAndParticipations response entity: \n  " + exercisesAndParticipationsJsonNode.toString());
-		JsonNode exercisesJsonArray = exercisesAndParticipationsJsonNode.get("exercises");
-		if (!exercisesJsonArray.isArray()) throw new Exception("Error parsing json.");
 
-		Collection<IExercise> exercises = new LinkedList<IExercise>();
-		exercisesJsonArray.forEach(exerciseJsonNode -> {
-			try {
-				exercises.add(this.getExercisefromJsonNode(exerciseJsonNode));
-			} catch (Exception e) {
-				//TODO handle exception!
-			}
-		});
+		JsonNode exercisesJsonArray = exercisesAndParticipationsJsonNode.get(EXERCISES_PATHPART);
+		if (!exercisesJsonArray.isArray()) throw new ArtemisClientException("Error parsing json.");
+
+		Collection<IExercise> exercises = new LinkedList<>();
+		for (JsonNode exerciseJsonNode : exercisesJsonArray) {
+			exercises.add(this.getExercisefromJsonNode(exerciseJsonNode));
+		}
 
 		//handle exams TODO --> new method
 		final Response examsRsp = this.rootApiTarget
-				.path("courses")
+				.path(COURSES_PATHPART)
 				.path(String.valueOf(courseId))
-				.path("exams")
-				.request().header("Authorization", this.id_token.get().getHeaderString())
+				.path(EXAMS_PATHPART)
+				.request().header(AUTHORIZATION_NAME, this.idToken.get().getHeaderString())
 				.buildGet()
 				.invoke(); // synchronous call
 		this.throwIfStatusUnsuccessful(examsRsp);
 		final JsonNode examsJsonArray = new ObjectMapper()
 				.readTree(examsRsp.readEntity(String.class));
-//		System.out.println("  Read jsonNode from exams-for-user response entity: \n  " + examsJsonArray.toString());
-		if (!examsJsonArray.isArray()) throw new Exception("Error parsing json.");
 
-		Collection<IExam> exams = new LinkedList<IExam>();
-		examsJsonArray.forEach(examJsonNode -> {
-			try {
-				exams.add(this.getExamFromJsonNode(examJsonNode, courseId));
-			} catch (Exception e) {
-				//TODO handle exception!
-			}
-		});
+		if (!examsJsonArray.isArray()) throw new ArtemisClientException("Error parsing json.");
 
+		Collection<IExam> exams = new LinkedList<>();
+		for (JsonNode examJsonNode : examsJsonArray) {
+			exams.add(this.getExamFromJsonNode(examJsonNode, courseId));
+		}
 
 		return new ArtemisCourse(courseId, title, shortName, exercises, exams);
 	}
 
 	@Override
-	public Collection<ICourse> getCourses() throws Exception {
+	public Collection<ICourse> getCourses() throws ArtemisClientException, AuthenticationException {
 		this.checkAuthentication();
 		final Response rsp = this.rootApiTarget
-				.path("courses")
-				.request().header("Authorization", this.id_token.get().getHeaderString())
+				.path(COURSES_PATHPART)
+				.request().header(AUTHORIZATION_NAME, this.idToken.get().getHeaderString())
 				.buildGet()
 				.invoke(); // synchronous variant
-//				.submit(); // asynchronous variant
 		this.throwIfStatusUnsuccessful(rsp);
 		String rspString = rsp.readEntity(String.class);
+
+		// Put the result into a JsonNode -> No need for java objects, but bad style.
+		JsonNode jsonNode = null;
 		try {
-			// Put the result into a JsonNode -> No need for java objects, but bad style.
-			JsonNode jsonNode = new ObjectMapper().readTree(rspString);
-//			System.out.println("Read jsonNode from response entity: \n" + jsonNode.toString());
-			if (!jsonNode.isArray()) throw new Exception("Error parsing json.");
-
-			Collection<ICourse> courses = new LinkedList();
-			jsonNode.forEach(courseJsonNode -> {
-				try {
-					courses.add(this.getCoursefromJsonNode(courseJsonNode));
-				} catch (Exception e) {
-					//TODO handle exception!
-				}
-			});
-			return courses;
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			jsonNode = new ObjectMapper().readTree(rspString);
+		} catch (JsonProcessingException e) {
+			throw new ArtemisClientException(JSON_PARSE_ERROR_MESSAGE + e.getMessage(), e);
 		}
+		if (!jsonNode.isArray()) throw new ArtemisClientException("Error parsing json.");
 
-		return List.of();
+		// collect constructed courses (by parsing and re-calling)
+		Collection<ICourse> courses = new LinkedList<>();
+		try {
+			for (JsonNode courseJsonNode : jsonNode) {
+				courses.add(this.getCoursefromJsonNode(courseJsonNode));
+			}
+		} catch (JsonProcessingException e) {
+			throw new ArtemisClientException(JSON_PARSE_ERROR_MESSAGE + e.getMessage(), e);
+		}
+		return courses;
 	}
 
-	private IExam getExamFromJsonNode(JsonNode examJsonNode, int courseId) throws Exception {
+	private IExam getExamFromJsonNode(JsonNode examJsonNode, int courseId)  throws ArtemisClientException, AuthenticationException, JsonProcessingException {
 
 		final int examId = examJsonNode.get("id").intValue();
-		final String title = examJsonNode.get("title").textValue();
+		final String title = examJsonNode.get(TITLE_FIELD).textValue();
 
 		this.checkAuthentication();
 		final Response rsp = this.rootApiTarget
-				.path("courses")
+				.path(COURSES_PATHPART)
 				.path(String.valueOf(courseId))
-				.path("exams")
+				.path(EXAMS_PATHPART)
 				.path(String.valueOf(examId))
 				.path("exam-for-assessment-dashboard") // web client does it that way..
-				.request().header("Authorization", this.id_token.get().getHeaderString())
+				.request().header(AUTHORIZATION_NAME, this.idToken.get().getHeaderString())
 				.buildGet()
 				.invoke(); // synchronous variant
 		this.throwIfStatusUnsuccessful(rsp);
 
 		JsonNode detailledExamJsonNode = new ObjectMapper().readTree(rsp.readEntity(String.class));
-//		System.out.println("  Read jsonNode from exam response entity: \n  " + detailledExamJsonNode.toString());
 
 		JsonNode exerciseGroupsJsonArray = detailledExamJsonNode.get("exerciseGroups");
-		if (!exerciseGroupsJsonArray.isArray()) throw new Exception("Error parsing json.");
+		if (!exerciseGroupsJsonArray.isArray()) throw new ArtemisClientException("Error parsing json.");
 
-		final Collection<IExerciseGroup> exerciseGroups = new LinkedList<IExerciseGroup>();
+		final Collection<IExerciseGroup> exerciseGroups = new LinkedList<>();
 
 		exerciseGroupsJsonArray.forEach(exerciseGroupJsonNode -> {
 			try {
 				exerciseGroups.add(this.getExerciseGroupFromJsonNode(exerciseGroupJsonNode));
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		});
 		return new ArtemisExam(exerciseGroups, examId, title);
 	}
 
-	private IExercise getExercisefromJsonNode(JsonNode exerciseJsonNode) throws Exception {
-//		System.out.println("IN getExercisefromJsonNode:");
+	private IExercise getExercisefromJsonNode(JsonNode exerciseJsonNode)  throws AuthenticationException, JsonProcessingException {
 
 		final int exerciseId = exerciseJsonNode.get("id").intValue();
-		final String title = exerciseJsonNode.get("title").textValue();
+		final String title = exerciseJsonNode.get(TITLE_FIELD).textValue();
 		final String shortName = exerciseJsonNode.get("shortName").textValue();
 		final String testRepositoryUrl = exerciseJsonNode.get("testRepositoryUrl").textValue();
 
 		this.checkAuthentication();
 		final Response rsp = this.rootApiTarget
-				.path("exercises")
+				.path(EXERCISES_PATHPART)
 				.path(String.valueOf(exerciseId))
-				.path("programming-submissions")
+				.path(PROGRAMMING_SUBMISSION_PATHPART)
 //				.queryParam("submittedOnly", true)		//TODO auf true setzen!
-				.request().header("Authorization", this.id_token.get().getHeaderString())
+				.request().header(AUTHORIZATION_NAME, this.idToken.get().getHeaderString())
 				.buildGet()
 				.invoke(); // synchronous variant
 		this.throwIfStatusUnsuccessful(rsp);
 
 		JsonNode submissionsArrayJsonNode = new ObjectMapper().readTree(rsp.readEntity(String.class));
-//		System.out.println("  Read jsonNode from response entity: \n  " + submissionsArrayJsonNode.toString());
 
-		final Collection<ISubmission> submissions = new LinkedList<ISubmission>();
-		submissionsArrayJsonNode.forEach(submission -> {
-			submissions.add(this.getSubmissionFromJsonNode(submission));
-		});
+		final Collection<ISubmission> submissions = new LinkedList<>();
+		submissionsArrayJsonNode.forEach(submission ->
+			submissions.add(this.getSubmissionFromJsonNode(submission))
+		);
 
 		return new ArtemisExercise(exerciseId, title, shortName, testRepositoryUrl, submissions);
 	}
 
 	// for exams
-	private IExerciseGroup getExerciseGroupFromJsonNode(JsonNode exerciseGroupJsonNode) throws Exception {
+	private IExerciseGroup getExerciseGroupFromJsonNode(JsonNode exerciseGroupJsonNode) throws ArtemisClientException, AuthenticationException, JsonProcessingException {
 
 		final int exerciseGroupId = exerciseGroupJsonNode.get("id").intValue();
-		final String title = exerciseGroupJsonNode.get("title").asText();
+		final String title = exerciseGroupJsonNode.get(TITLE_FIELD).asText();
 		final boolean isMandatory = exerciseGroupJsonNode.get("isMandatory").booleanValue();
 
-		JsonNode exercisesJsonArray = exerciseGroupJsonNode.get("exercises");
-		if (!exercisesJsonArray.isArray()) throw new Exception("Error parsing json.");
+		JsonNode exercisesJsonArray = exerciseGroupJsonNode.get(EXERCISES_PATHPART);
+		if (!exercisesJsonArray.isArray()) throw new ArtemisClientException("Error parsing json.");
 
-		Collection<IExercise> exercises = new LinkedList<IExercise>();
-		exercisesJsonArray.forEach(exerciseJsonNode -> {
-			try {
+		Collection<IExercise> exercises = new LinkedList<>();
+		for (JsonNode exerciseJsonNode : exercisesJsonArray) {
+			if (exerciseJsonNode.get("type").asText().equals("programming")) {
 				exercises.add(this.getExercisefromJsonNode(exerciseJsonNode));
-			} catch (Exception e) {
-				//TODO handle exception!
 			}
-		});
+		}
 		return new ArtemisExerciseGroup(exerciseGroupId, exercises, title, isMandatory);
 
 	}
@@ -349,24 +349,30 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 	}
 
 	@Override
-	public Collection<ISubmission> getSubmissions(int exerciseID, boolean assessedByTutor) throws Exception {
+	public Collection<ISubmission> getSubmissions(int exerciseID, boolean assessedByTutor)  throws ArtemisClientException, AuthenticationException {
 		this.checkAuthentication();
 		final Response rsp = this.rootApiTarget
-				.path("exercises")
+				.path(EXERCISES_PATHPART)
 				.path(String.valueOf(exerciseID))
-				.path("programming-submissions")
+				.path(PROGRAMMING_SUBMISSION_PATHPART)
 //				.queryParam("submittedOnly", submittedOnly) TODO change to true
 				.queryParam("assessedByTutor", assessedByTutor)
-				.request().header("Authorization", this.id_token.get().getHeaderString())
+				.request().header(AUTHORIZATION_NAME, this.idToken.get().getHeaderString())
 				.buildGet()
 				.invoke(); // synchronous variant
 		this.throwIfStatusUnsuccessful(rsp);
 
-		JsonNode submissionsArrayJsonNode = new ObjectMapper().readTree(rsp.readEntity(String.class));
-		final Collection<ISubmission> submissions = new LinkedList<ISubmission>();
-		submissionsArrayJsonNode.forEach(submission -> {
-			submissions.add(this.getSubmissionFromJsonNode(submission));
-		});
+		JsonNode submissionsArrayJsonNode = null;
+		try {
+			submissionsArrayJsonNode = new ObjectMapper().readTree(rsp.readEntity(String.class));
+		} catch (JsonProcessingException e) {
+			throw new ArtemisClientException(JSON_PARSE_ERROR_MESSAGE + e.getMessage(), e);
+		}
+
+		final Collection<ISubmission> submissions = new LinkedList<>();
+		submissionsArrayJsonNode.forEach(submission ->
+			submissions.add(this.getSubmissionFromJsonNode(submission))
+		);
 
 		return submissions;
 
@@ -382,24 +388,21 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 				.invoke();
 
 		this.throwIfStatusUnsuccessful(authenticationResponse);
-//		System.out.println("Tried to authenticate with status " + authenticationResponse.getStatus());
 		final String authRspEntity = authenticationResponse.readEntity(String.class);
 		try {
-			this.id_token = Optional.of(new IDToken(new ObjectMapper().readTree(authRspEntity).get("id_token").asText()));
+			this.idToken = Optional.of(new IDToken(new ObjectMapper().readTree(authRspEntity).get("id_token").asText()));
 		} catch (IOException e1) {
 			throw new AuthenticationException("Authentication to \"" + this.getApiRoot() + "\" failed: No token could be retrieved in server response.");
 		}
 	}
 
-	private IAssessor parseAssessorResult(final String jsonString) throws JsonMappingException, JsonProcessingException {
+	private IAssessor parseAssessorResult(final String jsonString) throws JsonProcessingException {
 		return new ObjectMapper()
 				.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 				.readValue(jsonString, Assessor.class);
 	}
 
-	private ILockResult parseLockResult(final String jsonString) throws JsonMappingException, JsonProcessingException {
-		//TODO impl
-		System.out.println("######ArtemisRESTClient::parseLockResult DEBUG: " + jsonString);
+	private ILockResult parseLockResult(final String jsonString) throws JsonProcessingException {
 		return new ObjectMapper()
 				.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 				.readValue(jsonString, LockResult.class);
@@ -409,49 +412,49 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 	public void saveAssessment(int participationID, boolean submit, String payload) throws AuthenticationException {
 		this.checkAuthentication();
 
-		System.out.println("######ArtemisRESTClient::saveAssessment DEBUG: " + payload);
-
-
-		// /api/users/{login}
 		final Response rsp = this.rootApiTarget
 				.path("participations")
 				.path(Integer.toString(participationID))
 				.path("manual-results")
 				.queryParam("submit", submit)
-				.request().header("Authorization", this.id_token.get().getHeaderString())
+				.request().header(AUTHORIZATION_NAME, this.idToken.get().getHeaderString())
 				.buildPut(this.toJsonStringEntity(payload))
 				.invoke(); // synchronous variant
 		this.throwIfStatusUnsuccessful(rsp);
 	}
 
 	@Override
-	public ILockResult startAssessment(int submissionID) throws Exception {
+	public ILockResult startAssessment(int submissionID) throws AuthenticationException, ArtemisClientException {
 		this.checkAuthentication();
 
 		final Response rsp = this.rootApiTarget
-				.path("programming-submissions")
+				.path(PROGRAMMING_SUBMISSION_PATHPART)
 				.path(String.valueOf(submissionID))
 				.path("lock")				// this should be best.
-				.request().header("Authorization", this.id_token.get().getHeaderString())
+				.request().header(AUTHORIZATION_NAME, this.idToken.get().getHeaderString())
 				.buildGet()
 				.invoke(); // synchronous variant
 		this.throwIfStatusUnsuccessful(rsp);
 
-		return this.parseLockResult(rsp.readEntity(String.class));
+		try {
+			return this.parseLockResult(rsp.readEntity(String.class));
+		} catch (JsonProcessingException e) {
+			throw new ArtemisClientException("Error parsing lock result json: " + e.getMessage(), e);
+		}
 
 	}
 
 	@Override
-	public Optional<ILockResult> startNextAssessment(int exerciseID, int correctionRound) throws Exception {
+	public Optional<ILockResult> startNextAssessment(int exerciseID, int correctionRound) throws AuthenticationException, ArtemisClientException {
 		this.checkAuthentication();
 
 		final Response rsp = this.rootApiTarget
-				.path("exercises")
+				.path(EXERCISES_PATHPART)
 				.path(String.valueOf(exerciseID))
 				.path("programming-submission-without-assessment")
 				.queryParam("correction-round", correctionRound)
 				.queryParam("lock", true)
-				.request().header("Authorization", this.id_token.get().getHeaderString())
+				.request().header(AUTHORIZATION_NAME, this.idToken.get().getHeaderString())
 				.buildGet()
 				.invoke(); // synchronous variant
 		if (!this.isStatusSuccessful(rsp)) {
@@ -459,7 +462,11 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 			return Optional.empty();
 		}
 
-		return Optional.of(this.parseLockResult(rsp.readEntity(String.class)));
+		try {
+			return Optional.of(this.parseLockResult(rsp.readEntity(String.class)));
+		} catch (JsonProcessingException e) {
+			throw new ArtemisClientException("Error parsing lock result json: " + e.getMessage(), e);
+		}
 	}
 
 	private void throwIfStatusUnsuccessful(final Response response) throws AuthenticationException {
