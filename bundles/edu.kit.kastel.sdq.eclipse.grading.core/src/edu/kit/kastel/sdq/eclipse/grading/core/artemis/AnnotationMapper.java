@@ -1,30 +1,25 @@
 package edu.kit.kastel.sdq.eclipse.grading.core.artemis;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import edu.kit.kastel.sdq.eclipse.grading.api.model.IAnnotation;
-import edu.kit.kastel.sdq.eclipse.grading.api.model.IMistakeType;
-import edu.kit.kastel.sdq.eclipse.grading.api.model.IRatingGroup;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.ILockResult;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IAssessor;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IFeedback;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IFeedback.FeedbackType;
+import edu.kit.kastel.sdq.eclipse.grading.api.model.IAnnotation;
+import edu.kit.kastel.sdq.eclipse.grading.api.model.IMistakeType;
+import edu.kit.kastel.sdq.eclipse.grading.api.model.IRatingGroup;
 
 /**
  * Maps Annotations to Artemis-accepted json-formatted strings.
  */
 public class AnnotationMapper {
-
-	private static final String DATE_FORMAT_STRING = "yyyy-MM-dd'T'hh:mm:ss.nnnnnn";
 
 	private final Collection<IAnnotation> annotations;
 	private final Collection<IMistakeType> mistakeTypes;
@@ -36,7 +31,6 @@ public class AnnotationMapper {
 
 	public AnnotationMapper(Collection<IAnnotation> annotations, Collection<IMistakeType> mistakeTypes, Collection<IRatingGroup> ratingGroups,
 			IAssessor assessor, ILockResult lockResult, IPenaltyCalculationStrategy penaltyCalculationStrategy) {
-		//TODO needs results from LOCK call and from USERS call!
 		this.annotations = annotations;
 		this.mistakeTypes = mistakeTypes;
 		this.ratingGroups = ratingGroups;
@@ -47,46 +41,43 @@ public class AnnotationMapper {
 	}
 
 	private double calculateAbsoluteScore(Collection<IFeedback> allFeedbacks) {
-		return allFeedbacks.stream().map(IFeedback::getCredits).reduce(Double::sum).get();
+		return allFeedbacks.stream()
+				.map(IFeedback::getCredits)
+				.reduce(Double::sum)
+				.orElse(0D);
 	}
 
-	private Collection<IFeedback> calculateAllFeedbacks() {
+	private Collection<IFeedback> calculateAllFeedbacks() throws JsonProcessingException {
 		final boolean submissionIsInvalid = this.penaltyCalculationStrategy.submissionIsInvalid();
 
-		final List<IFeedback> result = new LinkedList();
+		final List<IFeedback> result = new LinkedList<>();
 		result.addAll(this.getFilteredPreexistentFeedbacks(FeedbackType.AUTOMATIC));
 		result.addAll( submissionIsInvalid ? this.calculateInvalidManualFeedback() : this.calculateManualFeedbacks());
 
-		try {
-			result.add(this.calculateAnnotationSerialitationAsFeedback());
-		} catch (JsonProcessingException e) {
-			System.out.println("TODO handle this exception in calculateAllFeedbacks: " + e.getMessage());
-		}
+		result.add(this.calculateAnnotationSerialitationAsFeedback());
 
 		return result;
 	}
 
 	private Feedback calculateAnnotationSerialitationAsFeedback() throws JsonProcessingException {
-		System.out.println("DEBUG in calculateAnnotationSerialitationAsFeedback: BEFORE");
 		final String annotationsJSONString = new ObjectMapper()
 				.writeValueAsString(this.annotations);
-		System.out.println("DEBUG in calculateAnnotationSerialitationAsFeedback:\n" + annotationsJSONString);
+		// we don't want the serialization to be visible (for non-privileged users)
 		return new Feedback(FeedbackType.MANUAL_UNREFERENCED.name(), 0D, null, null, "NEVER", "CLIENT_DATA", null, annotationsJSONString);
 	}
 
 	private Collection<Feedback> calculateInvalidManualFeedback() {
-		final Collection<Feedback> manualFeedbacks = new LinkedList<Feedback>();
+		final Collection<Feedback> manualFeedbacks = new LinkedList<>();
 		manualFeedbacks.add(
 				new Feedback(IFeedback.FeedbackType.MANUAL_UNREFERENCED.name(),
 						0.D,
-						// TODO check visibility
-						null, null, "", null, null, "Invalid Submission.")
+						null, null, null, null, null, "Invalid Submission.")
 		);
 		return manualFeedbacks;
 	}
 
 	private Collection<Feedback> calculateManualFeedbacks() {
-		Collection<Feedback> manualFeedbacks = new LinkedList<Feedback>();
+		Collection<Feedback> manualFeedbacks = new LinkedList<>();
 		//add the code annotations
 		manualFeedbacks.addAll(
 			this.annotations.stream()
@@ -142,7 +133,7 @@ public class AnnotationMapper {
 				.toString();
 	}
 
-	private AssessmentResult createAssessmentResult() {
+	private AssessmentResult createAssessmentResult() throws JsonProcessingException {
 		final boolean submissionIsInvalid = this.penaltyCalculationStrategy.submissionIsInvalid();
 		// only add preexistent automatic feedback (unit tests etc) and manual feedback.										arTem155
 		//this should work indepently of invalid or not. if invalid, there should just be no feedbacks.
@@ -158,7 +149,6 @@ public class AnnotationMapper {
 
 	private Feedback createNewManualFeedback(IAnnotation annotation) {
 		// manual feedbacks do not have no credits!
-		final Optional<String> customMessageOptional = annotation.getCustomMessage();
 		final String text = new StringBuilder()
 				.append("File ")
 				.append(annotation.getClassFilePath())
@@ -217,17 +207,16 @@ public class AnnotationMapper {
 						.append(Util.formatDouble(currentPenalty))
 						.append("]:");
 
-					currentAnnotations.forEach(annotation ->  {
+					currentAnnotations.forEach(annotation ->
 						detailTextStringBuilder
 						.append("\n        * ")
 						.append(annotation.getClassFilePath())
 						.append(" at line ")
-						.append(annotation.getStartLine());
-					});
+						.append(annotation.getStartLine())
+					);
 				}
 			});
 
-		//TODO add Anmerkung "penalty limit reached"
 		if (this.penaltyCalculationStrategy.penaltyLimitIsHitForRatingGroup(ratingGroup)) {
 			detailTextStringBuilder
 				.append("\n    * ")
@@ -238,49 +227,13 @@ public class AnnotationMapper {
 				detailTextStringBuilder.toString());
 	}
 
-	private String getCurrentTimestamp() {
-		return LocalDateTime.now().format(DateTimeFormatter.ofPattern(AnnotationMapper.DATE_FORMAT_STRING));
-	}
-
 	private Collection<IFeedback> getFilteredPreexistentFeedbacks(FeedbackType feedbackType) {
 		return this.lockResult.getPreexistentFeedbacks().stream()
 				.filter(feedback -> feedback.getFeedbackType().equals(feedbackType)).collect(Collectors.toList());
-	}
-
-	private int getLatestFeedbackID() {
-		int greatestId = -1;
-		for (IFeedback feedback : this.lockResult.getPreexistentFeedbacks()) {
-			final int currentId = feedback.getId();
-			if (currentId > greatestId) greatestId = currentId;
-		}
-		return greatestId;
 	}
 
 	public String mapToJsonFormattedString() throws JsonProcessingException {
 		return new ObjectMapper()
 				.writeValueAsString(this.createAssessmentResult());
 	}
-
-	//TODO need to map Collection<IAnnotation> to a "Result" json structure:
-	/*
-	 * id: 14															muss aus (*) geholt werden
-	 * resultString: "13 of 13 passed, 56.5 of 66 points"				muss berechnet werden
-	 * assessmentType: "SEMI_AUTOMATIC"
-	 * score: 85.60606060606061 										muss berechnet werden: (= 56.5 /66)
-	 * rated: true
-	 * hasFeedback: true
-	 * completionDate: 													???
-	 * assessor															muss aus (**) geholt werden
-	 * feedbacks: Array, bestehend aus präexistenten automatischen 		teils aus (*), teils aus this.annotations
-	 * feedbacks und aus manuellen feedbacks
-	 *
-	 *
-	 * (*)  Um das füllen zu können, muss folgendes aufgerufen werden: /api/programming-submissions/{submissionId}/lock
-	 * (**) Um das füllen zu können, muss folgendes aufgerufen werden: /api/users/{login}. "login" ist der username.
-	 *
-	 */
-
-
-//	public String map
-
 }

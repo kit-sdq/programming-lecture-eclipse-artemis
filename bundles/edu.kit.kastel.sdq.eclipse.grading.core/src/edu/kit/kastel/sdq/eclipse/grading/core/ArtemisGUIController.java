@@ -19,8 +19,6 @@ import edu.kit.kastel.sdq.eclipse.grading.api.AbstractArtemisClient;
 import edu.kit.kastel.sdq.eclipse.grading.api.IArtemisGUIController;
 import edu.kit.kastel.sdq.eclipse.grading.api.IAssessmentController;
 import edu.kit.kastel.sdq.eclipse.grading.api.alerts.IAlertObservable;
-import edu.kit.kastel.sdq.eclipse.grading.api.model.IAnnotation;
-import edu.kit.kastel.sdq.eclipse.grading.api.model.IMistakeType;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.ILockResult;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IProjectFileNamingStrategy;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ICourse;
@@ -28,8 +26,10 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExam;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExerciseGroup;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IFeedback;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IFeedback.FeedbackType;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
+import edu.kit.kastel.sdq.eclipse.grading.api.model.IAnnotation;
+import edu.kit.kastel.sdq.eclipse.grading.api.model.IMistakeType;
 import edu.kit.kastel.sdq.eclipse.grading.client.rest.ArtemisRESTClient;
 import edu.kit.kastel.sdq.eclipse.grading.core.artemis.AnnotationMapper;
 import edu.kit.kastel.sdq.eclipse.grading.core.artemis.DefaultPenaltyCalculationStrategy;
@@ -39,7 +39,6 @@ import edu.kit.kastel.sdq.eclipse.grading.core.artemis.ZeroedPenaltyCalculationS
 
 public class ArtemisGUIController implements IArtemisGUIController {
 
-	private final String host;
 	private final SystemwideController systemwideController;
 	private final AbstractArtemisClient artemisClient;
 
@@ -48,10 +47,9 @@ public class ArtemisGUIController implements IArtemisGUIController {
 	private AlertObservable alertObservable;
 
 	protected ArtemisGUIController(final SystemwideController systemwideController, final String host, final String username, final String password) {
-		this.host = host;
 		this.artemisClient = new ArtemisRESTClient(username, password, host);
 		this.systemwideController = systemwideController;
-		this.lockResults = new HashMap<Integer, ILockResult>();
+		this.lockResults = new HashMap<>();
 
 		this.alertObservable = new AlertObservable();
 	}
@@ -156,7 +154,12 @@ public class ArtemisGUIController implements IArtemisGUIController {
 
 	@Override
 	public IExercise getExerciseFromCourses(Collection<ICourse> courses, int courseID, int exerciseID) {
-		final Collection<IExercise> filteredExercises = this.getCourseFromCourses(courses, courseID).getExercises().stream()
+		ICourse course = this.getCourseFromCourses(courses, courseID);
+		if (course == null) {
+			this.alertObservable.error("No course found for courseID=" + courseID, null);
+			return null;
+		}
+		final Collection<IExercise> filteredExercises = course.getExercises().stream()
 				.filter(exercise -> (exercise.getExerciseId() == exerciseID))
 				.collect(Collectors.toList());
 		if (filteredExercises.isEmpty()) {
@@ -201,11 +204,12 @@ public class ArtemisGUIController implements IArtemisGUIController {
 		return foundExam.getExerciseGroups().stream()
 			.map(IExerciseGroup::getExercises)
 			.reduce((list1, list2) -> {
-				List<IExercise> exercises = new LinkedList<IExercise>();
+				List<IExercise> exercises = new LinkedList<>();
 				exercises.addAll(list1);
 				exercises.addAll(list2);
 				return exercises;
-			}).get()
+			})
+			.orElse(List.of())
 			.stream()
 			.map(IExercise::getShortName)
 			.collect(Collectors.toList());
@@ -214,7 +218,6 @@ public class ArtemisGUIController implements IArtemisGUIController {
 
 	@Override
 	public Collection<IFeedback> getPrecalculatedAutoFeedbacks(int submissionID) {
-		System.out.println("DBUG IN ArtemisGUICONTROLLER::getPrecalculatedAutoFeedbacks: " + this.lockResults.get(submissionID));
 		return this.lockResults.get(submissionID)
 				.getPreexistentFeedbacks().stream()
 				.filter(feedback -> feedback.getFeedbackType().equals(FeedbackType.AUTOMATIC))
@@ -264,11 +267,11 @@ public class ArtemisGUIController implements IArtemisGUIController {
 				.mapToJsonFormattedString()
 			);
 		} catch (AuthenticationException e) {
-			this.alertObservable.error("Authentication to Artemis failed.", e);
+			this.alertObservable.error("Authentication to Artemis failed: " + e.getMessage(), e);
 		} catch (JsonProcessingException e) {
-			this.alertObservable.error("Local backend failed to format the annotations.", e);
+			this.alertObservable.error("Local backend failed to format the annotations: " + e.getMessage(), e);
 		} catch (Exception e) {
-			this.alertObservable.error("Assessor could not be retrieved from Artemis.", e);
+			this.alertObservable.error("Assessor could not be retrieved from Artemis: " + e.getMessage(), e);
 		}
 
 		if (submit) {
@@ -281,7 +284,7 @@ public class ArtemisGUIController implements IArtemisGUIController {
 		try {
 			this.lockResults.put(submissionID, this.artemisClient.startAssessment(submissionID));
 		} catch (Exception e) {
-			this.alertObservable.error("Assessment could not be started: " + e.getMessage(), e);
+			this.alertObservable.error(Messages.ASSESSMENT_COULD_NOT_BE_STARTED_MESSAGE + e.getMessage(), e);
 		}
 	}
 
@@ -290,7 +293,7 @@ public class ArtemisGUIController implements IArtemisGUIController {
 		try {
 			return this.startNextAssessment(exerciseID, 0);
 		} catch (Exception e) {
-			this.alertObservable.error("Assessment could not be started: " + e.getMessage(), e);
+			this.alertObservable.error(Messages.ASSESSMENT_COULD_NOT_BE_STARTED_MESSAGE + e.getMessage(), e);
 			return Optional.empty();
 		}
 	}
@@ -301,7 +304,7 @@ public class ArtemisGUIController implements IArtemisGUIController {
 		try {
 			lockResultOptional = this.artemisClient.startNextAssessment(exerciseID, correctionRound);
 		} catch (Exception e) {
-			this.alertObservable.error("Assessment could not be started: " + e.getMessage(), e);
+			this.alertObservable.error(Messages.ASSESSMENT_COULD_NOT_BE_STARTED_MESSAGE + e.getMessage(), e);
 			return Optional.empty();
 		}
 		if (lockResultOptional.isEmpty()) return Optional.empty();

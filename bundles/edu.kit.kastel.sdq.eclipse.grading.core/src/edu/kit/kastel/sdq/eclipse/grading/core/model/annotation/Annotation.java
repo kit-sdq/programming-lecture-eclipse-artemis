@@ -69,9 +69,8 @@ public class Annotation implements IAnnotation {
 
 	@Override
 	public boolean equals(Object otherAnnotation) {
-		return (IAnnotation.class.isInstance(otherAnnotation))
-				? this.getId() == ((IAnnotation)otherAnnotation).getId()
-				: false;
+		return (otherAnnotation instanceof IAnnotation)
+				&& (this.getId() == ((IAnnotation)otherAnnotation).getId());
 	}
 
 	@Override
@@ -149,9 +148,10 @@ public class Annotation implements IAnnotation {
 
 	/**
 	 * This Method is ONLY FOR DESERIALIZATION!
+	 * If mistakeType is already set, this has no effect.
 	 */
 	public void setMistakeType(IMistakeType mistakeType) {
-		if (this.mistakeType != null) throw new RuntimeException("Thou shalt not override the MistakeType!");
+		if (this.mistakeType != null) return;
 		this.mistakeType = mistakeType;
 	}
 

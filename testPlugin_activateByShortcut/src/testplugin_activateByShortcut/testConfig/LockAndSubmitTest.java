@@ -146,8 +146,8 @@ public class LockAndSubmitTest {
 		this.printBegunSubmissionState(sysController, "before save");
 		sysController.onSaveAssessmentButton();
 		this.printBegunSubmissionState(sysController, "before submit");
-//		sysController.onSubmitAssessmentButton();
-//		this.printBegunSubmissionState(sysController, "after submit");
+		sysController.onSubmitAssessmentButton();
+		this.printBegunSubmissionState(sysController, "after submit");
 
 		return this;
 	}

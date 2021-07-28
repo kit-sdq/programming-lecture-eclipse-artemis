@@ -25,7 +25,6 @@ import edu.kit.kastel.sdq.eclipse.grading.core.artemis.DefaultProjectFileNamingS
 import edu.kit.kastel.sdq.eclipse.grading.core.artemis.WorkspaceUtil;
 import edu.kit.kastel.sdq.eclipse.grading.core.config.ConfigDao;
 import edu.kit.kastel.sdq.eclipse.grading.core.config.ExerciseConfig;
-import edu.kit.kastel.sdq.eclipse.grading.core.config.JsonFileConfigDao;
 import edu.kit.kastel.sdq.eclipse.grading.core.model.annotation.AnnotationDao;
 import edu.kit.kastel.sdq.eclipse.grading.core.model.annotation.AnnotationException;
 import edu.kit.kastel.sdq.eclipse.grading.core.model.annotation.JsonFileAnnotationDao;
@@ -35,7 +34,6 @@ public class AssessmentController implements IAssessmentController {
 
 	private SystemwideController systemWideController;
 	private int submissionID;
-	private JsonFileConfigDao configDao;
 	private AnnotationDao annotationDao;
 
 	private AlertObservable alertObservable;
@@ -44,9 +42,6 @@ public class AssessmentController implements IAssessmentController {
 	private final int exerciseID;
 
 	private String exerciseConfigShortName;
-	//TODO global List of ASsessmentController in SystemSpecificController
-	//
-	//TODO pull config file up to "global state".
 
 	/**
 	 * Protected, because the way to get a specific assessment controller should be over a SystemwideController.
@@ -229,9 +224,6 @@ public class AssessmentController implements IAssessmentController {
 		}
 	}
 
-	/**
-	 * TODO null statt optional
-	 */
 	@Override
 	public void modifyAnnotation(int annatationId, String customMessage, Double customPenalty) {
 		this.annotationDao.modifyAnnotation(annatationId, customMessage, customPenalty);
