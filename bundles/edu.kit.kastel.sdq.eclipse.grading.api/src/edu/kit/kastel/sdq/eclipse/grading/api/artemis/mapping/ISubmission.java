@@ -4,11 +4,9 @@ import java.util.function.Predicate;
 
 public interface ISubmission {
 
-	//TODO define
-
 	/**
 	 *
-	 * Used to be able to discriminate submissions.
+	 * Used to be able to discriminate submissions that were started by the caller.
 	 */
 	enum Filter {
 		SAVED_BUT_NOT_SUBMITTED(submission -> submission.hasSavedAssessment() && !submission.hasSubmittedAssessment()),

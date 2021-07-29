@@ -105,7 +105,7 @@ public interface IArtemisGUIController {
 	/**
 	 * Starts the next assessment of the given correction round. Which one is smh determined by artemis.
 	 * @param exerciseID the exerciseID (found in your ICourse-Collection gotten via IArtemisGUIController::getCourses())
-	 * @param correctionRound for non-exams: 0. For exams: either 0 or 1 (TODO really? or (1,2) or (0,2)?? ==> find out..
+	 * @param correctionRound for non-exams: 0. For exams: either 0 or 1
 	 * @return
 	 * 		<li> the submissionID which defines what is assessed.
 	 * 		<li> Optional.empty(), if no assessment is left!

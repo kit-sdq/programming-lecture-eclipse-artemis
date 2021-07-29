@@ -2,13 +2,13 @@ package edu.kit.kastel.sdq.eclipse.grading.client.rest;
 
 class IDToken {
 
-	private String idToken;
-	
-	IDToken(final String idToken) {
-		this.idToken = idToken;
+	private String idTokenValue;
+
+	IDToken(final String idTokenValue) {
+		this.idTokenValue = idTokenValue;
 	}
-	
+
 	public String getHeaderString() {
-		return "Bearer " + idToken;
+		return "Bearer " + this.idTokenValue;
 	}
 }

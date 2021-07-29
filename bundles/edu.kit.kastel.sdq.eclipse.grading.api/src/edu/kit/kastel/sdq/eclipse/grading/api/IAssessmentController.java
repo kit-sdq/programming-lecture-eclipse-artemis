@@ -8,7 +8,6 @@ import edu.kit.kastel.sdq.eclipse.grading.api.model.IMistakeType;
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IRatingGroup;
 
 /**
- * TODO Zwischenberechnung der mistakes (pro Klasse e.g.) zurück an die GUI.
  *
  */
 public interface IAssessmentController {
@@ -16,16 +15,13 @@ public interface IAssessmentController {
 	/**
 	 * Add an annotation to the current assessment.
 	 *
-	 * TODO
-	 * <li> additional param: mistake type!
-	 * <li> maybe return int (id)
-	 *
 	 * @param annotationID a unique annotation ID.
+	 * @param mistakeType
 	 * @param startLine annotation start
 	 * @param endLine	annotation end
 	 * @param fullyClassifiedClassName	fully classified class name of the respective Class to be annotated
 	 * @param customMessage	custom message set by tutor
-	 * @param customPenalty This may or may not have an effekt, depending on the MistakeType's PenaltyRule!
+	 * @param customPenalty This may or may not have an effect, depending on the MistakeType's PenaltyRule!
 	 * @param marker_char_start additional encoding of the start (counts from file start, eclipse GUI requires this)
 	 * @param marker_char_end additional encoding of the start (counts from file start, eclipse GUI requires this)
 	 * E.g. a ThresholdPenaltyRule will not consider custom penalties while a (thinkable) "AggregatedPenaltyThresholdPenaltyRule" would do so.

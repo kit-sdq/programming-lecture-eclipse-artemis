@@ -3,13 +3,9 @@ package edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping;
 import java.util.Collection;
 
 /**
- * TODO
- * <li> Exams differ? two assessments! other calls?
- *
+ * This Class represents an artemis course.
  */
 public interface ICourse {
-	//TODO noch id, name usw
-
 	int getCourseId();
 
 	Collection<IExam> getExams();
@@ -23,5 +19,4 @@ public interface ICourse {
 	String getShortName();
 
 	String getTitle();
-
 }

@@ -91,7 +91,8 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 	 * @return
 	 */
 	private String convertRepositoryUrl(String repositoryURLWithStudentName) {
-		return repositoryURLWithStudentName.replaceFirst("https://" + USERNAME_REGEX + "@", "https://");
+		final String httpsPrefix = "https://";
+		return repositoryURLWithStudentName.replaceFirst(httpsPrefix + USERNAME_REGEX + "@", httpsPrefix);
 	}
 
 	private void downloadExercise(IExercise exercise, File directory) throws GitException {
@@ -349,7 +350,7 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 	}
 
 	@Override
-	public Collection<ISubmission> getSubmissions(int exerciseID, boolean assessedByTutor)  throws ArtemisClientException, AuthenticationException {
+	public Collection<ISubmission> getSubmissions(int exerciseID, boolean assessedByTutor) throws ArtemisClientException, AuthenticationException {
 		this.checkAuthentication();
 		final Response rsp = this.rootApiTarget
 				.path(EXERCISES_PATHPART)
