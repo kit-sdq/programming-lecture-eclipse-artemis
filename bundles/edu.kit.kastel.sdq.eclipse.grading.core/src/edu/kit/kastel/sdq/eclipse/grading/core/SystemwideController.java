@@ -134,14 +134,14 @@ public class SystemwideController implements ISystemwideController {
 	}
 
 	@Override
-	public void onLoadAgainButton() {
+	public void loadAgain() {
 		if (this.nullCheckMembersAndNotify(true, true, true)) return;
 		this.getArtemisGUIController().startAssessment(this.submissionID);
 		this.getArtemisGUIController().downloadExerciseAndSubmission(this.courseID, this.exerciseID, this.submissionID);
 	}
 
 	@Override
-	public void onReloadAssessmentButton() {
+	public void reloadAssessment() {
 		if (this.nullCheckMembersAndNotify(true, true, true)) return;
 
 		this.getCurrentAssessmentController().deleteEclipseProject();
@@ -153,28 +153,28 @@ public class SystemwideController implements ISystemwideController {
 	}
 
 	@Override
-	public void onSaveAssessmentButton() {
+	public void saveAssessment() {
 		if (this.nullCheckMembersAndNotify(true, true, true)) return;
 		this.artemisGUIController.saveAssessment(this.submissionID, false, false);
 	}
 
 	@Override
-	public boolean onStartAssessmentButton() {
+	public boolean startAssessment() {
 		return this.startAssessment(0);
 	}
 
 	@Override
-	public boolean onStartCorrectionRound1Button() {
+	public boolean startCorrectionRound1() {
 		return this.startAssessment(0);
 	}
 
 	@Override
-	public boolean onStartCorrectionRound2Button() {
+	public boolean startCorrectionRound2() {
 		return this.startAssessment(1);
 	}
 
 	@Override
-	public void onSubmitAssessmentButton() {
+	public void submitAssessment() {
 		if (this.nullCheckMembersAndNotify(true, true, true)) return;
 		if (this.artemisGUIController.saveAssessment(this.submissionID, true, false)) {
 			this.getCurrentAssessmentController().deleteEclipseProject();
@@ -211,11 +211,13 @@ public class SystemwideController implements ISystemwideController {
 	}
 
 	@Override
-	public Collection<String> setCourseIdAndGetExerciseTitles(final String courseShortName) {
+	public Collection<String> setCourseIdAndGetExerciseShortNames(final String courseShortName) {
 		for (ICourse course : this.getArtemisGUIController().getCourses()) {
 			if (course.getShortName().equals(courseShortName)) {
 				this.courseID = course.getCourseId();
-				return course.getExercises().stream().map(IExercise::getShortName).collect(Collectors.toList());
+				return course.getExercises().stream()
+						.map(IExercise::getShortName)
+						.collect(Collectors.toList());
 			}
 		}
 		this.alertObservable.error("No Course with the given shortName \"" + courseShortName + "\" found.", null);

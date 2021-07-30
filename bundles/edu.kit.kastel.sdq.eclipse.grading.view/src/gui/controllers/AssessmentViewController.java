@@ -261,7 +261,7 @@ public class AssessmentViewController {
 	}
 
 	public boolean onStartAssessment() {
-		return this.systemwideController.onStartAssessmentButton();
+		return this.systemwideController.startAssessment();
 	}
 
 	public Collection<String> getCourseShortNames() {
@@ -269,28 +269,28 @@ public class AssessmentViewController {
 	}
 
 	public Collection<String> getExerciseShortNames(String courseName) {
-		return this.systemwideController.setCourseIdAndGetExerciseTitles(courseName);
+		return this.systemwideController.setCourseIdAndGetExerciseShortNames(courseName);
 	}
 
 	public void onReloadAssessment() {
-		this.systemwideController.onReloadAssessmentButton();
+		this.systemwideController.reloadAssessment();
 		this.getAnnotations().forEach(this::createMarkerForAnnotation);
 	}
 
 	public void onSaveAssessment() {
-		this.systemwideController.onSaveAssessmentButton();
+		this.systemwideController.saveAssessment();
 	}
 
 	public void onSubmitAssessment() {
-		this.systemwideController.onSubmitAssessmentButton();
+		this.systemwideController.submitAssessment();
 	}
 
 	public void onStartCorrectionRound1() {
-		this.systemwideController.onStartCorrectionRound1Button();
+		this.systemwideController.startCorrectionRound1();
 	}
 
 	public void onStartCorrectionRound2() {
-		this.systemwideController.onStartCorrectionRound2Button();
+		this.systemwideController.startCorrectionRound2();
 	}
 
 	public void setExerciseID(String exerciseShortName) {
@@ -310,7 +310,7 @@ public class AssessmentViewController {
 	}
 
 	public void onLoadAgain() {
-		this.systemwideController.onLoadAgainButton();
+		this.systemwideController.loadAgain();
 	}
 
 	public void setAssessedSubmission(String projectName) {

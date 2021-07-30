@@ -130,11 +130,11 @@ public class LockAndSubmitTest {
 				this.username,
 				this.password);
 		final int exerciseID = 1;
-		sysController.setCourseIdAndGetExerciseTitles("praktikum21");
+		sysController.setCourseIdAndGetExerciseShortNames("praktikum21");
 		sysController.setExerciseId("testAufgabe1");
 
 		this.printBegunSubmissionState(sysController, "before assessment start");
-		boolean startSuccessful = sysController.onStartAssessmentButton();
+		boolean startSuccessful = sysController.startAssessment();
 
 		if (!startSuccessful) {
 			System.out.println("######################### NO MORE SUBMISSIONS FOUND ####");
@@ -144,9 +144,9 @@ public class LockAndSubmitTest {
 		this.addSomeFakeAssessments(sysController);
 
 		this.printBegunSubmissionState(sysController, "before save");
-		sysController.onSaveAssessmentButton();
+		sysController.saveAssessment();
 		this.printBegunSubmissionState(sysController, "before submit");
-		sysController.onSubmitAssessmentButton();
+		sysController.submitAssessment();
 		this.printBegunSubmissionState(sysController, "after submit");
 
 		return this;
