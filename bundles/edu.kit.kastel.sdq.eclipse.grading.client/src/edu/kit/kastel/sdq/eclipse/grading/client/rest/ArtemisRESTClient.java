@@ -318,7 +318,6 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 			}
 		}
 		return new ArtemisExerciseGroup(exerciseGroupId, exercises, title, isMandatory);
-
 	}
 
 	private ISubmission getSubmissionFromJsonNode(JsonNode submissionJsonNode) {
