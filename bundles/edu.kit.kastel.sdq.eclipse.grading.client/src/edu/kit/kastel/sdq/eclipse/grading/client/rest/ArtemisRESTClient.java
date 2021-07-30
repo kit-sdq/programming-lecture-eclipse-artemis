@@ -58,6 +58,7 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 	private static final String AUTHORIZATION_NAME = "Authorization";
 
 	private static final String JSON_PARSE_ERROR_MESSAGE = "Error parsing json: ";
+	private static final String JSON_PARSE_ERROR_MESSAGE_CORRUPT_JSON_STRUCTURE = "Error parsing json: Corrupt Json Structure";
 
 	private WebTarget rootApiTarget;
 	private Optional<IDToken> idToken;
@@ -177,7 +178,7 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 				.readTree(exercisesAndParticipationsRsp.readEntity(String.class));
 
 		JsonNode exercisesJsonArray = exercisesAndParticipationsJsonNode.get(EXERCISES_PATHPART);
-		if (!exercisesJsonArray.isArray()) throw new ArtemisClientException("Error parsing json.");
+		if (!exercisesJsonArray.isArray()) throw new ArtemisClientException(JSON_PARSE_ERROR_MESSAGE_CORRUPT_JSON_STRUCTURE);
 
 		Collection<IExercise> exercises = new LinkedList<>();
 		for (JsonNode exerciseJsonNode : exercisesJsonArray) {
@@ -196,7 +197,7 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 		final JsonNode examsJsonArray = new ObjectMapper()
 				.readTree(examsRsp.readEntity(String.class));
 
-		if (!examsJsonArray.isArray()) throw new ArtemisClientException("Error parsing json.");
+		if (!examsJsonArray.isArray()) throw new ArtemisClientException(JSON_PARSE_ERROR_MESSAGE_CORRUPT_JSON_STRUCTURE);
 
 		Collection<IExam> exams = new LinkedList<>();
 		for (JsonNode examJsonNode : examsJsonArray) {
@@ -224,7 +225,7 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 		} catch (JsonProcessingException e) {
 			throw new ArtemisClientException(JSON_PARSE_ERROR_MESSAGE + e.getMessage(), e);
 		}
-		if (!jsonNode.isArray()) throw new ArtemisClientException("Error parsing json.");
+		if (!jsonNode.isArray()) throw new ArtemisClientException(JSON_PARSE_ERROR_MESSAGE_CORRUPT_JSON_STRUCTURE);
 
 		// collect constructed courses (by parsing and re-calling)
 		Collection<ICourse> courses = new LinkedList<>();
@@ -258,7 +259,7 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 		JsonNode detailledExamJsonNode = new ObjectMapper().readTree(rsp.readEntity(String.class));
 
 		JsonNode exerciseGroupsJsonArray = detailledExamJsonNode.get("exerciseGroups");
-		if (!exerciseGroupsJsonArray.isArray()) throw new ArtemisClientException("Error parsing json.");
+		if (!exerciseGroupsJsonArray.isArray()) throw new ArtemisClientException(JSON_PARSE_ERROR_MESSAGE_CORRUPT_JSON_STRUCTURE);
 
 		final Collection<IExerciseGroup> exerciseGroups = new LinkedList<>();
 
@@ -308,7 +309,7 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 		final boolean isMandatory = exerciseGroupJsonNode.get("isMandatory").booleanValue();
 
 		JsonNode exercisesJsonArray = exerciseGroupJsonNode.get(EXERCISES_PATHPART);
-		if (!exercisesJsonArray.isArray()) throw new ArtemisClientException("Error parsing json.");
+		if (!exercisesJsonArray.isArray()) throw new ArtemisClientException(JSON_PARSE_ERROR_MESSAGE_CORRUPT_JSON_STRUCTURE);
 
 		Collection<IExercise> exercises = new LinkedList<>();
 		for (JsonNode exerciseJsonNode : exercisesJsonArray) {
