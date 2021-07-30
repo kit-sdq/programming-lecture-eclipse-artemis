@@ -1,6 +1,7 @@
 package edu.kit.kastel.sdq.eclipse.grading.core;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -13,8 +14,6 @@ import javax.security.sasl.AuthenticationException;
 
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.AbstractArtemisClient;
 import edu.kit.kastel.sdq.eclipse.grading.api.ArtemisClientException;
@@ -280,7 +279,7 @@ public class ArtemisGUIController implements IArtemisGUIController {
 		} catch (AuthenticationException e) {
 			this.alertObservable.error("Authentication to Artemis failed: " + e.getMessage(), e);
 			return false;
-		} catch (JsonProcessingException e) {
+		} catch (IOException e) {
 			this.alertObservable.error("Local backend failed to format the annotations: " + e.getMessage(), e);
 			return false;
 		} catch (Exception e) {

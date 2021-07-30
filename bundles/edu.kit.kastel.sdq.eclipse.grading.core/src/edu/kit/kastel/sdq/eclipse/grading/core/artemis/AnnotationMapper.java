@@ -1,5 +1,6 @@
 package edu.kit.kastel.sdq.eclipse.grading.core.artemis;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -51,7 +52,7 @@ public class AnnotationMapper {
 				.orElse(0D);
 	}
 
-	private Collection<IFeedback> calculateAllFeedbacks() throws JsonProcessingException {
+	private Collection<IFeedback> calculateAllFeedbacks() throws IOException {
 		final boolean submissionIsInvalid = this.penaltyCalculationStrategy.submissionIsInvalid();
 
 		final List<IFeedback> result = new LinkedList<>();
@@ -63,7 +64,7 @@ public class AnnotationMapper {
 		return result;
 	}
 
-	private Collection<Feedback> calculateAnnotationSerialisationAsFeedbacks(List<IAnnotation> givenAnnotations, int detailTextMaxCharacters) throws JsonProcessingException {
+	private Collection<Feedback> calculateAnnotationSerialisationAsFeedbacks(List<IAnnotation> givenAnnotations, int detailTextMaxCharacters) throws IOException {
 		final String givenAnnotationsJSONString = this.convertAnnotationsToJSONString(givenAnnotations);
 		//put as many feedbacks in one pack.
 		if (givenAnnotationsJSONString.length() < detailTextMaxCharacters) {
@@ -72,8 +73,7 @@ public class AnnotationMapper {
 		}
 		//if one single annotation is too large, serialization is impossible!
 		if (givenAnnotations.size() == 1) {
-			//TODO throw IOException or so-
-			throw new RuntimeException("This annotation is too large to serialize! " + givenAnnotationsJSONString);
+			throw new IOException("This annotation is too large to serialize! " + givenAnnotationsJSONString);
 		}
 
 		//recursion
@@ -89,7 +89,7 @@ public class AnnotationMapper {
 		return resultFeedbacks;
 	}
 
-	private Collection<Feedback> calculateAnnotationSerialitationAsFeedbacks() throws JsonProcessingException {
+	private Collection<Feedback> calculateAnnotationSerialitationAsFeedbacks() throws IOException {
 		// because Artemis has a Limit on "detailText" of 5000, we gotta do this little trick
 		return this.calculateAnnotationSerialisationAsFeedbacks(this.annotations.stream().collect(Collectors.toList()), FEEDBACK_DETAIL_TEXT_MAX_CHARACTERS);
 	}
@@ -165,7 +165,7 @@ public class AnnotationMapper {
 		return new ObjectMapper().writeValueAsString(givenAnnotations);
 	}
 
-	private AssessmentResult createAssessmentResult() throws JsonProcessingException {
+	private AssessmentResult createAssessmentResult() throws IOException {
 		final boolean submissionIsInvalid = this.penaltyCalculationStrategy.submissionIsInvalid();
 		// only add preexistent automatic feedback (unit tests etc) and manual feedback.										arTem155
 		//this should work indepently of invalid or not. if invalid, there should just be no feedbacks.
@@ -264,7 +264,7 @@ public class AnnotationMapper {
 				.filter(feedback -> feedback.getFeedbackType().equals(feedbackType)).collect(Collectors.toList());
 	}
 
-	public String mapToJsonFormattedString() throws JsonProcessingException {
+	public String mapToJsonFormattedString() throws IOException {
 		return new ObjectMapper()
 				.writeValueAsString(this.createAssessmentResult());
 	}
