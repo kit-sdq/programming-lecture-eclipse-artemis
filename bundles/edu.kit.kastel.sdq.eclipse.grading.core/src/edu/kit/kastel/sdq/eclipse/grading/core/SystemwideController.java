@@ -167,14 +167,12 @@ public class SystemwideController implements ISystemwideController {
 
 	@Override
 	public void setAssessedSubmissionByProjectName(String projectName) {
-		System.out.println("DEBUG IN setAssessedSubmissionByProjectName(" + projectName + ")");
 		boolean[] found = {false};
 		this.getBegunSubmissions(Filter.ALL).forEach(submission -> {
 			String currentProjectName = this.projectFileNamingStrategy.getProjectFileInWorkspace(
 					WorkspaceUtil.getWorkspaceFile(),
 					this.getCurrentExercise(),
 					submission).getName();
-			System.out.println("    testing " + currentProjectName);
 
 			if (currentProjectName.equals(projectName)) {
 				this.submissionID = submission.getSubmissionId();
