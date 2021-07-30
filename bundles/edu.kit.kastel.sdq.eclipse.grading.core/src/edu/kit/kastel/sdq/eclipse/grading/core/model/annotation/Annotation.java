@@ -66,13 +66,6 @@ public class Annotation implements IAnnotation {
 		this.markerCharEnd = markerCharEnd;
 	}
 
-
-	@Override
-	public boolean equals(Object otherAnnotation) {
-		return (otherAnnotation instanceof IAnnotation)
-				&& (this.getId() == ((IAnnotation)otherAnnotation).getId());
-	}
-
 	@Override
 	public String getClassFilePath() {
 		return this.fullyClassifiedClassName;
