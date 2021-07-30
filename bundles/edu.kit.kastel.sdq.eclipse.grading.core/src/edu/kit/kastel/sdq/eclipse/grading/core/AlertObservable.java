@@ -30,9 +30,11 @@ public class AlertObservable implements IAlertObservable {
 	}
 
 	private void printToConsoleIfNoObserversRegistered(String msg, Throwable cause) {
-		System.err.println(msg);
-		if ((this.observers.isEmpty()) && (cause != null)) {
-			cause.printStackTrace(System.err);
+		if (this.observers.isEmpty()) {
+			System.err.println(msg);
+			if (cause != null) {
+				cause.printStackTrace(System.err);
+			}
 		}
 	}
 

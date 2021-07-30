@@ -70,7 +70,7 @@ public class SystemwideController implements ISystemwideController {
 
 
 	private Collection<ISubmission> getBegunSubmissions(ISubmission.Filter submissionFilter) {
-		if (this.nullCheckMembersAndNotify(true, true, true)) return List.of();
+		if (this.nullCheckMembersAndNotify(true, true, false)) return List.of();
 
 		return this.getArtemisGUIController().getBegunSubmissions(this.exerciseID).stream()
 				.filter(submissionFilter.getFilterPredicate())
@@ -108,6 +108,13 @@ public class SystemwideController implements ISystemwideController {
 				.getExerciseFromCourses(this.getArtemisGUIController().getCourses(), this.courseID, this.exerciseID);
 	}
 
+	@Override
+	public void loadAgain() {
+		if (this.nullCheckMembersAndNotify(true, true, true)) return;
+		this.getArtemisGUIController().startAssessment(this.submissionID);
+		this.getArtemisGUIController().downloadExerciseAndSubmission(this.courseID, this.exerciseID, this.submissionID);
+	}
+
 	/**
 	 *
 	 * @return true if at least one of those three is null
@@ -133,11 +140,11 @@ public class SystemwideController implements ISystemwideController {
 		return somethingNull;
 	}
 
-	@Override
-	public void loadAgain() {
-		if (this.nullCheckMembersAndNotify(true, true, true)) return;
-		this.getArtemisGUIController().startAssessment(this.submissionID);
-		this.getArtemisGUIController().downloadExerciseAndSubmission(this.courseID, this.exerciseID, this.submissionID);
+	public void onZeroPointsForAssessment() {
+		if (this.artemisGUIController.saveAssessment(this.submissionID, true, true)) {
+			this.getCurrentAssessmentController().deleteEclipseProject();
+			this.submissionID = null;
+		}
 	}
 
 	@Override
@@ -159,49 +166,24 @@ public class SystemwideController implements ISystemwideController {
 	}
 
 	@Override
-	public boolean startAssessment() {
-		return this.startAssessment(0);
-	}
-
-	@Override
-	public boolean startCorrectionRound1() {
-		return this.startAssessment(0);
-	}
-
-	@Override
-	public boolean startCorrectionRound2() {
-		return this.startAssessment(1);
-	}
-
-	@Override
-	public void submitAssessment() {
-		if (this.nullCheckMembersAndNotify(true, true, true)) return;
-		if (this.artemisGUIController.saveAssessment(this.submissionID, true, false)) {
-			this.getCurrentAssessmentController().deleteEclipseProject();
-			this.submissionID = null;
-		}
-	}
-
-	public void onZeroPointsForAssessment() {
-		if (this.artemisGUIController.saveAssessment(this.submissionID, true, true)) {
-			this.getCurrentAssessmentController().deleteEclipseProject();
-			this.submissionID = null;
-		}
-	}
-
-	@Override
 	public void setAssessedSubmissionByProjectName(String projectName) {
+		System.out.println("DEBUG IN setAssessedSubmissionByProjectName(" + projectName + ")");
+		boolean[] found = {false};
 		this.getBegunSubmissions(Filter.ALL).forEach(submission -> {
 			String currentProjectName = this.projectFileNamingStrategy.getProjectFileInWorkspace(
 					WorkspaceUtil.getWorkspaceFile(),
 					this.getCurrentExercise(),
 					submission).getName();
+			System.out.println("    testing " + currentProjectName);
+
 			if (currentProjectName.equals(projectName)) {
 				this.submissionID = submission.getSubmissionId();
-				return;
+				found[0] = true;
 			}
 		});
-
+		if (found[0]) {
+			return;
+		}
 		this.alertObservable.error("Assessed submission with projectName=\"" + projectName +  "\" not found!", null);
 	}
 
@@ -237,6 +219,11 @@ public class SystemwideController implements ISystemwideController {
 		this.alertObservable.error("No Exercise with the given shortName \"" + exerciseShortName + "\" found.", null);
 	}
 
+	@Override
+	public boolean startAssessment() {
+		return this.startAssessment(0);
+	}
+
 	private boolean startAssessment(int correctionRound) {
 		if (this.nullCheckMembersAndNotify(true, true, false)) return false;
 		Optional<Integer> optionalSubmissionID = this.getArtemisGUIController().startNextAssessment(this.exerciseID, correctionRound);
@@ -247,5 +234,25 @@ public class SystemwideController implements ISystemwideController {
 		this.getArtemisGUIController().downloadExerciseAndSubmission(this.courseID, this.exerciseID, this.submissionID);
 		return true;
 
+	}
+
+	@Override
+	public boolean startCorrectionRound1() {
+		return this.startAssessment(0);
+	}
+
+	@Override
+	public boolean startCorrectionRound2() {
+		return this.startAssessment(1);
+	}
+
+	@Override
+	public void submitAssessment() {
+		if (this.nullCheckMembersAndNotify(true, true, true)) return;
+		if (this.artemisGUIController.saveAssessment(this.submissionID, true, false)) {
+			this.getCurrentAssessmentController().deleteEclipseProject();
+			this.assessmentControllers.remove(this.submissionID);
+			this.submissionID = null;
+		}
 	}
 }

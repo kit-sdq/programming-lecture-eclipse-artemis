@@ -8,6 +8,8 @@ import org.eclipse.core.resources.ResourcesPlugin;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.AbstractArtemisClient;
 import edu.kit.kastel.sdq.eclipse.grading.api.ISystemwideController;
+import edu.kit.kastel.sdq.eclipse.grading.api.alerts.IAlertObservable;
+import edu.kit.kastel.sdq.eclipse.grading.api.alerts.IAlertObserver;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.ILockResult;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IAssessor;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission.Filter;
@@ -93,6 +95,27 @@ public class LockAndSubmitTest {
 
 	}
 
+	private void subscribeToAlertObservable(IAlertObservable alertObservable, String upFront) {
+		alertObservable.addAlertObserver(new IAlertObserver() {
+
+			@Override
+			public void error(String errorMsg, Throwable cause) {
+				System.out.println("====" + upFront + ":" + errorMsg);
+			}
+
+			@Override
+			public void info(String infoMsg) {
+				System.out.println("====" + upFront + ":" + infoMsg);
+			}
+
+			@Override
+			public void warn(String warningMsg) {
+				System.out.println("====" + upFront + ":" + warningMsg);
+
+			}
+		});
+	}
+
 	public void test() throws Exception {
 
 		ILockResult lockResult = this.artemisClient.startAssessment(3);
@@ -130,11 +153,16 @@ public class LockAndSubmitTest {
 				this.username,
 				this.password);
 		final int exerciseID = 1;
+		this.subscribeToAlertObservable(sysController.getAlertObservable(), "SysController");
+		this.subscribeToAlertObservable(sysController.getArtemisGUIController().getAlertObservable(), "ArtemisGUIController");
 		sysController.setCourseIdAndGetExerciseShortNames("praktikum21");
 		sysController.setExerciseId("testAufgabe1");
 
 		this.printBegunSubmissionState(sysController, "before assessment start");
 		boolean startSuccessful = sysController.startAssessment();
+		this.subscribeToAlertObservable(
+				sysController.getCurrentAssessmentController().getAlertObservable(),
+				"ArtemisGUIController");
 
 		if (!startSuccessful) {
 			System.out.println("######################### NO MORE SUBMISSIONS FOUND ####");
@@ -147,7 +175,19 @@ public class LockAndSubmitTest {
 		sysController.saveAssessment();
 		this.printBegunSubmissionState(sysController, "before submit");
 		sysController.submitAssessment();
+
+		// check BACKLOG and deserialization
+		sysController.setCourseIdAndGetExerciseShortNames("praktikum21");
+		sysController.setExerciseId("testAufgabe1");
 		this.printBegunSubmissionState(sysController, "after submit");
+		sysController.setAssessedSubmissionByProjectName("exercise-1-testAufgabe1_submission-89-test-student");
+		sysController.loadAgain();
+		this.subscribeToAlertObservable(
+				sysController.getCurrentAssessmentController().getAlertObservable(),
+				"ArtemisGUIController");
+
+		System.out.println("Deserialized annotations:\n "
+				+ sysController.getCurrentAssessmentController().getAnnotations());
 
 		return this;
 	}

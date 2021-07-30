@@ -21,12 +21,16 @@ import edu.kit.kastel.sdq.eclipse.grading.api.model.IRatingGroup;
  */
 public class AnnotationMapper {
 
+	// TODO maybe put into a constants class.
+	// keep this up to date with  https://github.com/ls1intum/Artemis/blob/develop/src/main/java/de/tum/in/www1/artemis/config/Constants.java#L121
+	private static final int FEEDBACK_DETAIL_TEXT_MAX_CHARACTERS = 5000;
 	private final Collection<IAnnotation> annotations;
 	private final Collection<IMistakeType> mistakeTypes;
-	private final Collection<IRatingGroup> ratingGroups;
 
+	private final Collection<IRatingGroup> ratingGroups;
 	private final IAssessor assessor;
 	private final ILockResult lockResult;
+
 	private final IPenaltyCalculationStrategy penaltyCalculationStrategy;
 
 	public AnnotationMapper(Collection<IAnnotation> annotations, Collection<IMistakeType> mistakeTypes, Collection<IRatingGroup> ratingGroups,
@@ -54,16 +58,40 @@ public class AnnotationMapper {
 		result.addAll(this.getFilteredPreexistentFeedbacks(FeedbackType.AUTOMATIC));
 		result.addAll( submissionIsInvalid ? this.calculateInvalidManualFeedback() : this.calculateManualFeedbacks());
 
-		result.add(this.calculateAnnotationSerialitationAsFeedback());
+		result.addAll(this.calculateAnnotationSerialitationAsFeedbacks());
 
 		return result;
 	}
 
-	private Feedback calculateAnnotationSerialitationAsFeedback() throws JsonProcessingException {
-		final String annotationsJSONString = new ObjectMapper()
-				.writeValueAsString(this.annotations);
-		// we don't want the serialization to be visible (for non-privileged users)
-		return new Feedback(FeedbackType.MANUAL_UNREFERENCED.name(), 0D, null, null, "NEVER", "CLIENT_DATA", null, annotationsJSONString);
+	private Collection<Feedback> calculateAnnotationSerialisationAsFeedbacks(List<IAnnotation> givenAnnotations, int detailTextMaxCharacters) throws JsonProcessingException {
+		final String givenAnnotationsJSONString = this.convertAnnotationsToJSONString(givenAnnotations);
+		//put as many feedbacks in one pack.
+		if (givenAnnotationsJSONString.length() < detailTextMaxCharacters) {
+			// we don't want the serialization to be visible (for non-privileged users)
+			return List.of(new Feedback(FeedbackType.MANUAL_UNREFERENCED.name(), 0D, null, null, "NEVER", "CLIENT_DATA", null, givenAnnotationsJSONString));
+		}
+		//if one single annotation is too large, serialization is impossible!
+		if (givenAnnotations.size() == 1) {
+			//TODO throw IOException or so-
+			throw new RuntimeException("This annotation is too large to serialize! " + givenAnnotationsJSONString);
+		}
+
+		//recursion
+		final int givenAnnotationsSize = givenAnnotations.size();
+		final Collection<Feedback> resultFeedbacks = new LinkedList<>();
+		resultFeedbacks.addAll(
+				this.calculateAnnotationSerialisationAsFeedbacks(givenAnnotations.subList(0, givenAnnotationsSize/2), detailTextMaxCharacters)
+		);
+
+		resultFeedbacks.addAll(
+				this.calculateAnnotationSerialisationAsFeedbacks(givenAnnotations.subList((givenAnnotationsSize/2), givenAnnotations.size()), detailTextMaxCharacters)
+		);
+		return resultFeedbacks;
+	}
+
+	private Collection<Feedback> calculateAnnotationSerialitationAsFeedbacks() throws JsonProcessingException {
+		// because Artemis has a Limit on "detailText" of 5000, we gotta do this little trick
+		return this.calculateAnnotationSerialisationAsFeedbacks(this.annotations.stream().collect(Collectors.toList()), FEEDBACK_DETAIL_TEXT_MAX_CHARACTERS);
 	}
 
 	private Collection<Feedback> calculateInvalidManualFeedback() {
@@ -110,10 +138,10 @@ public class AnnotationMapper {
 		return -1D * this.penaltyCalculationStrategy.calcultatePenaltyForRatingGroup(ratingGroup);
 	}
 
-
 	private double calculateRelativeScore(double absoluteScore) {
 		return (absoluteScore / this.lockResult.getMaxPoints()) * 100D;
 	}
+
 
 	private String calculateResultString(final Collection<IFeedback> allFeedbacks, final double absoluteScore) {
 		final Collection<IFeedback> autoFeedbacks = allFeedbacks.stream()
@@ -131,6 +159,10 @@ public class AnnotationMapper {
 				.append(Util.formatDouble(this.lockResult.getMaxPoints()))
 				.append(" points")
 				.toString();
+	}
+
+	private String convertAnnotationsToJSONString(final Collection<IAnnotation> givenAnnotations) throws JsonProcessingException {
+		return new ObjectMapper().writeValueAsString(givenAnnotations);
 	}
 
 	private AssessmentResult createAssessmentResult() throws JsonProcessingException {
