@@ -1,8 +1,15 @@
-package gui.marker;
+package edu.kit.kastel.eclipse.grading.gui.marker;
 
 import org.eclipse.ui.views.markers.MarkerField;
 import org.eclipse.ui.views.markers.MarkerItem;
 
+/**
+ * Class of the position field in the marker view. Converted to
+ * [startLine,endLine]
+ * 
+ * @See {@link MarkerField}
+ *
+ */
 public class AssessmentMarkerPositionField extends MarkerField {
 
 	@Override

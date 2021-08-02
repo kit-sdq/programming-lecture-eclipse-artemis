@@ -1,4 +1,4 @@
-package gui.preferences;
+package edu.kit.kastel.eclipse.grading.gui.preferences;
 
 /**
  * Constant definitions for plug-in preferences

@@ -1,38 +1,41 @@
-package gui.controllers;
+package edu.kit.kastel.eclipse.grading.gui.controllers;
 
 import java.io.File;
 import java.util.Collection;
-import java.util.Optional;
-
-import javax.management.RuntimeErrorException;
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.ITextSelection;
 
+import edu.kit.kastel.eclipse.grading.gui.activator.Activator;
+import edu.kit.kastel.eclipse.grading.gui.assessment.view.ArtemisGradingView;
+import edu.kit.kastel.eclipse.grading.gui.observers.ViewAlertObserver;
+import edu.kit.kastel.eclipse.grading.gui.preferences.PreferenceConstants;
+import edu.kit.kastel.eclipse.grading.gui.utilities.AssessmentUtilities;
 import edu.kit.kastel.sdq.eclipse.grading.api.IArtemisGUIController;
 import edu.kit.kastel.sdq.eclipse.grading.api.IAssessmentController;
+import edu.kit.kastel.sdq.eclipse.grading.api.ISystemwideController;
+import edu.kit.kastel.sdq.eclipse.grading.api.alerts.IAlertObserver;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ICourse;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission.Filter;
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IAnnotation;
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IMistakeType;
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IRatingGroup;
 import edu.kit.kastel.sdq.eclipse.grading.core.SystemwideController;
-import gui.activator.Activator;
-import gui.preferences.PreferenceConstants;
-import gui.utilities.AssessmentUtilities;
-import observers.ViewAlertObserver;
 
+/**
+ * This class is the controller for the grading view. It creates the marker for
+ * the annotations and holds all controller for the backend calls.
+ * 
+ * @see {@link ArtemisGradingView}
+ *
+ */
 public class AssessmentViewController {
 
-	private static String CONFIG_PATH;
-	private static boolean IS_RELATIVE_PATH;
-	private int submissionID;
 	private IAssessmentController assessmentController;
 	private IArtemisGUIController artemisGUIController;
-	private SystemwideController systemwideController;
+	private ISystemwideController systemwideController;
+	private IAlertObserver alertObserver;
 
 	public AssessmentViewController() {
 		final IPreferenceStore store = Activator.getDefault().getPreferenceStore();
@@ -41,25 +44,34 @@ public class AssessmentViewController {
 				store.getString(PreferenceConstants.P_CONFIG_NAME), store.getString(PreferenceConstants.P_ARTEMIS_URL),
 				store.getString(PreferenceConstants.P_ARTEMIS_USER),
 				store.getString(PreferenceConstants.P_ARTEMIS_PASSWORD));
+		this.alertObserver = new ViewAlertObserver();
 		this.artemisGUIController = this.systemwideController.getArtemisGUIController();
-		this.systemwideController.getAlertObservable().addAlertObserver(new ViewAlertObserver());
-		this.artemisGUIController.getAlertObservable().addAlertObserver(new ViewAlertObserver());
+		this.systemwideController.getAlertObservable().addAlertObserver(this.alertObserver);
+		this.artemisGUIController.getAlertObservable().addAlertObserver(this.alertObserver);
 	}
 
+	/**
+	 * This method creates a marker for the annotation and add a new annotation to
+	 * the backlog
+	 * 
+	 * @param mistake         (the mistake type of the new annotation)
+	 * @param customMessage   (for custom mistake type, else null)
+	 * @param customPenalty   (for custom mistake, else null)
+	 * @param ratingGroupName (the name of the rating group of the new annotation)
+	 */
 	public void addAssessmentAnnotaion(IMistakeType mistake, String customMessage, Double customPenalty,
 			String ratingGroupName) {
 
 		final ITextSelection textSelection = AssessmentUtilities.getTextSelection();
 		if (textSelection == null) {
-			throw new RuntimeErrorException(null, "No text is selected in the editor");
+			this.alertObserver.error("Text selection needed to add a new annotation", null);
+			return;
 		}
 		final Integer startLine = textSelection.getStartLine();
 		final Integer endLine = textSelection.getEndLine();
 		final Integer lenght = textSelection.getLength();
-
-		IMarker marker = null;
 		try {
-			marker = AssessmentUtilities.getCurrentFile().createMarker("gui.assessment.marker");
+			IMarker marker = AssessmentUtilities.getCurrentFile().createMarker("gui.assessment.marker");
 			marker.setAttribute(IMarker.CHAR_START, AssessmentUtilities.getLineOffSet(startLine));
 			marker.setAttribute(IMarker.CHAR_END, AssessmentUtilities.getLineOffSet(startLine) + lenght + 10);
 			if (mistake != null) {
@@ -88,121 +100,91 @@ public class AssessmentViewController {
 					AssessmentUtilities.getLineOffSet(startLine),
 					AssessmentUtilities.getLineOffSet(startLine) + lenght + 10);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			this.alertObserver.error("Unable to create marker for annotation", e);
 		}
 
 	}
 
-	public void createAssessmentController() {
+	/**
+	 * creates a new assessment controller (if needed) and adds a observer for error
+	 * handling
+	 */
+	public void setCurrentAssessmentController() {
 		this.assessmentController = this.systemwideController.getCurrentAssessmentController();
-		this.assessmentController.getAlertObservable().addAlertObserver(new ViewAlertObserver());
+		this.assessmentController.getAlertObservable().addAlertObserver(this.alertObserver);
 	}
 
-	private File createConfigFile() {
-		final IPreferenceStore store = Activator.getDefault().getPreferenceStore();
-		AssessmentViewController.IS_RELATIVE_PATH = store.getBoolean(PreferenceConstants.P_IS_RELATIVE_CONFIG_PATH);
-
-		AssessmentViewController.CONFIG_PATH = AssessmentViewController.IS_RELATIVE_PATH
-				? store.getString(PreferenceConstants.P_RELATIVE_CONFIG_PATH)
-				: store.getString(PreferenceConstants.P_ABSOLUTE_CONFIG_PATH);
-
-		return AssessmentViewController.IS_RELATIVE_PATH
-				? new File(this.getEclipseWorkspaceRootFile(), AssessmentViewController.CONFIG_PATH)
-				: new File(AssessmentViewController.CONFIG_PATH);
-	}
-
+	/**
+	 * @param ratingGroup
+	 * @return the current penalty for the given rating group
+	 */
 	public double getCurrentPenaltyForRatingGroup(IRatingGroup ratingGroup) {
 		return this.assessmentController.calculateCurrentPenaltyForRatingGroup(ratingGroup);
 	}
 
-	private File getEclipseWorkspaceRootFile() {
-		return ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile();
-	}
-
-	public Collection<IMistakeType> getMistakeTypesForButtonView() {
+	/**
+	 * @return the mistake types of the current config file
+	 */
+	public Collection<IMistakeType> getMistakeTypes() {
 		return this.assessmentController.getMistakes();
 	}
 
+	/**
+	 * @return the rating groups of the current config file
+	 */
 	public Collection<IRatingGroup> getRatingGroups() {
 		return this.assessmentController.getRatingGroups();
 	}
 
+	/**
+	 * @return all courses available at artemis
+	 */
 	public Collection<ICourse> getCourses() {
 		return this.artemisGUIController.getCourses();
 	}
 
-	private void setConfigPathFromPreferenceStore() {
-		final IPreferenceStore store = Activator.getDefault().getPreferenceStore();
-		AssessmentViewController.IS_RELATIVE_PATH = store.getBoolean(PreferenceConstants.P_IS_RELATIVE_CONFIG_PATH);
-
-		AssessmentViewController.CONFIG_PATH = AssessmentViewController.IS_RELATIVE_PATH
-				? store.getString(PreferenceConstants.P_RELATIVE_CONFIG_PATH)
-				: store.getString(PreferenceConstants.P_ABSOLUTE_CONFIG_PATH);
-	}
-
-	public int startAssessment(int exerciseID, int courseID) throws Exception {
-		Optional<Integer> optionalSubmissonID = this.artemisGUIController.startNextAssessment(exerciseID);
-		if (optionalSubmissonID.isPresent()) {
-			this.artemisGUIController.downloadExerciseAndSubmission(courseID, exerciseID, optionalSubmissonID.get());
-			this.setSubmissionID(optionalSubmissonID.get());
-			return optionalSubmissonID.get();
-		} else {
-			return -1;
-		}
-
-	}
-
-	public void startAssessment(int submissionID) {
-		this.artemisGUIController.startAssessment(submissionID);
-	}
-
-	public void submitAssessment(int submissonId) {
-		try {
-			this.artemisGUIController.saveAssessment(submissonId, true, false);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		MessageDialog.openInformation(null, "Submitted", "Submitted current assessment for selected exercise.");
-	}
-
-	public int getSubmissonID() {
-		return this.submissionID;
-	}
-
-	public void setSubmissionID(int submissionID) {
-		this.submissionID = submissionID;
-	}
-
+	/**
+	 * Deletes an annotation on the backend
+	 * 
+	 * @param id (of the annotation)
+	 */
 	public void deleteAnnotation(long id) {
 		this.assessmentController.removeAnnotation((int) id);
 	}
 
+	/**
+	 * @param mistakeType (of the certain button)
+	 * @return tooltip for the mistake type button
+	 */
 	public String getToolTipForMistakeType(IMistakeType mistakeType) {
 		return this.assessmentController.getTooltipForMistakeType(mistakeType);
 
 	}
 
+	/**
+	 * @return all annotations for the current assessment
+	 */
 	public Collection<IAnnotation> getAnnotations() {
 		return this.assessmentController.getAnnotations();
 	}
 
+	/**
+	 * creates marker for current annotations in the backend
+	 */
 	public void createAnnotationsMarkers() {
 		this.getAnnotations().forEach(this::createMarkerForAnnotation);
 	}
 
-	// TODO: handle customs annotations
 	private void createMarkerForAnnotation(IAnnotation annotation) {
 
 		int startLine = annotation.getStartLine();
 		int endLine = annotation.getEndLine();
 		IMistakeType mistake = annotation.getMistakeType();
-		// String customMessage = annotation.getCustomMessage().orElse("");
-		// Double customPenalty = annotation.getCustomPenalty().orElse(0.0);
-		IMarker marker = null;
+		String customMessage = annotation.getCustomMessage().orElse("");
+		Double customPenalty = annotation.getCustomPenalty().orElse(0.0);
 		try {
-			marker = AssessmentUtilities.getFile(annotation.getClassFilePath()).createMarker("gui.assessment.marker");
+			IMarker marker = AssessmentUtilities.getFile(annotation.getClassFilePath())
+					.createMarker("gui.assessment.marker");
 			marker.setAttribute(IMarker.CHAR_START, annotation.getMarkerCharStart());
 			marker.setAttribute(IMarker.CHAR_END, annotation.getMarkerCharEnd());
 			if (mistake != null) {
@@ -213,106 +195,120 @@ public class AssessmentViewController {
 			marker.setAttribute("end", endLine + 1);
 			marker.setAttribute("className", annotation.getClassFilePath());
 			marker.setAttribute("ratingGroup", mistake.getRatingGroupName());
-			// if (customMessage != null) {
-			// marker.setAttribute("customMessage", customMessage);
-			// }
-			// if (customPenalty != null) {
-			// marker.setAttribute("customPenalty", customPenalty);
-			// }
-			if (mistake != null) {
-				marker.setAttribute(IMarker.MESSAGE, AssessmentUtilities.createMarkerTooltip(startLine + 1, endLine + 1,
-						mistake.getButtonName(), mistake.getRatingGroupName(), mistake.getMessage()));
+			if (customMessage != null) {
+				marker.setAttribute("customMessage", customMessage);
 			}
-			// else {
-			// marker.setAttribute(IMarker.MESSAGE, AssessmentUtilities
-			// .createMarkerTooltipForCustomButton(startLine + 1, endLine + 1,
-			// customMessage, customPenalty));
-			// }
+			if (customPenalty != null) {
+				marker.setAttribute("customPenalty", customPenalty);
+			}
+			marker.setAttribute(IMarker.MESSAGE, AssessmentUtilities.createMarkerTooltip(startLine + 1, endLine + 1,
+					mistake.getButtonName(), mistake.getRatingGroupName(), mistake.getMessage()));
 		} catch (Exception e) {
-			e.printStackTrace();
+			this.alertObserver.error("Unable to create marker for given annotation:" + annotation.toString(), e);
 		}
 	}
 
-	public void reloadAssessment(int courseID, int exerciseID, int submissionID) {
-		this.assessmentController.deleteEclipseProject();
-		try {
-			this.artemisGUIController.downloadExerciseAndSubmission(courseID, exerciseID, submissionID);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	public Optional<Integer> startNextAssessment(int exerciseID, int correctionRound, int courseID) {
-		Optional<Integer> optSubmissionID = this.artemisGUIController.startNextAssessment(exerciseID, correctionRound);
-		if (optSubmissionID.isPresent()) {
-			this.artemisGUIController.downloadExerciseAndSubmission(courseID, exerciseID, optSubmissionID.get());
-		}
-		return optSubmissionID;
-	}
-
-	public void saveAssessment(int submissionID) {
-		try {
-			this.artemisGUIController.saveAssessment(submissionID, false, false);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
+	/**
+	 * @return true, if a new assessment is started, else false
+	 */
 	public boolean onStartAssessment() {
 		return this.systemwideController.startAssessment();
 	}
 
+	/**
+	 * @return the name of all courses
+	 */
 	public Collection<String> getCourseShortNames() {
 		return this.artemisGUIController.getCourseShortNames();
 	}
 
+	/**
+	 * @param courseName (selected course in the combo)
+	 * @return all exercises from the given course
+	 */
 	public Collection<String> getExerciseShortNames(String courseName) {
 		return this.systemwideController.setCourseIdAndGetExerciseShortNames(courseName);
 	}
 
+	/**
+	 * reloads the current assessment and creates the marker for the given
+	 * annotations
+	 */
 	public void onReloadAssessment() {
 		this.systemwideController.reloadAssessment();
 		this.getAnnotations().forEach(this::createMarkerForAnnotation);
 	}
 
+	/**
+	 * Saves the current assessment
+	 */
 	public void onSaveAssessment() {
 		this.systemwideController.saveAssessment();
 	}
 
+	/**
+	 * Submits the current assessment
+	 */
 	public void onSubmitAssessment() {
 		this.systemwideController.submitAssessment();
 	}
 
+	/**
+	 * Starts the first correction round of an exam
+	 */
 	public void onStartCorrectionRound1() {
 		this.systemwideController.startCorrectionRound1();
 	}
 
+	/**
+	 * Starts the second correction round of an exam
+	 */
 	public void onStartCorrectionRound2() {
 		this.systemwideController.startCorrectionRound2();
 	}
 
+	/**
+	 * Sets the exercise ID of the selected exercise
+	 * 
+	 * @param exerciseShortName (of the selected exercise in the combo)
+	 */
 	public void setExerciseID(String exerciseShortName) {
 		this.systemwideController.setExerciseId(exerciseShortName);
 	}
 
+	/**
+	 * @param courseTitle (of the selected course in the combo)
+	 * @return all exams of the given course
+	 */
 	public Collection<String> getExamShortNames(String courseTitle) {
 		return this.artemisGUIController.getExamTitles(courseTitle);
 	}
 
+	/**
+	 * @param examShortName (of the selected exam in the combo)
+	 * @return all exercises of the given exam
+	 */
 	public Collection<String> getExercisesShortNamesForExam(String examShortName) {
 		return this.artemisGUIController.getExerciseShortNamesFromExam(examShortName);
 	}
 
+	/**
+	 * @return all submissions for the given filter
+	 */
 	public Collection<String> getSubmissionsForBacklog() {
 		return this.systemwideController.getBegunSubmissionsProjectNames(Filter.ALL);
 	}
 
+	/**
+	 * Loads the selected assessment from the backlog combo
+	 */
 	public void onLoadAgain() {
 		this.systemwideController.loadAgain();
 	}
 
+	/**
+	 * @param projectName (of the selected assessment)
+	 */
 	public void setAssessedSubmission(String projectName) {
 		this.systemwideController.setAssessedSubmissionByProjectName(projectName);
 	}

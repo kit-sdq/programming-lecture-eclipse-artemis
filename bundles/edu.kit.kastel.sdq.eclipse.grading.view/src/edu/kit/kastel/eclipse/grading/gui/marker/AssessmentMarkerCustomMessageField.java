@@ -1,8 +1,14 @@
-package gui.marker;
+package edu.kit.kastel.eclipse.grading.gui.marker;
 
 import org.eclipse.ui.views.markers.MarkerField;
 import org.eclipse.ui.views.markers.MarkerItem;
 
+/**
+ * Class of the custom message field in the marker view
+ * 
+ * @See {@link MarkerField}
+ *
+ */
 public class AssessmentMarkerCustomMessageField extends MarkerField {
 
 	@Override

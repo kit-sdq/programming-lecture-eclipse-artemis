@@ -1,13 +1,10 @@
-package gui.artemis.grading;
+package edu.kit.kastel.eclipse.grading.gui.assessment.view;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.core.resources.IResourceChangeEvent;
-import org.eclipse.core.resources.IResourceChangeListener;
-import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.layout.GridData;
@@ -16,77 +13,67 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.part.ViewPart;
 
+import edu.kit.kastel.eclipse.grading.gui.controllers.AssessmentViewController;
+import edu.kit.kastel.eclipse.grading.gui.utilities.AssessmentUtilities;
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IMistakeType;
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IRatingGroup;
-import gui.controllers.AssessmentViewController;
-import gui.utilities.AssessmentUtilities;
 
+/**
+ * This class creates the view elements for the artemis grading process. It is
+ * build as a tab folder with four tabs grading, assessment, exam and backlog.
+ * 
+ * @see {@link ViewPart}
+ *
+ */
 public class ArtemisGradingView extends ViewPart {
 
 	private final AssessmentViewController viewController;
 	private Map<String, Group> ratingGroupViewElements;
-	private final String MARKER_NAME = "gui.assessment.marker";
-	private HashMap<String, Button> mistakeButtons;
+	private Map<String, Button> mistakeButtons;
 	private ScrolledComposite scrolledComposite_grading;
 	private Composite gradingComposite;
-	private boolean created;
 
 	public ArtemisGradingView() {
 		this.viewController = new AssessmentViewController();
 		this.ratingGroupViewElements = new HashMap<String, Group>();
 		this.mistakeButtons = new HashMap<String, Button>();
 		this.addListenerForMarkerDeletion();
-		this.created = false;
 	}
 
 	private void addListenerForMarkerDeletion() {
-		IWorkspace workspace = AssessmentUtilities.getWorkspace();
-		IResourceChangeListener listener = new IResourceChangeListener() {
-
-			@Override
-			public void resourceChanged(IResourceChangeEvent event) {
-				Arrays.asList(event.findMarkerDeltas(ArtemisGradingView.this.MARKER_NAME, true)).forEach(marker -> {
-					if (marker.getKind() == 2) {
-						ArtemisGradingView.this.viewController.deleteAnnotation(marker.getId());
-						ArtemisGradingView.this.updatePenalties();
-					}
-				});
-
-			}
-
-		};
-
-		workspace.addResourceChangeListener(listener);
+		AssessmentUtilities.getWorkspace().addResourceChangeListener(event -> {
+			Arrays.asList(event.findMarkerDeltas(AssessmentUtilities.MARKER_NAME, true)).forEach(marker -> {
+				// check if marker is deleted
+				if (marker.getKind() == 2) {
+					this.viewController.deleteAnnotation(marker.getId());
+					this.updatePenalties();
+				}
+			});
+		});
 	}
 
 	private void createCustomButton(IRatingGroup ratingGroup, Group rgDisplay, Composite parent) {
 		final Button customButton = new Button(rgDisplay, SWT.PUSH);
 		customButton.setText("Custom");
-		customButton.addListener(SWT.Selection, new Listener() {
-
-			@Override
-			public void handleEvent(Event event) {
-				final CustomButtonDialog customDialog = new CustomButtonDialog(AssessmentUtilities.getWindowsShell(),
-						ArtemisGradingView.this.viewController, ratingGroup.getDisplayName(), rgDisplay);
-				customDialog.setBlockOnOpen(true);
-				customDialog.open();
-				Display.getDefault()
-						.asyncExec(() -> ArtemisGradingView.this.updatePenalties(ratingGroup.getDisplayName(), false));
-			}
+		customButton.addListener(SWT.Selection, event -> {
+			final CustomButtonDialog customDialog = new CustomButtonDialog(AssessmentUtilities.getWindowsShell(),
+					this.viewController, ratingGroup.getDisplayName(), rgDisplay);
+			customDialog.setBlockOnOpen(true);
+			customDialog.open();
+			// avoid SWT Exception
+			Display.getDefault().asyncExec(() -> this.updatePenalty(ratingGroup.getDisplayName()));
 		});
 	}
 
 	private void updatePenalties() {
 		this.viewController.getRatingGroups().forEach(ratingGroup -> {
-			this.updatePenalties(ratingGroup.getDisplayName(), false);
+			this.updatePenalty(ratingGroup.getDisplayName());
 		});
 	}
 
@@ -101,34 +88,31 @@ public class ArtemisGradingView extends ViewPart {
 	}
 
 	private void createAssessmentViewElements() {
-		this.created = true;
-		this.viewController.createAssessmentController();
+		this.gradingComposite.dispose();
+		this.scrolledComposite_grading.setContent(null);
+		this.gradingComposite = new Composite(this.scrolledComposite_grading, SWT.NONE);
+		this.viewController.setCurrentAssessmentController();
 		this.gradingComposite.setLayout(new GridLayout(3, true));
 		this.viewController.getRatingGroups().forEach(element -> {
 			final Group rgDisplay = new Group(this.gradingComposite, SWT.NONE);
 			this.ratingGroupViewElements.put(element.getDisplayName(), rgDisplay);
-			this.updatePenalties(element.getDisplayName(), false);
+			this.updatePenalty(element.getDisplayName());
 			final GridLayout gridLayout = new GridLayout();
 			gridLayout.numColumns = 3;
 			rgDisplay.setLayout(gridLayout);
 			final GridData gridData = new GridData(GridData.VERTICAL_ALIGN_FILL);
 			gridData.horizontalSpan = 3;
 			rgDisplay.setLayoutData(gridData);
-			this.viewController.getMistakeTypesForButtonView().forEach(mistake -> {
+			this.viewController.getMistakeTypes().forEach(mistake -> {
 				if (mistake.getRatingGroup().getDisplayName().equals(element.getDisplayName())) {
 					final Button mistakeButton = new Button(rgDisplay, SWT.PUSH);
 					mistakeButton.setText(mistake.getButtonName());
 					this.mistakeButtons.put(mistake.getButtonName(), mistakeButton);
 					mistakeButton.setToolTipText(this.viewController.getToolTipForMistakeType(mistake));
-					mistakeButton.addListener(SWT.Selection, new Listener() {
-
-						@Override
-						public void handleEvent(Event event) {
-							ArtemisGradingView.this.viewController.addAssessmentAnnotaion(mistake, null, null,
-									mistake.getRatingGroupName());
-							ArtemisGradingView.this.updatePenalties(mistake.getRatingGroupName(), false);
-							ArtemisGradingView.this.updateMistakeButtonToolTips(mistake);
-						}
+					mistakeButton.addListener(SWT.Selection, event -> {
+						this.viewController.addAssessmentAnnotaion(mistake, null, null, mistake.getRatingGroupName());
+						this.updatePenalty(mistake.getRatingGroupName());
+						this.updateMistakeButtonToolTips(mistake);
 					});
 				}
 			});
@@ -145,12 +129,12 @@ public class ArtemisGradingView extends ViewPart {
 		}
 	}
 
-	protected void updatePenalties(String ratingGroupName, boolean reset) {
+	private void updatePenalty(String ratingGroupName) {
 		Group viewElement = this.ratingGroupViewElements.get(ratingGroupName);
 		IRatingGroup ratingGroup = this.findRatingGroup(ratingGroupName);
 		StringBuilder builder = new StringBuilder(ratingGroupName);
 		builder.append("(");
-		builder.append(reset ? 0 : this.viewController.getCurrentPenaltyForRatingGroup(ratingGroup));
+		builder.append(this.viewController.getCurrentPenaltyForRatingGroup(ratingGroup));
 		if (ratingGroup.hasPenaltyLimit()) {
 			builder.append("/");
 			builder.append(ratingGroup.getPenaltyLimit());
@@ -178,70 +162,52 @@ public class ArtemisGradingView extends ViewPart {
 
 	private void generateLayout(Composite parent) {
 		TabFolder tabFolder = new TabFolder(parent, SWT.NONE);
+		this.createGradingTab(tabFolder);
+		this.createAssessmentTab(tabFolder);
+		this.createExamTab(tabFolder);
+		this.createBacklogTab(tabFolder);
 
-		TabItem gradingTabItem = new TabItem(tabFolder, SWT.NONE);
-		gradingTabItem.setText("Grading");
+	}
 
-		this.scrolledComposite_grading = new ScrolledComposite(tabFolder, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
-		gradingTabItem.setControl(this.scrolledComposite_grading);
-		this.scrolledComposite_grading.setExpandHorizontal(true);
-		this.scrolledComposite_grading.setExpandVertical(true);
+	private void createBacklogTab(TabFolder tabFolder) {
+		TabItem backlogTabItem = new TabItem(tabFolder, SWT.NONE);
+		backlogTabItem.setText("Backlog");
 
-		this.gradingComposite = new Composite(this.scrolledComposite_grading, SWT.NONE);
-		this.scrolledComposite_grading.setContent(this.gradingComposite);
-		this.scrolledComposite_grading.setMinSize(this.gradingComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-
-		TabItem assessmentTabItem = new TabItem(tabFolder, SWT.NONE);
-		assessmentTabItem.setText("Assessment");
-
-		ScrolledComposite scrolledComposite_assessment = new ScrolledComposite(tabFolder,
+		ScrolledComposite scrolledComposite_backlog = new ScrolledComposite(tabFolder,
 				SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
-		assessmentTabItem.setControl(scrolledComposite_assessment);
-		scrolledComposite_assessment.setExpandHorizontal(true);
-		scrolledComposite_assessment.setExpandVertical(true);
+		backlogTabItem.setControl(scrolledComposite_backlog);
+		scrolledComposite_backlog.setExpandHorizontal(true);
+		scrolledComposite_backlog.setExpandVertical(true);
 
-		Composite assessmentComposite = new Composite(scrolledComposite_assessment, SWT.NONE);
-		assessmentComposite.setLayout(new GridLayout(2, false));
+		Composite backlogComposite = new Composite(scrolledComposite_backlog, SWT.NONE);
+		backlogComposite.setLayout(new GridLayout(2, false));
 
-		Label courseLabel = new Label(assessmentComposite, SWT.NONE);
-		courseLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		courseLabel.setText("Course");
+		Label lblSubmitted = new Label(backlogComposite, SWT.NONE);
+		lblSubmitted.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblSubmitted.setText("Submitted");
 
-		Combo courseCombo = new Combo(assessmentComposite, SWT.READ_ONLY);
-		courseCombo.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
+		Combo backlogCombo = new Combo(backlogComposite, SWT.READ_ONLY);
+		GridData gd_combo_4 = new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1);
+		gd_combo_4.widthHint = 152;
+		backlogCombo.setLayoutData(gd_combo_4);
 
-		Label exerciseLabel = new Label(assessmentComposite, SWT.NONE);
-		exerciseLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		exerciseLabel.setText("Exercise");
+		this.initializeBacklogCombo(backlogCombo);
 
-		Combo exerciseCombo = new Combo(assessmentComposite, SWT.READ_ONLY);
-		exerciseCombo.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
+		Button refreshButton = new Button(backlogComposite, SWT.NONE);
+		refreshButton.setText("Refresh Submitted");
 
-		this.createCourseListForAssessmentTabItem(courseCombo, exerciseCombo);
+		this.addSelectionListenerForRefreshButton(refreshButton, backlogCombo);
 
-		Button btnStartAssessment = new Button(assessmentComposite, SWT.NONE);
-		btnStartAssessment.setText("Start");
+		Button btnLoadAgain = new Button(backlogComposite, SWT.NONE);
+		btnLoadAgain.setText("Load again");
 
-		this.addSelectionListenerForStartAssessmentButton(btnStartAssessment);
+		this.addSelectionListenerForLoadFromBacklogButton(btnLoadAgain);
 
-		Button btnReloadA = new Button(assessmentComposite, SWT.NONE);
-		btnReloadA.setText("Reload");
+		scrolledComposite_backlog.setContent(backlogComposite);
+		scrolledComposite_backlog.setMinSize(backlogComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+	}
 
-		this.addSelectionListenerForReloadButton(btnReloadA);
-
-		Button btnSaveAssessment = new Button(assessmentComposite, SWT.NONE);
-		btnSaveAssessment.setText("Save ");
-
-		this.addSelectionListenerForSaveButton(btnSaveAssessment);
-
-		Button btnSubmitAssessment = new Button(assessmentComposite, SWT.NONE);
-		btnSubmitAssessment.setText("Submit");
-
-		this.addSelectionListenerForSubmitButton(btnSubmitAssessment);
-
-		scrolledComposite_assessment.setContent(assessmentComposite);
-		scrolledComposite_assessment.setMinSize(assessmentComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-
+	private void createExamTab(TabFolder tabFolder) {
 		TabItem tbtmExam = new TabItem(tabFolder, SWT.NONE);
 		tbtmExam.setText("Exam");
 
@@ -304,43 +270,73 @@ public class ArtemisGradingView extends ViewPart {
 
 		scrolledComposite_exam.setContent(examComposite);
 		scrolledComposite_exam.setMinSize(examComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+	}
 
-		TabItem backlogTabItem = new TabItem(tabFolder, SWT.NONE);
-		backlogTabItem.setText("Backlog");
+	private void createAssessmentTab(TabFolder tabFolder) {
+		TabItem assessmentTabItem = new TabItem(tabFolder, SWT.NONE);
+		assessmentTabItem.setText("Assessment");
 
-		ScrolledComposite scrolledComposite_backlog = new ScrolledComposite(tabFolder,
+		ScrolledComposite scrolledComposite_assessment = new ScrolledComposite(tabFolder,
 				SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
-		backlogTabItem.setControl(scrolledComposite_backlog);
-		scrolledComposite_backlog.setExpandHorizontal(true);
-		scrolledComposite_backlog.setExpandVertical(true);
+		assessmentTabItem.setControl(scrolledComposite_assessment);
+		scrolledComposite_assessment.setExpandHorizontal(true);
+		scrolledComposite_assessment.setExpandVertical(true);
 
-		Composite backlogComposite = new Composite(scrolledComposite_backlog, SWT.NONE);
-		backlogComposite.setLayout(new GridLayout(2, false));
+		Composite assessmentComposite = new Composite(scrolledComposite_assessment, SWT.NONE);
+		assessmentComposite.setLayout(new GridLayout(2, false));
 
-		Label lblSubmitted = new Label(backlogComposite, SWT.NONE);
-		lblSubmitted.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblSubmitted.setText("Submitted");
+		Label courseLabel = new Label(assessmentComposite, SWT.NONE);
+		courseLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		courseLabel.setText("Course");
 
-		Combo backlogCombo = new Combo(backlogComposite, SWT.READ_ONLY);
-		GridData gd_combo_4 = new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1);
-		gd_combo_4.widthHint = 152;
-		backlogCombo.setLayoutData(gd_combo_4);
+		Combo courseCombo = new Combo(assessmentComposite, SWT.READ_ONLY);
+		courseCombo.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
 
-		this.initializeBacklogCombo(backlogCombo);
+		Label exerciseLabel = new Label(assessmentComposite, SWT.NONE);
+		exerciseLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		exerciseLabel.setText("Exercise");
 
-		Button refreshButton = new Button(backlogComposite, SWT.NONE);
-		refreshButton.setText("Refresh Submitted");
+		Combo exerciseCombo = new Combo(assessmentComposite, SWT.READ_ONLY);
+		exerciseCombo.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
 
-		this.addSelectionListenerForRefreshButton(refreshButton, backlogCombo);
+		this.createCourseListForAssessmentTabItem(courseCombo, exerciseCombo);
 
-		Button btnLoadAgain = new Button(backlogComposite, SWT.NONE);
-		btnLoadAgain.setText("Load again");
+		Button btnStartAssessment = new Button(assessmentComposite, SWT.NONE);
+		btnStartAssessment.setText("Start");
 
-		this.addSelectionListenerForLoadFromBacklogButton(btnLoadAgain);
+		this.addSelectionListenerForStartAssessmentButton(btnStartAssessment);
 
-		scrolledComposite_backlog.setContent(backlogComposite);
-		scrolledComposite_backlog.setMinSize(backlogComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+		Button btnReloadA = new Button(assessmentComposite, SWT.NONE);
+		btnReloadA.setText("Reload");
 
+		this.addSelectionListenerForReloadButton(btnReloadA);
+
+		Button btnSaveAssessment = new Button(assessmentComposite, SWT.NONE);
+		btnSaveAssessment.setText("Save ");
+
+		this.addSelectionListenerForSaveButton(btnSaveAssessment);
+
+		Button btnSubmitAssessment = new Button(assessmentComposite, SWT.NONE);
+		btnSubmitAssessment.setText("Submit");
+
+		this.addSelectionListenerForSubmitButton(btnSubmitAssessment);
+
+		scrolledComposite_assessment.setContent(assessmentComposite);
+		scrolledComposite_assessment.setMinSize(assessmentComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+	}
+
+	private void createGradingTab(TabFolder tabFolder) {
+		TabItem gradingTabItem = new TabItem(tabFolder, SWT.NONE);
+		gradingTabItem.setText("Grading");
+
+		this.scrolledComposite_grading = new ScrolledComposite(tabFolder, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+		gradingTabItem.setControl(this.scrolledComposite_grading);
+		this.scrolledComposite_grading.setExpandHorizontal(true);
+		this.scrolledComposite_grading.setExpandVertical(true);
+
+		this.gradingComposite = new Composite(this.scrolledComposite_grading, SWT.NONE);
+		this.scrolledComposite_grading.setContent(this.gradingComposite);
+		this.scrolledComposite_grading.setMinSize(this.gradingComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 	}
 
 	private void addSelectionListenerForRefreshButton(Button refreshButton, Combo backlogCombo) {
@@ -432,8 +428,7 @@ public class ArtemisGradingView extends ViewPart {
 	private void addSelectionListenerForStartAssessmentButton(Button startAssessmentButton) {
 		startAssessmentButton.addListener(SWT.Selection, e -> {
 			boolean started = this.viewController.onStartAssessment();
-			// TODO: clean up and new generation
-			if (started && !this.created) {
+			if (started) {
 				this.createAssessmentViewElements();
 				this.prepareNewAssessment();
 			}
@@ -454,13 +449,9 @@ public class ArtemisGradingView extends ViewPart {
 	}
 
 	private void prepareNewAssessment() {
-		this.loadAnnotationMarkers();
-		this.viewController.getRatingGroups().forEach(ratingGroup -> {
-			this.updatePenalties(ratingGroup.getDisplayName(), false);
-		});
-	}
-
-	private void loadAnnotationMarkers() {
 		this.viewController.createAnnotationsMarkers();
+		this.viewController.getRatingGroups().forEach(ratingGroup -> {
+			this.updatePenalty(ratingGroup.getDisplayName());
+		});
 	}
 }

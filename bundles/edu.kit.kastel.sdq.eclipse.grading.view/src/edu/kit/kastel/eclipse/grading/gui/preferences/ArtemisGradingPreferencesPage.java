@@ -1,15 +1,13 @@
-package gui.preferences;
+package edu.kit.kastel.eclipse.grading.gui.preferences;
 
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.FileFieldEditor;
 import org.eclipse.jface.preference.StringFieldEditor;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
-import gui.activator.Activator;
+import edu.kit.kastel.eclipse.grading.gui.activator.Activator;
 
 /**
  * This class represents a preference page that is contributed to the
@@ -20,6 +18,7 @@ import gui.activator.Activator;
  * This page is used to modify preferences only. They are stored in the
  * preference store that belongs to the main plug-in class. That way,
  * preferences can be accessed directly via the preference store.
+ * <p>
  */
 
 public class ArtemisGradingPreferencesPage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
@@ -91,24 +90,14 @@ public class ArtemisGradingPreferencesPage extends FieldEditorPreferencePage imp
 	protected void initialize() {
 		super.initialize();
 		this.relativeConfigPath.setEnabled(false, this.getFieldEditorParent());
-		this.isRelativeConfigPath.setPropertyChangeListener(new IPropertyChangeListener() {
-
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-
-				final boolean isRelative = ((Boolean) event.getNewValue()).booleanValue();
-				if (isRelative) {
-					ArtemisGradingPreferencesPage.this.relativeConfigPath.setEnabled(true,
-							ArtemisGradingPreferencesPage.this.getFieldEditorParent());
-					ArtemisGradingPreferencesPage.this.absoluteConfigPath.setEnabled(false,
-							ArtemisGradingPreferencesPage.this.getFieldEditorParent());
-				} else {
-					ArtemisGradingPreferencesPage.this.relativeConfigPath.setEnabled(false,
-							ArtemisGradingPreferencesPage.this.getFieldEditorParent());
-					ArtemisGradingPreferencesPage.this.absoluteConfigPath.setEnabled(true,
-							ArtemisGradingPreferencesPage.this.getFieldEditorParent());
-				}
-
+		this.isRelativeConfigPath.setPropertyChangeListener(event -> {
+			final boolean isRelative = ((Boolean) event.getNewValue()).booleanValue();
+			if (isRelative) {
+				this.relativeConfigPath.setEnabled(true, this.getFieldEditorParent());
+				this.absoluteConfigPath.setEnabled(false, this.getFieldEditorParent());
+			} else {
+				this.relativeConfigPath.setEnabled(false, this.getFieldEditorParent());
+				this.absoluteConfigPath.setEnabled(true, this.getFieldEditorParent());
 			}
 		});
 

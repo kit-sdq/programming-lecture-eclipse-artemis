@@ -1,9 +1,9 @@
-package gui.preferences;
+package edu.kit.kastel.eclipse.grading.gui.preferences;
 
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
 
-import gui.activator.Activator;
+import edu.kit.kastel.eclipse.grading.gui.activator.Activator;
 
 /**
  * Class used to initialize default preference values.

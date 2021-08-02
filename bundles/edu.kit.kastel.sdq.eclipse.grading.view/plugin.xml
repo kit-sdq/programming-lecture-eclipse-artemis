@@ -3,34 +3,6 @@
 <plugin>
 
    <extension
-         point="org.eclipse.ui.commands">
-      <category
-            id="gui.commands.category"
-            name="Sample Category">
-      </category>
-      <command
-            categoryId="gui.commands.category"
-            name="Sample Command"
-            id="gui.commands.sampleCommand">
-      </command>
-   </extension>
-   <extension
-         point="org.eclipse.ui.handlers">
-      <handler
-            class="gui.handlers.SampleHandler"
-            commandId="gui.commands.sampleCommand">
-      </handler>
-   </extension>
-   <extension
-         point="org.eclipse.ui.bindings">
-      <key
-            commandId="gui.commands.sampleCommand"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            contextId="org.eclipse.ui.contexts.window"
-            sequence="M1+6">
-      </key>
-   </extension>
-   <extension
          id="gui.assessment.marker"
          name="Assessment Marker"
          point="org.eclipse.core.resources.markers">
@@ -93,13 +65,13 @@
    <extension
          point="org.eclipse.ui.views">
       <view
-            class="gui.marker.AssessmentMarkerView"
+            class="edu.kit.kastel.eclipse.grading.gui.marker.AssessmentMarkerView"
             id="gui.annotaion.marker.view"
             name="Assessment Annotations"
             restorable="true">
       </view>
       <view
-            class="gui.artemis.grading.ArtemisGradingView"
+            class="edu.kit.kastel.eclipse.grading.gui.assessment.view.ArtemisGradingView"
             id="gui.button.selection.view"
             name="Artemis Grading"
             restorable="true">
@@ -138,37 +110,37 @@
          </markerFieldReference>
       </markerContentGenerator>
       <markerField
-            class="gui.marker.AssessmentMarkerPositionField"
+            class="edu.kit.kastel.eclipse.grading.gui.marker.AssessmentMarkerPositionField"
             id="gui.markerPositionField"
             name="Position">
       </markerField>
       <markerField
-            class="gui.marker.AssessmentRatingGroupField"
+            class="edu.kit.kastel.eclipse.grading.gui.marker.AssessmentRatingGroupField"
             id="gui.marker.ratingGroupField"
             name="Rating Group ">
       </markerField>
       <markerField
-            class="gui.marker.AssessmentErrorTypeField"
+            class="edu.kit.kastel.eclipse.grading.gui.marker.AssessmentErrorTypeField"
             id="gui.markerErrorTypeField"
             name="Error Type">
       </markerField>
       <markerField
-            class="gui.marker.AssessmentErrorTypeDescriptionField"
+            class="edu.kit.kastel.eclipse.grading.gui.marker.AssessmentErrorTypeDescriptionField"
             id="gui.marker.customErrorTypeDescription"
             name="Error Type Description">
       </markerField>
       <markerField
-            class="gui.marker.AssessmentMarkerCustomMessageField"
+            class="edu.kit.kastel.eclipse.grading.gui.marker.AssessmentMarkerCustomMessageField"
             id="gui.marker.customMessageField"
             name="Custom Message">
       </markerField>
       <markerField
-            class="gui.marker.AssessmentMarkerClassNameField"
+            class="edu.kit.kastel.eclipse.grading.gui.marker.AssessmentMarkerClassNameField"
             id="gui.marker.className"
             name="Class Name">
       </markerField>
       <markerField
-            class="gui.marker.AssessmentMarkerCustomPenalyField"
+            class="edu.kit.kastel.eclipse.grading.gui.marker.AssessmentMarkerCustomPenalyField"
             id="gui.marker.customPenalty"
             name="Custom Penalty">
       </markerField>
@@ -176,7 +148,7 @@
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
-            class="gui.preferences.ArtemisGradingPreferencesPage"
+            class="edu.kit.kastel.eclipse.grading.gui.preferences.ArtemisGradingPreferencesPage"
             id="gui.preferences.SamplePreferencePage"
             name="Artemis Grading">
       </page>
@@ -185,7 +157,7 @@
          name="Artemis Grading"
          point="org.eclipse.core.runtime.preferences">
       <initializer
-            class="gui.preferences.PreferenceInitializer">
+            class="edu.kit.kastel.eclipse.grading.gui.preferences.PreferenceInitializer">
       </initializer>
    </extension>
 
