@@ -1,10 +1,8 @@
 package edu.kit.kastel.eclipse.grading.gui.controllers;
 
-import java.io.File;
 import java.util.Collection;
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.ITextSelection;
 
 import edu.kit.kastel.eclipse.grading.gui.activator.Activator;
@@ -14,7 +12,6 @@ import edu.kit.kastel.eclipse.grading.gui.utilities.AssessmentUtilities;
 import edu.kit.kastel.sdq.eclipse.grading.api.IArtemisGUIController;
 import edu.kit.kastel.sdq.eclipse.grading.api.IAssessmentController;
 import edu.kit.kastel.sdq.eclipse.grading.api.ISystemwideController;
-import edu.kit.kastel.sdq.eclipse.grading.api.PreferenceConstants;
 import edu.kit.kastel.sdq.eclipse.grading.api.alerts.IAlertObserver;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ICourse;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission.Filter;
@@ -38,12 +35,7 @@ public class AssessmentViewController {
 	private IAlertObserver alertObserver;
 
 	public AssessmentViewController() {
-		final IPreferenceStore store = Activator.getDefault().getPreferenceStore();
-		this.systemwideController = new SystemwideController(
-				new File(store.getString(PreferenceConstants.P_ABSOLUTE_CONFIG_PATH)),
-				store.getString(PreferenceConstants.P_CONFIG_NAME), store.getString(PreferenceConstants.P_ARTEMIS_URL),
-				store.getString(PreferenceConstants.P_ARTEMIS_USER),
-				store.getString(PreferenceConstants.P_ARTEMIS_PASSWORD));
+		this.systemwideController = new SystemwideController(Activator.getDefault().getPreferenceStore());
 		this.alertObserver = new ViewAlertObserver();
 		this.artemisGUIController = this.systemwideController.getArtemisGUIController();
 		this.systemwideController.getAlertObservable().addAlertObserver(this.alertObserver);
@@ -311,6 +303,10 @@ public class AssessmentViewController {
 	 */
 	public void setAssessedSubmission(String projectName) {
 		this.systemwideController.setAssessedSubmissionByProjectName(projectName);
+	}
+
+	public IRatingGroup getRatingGroupByShortName(String name) {
+		return this.assessmentController.getRatingGroupByShortName(name);
 	}
 
 }

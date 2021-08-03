@@ -1,6 +1,5 @@
 package edu.kit.kastel.eclipse.grading.gui.assessment.view;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -82,7 +81,7 @@ public class ArtemisGradingView extends ViewPart {
 				e -> this.viewController.setExerciseID(exerciseList.getItem(exerciseList.getSelectionIndex())));
 	}
 
-	private void createAssessmentViewElements() {
+	private void createGradingViewElements() {
 		this.gradingComposite.dispose();
 		this.scrolledCompositeGrading.setContent(null);
 		this.gradingComposite = new Composite(this.scrolledCompositeGrading, SWT.NONE);
@@ -126,7 +125,10 @@ public class ArtemisGradingView extends ViewPart {
 
 	private void updatePenalty(String ratingGroupName) {
 		Group viewElement = this.ratingGroupViewElements.get(ratingGroupName);
-		IRatingGroup ratingGroup = this.findRatingGroup(ratingGroupName);
+		IRatingGroup ratingGroup = this.viewController.getRatingGroupByShortName(ratingGroupName);
+		if (ratingGroup == null) {
+			return;
+		}
 		StringBuilder builder = new StringBuilder(ratingGroupName);
 		builder.append("(");
 		builder.append(this.viewController.getCurrentPenaltyForRatingGroup(ratingGroup));
@@ -138,22 +140,12 @@ public class ArtemisGradingView extends ViewPart {
 		Display.getDefault().asyncExec(() -> viewElement.setText(builder.toString()));
 	}
 
-	private IRatingGroup findRatingGroup(String ratingGroupName) {
-		for (int i = 0; i < this.viewController.getRatingGroups().size(); i++) {
-			if (((ArrayList<IRatingGroup>) this.viewController.getRatingGroups()).get(i).getDisplayName()
-					.equals(ratingGroupName)) {
-				return ((ArrayList<IRatingGroup>) this.viewController.getRatingGroups()).get(i);
-			}
-		}
-		return null;
-	}
-
 	@Override
 	public void createPartControl(Composite parent) {
-		this.generateLayout(parent);
+		this.createView(parent);
 	}
 
-	private void generateLayout(Composite parent) {
+	private void createView(Composite parent) {
 		TabFolder tabFolder = new TabFolder(parent, SWT.NONE);
 		this.createGradingTab(tabFolder);
 		this.createAssessmentTab(tabFolder);
@@ -180,9 +172,9 @@ public class ArtemisGradingView extends ViewPart {
 		lblSubmitted.setText("Submitted");
 
 		Combo backlogCombo = new Combo(backlogComposite, SWT.READ_ONLY);
-		GridData gd_combo_4 = new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1);
-		gd_combo_4.widthHint = 152;
-		backlogCombo.setLayoutData(gd_combo_4);
+		GridData gdBacklogCombo = new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1);
+		gdBacklogCombo.widthHint = 152;
+		backlogCombo.setLayoutData(gdBacklogCombo);
 
 		this.initializeBacklogCombo(backlogCombo);
 
@@ -401,7 +393,7 @@ public class ArtemisGradingView extends ViewPart {
 		startAssessmentButton.addListener(SWT.Selection, e -> {
 			boolean started = this.viewController.onStartAssessment();
 			if (started) {
-				this.createAssessmentViewElements();
+				this.createGradingViewElements();
 				this.prepareNewAssessment();
 			}
 		});
