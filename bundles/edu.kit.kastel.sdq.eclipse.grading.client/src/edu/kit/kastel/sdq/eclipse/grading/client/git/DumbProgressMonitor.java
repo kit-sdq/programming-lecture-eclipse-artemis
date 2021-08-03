@@ -2,6 +2,11 @@ package edu.kit.kastel.sdq.eclipse.grading.client.git;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
+/**
+ * Still required for git
+ * TODO silence it or introduce a Logger and put out FINEST msgs instead of sysout-ing
+ *
+ */
 public class DumbProgressMonitor implements IProgressMonitor {
 
 	private boolean isCancelled = false;

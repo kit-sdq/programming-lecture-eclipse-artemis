@@ -9,6 +9,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IFeedback;
 
+/**
+ * Used for deserializing assessmentResults in lock calls into feedbacks.
+ */
 public class LockCallAssessmentResult {
 
 	private Collection<Feedback> feedbacks;

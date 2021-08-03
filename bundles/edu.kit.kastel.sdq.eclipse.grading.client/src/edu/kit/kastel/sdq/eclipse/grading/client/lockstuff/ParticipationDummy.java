@@ -4,9 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * Only used for deserializing LockResult (retrieving participationID).
- * @author Robin
- *
+ * Only used for deserializing LockResult (retrieving participationID). Much like {@link ExerciseDummy}
  */
 public class ParticipationDummy {
 
