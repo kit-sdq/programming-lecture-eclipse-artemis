@@ -3,7 +3,7 @@ package edu.kit.kastel.sdq.eclipse.grading.client.git;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
- * Still required for git
+ * Still required for Egit
  * TODO silence it or introduce a Logger and put out FINEST msgs instead of sysout-ing
  *
  */
