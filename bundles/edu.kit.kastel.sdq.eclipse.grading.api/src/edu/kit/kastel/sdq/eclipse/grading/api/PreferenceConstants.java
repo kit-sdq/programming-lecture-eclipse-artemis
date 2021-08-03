@@ -1,4 +1,4 @@
-package edu.kit.kastel.eclipse.grading.gui.preferences;
+package edu.kit.kastel.sdq.eclipse.grading.api;
 
 /**
  * Constant definitions for plug-in preferences

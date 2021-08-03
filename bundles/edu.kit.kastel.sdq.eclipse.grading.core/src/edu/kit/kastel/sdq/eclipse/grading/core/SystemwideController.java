@@ -8,9 +8,12 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.eclipse.jface.preference.IPreferenceStore;
+
 import edu.kit.kastel.sdq.eclipse.grading.api.IArtemisGUIController;
 import edu.kit.kastel.sdq.eclipse.grading.api.IAssessmentController;
 import edu.kit.kastel.sdq.eclipse.grading.api.ISystemwideController;
+import edu.kit.kastel.sdq.eclipse.grading.api.PreferenceConstants;
 import edu.kit.kastel.sdq.eclipse.grading.api.alerts.IAlertObservable;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IProjectFileNamingStrategy;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ICourse;
@@ -40,14 +43,20 @@ public class SystemwideController implements ISystemwideController {
 
 	public SystemwideController(final File configFile, final String exerciseConfigName, final String artemisHost, final String username, final String password) {
 		this.setConfigFile(configFile);
-		this.exerciseConfigName = exerciseConfigName;
 		this.assessmentControllers = new HashMap<>();
-
 		this.alertObservable = new AlertObservable();
 
+		this.exerciseConfigName = exerciseConfigName;
 		this.artemisGUIController = new ArtemisGUIController(this, artemisHost, username, password);
+		this.projectFileNamingStrategy = new DefaultProjectFileNamingStrategy();		//TODO durch das ganze projekt durchreichen! NUR hier instanziieren!
+	}
 
-		this.projectFileNamingStrategy = new DefaultProjectFileNamingStrategy();
+	public SystemwideController(final IPreferenceStore preferenceStore) {
+		this(new File(preferenceStore.getString(PreferenceConstants.P_ABSOLUTE_CONFIG_PATH)),
+				preferenceStore.getString(PreferenceConstants.P_CONFIG_NAME),
+				preferenceStore.getString(PreferenceConstants.P_ARTEMIS_URL),
+				preferenceStore.getString(PreferenceConstants.P_ARTEMIS_USER),
+				preferenceStore.getString(PreferenceConstants.P_ARTEMIS_PASSWORD));
 	}
 
 	@Override
