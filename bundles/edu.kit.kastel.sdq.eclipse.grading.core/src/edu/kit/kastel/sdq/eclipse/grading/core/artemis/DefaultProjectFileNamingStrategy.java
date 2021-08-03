@@ -6,6 +6,13 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IProjectFileNamingStrategy
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
 
+/**
+ * A naming strategy that creates projects like this:
+ * <pre>
+ * exercise-${EXERCISE_ID}-${EXERCISE_SHORTNAME}_submission-${SUBMISSION_ID}-$PARTICIPANT_ID}
+ * </pre>
+ *
+ */
 public class DefaultProjectFileNamingStrategy implements IProjectFileNamingStrategy {
 
 	@Override

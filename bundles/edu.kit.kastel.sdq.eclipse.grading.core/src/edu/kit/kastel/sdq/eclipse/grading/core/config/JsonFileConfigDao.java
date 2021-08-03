@@ -8,6 +8,10 @@ import java.util.Collection;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+/**
+ * Implementation of {@link ConfigDao} using a json file.
+ *
+ */
 public class JsonFileConfigDao implements ConfigDao {
 
 	private File configFile;

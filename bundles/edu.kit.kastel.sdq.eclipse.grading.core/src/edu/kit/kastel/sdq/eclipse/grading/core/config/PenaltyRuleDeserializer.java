@@ -14,6 +14,7 @@ import edu.kit.kastel.sdq.eclipse.grading.core.model.ThresholdPenaltyRule;
 /**
  * Deserialize a PenaltyRule which is not trivial since PenaltyRule is abstract and its subclasses have individual constructor signatures.
  * Thus, this must be done manually.
+ * Penalty rule types are defined here (see {@link PenaltyRuleType}) and by extending {@link PenaltyRule} in the model package.
  *
  */
 public class PenaltyRuleDeserializer extends StdDeserializer<PenaltyRule> {

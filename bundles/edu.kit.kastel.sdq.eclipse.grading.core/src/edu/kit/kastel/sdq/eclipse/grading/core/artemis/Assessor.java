@@ -2,7 +2,7 @@ package edu.kit.kastel.sdq.eclipse.grading.core.artemis;
 
 /**
  * 
- * This is only used to construct a JSON Object to be sent as the assessment
+ * This is only used to construct a JSON Object to be sent as the assessment by the {@link AnnotationMapper}
  */
 public class Assessor {
 	private int id;

@@ -10,7 +10,7 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IFeedback;
 
 /**
  *
- * This is used to construct a JSON Object to be sent as the assessment
+ * This is used to construct a JSON Object to be transformed into sent as the assessment by the {@link AnnotationMapper}
  */
 @JsonInclude(Include.NON_NULL)
 public class AssessmentResult {

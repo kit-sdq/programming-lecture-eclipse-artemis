@@ -140,6 +140,7 @@ public class SystemwideController implements ISystemwideController {
 		return somethingNull;
 	}
 
+	@Override
 	public void onZeroPointsForAssessment() {
 		if (this.artemisGUIController.saveAssessment(this.submissionID, true, true)) {
 			this.getCurrentAssessmentController().deleteEclipseProject();

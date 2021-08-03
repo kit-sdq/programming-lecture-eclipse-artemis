@@ -8,6 +8,9 @@ import com.fasterxml.jackson.databind.util.StdConverter;
 import edu.kit.kastel.sdq.eclipse.grading.core.model.MistakeType;
 import edu.kit.kastel.sdq.eclipse.grading.core.model.RatingGroup;
 
+/**
+ * Used by {@link JsonFileConfigDao} to add rating Group - mistake type associations.
+ */
 public class ExerciseConfigConverter extends StdConverter<ExerciseConfig, ExerciseConfig> {
 
 	@Override

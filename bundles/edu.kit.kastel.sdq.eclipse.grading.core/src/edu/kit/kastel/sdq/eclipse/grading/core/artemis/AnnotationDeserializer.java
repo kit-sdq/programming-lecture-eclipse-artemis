@@ -30,6 +30,12 @@ public class AnnotationDeserializer {
 		this.mistakeTypes = mistakeTypes;
 	}
 
+	/**
+	 * Deserialize a given Collection of IFeedbacks (that contain json blobs in the detailText field) into our model Annotations.
+	 * @param feedbacks
+	 * @return
+	 * @throws JsonProcessingException if parsing the json blob fails.
+	 */
 	public Collection<IAnnotation> deserialize(Collection<IFeedback> feedbacks) throws JsonProcessingException {
 		final List<IFeedback> matchingFeedbacks = feedbacks.stream()
 				.filter(feedback -> {

@@ -64,6 +64,12 @@ public class WorkspaceUtil {
 		});
 	}
 
+	/**
+	 * Delete a given eclipse project via eclipse functionality and, thereafter, on the file system if anything is left.
+	 * @param projectName
+	 * @throws CoreException
+	 * @throws IOException
+	 */
 	public static final void deleteEclipseProject(final String projectName) throws CoreException, IOException {
 		final IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
 		File projectLocation =	project.getLocation().toFile();
@@ -75,6 +81,10 @@ public class WorkspaceUtil {
 		}
 	}
 
+	/**
+	 *
+	 * @return the current workspace as a file.
+	 */
 	public static final File getWorkspaceFile() {
 		return ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile();
 

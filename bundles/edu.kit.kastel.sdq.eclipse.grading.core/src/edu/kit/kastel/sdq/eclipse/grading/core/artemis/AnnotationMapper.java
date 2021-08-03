@@ -264,6 +264,23 @@ public class AnnotationMapper {
 				.filter(feedback -> feedback.getFeedbackType().equals(feedbackType)).collect(Collectors.toList());
 	}
 
+	/**
+	 * This transforms Annotations (in the context of the whole model, consisting of RatingGroupse, MistakteTypes etc) into a payload.
+	 * In the process, calculation is done, including
+	 * <ul>
+	 * 		<li> calculating the rating score based on our annotations and the previously existent (automatic) feedbacks (e.g. Unit test results)
+	 *		<li> creating per-annotation artemis-annotations ("Feedbacks") {@link FeedbackType#MANUAL}
+	 * 		<li> creating general artemis-annotations ("Feedbacks") {@link FeedbackType#MANUAL_UNREFERENCED}
+	 * 		<li> creating our own database by serializing our Java Annotations into HIDDEN {@link FeedbackType#MANUAL_UNREFERENCED} Feedbacks with
+	 * 		<ul>
+	 * 			<li> "CLIENT_DATA" in the <I>text</I> field, as an identifier
+	 * 			<li> the Java Annotations as json blob in the <I>detailText</I> field.
+	 * 		</ul>
+	 * </ul>
+	 *
+	 * @return a json-formatted string ready to be send as payload to the Client
+	 * @throws IOException
+	 */
 	public String mapToJsonFormattedString() throws IOException {
 		return new ObjectMapper()
 				.writeValueAsString(this.createAssessmentResult());

@@ -19,11 +19,20 @@ public class AlertObservable implements IAlertObservable {
 		this.observers.add(alertObserver);
 	}
 
+	/**
+	 * Alert all observers
+	 * @param errorMsg
+	 * @param cause
+	 */
 	void error(String errorMsg, Throwable cause) {
 		this.observers.forEach(observer -> observer.error(errorMsg, cause));
 		this.printToConsoleIfNoObserversRegistered(errorMsg, cause);
 	}
 
+	/**
+	 * Alert all observers
+	 * @param infoMsg
+	 */
 	void info(String infoMsg) {
 		this.observers.forEach(observer -> observer.info(infoMsg));
 		this.printToConsoleIfNoObserversRegistered(infoMsg, null);
@@ -43,6 +52,10 @@ public class AlertObservable implements IAlertObservable {
 		this.observers.remove(alertObserver);
 	}
 
+	/**
+	 * Alert all observers
+	 * @param warningMsg
+	 */
 	void warn(String warningMsg) {
 		this.observers.forEach(observer -> observer.warn(warningMsg));
 		this.printToConsoleIfNoObserversRegistered(warningMsg, null);

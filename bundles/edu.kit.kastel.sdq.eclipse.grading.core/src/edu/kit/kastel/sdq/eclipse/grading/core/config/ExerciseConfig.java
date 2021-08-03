@@ -12,6 +12,10 @@ import edu.kit.kastel.sdq.eclipse.grading.api.model.IRatingGroup;
 import edu.kit.kastel.sdq.eclipse.grading.core.model.MistakeType;
 import edu.kit.kastel.sdq.eclipse.grading.core.model.RatingGroup;
 
+/**
+ * A mapped config file (from {@link JsonFileConfigDao})
+ *
+ */
 @JsonDeserialize(converter = ExerciseConfigConverter.class) //used for adding associations between mistakeType and RatingGroup
 public class ExerciseConfig {
 

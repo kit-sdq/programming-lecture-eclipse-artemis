@@ -10,6 +10,11 @@ public class Util {
 		return String.format("%,.2f", d);
 	}
 
+	/**
+	 *
+	 * @param d
+	 * @return whether a double value is deemed as zero, by calculating "delta_to_zero < 0.001D"
+	 */
 	public static boolean isZero(double d) {
 		return  (0D + Math.abs(d)) < 0.001D;
 	}
