@@ -2,10 +2,11 @@ package edu.kit.kastel.sdq.eclipse.grading.api;
 
 public class ArtemisClientException extends Exception {
 
+
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -1022345135975530727L;
 
 	public ArtemisClientException(String message) {
 		super(message);

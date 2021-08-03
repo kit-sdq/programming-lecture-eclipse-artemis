@@ -14,6 +14,7 @@ package edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping;
  */
 public interface IFeedback {
 
+	//TODO Raus hier!
 	public enum FeedbackType {
 		MANUAL, MANUAL_UNREFERENCED, AUTOMATIC;
 
@@ -73,13 +74,13 @@ public interface IFeedback {
 	String getText();
 
 	/**
-	 *
+	 *	TODO check if removeable!
 	 * @return this Feedback's {@link FeedbackType}
 	 */
 	String getType();
 
 	/**
-	 *
+	 * TODO ggf enum draus machen!
 	 * @return not sure what. Unimportant for now.<br/>
 	 *  <b>null</b> for {@link FeedbackType#MANUAL} and {@link FeedbackType#MANUAL_UNREFERENCED}
 	 */

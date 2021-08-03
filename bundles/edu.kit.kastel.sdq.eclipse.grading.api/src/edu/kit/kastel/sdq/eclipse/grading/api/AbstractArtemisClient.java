@@ -86,6 +86,8 @@ public abstract class AbstractArtemisClient {
  * 							The participationID can be gotten from the {@link ILockResult}, via {@link #startAssessment(int)} or {@link #startNextAssessment(int, int)}!
  *   * @param submit determine whether the assessment should be submitted or just saved.
 	 * @param payload the payload formatted correctly.
+	 * TODO ISubmission statt ID
+	 * TODO Payload verstecken, irgendein Vorberechnungsergebnis
 	 */
 	public abstract void saveAssessment(int participationID, boolean submit, String payload) throws AuthenticationException;
 

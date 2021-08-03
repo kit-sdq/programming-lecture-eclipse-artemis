@@ -6,6 +6,7 @@ package edu.kit.kastel.sdq.eclipse.grading.api.model;
  *
  */
 public interface IRatingGroup {
+	//TODO hier getMistakeTypes ! transient oder sowas (?), nicht serialisiert!
 
 	/**
 	 *

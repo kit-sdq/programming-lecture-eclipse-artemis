@@ -11,6 +11,7 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IFeedback;
  */
 public interface ILockResult {
 
+	//TODO check if IExercise has that field, too!
 	double getMaxPoints();
 
 	/**

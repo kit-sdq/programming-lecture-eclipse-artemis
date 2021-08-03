@@ -107,6 +107,7 @@ public interface IAssessmentController {
 	void removeAnnotation(int annotationId);
 
 	/**
+	 * TODO requirements raus (?)
 	 * Reset annotations by reloading from Artemis state. You need to RE-LOCK, for this to have any effect!
 	 * Do so with {@link IArtemisGUIController#startAssessment(int)}, with this {@link IAssessmentController#getSubmissionID()} as param.
 	 */

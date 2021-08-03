@@ -5,6 +5,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 /**
  * Still required for Egit
  * TODO silence it or introduce a Logger and put out FINEST msgs instead of sysout-ing
+ * TODO NullProgressMonitor ?
  *
  */
 public class DumbProgressMonitor implements IProgressMonitor {

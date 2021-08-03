@@ -5,6 +5,7 @@ package edu.kit.kastel.sdq.eclipse.grading.api;
  */
 public class PreferenceConstants {
 
+	//TODO prefix P_ raus!
 	public static final String P_IS_RELATIVE_CONFIG_PATH = "isRelativeConfigPath";
 	public static final String P_ABSOLUTE_CONFIG_PATH = "absoluteConfigPath";
 	public static final String P_RELATIVE_CONFIG_PATH = "relativeConfigPath";

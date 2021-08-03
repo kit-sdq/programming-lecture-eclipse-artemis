@@ -10,6 +10,8 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IFeedback;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
 
+//TODO umbenennen in IArtemisController
+//TODO ggf in AssessmentController reinklatschen
 public interface IArtemisGUIController {
 
 	/**

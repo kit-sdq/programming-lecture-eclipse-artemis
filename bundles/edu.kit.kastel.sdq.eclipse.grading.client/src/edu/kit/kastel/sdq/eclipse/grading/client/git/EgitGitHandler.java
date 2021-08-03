@@ -15,6 +15,7 @@ public class EgitGitHandler extends AbstractGitHandler {
 		super(repoURL);
 	}
 
+	//TODO static evtl
 	@Override
 	public void cloneRepo(final File destination, final String branch) throws GitException {
 		// TODO this currently clones all branches. Sparse checkout might be better?!

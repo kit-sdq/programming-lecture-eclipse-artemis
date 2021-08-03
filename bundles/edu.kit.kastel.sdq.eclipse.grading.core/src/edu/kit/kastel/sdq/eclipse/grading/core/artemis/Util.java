@@ -3,7 +3,7 @@ package edu.kit.kastel.sdq.eclipse.grading.core.artemis;
 public class Util {
 
 	/**
-	 *
+	 * TODO macht das hier Kommas? ==> Mit Punkt trennen und Locale einstellen
 	 * @return a double with two decimal points
 	 */
 	public static String formatDouble(Double d) {

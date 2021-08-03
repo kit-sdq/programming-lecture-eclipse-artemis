@@ -43,6 +43,7 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 
 	/**
 	 * TODO review this. Dont know what usernames are to be expected...
+	 * TODO nicht das verwenden. Ich habe den Benutzernamen!
 	 */
 	private static final String USERNAME_REGEX = "[0-9A-Za-z.\\-]+";
 
@@ -96,6 +97,7 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 		return repositoryURLWithStudentName.replaceFirst(httpsPrefix + USERNAME_REGEX + "@", httpsPrefix);
 	}
 
+	//TODO download testRepo
 	private void downloadExercise(IExercise exercise, File directory) throws GitException {
 		//TODO remove hardcoded
 		new EgitGitHandler(exercise.getTestRepositoryUrl()).cloneRepo(directory, "master");
