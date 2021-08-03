@@ -187,22 +187,22 @@ public class AssessmentViewController {
 					.createMarker("gui.assessment.marker");
 			marker.setAttribute(IMarker.CHAR_START, annotation.getMarkerCharStart());
 			marker.setAttribute(IMarker.CHAR_END, annotation.getMarkerCharEnd());
-			if (mistake != null) {
-				marker.setAttribute("errorTypeDescription", mistake.getMessage());
-				marker.setAttribute("errorType", mistake.getButtonName());
-			}
 			marker.setAttribute("start", startLine + 1);
 			marker.setAttribute("end", endLine + 1);
 			marker.setAttribute("className", annotation.getClassFilePath());
-			marker.setAttribute("ratingGroup", mistake.getRatingGroupName());
 			if (customMessage != null) {
 				marker.setAttribute("customMessage", customMessage);
 			}
 			if (customPenalty != null) {
 				marker.setAttribute("customPenalty", customPenalty);
 			}
-			marker.setAttribute(IMarker.MESSAGE, AssessmentUtilities.createMarkerTooltip(startLine + 1, endLine + 1,
-					mistake.getButtonName(), mistake.getRatingGroupName(), mistake.getMessage()));
+			if (mistake != null) {
+				marker.setAttribute("errorTypeDescription", mistake.getMessage());
+				marker.setAttribute("errorType", mistake.getButtonName());
+				marker.setAttribute("ratingGroup", mistake.getRatingGroupName());
+				marker.setAttribute(IMarker.MESSAGE, AssessmentUtilities.createMarkerTooltip(startLine + 1, endLine + 1,
+						mistake.getButtonName(), mistake.getRatingGroupName(), mistake.getMessage()));
+			}
 		} catch (Exception e) {
 			this.alertObserver.error("Unable to create marker for given annotation:" + annotation.toString(), e);
 		}

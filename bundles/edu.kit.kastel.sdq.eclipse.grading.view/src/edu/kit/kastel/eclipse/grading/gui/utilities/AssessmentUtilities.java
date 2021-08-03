@@ -84,8 +84,7 @@ public class AssessmentUtilities {
 	public static String getClassNameForAnnotation() {
 		final IWorkbenchPart workbenchPart = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
 				.getActivePart();
-		final String name = workbenchPart.getSite().getPage().getActiveEditor().getEditorInput().getName();
-		return name;
+		return workbenchPart.getSite().getPage().getActiveEditor().getEditorInput().getName();
 	}
 
 	/**
@@ -96,8 +95,7 @@ public class AssessmentUtilities {
 	public static IFile getCurrentFile() {
 		final IWorkbenchPart workbenchPart = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
 				.getActivePart();
-		final IFile file = workbenchPart.getSite().getPage().getActiveEditor().getEditorInput().getAdapter(IFile.class);
-		return file;
+		return workbenchPart.getSite().getPage().getActiveEditor().getEditorInput().getAdapter(IFile.class);
 	}
 
 	public static Integer getLineOffSet(Integer startLine) {
@@ -108,17 +106,20 @@ public class AssessmentUtilities {
 
 		final IEditorPart editor = activePage == null ? null : activePage.getActiveEditor();
 		Integer lineOffset = 0;
-		final ITextEditor editor2 = editor.getAdapter(ITextEditor.class);
 		if (editor != null) {
-			final IDocumentProvider provider = editor2.getDocumentProvider();
-			final IDocument document = provider.getDocument(editor2.getEditorInput());
-			try {
-				lineOffset = document.getLineOffset(startLine);
-			} catch (final BadLocationException e) {
-				e.printStackTrace();
+			final ITextEditor editor2 = editor.getAdapter(ITextEditor.class);
+			if (editor2 != null) {
+				final IDocumentProvider provider = editor2.getDocumentProvider();
+				final IDocument document = provider.getDocument(editor2.getEditorInput());
+				try {
+					lineOffset = document.getLineOffset(startLine);
+				} catch (final BadLocationException e) {
+					e.printStackTrace();
+				}
+				return lineOffset;
 			}
 		}
-		return lineOffset;
+		return -1;
 	}
 
 	public static String getPathForAnnotation() {
@@ -141,13 +142,11 @@ public class AssessmentUtilities {
 					break;
 				}
 			}
-			System.out.println(srcIndex);
 			StringBuilder result = new StringBuilder().append("src");
 			for (int j = srcIndex + 1; j < path.segments().length; j++) {
 				result.append("/");
 				result.append(path.segments()[j]);
 			}
-			System.out.println(result.toString());
 			return result.toString();
 		}
 		return "";

@@ -26,10 +26,6 @@ public class ArtemisGradingPreferencesPage extends FieldEditorPreferencePage imp
 	private BooleanFieldEditor isRelativeConfigPath;
 	private StringFieldEditor relativeConfigPath;
 	private FileFieldEditor absoluteConfigPath;
-	private StringFieldEditor artemisUrl;
-	private StringFieldEditor artemisUser;
-	private StringFieldEditor artemisPassword;
-	private StringFieldEditor configNameField;
 
 	public ArtemisGradingPreferencesPage() {
 		super(FieldEditorPreferencePage.GRID);
@@ -54,25 +50,25 @@ public class ArtemisGradingPreferencesPage extends FieldEditorPreferencePage imp
 		this.relativeConfigPath = new StringFieldEditor(PreferenceConstants.P_RELATIVE_CONFIG_PATH,
 				"Relative config path: ", this.getFieldEditorParent());
 
-		this.artemisUrl = new StringFieldEditor(PreferenceConstants.P_ARTEMIS_URL, "Artemis URL: ",
+		StringFieldEditor artemisUrl = new StringFieldEditor(PreferenceConstants.P_ARTEMIS_URL, "Artemis URL: ",
 				this.getFieldEditorParent());
 
-		this.artemisUser = new StringFieldEditor(PreferenceConstants.P_ARTEMIS_USER, "Artemis username: ",
+		StringFieldEditor artemisUser = new StringFieldEditor(PreferenceConstants.P_ARTEMIS_USER, "Artemis username: ",
 				this.getFieldEditorParent());
 
-		this.artemisPassword = new StringFieldEditor(PreferenceConstants.P_ARTEMIS_PASSWORD, "Artemis password: ",
-				this.getFieldEditorParent());
+		StringFieldEditor artemisPassword = new StringFieldEditor(PreferenceConstants.P_ARTEMIS_PASSWORD,
+				"Artemis password: ", this.getFieldEditorParent());
 
-		this.configNameField = new StringFieldEditor(PreferenceConstants.P_CONFIG_NAME, "Config name: ",
+		StringFieldEditor configNameField = new StringFieldEditor(PreferenceConstants.P_CONFIG_NAME, "Config name: ",
 				this.getFieldEditorParent());
 
 		this.addField(this.absoluteConfigPath);
-		this.addField(this.configNameField);
+		this.addField(configNameField);
 		this.addField(this.relativeConfigPath);
 		this.addField(this.isRelativeConfigPath);
-		this.addField(this.artemisUrl);
-		this.addField(this.artemisUser);
-		this.addField(this.artemisPassword);
+		this.addField(artemisUrl);
+		this.addField(artemisUser);
+		this.addField(artemisPassword);
 
 	}
 

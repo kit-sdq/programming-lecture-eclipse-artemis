@@ -6,7 +6,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Spinner;
@@ -23,8 +22,7 @@ public class CustomButtonDialog extends Dialog {
 	private final AssessmentViewController viewController;
 	private final String ratingGroupName;
 
-	public CustomButtonDialog(Shell parentShell, AssessmentViewController viewController, String ratingGroupName,
-			Group ratingGroupViewElement) {
+	public CustomButtonDialog(Shell parentShell, AssessmentViewController viewController, String ratingGroupName) {
 		super(parentShell);
 		this.viewController = viewController;
 		this.ratingGroupName = ratingGroupName;
