@@ -33,6 +33,10 @@ public interface IMistakeType {
 	 */
 	IRatingGroup getRatingGroup();
 
+	/**
+	 *
+	 * @return this {@link IRatingGroup}s display name.
+	 */
 	String getRatingGroupName();
 
 	/**

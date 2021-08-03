@@ -8,7 +8,7 @@ import edu.kit.kastel.sdq.eclipse.grading.api.model.IMistakeType;
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IRatingGroup;
 
 /**
- *
+ * The assessmentController handles everything that has to do with the assessment of a single submission.
  */
 public interface IAssessmentController {
 
@@ -50,8 +50,9 @@ public interface IAssessmentController {
 	void deleteEclipseProject();
 
 	/**
-	 *
-	 * @return this AssessmentControllers {@link IAlertObservable} (Observer/ Observable pattern). This object replaces Exceptions.
+	 * You may subscribe to the {@link IAlertObservable} this method returns to be alerted on errors since
+	 * this replaces Exceptions.
+	 * @return this AssessmentControllers {@link IAlertObservable} (Observer/ Observable pattern).
 	 */
 	IAlertObservable getAlertObservable();
 

@@ -18,13 +18,18 @@ public interface IArtemisGUIController {
 	 */
 	void downloadExerciseAndSubmission(int courseID, int exerciseID, int submissionID);
 
+
 	/**
-	 *
-	 * @return this AssessmentControllers {@link IAlertObservable} (Observer/ Observable pattern). This object replaces Exceptions.
+	 * You may subscribe to the {@link IAlertObservable} this method returns to be alerted on errors since
+	 * this replaces Exceptions.
+	 * @return this ArtemisGUIController's {@link IAlertObservable} (Observer/ Observable pattern).
 	 */
 	IAlertObservable getAlertObservable();
 
-
+	/**
+	 *
+	 * @return all IFeedbacks that were gotten in the process of locking the given submission.
+	 */
 	Collection<IFeedback> getAllFeedbacksGottenFromLocking(int submissionID);
 
 	/**
@@ -52,6 +57,13 @@ public interface IArtemisGUIController {
 	 */
 	Collection<String> getExamTitles(String courseShortName);
 
+	/**
+	 * Convenience method. Search the given ids in the given courses.
+	 * @param courses the data in which to search for the exercise
+	 * @param courseID
+	 * @param exerciseID
+	 * @return the exercise, if found. null else.
+	 */
 	IExercise getExerciseFromCourses(Collection<ICourse> courses, int courseID, int exerciseID);
 
 	/**
@@ -73,6 +85,13 @@ public interface IArtemisGUIController {
 	 */
 	Collection<IFeedback> getPrecalculatedAutoFeedbacks(int submissionID);
 
+	/**
+	 * Convenience method. Search the given ids in the given courses.
+	 * @param courses the data in which to search for the submission
+	 * @param courseID
+	 * @param exerciseID
+	 * @return the submission, if found. null else.
+	 */
 	ISubmission getSubmissionFromExercise(IExercise exercise, int submissionID);
 
 	/**

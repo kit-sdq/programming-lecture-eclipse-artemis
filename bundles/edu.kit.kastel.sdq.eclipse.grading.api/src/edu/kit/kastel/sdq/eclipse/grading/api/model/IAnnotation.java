@@ -4,8 +4,9 @@ import java.util.Optional;
 
 /**
  * An annotation is one specific occurrence of a IMistakeType.
- * There might be multiple Annotation
+ * There might be multiple Annotations.
  *
+ * Note that penalty calculation is done collectively: {@link IMistakeType#calculatePenalty(java.util.List)}
  * You may define a custom penalty which might be used by some MistakeType (more precise: by its PenaltyRule).
  * Also, you may define a custom message.
  */
@@ -42,6 +43,10 @@ public interface IAnnotation {
 	 */
 	int getMarkerCharStart();
 
+	/**
+	 *
+	 * @return the type of mistake that this annotation is an occurance of.
+	 */
 	IMistakeType getMistakeType();
 
 	/**

@@ -8,6 +8,11 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
 
 public interface ISystemwideController {
 
+	/**
+	 * You may subscribe to the {@link IAlertObservable} this method returns to be alerted on errors since
+	 * this replaces Exceptions.
+	 * @return this SystemwideControllers {@link IAlertObservable} (Observer/ Observable pattern).
+	 */
 	IAlertObservable getAlertObservable();
 
 	/**
@@ -35,64 +40,33 @@ public interface ISystemwideController {
 
 	/**
 	 * <B>BACKLOG</B><br/>
-	 * Loads an already assessed (started, saved or even submitted) submission for re-assessment.
+	 * <li>Loads an already assessed (started, saved or even submitted) submission for re-assessment.
 	 *
-	 * You need to select a submission via {@link #setAssessedSubmission(int)}, first!
+	 * <li>You need to select a submission via {@link #setAssessedSubmission(int)}, first!
 	 * Has the same effect as {@link #startAssessment()} otherwise.
-	 * TODO see tolle Zustandsautomat-Grafik!
+	 * <li>See docs/Zustandshaltung-Automat
 	 */
 	void loadAgain();
 
 	/**
 	 * <B>ASSESSMENT</B><br/>
-	 * Deletes local project. Renews the lock and downloads the submission project again.
-	 * TODO see tolle Zustandsautomat-Grafik!
+	 * <li>Deletes local project. Renews the lock and downloads the submission project again.
+	 * <li>See docs/Zustandshaltung-Automat
 	 */
 	void reloadAssessment();
 
 	/**
 	 * <B>ASSESSMENT</B><br/>
-	 * Saves the assessment to Artemis.
-	 * TODO see tolle Zustandsautomat-Grafik!
+	 * <li>Saves the assessment to Artemis.
+	 * <li>See docs/Zustandshaltung-Automat
 	 */
 	void saveAssessment();
 
 	/**
-	 * <B>ASSESSMENT</B><br/>
-	 * <li> current state (exerciseID, courseID) is used for call to artemis: nextAssessement
-	 * <li> if an assessment is available, it is downloaded and locked.
-	 * @return whether a new assessment was started or not, depending on whether there was a submission available.
-	 * TODO see tolle Zustandsautomat-Grafik!
-	 */
-	boolean startAssessment();
-
-	/**
-	 * <B>ASSESSMENT</B><br/>
-	 * The same as {@link #startAssessment()}.
-	 * @return whether a new assessment was started or not, depending on whether there was a submission available.
-	 * TODO see tolle Zustandsautomat-Grafik!
-	 */
-	boolean startCorrectionRound1();
-
-	/**
-	 * <B>ASSESSMENT</B><br/>
-	 * Like {@link #startAssessment()}, but with correction round 2 as a parameter.
-	 * @return whether a new assessment was started or not, depending on whether there was a submission available.
-	 * TODO see tolle Zustandsautomat-Grafik!
-	 */
-	boolean startCorrectionRound2();
-
-	/**
-	 * <B>ASSESSMENT</B><br/>
-	 * Saves and submits the assessment to Artemis. Deletes project (in eclipse and on files system) thereafter.
-	 * TODO see tolle Zustandsautomat-Grafik!
-	 */
-	void submitAssessment();
-
-	/**
 	 * <B>BACKLOG</B><br/>
-	 * You want to have called {@link #getBegunSubmissions(ISubmission.Filter)}, first!
-	 * TODO see tolle Zustandsautomat-Grafik!
+	 * <li>Only sets the submission, does not start the assessment!.
+	 * <li>You want to have called {@link #getBegunSubmissions(ISubmission.Filter)}, first!
+	 * <li>See docs/Zustandshaltung-Automat
 	 *
 	 */
 	void setAssessedSubmissionByProjectName(String projectName);
@@ -106,8 +80,8 @@ public interface ISystemwideController {
 	/**
 	 *
 	 * <B>ASSESSMENT - STATE</B><br/>
-	 * Set the current course for further assessment-related actions, such as {@link #setExerciseId(String)}
-	 * TODO see tolle Zustandsautomat-Grafik!
+	 * <li>Set the current course for further assessment-related actions, such as {@link #setExerciseId(String)}
+	 * <li>See docs/Zustandshaltung-Automat
 	 *
 	 * @param courseShortName unique short name
 	 * @return all exercise short names. Can be used to call {@link #setExerciseId(String)}.
@@ -116,9 +90,43 @@ public interface ISystemwideController {
 
 	/**
 	 * <B>ASSESSMENT - STATE</B><br/>
-	 * Set the current exercise for further assessment-related actions, such as {@link #startAssessment()}
-	 * TODO see tolle Zustandsautomat-Grafik!
+	 * <li>Set the current exercise for further assessment-related actions, such as {@link #startAssessment()}
+	 * <li>See docs/Zustandshaltung-Automat
+	 *
 	 * @param exerciseShortName unique short name
 	 */
 	void setExerciseId(String exerciseShortName);
+
+	/**
+	 * <B>ASSESSMENT</B><br/>
+	 * <li> current state (exerciseID, courseID) is used for call to artemis: nextAssessement
+	 * <li> if an assessment is available, it is downloaded and locked.
+	 * <li> See docs/Zustandshaltung-Automat
+	 *
+	 * @return whether a new assessment was started or not, depending on whether there was a submission available.
+	 */
+	boolean startAssessment();
+
+	/**
+	 * <B>ASSESSMENT</B><br/>
+	 * <li>The same as {@link #startAssessment()}.
+	 * <li>See docs/Zustandshaltung-Automat
+	 * @return whether a new assessment was started or not, depending on whether there was a submission available.
+	 */
+	boolean startCorrectionRound1();
+
+	/**
+	 * <B>ASSESSMENT</B><br/>
+	 * <li>Like {@link #startAssessment()}, but with correction round 2 as a parameter.
+	 * <li>See docs/Zustandshaltung-Automat
+	 * @return whether a new assessment was started or not, depending on whether there was a submission available.
+	 */
+	boolean startCorrectionRound2();
+
+	/**
+	 * <B>ASSESSMENT</B><br/>
+	 * <li>Saves and submits the assessment to Artemis. Deletes project (in eclipse and on files system) thereafter.
+	 * <li>See docs/Zustandshaltung-Automat
+	 */
+	void submitAssessment();
 }

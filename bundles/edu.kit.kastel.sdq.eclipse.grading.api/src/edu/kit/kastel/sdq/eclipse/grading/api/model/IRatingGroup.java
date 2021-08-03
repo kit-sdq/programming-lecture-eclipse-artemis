@@ -25,5 +25,8 @@ public interface IRatingGroup {
 	 */
 	String getShortName();
 
+	/**
+	 * The rating group might have a penalty limit or not. See {@link #getPenaltyLimit()}
+	 */
 	boolean hasPenaltyLimit();
 }

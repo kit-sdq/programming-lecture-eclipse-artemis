@@ -84,6 +84,7 @@ public abstract class AbstractArtemisClient {
 	 * Submit the assessment to Artemis. Must have been started by {@link #startAssessment(int)} or {@link #startNextAssessment(int, int)} before!
 	 * @param participationID THOU SHALT NOT PROVIDE THE SUBMISSIONID, HERE!
  * 							The participationID can be gotten from the {@link ILockResult}, via {@link #startAssessment(int)} or {@link #startNextAssessment(int, int)}!
+ *   * @param submit determine whether the assessment should be submitted or just saved.
 	 * @param payload the payload formatted correctly.
 	 */
 	public abstract void saveAssessment(int participationID, boolean submit, String payload) throws AuthenticationException;
