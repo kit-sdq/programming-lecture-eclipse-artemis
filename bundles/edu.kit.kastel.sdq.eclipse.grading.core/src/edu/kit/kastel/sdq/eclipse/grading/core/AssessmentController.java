@@ -25,9 +25,9 @@ import edu.kit.kastel.sdq.eclipse.grading.core.artemis.DefaultProjectFileNamingS
 import edu.kit.kastel.sdq.eclipse.grading.core.artemis.WorkspaceUtil;
 import edu.kit.kastel.sdq.eclipse.grading.core.config.ConfigDao;
 import edu.kit.kastel.sdq.eclipse.grading.core.config.ExerciseConfig;
-import edu.kit.kastel.sdq.eclipse.grading.core.model.annotation.IAnnotationDao;
 import edu.kit.kastel.sdq.eclipse.grading.core.model.annotation.AnnotationException;
 import edu.kit.kastel.sdq.eclipse.grading.core.model.annotation.DefaultAnnotationDao;
+import edu.kit.kastel.sdq.eclipse.grading.core.model.annotation.IAnnotationDao;
 
 
 public class AssessmentController implements IAssessmentController {
@@ -168,6 +168,18 @@ public class AssessmentController implements IAssessmentController {
 		}
 		this.alertObservable.error("ExerciseConfigShortName " + this.exerciseConfigShortName + " not found in config!", null);
 		return List.of();
+	}
+
+	@Override
+	public IRatingGroup getRatingGroupByShortName(final String shortName) {
+		Optional<IRatingGroup> ratingGroupOptional = this.getRatingGroups().stream()
+				.filter(ratingGroup -> ratingGroup.getShortName().equals(shortName))
+				.findFirst();
+		if (ratingGroupOptional.isPresent()) {
+			return ratingGroupOptional.get();
+		}
+		this.alertObservable.error("Rating Group \"" + shortName + "\" not found in config!", null);
+		return null;
 	}
 
 	@Override
