@@ -1,13 +1,18 @@
 package edu.kit.kastel.sdq.eclipse.grading.core.artemis;
 
+import java.util.Locale;
+
 public class Util {
 
 	/**
-	 * TODO macht das hier Kommas? ==> Mit Punkt trennen und Locale einstellen
+	 * Formats a double by cutting after 2 decimal points and adding "readability commas"
+	 * Examples:
+	 * <li> 12345.6789 	==> "12,345.67"
+	 * <li> 25.22314 	==> "25.22"
 	 * @return a double with two decimal points
 	 */
 	public static String formatDouble(Double d) {
-		return String.format("%,.2f", d);
+		return String.format(Locale.ENGLISH, "%,.2f", d);
 	}
 
 	/**
