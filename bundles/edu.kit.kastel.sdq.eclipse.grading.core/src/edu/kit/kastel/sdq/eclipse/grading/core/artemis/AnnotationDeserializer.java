@@ -2,7 +2,6 @@ package edu.kit.kastel.sdq.eclipse.grading.core.artemis;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -51,22 +50,17 @@ public class AnnotationDeserializer {
 		JsonProcessingException[] foundException = {null};
 		Collection<IAnnotation> deserializedAnnotations = matchingFeedbacks.stream()
 			.map(IFeedback::getDetailText)	// get the json blob
-			.map(feedbackDetailText -> {
+			.map(feedbackDetailText -> { 					//transform the json blob to multiple annotations
 				try {
+
 					return new ObjectMapper().readValue(feedbackDetailText, Annotation[].class);
 				} catch (JsonProcessingException e) {
 					foundException[0] = e;
 					return new Annotation[0];
 				}
-			}) //transform the json blob to annotations
-			.map(Arrays::asList)
-			.reduce(new LinkedList<>(), (annotationList1, annotationList2) -> {	//collect into one single list
-				List<Annotation> resultList = new LinkedList<>();
-				resultList.addAll(annotationList1);
-				resultList.addAll(annotationList2);
-				return resultList;
 			})
-			.stream()
+			.map(Arrays::asList)
+			.flatMap(List::stream)							// Stream of List of annotations ==> Stream of annotations.
 			.map(IAnnotation.class::cast)
 			.collect(Collectors.toList());
 

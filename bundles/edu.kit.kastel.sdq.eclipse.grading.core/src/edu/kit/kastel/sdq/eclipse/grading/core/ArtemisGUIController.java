@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -213,14 +212,7 @@ public class ArtemisGUIController implements IArtemisGUIController {
 		}
 		return foundExam.getExerciseGroups().stream()
 			.map(IExerciseGroup::getExercises)
-			.reduce((list1, list2) -> {
-				List<IExercise> exercises = new LinkedList<>();
-				exercises.addAll(list1);
-				exercises.addAll(list2);
-				return exercises;
-			})
-			.orElse(List.of())
-			.stream()
+			.flatMap(Collection::stream)
 			.map(IExercise::getShortName)
 			.collect(Collectors.toList());
 

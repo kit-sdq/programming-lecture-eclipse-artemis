@@ -47,9 +47,8 @@ public class AnnotationMapper {
 
 	private double calculateAbsoluteScore(Collection<IFeedback> allFeedbacks) {
 		return allFeedbacks.stream()
-				.map(IFeedback::getCredits)
-				.reduce(Double::sum)
-				.orElse(0D);
+				.mapToDouble(IFeedback::getCredits)
+				.sum();
 	}
 
 	private Collection<IFeedback> calculateAllFeedbacks() throws IOException {

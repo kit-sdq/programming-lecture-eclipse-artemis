@@ -17,8 +17,8 @@ public class CustomPenaltyRule extends PenaltyRule {
 	public double calculatePenalty(List<IAnnotation> annotations) {
 		if (annotations != null) {
 			return annotations.stream()
-					.map(annotation -> annotation.getCustomPenalty().orElseGet(() -> 0.D))
-					.reduce(0.D, Double::sum);	//TODO Trick17: mapToDouble, flatMap
+					.mapToDouble(annotation -> annotation.getCustomPenalty().orElse(0.D))
+					.sum();
 		}
 		return 0.D;
 	}
