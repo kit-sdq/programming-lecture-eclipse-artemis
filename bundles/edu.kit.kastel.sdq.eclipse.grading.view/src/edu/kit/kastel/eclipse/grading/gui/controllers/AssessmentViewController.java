@@ -23,7 +23,7 @@ import edu.kit.kastel.sdq.eclipse.grading.core.SystemwideController;
 /**
  * This class is the controller for the grading view. It creates the marker for
  * the annotations and holds all controller for the backend calls.
- * 
+ *
  * @see {@link ArtemisGradingView}
  *
  */
@@ -45,7 +45,7 @@ public class AssessmentViewController {
 	/**
 	 * This method creates a marker for the annotation and add a new annotation to
 	 * the backlog
-	 * 
+	 *
 	 * @param mistake         (the mistake type of the new annotation)
 	 * @param customMessage   (for custom mistake type, else null)
 	 * @param customPenalty   (for custom mistake, else null)
@@ -68,12 +68,12 @@ public class AssessmentViewController {
 			marker.setAttribute(IMarker.CHAR_END, AssessmentUtilities.getLineOffSet(startLine) + lenght + 10);
 			if (mistake != null) {
 				marker.setAttribute("errorTypeDescription", mistake.getMessage());
-				marker.setAttribute("errorType", mistake.getButtonName());
+				marker.setAttribute("errorType", mistake.getName());
 			}
 			marker.setAttribute("start", startLine + 1);
 			marker.setAttribute("end", endLine + 1);
 			marker.setAttribute("className", AssessmentUtilities.getClassNameForAnnotation());
-			marker.setAttribute("ratingGroup", mistake == null ? ratingGroupName : mistake.getRatingGroupName());
+			marker.setAttribute("ratingGroup", mistake == null ? ratingGroupName : mistake.getRatingGroup().getDisplayName());
 			if (customMessage != null) {
 				marker.setAttribute("customMessage", customMessage);
 			}
@@ -82,7 +82,7 @@ public class AssessmentViewController {
 			}
 			if (mistake != null) {
 				marker.setAttribute(IMarker.MESSAGE, AssessmentUtilities.createMarkerTooltip(startLine + 1, endLine + 1,
-						mistake.getButtonName(), mistake.getRatingGroupName(), mistake.getMessage()));
+						mistake.getName(), mistake.getRatingGroup().getDisplayName(), mistake.getMessage()));
 			} else {
 				marker.setAttribute(IMarker.MESSAGE, AssessmentUtilities
 						.createMarkerTooltipForCustomButton(startLine + 1, endLine + 1, customMessage, customPenalty));
@@ -95,69 +95,6 @@ public class AssessmentViewController {
 			this.alertObserver.error("Unable to create marker for annotation", e);
 		}
 
-	}
-
-	/**
-	 * creates a new assessment controller (if needed) and adds a observer for error
-	 * handling
-	 */
-	public void setCurrentAssessmentController() {
-		this.assessmentController = this.systemwideController.getCurrentAssessmentController();
-		this.assessmentController.getAlertObservable().addAlertObserver(this.alertObserver);
-	}
-
-	/**
-	 * @param ratingGroup
-	 * @return the current penalty for the given rating group
-	 */
-	public double getCurrentPenaltyForRatingGroup(IRatingGroup ratingGroup) {
-		return this.assessmentController.calculateCurrentPenaltyForRatingGroup(ratingGroup);
-	}
-
-	/**
-	 * @return the mistake types of the current config file
-	 */
-	public Collection<IMistakeType> getMistakeTypes() {
-		return this.assessmentController.getMistakes();
-	}
-
-	/**
-	 * @return the rating groups of the current config file
-	 */
-	public Collection<IRatingGroup> getRatingGroups() {
-		return this.assessmentController.getRatingGroups();
-	}
-
-	/**
-	 * @return all courses available at artemis
-	 */
-	public Collection<ICourse> getCourses() {
-		return this.artemisGUIController.getCourses();
-	}
-
-	/**
-	 * Deletes an annotation on the backend
-	 * 
-	 * @param id (of the annotation)
-	 */
-	public void deleteAnnotation(long id) {
-		this.assessmentController.removeAnnotation((int) id);
-	}
-
-	/**
-	 * @param mistakeType (of the certain button)
-	 * @return tooltip for the mistake type button
-	 */
-	public String getToolTipForMistakeType(IMistakeType mistakeType) {
-		return this.assessmentController.getTooltipForMistakeType(mistakeType);
-
-	}
-
-	/**
-	 * @return all annotations for the current assessment
-	 */
-	public Collection<IAnnotation> getAnnotations() {
-		return this.assessmentController.getAnnotations();
 	}
 
 	/**
@@ -190,10 +127,10 @@ public class AssessmentViewController {
 			}
 			if (mistake != null) {
 				marker.setAttribute("errorTypeDescription", mistake.getMessage());
-				marker.setAttribute("errorType", mistake.getButtonName());
-				marker.setAttribute("ratingGroup", mistake.getRatingGroupName());
+				marker.setAttribute("errorType", mistake.getName());
+				marker.setAttribute("ratingGroup", mistake.getRatingGroup().getDisplayName());
 				marker.setAttribute(IMarker.MESSAGE, AssessmentUtilities.createMarkerTooltip(startLine + 1, endLine + 1,
-						mistake.getButtonName(), mistake.getRatingGroupName(), mistake.getMessage()));
+						mistake.getName(), mistake.getRatingGroup().getDisplayName(), mistake.getMessage()));
 			}
 		} catch (Exception e) {
 			this.alertObserver.error("Unable to create marker for given annotation:" + annotation.toString(), e);
@@ -201,10 +138,26 @@ public class AssessmentViewController {
 	}
 
 	/**
-	 * @return true, if a new assessment is started, else false
+	 * Deletes an annotation on the backend
+	 *
+	 * @param id (of the annotation)
 	 */
-	public boolean onStartAssessment() {
-		return this.systemwideController.startAssessment();
+	public void deleteAnnotation(long id) {
+		this.assessmentController.removeAnnotation((int) id);
+	}
+
+	/**
+	 * @return all annotations for the current assessment
+	 */
+	public Collection<IAnnotation> getAnnotations() {
+		return this.assessmentController.getAnnotations();
+	}
+
+	/**
+	 * @return all courses available at artemis
+	 */
+	public Collection<ICourse> getCourses() {
+		return this.artemisGUIController.getCourses();
 	}
 
 	/**
@@ -215,11 +168,76 @@ public class AssessmentViewController {
 	}
 
 	/**
+	 * @param ratingGroup
+	 * @return the current penalty for the given rating group
+	 */
+	public double getCurrentPenaltyForRatingGroup(IRatingGroup ratingGroup) {
+		return this.assessmentController.calculateCurrentPenaltyForRatingGroup(ratingGroup);
+	}
+
+	/**
+	 * @param courseTitle (of the selected course in the combo)
+	 * @return all exams of the given course
+	 */
+	public Collection<String> getExamShortNames(String courseTitle) {
+		return this.artemisGUIController.getExamTitles(courseTitle);
+	}
+
+	/**
 	 * @param courseName (selected course in the combo)
 	 * @return all exercises from the given course
 	 */
 	public Collection<String> getExerciseShortNames(String courseName) {
 		return this.systemwideController.setCourseIdAndGetExerciseShortNames(courseName);
+	}
+
+	/**
+	 * @param examShortName (of the selected exam in the combo)
+	 * @return all exercises of the given exam
+	 */
+	public Collection<String> getExercisesShortNamesForExam(String examShortName) {
+		return this.artemisGUIController.getExerciseShortNamesFromExam(examShortName);
+	}
+
+	/**
+	 * @return the mistake types of the current config file
+	 */
+	public Collection<IMistakeType> getMistakeTypes() {
+		return this.assessmentController.getMistakes();
+	}
+
+	public IRatingGroup getRatingGroupByShortName(String name) {
+		return this.assessmentController.getRatingGroupByShortName(name);
+	}
+
+	/**
+	 * @return the rating groups of the current config file
+	 */
+	public Collection<IRatingGroup> getRatingGroups() {
+		return this.assessmentController.getRatingGroups();
+	}
+
+	/**
+	 * @return all submissions for the given filter
+	 */
+	public Collection<String> getSubmissionsForBacklog() {
+		return this.systemwideController.getBegunSubmissionsProjectNames(Filter.ALL);
+	}
+
+	/**
+	 * @param mistakeType (of the certain button)
+	 * @return tooltip for the mistake type button
+	 */
+	public String getToolTipForMistakeType(IMistakeType mistakeType) {
+		return this.assessmentController.getTooltipForMistakeType(mistakeType);
+
+	}
+
+	/**
+	 * Loads the selected assessment from the backlog combo
+	 */
+	public void onLoadAgain() {
+		this.systemwideController.loadAgain();
 	}
 
 	/**
@@ -239,10 +257,10 @@ public class AssessmentViewController {
 	}
 
 	/**
-	 * Submits the current assessment
+	 * @return true, if a new assessment is started, else false
 	 */
-	public void onSubmitAssessment() {
-		this.systemwideController.submitAssessment();
+	public boolean onStartAssessment() {
+		return this.systemwideController.startAssessment();
 	}
 
 	/**
@@ -260,42 +278,10 @@ public class AssessmentViewController {
 	}
 
 	/**
-	 * Sets the exercise ID of the selected exercise
-	 * 
-	 * @param exerciseShortName (of the selected exercise in the combo)
+	 * Submits the current assessment
 	 */
-	public void setExerciseID(String exerciseShortName) {
-		this.systemwideController.setExerciseId(exerciseShortName);
-	}
-
-	/**
-	 * @param courseTitle (of the selected course in the combo)
-	 * @return all exams of the given course
-	 */
-	public Collection<String> getExamShortNames(String courseTitle) {
-		return this.artemisGUIController.getExamTitles(courseTitle);
-	}
-
-	/**
-	 * @param examShortName (of the selected exam in the combo)
-	 * @return all exercises of the given exam
-	 */
-	public Collection<String> getExercisesShortNamesForExam(String examShortName) {
-		return this.artemisGUIController.getExerciseShortNamesFromExam(examShortName);
-	}
-
-	/**
-	 * @return all submissions for the given filter
-	 */
-	public Collection<String> getSubmissionsForBacklog() {
-		return this.systemwideController.getBegunSubmissionsProjectNames(Filter.ALL);
-	}
-
-	/**
-	 * Loads the selected assessment from the backlog combo
-	 */
-	public void onLoadAgain() {
-		this.systemwideController.loadAgain();
+	public void onSubmitAssessment() {
+		this.systemwideController.submitAssessment();
 	}
 
 	/**
@@ -305,8 +291,22 @@ public class AssessmentViewController {
 		this.systemwideController.setAssessedSubmissionByProjectName(projectName);
 	}
 
-	public IRatingGroup getRatingGroupByShortName(String name) {
-		return this.assessmentController.getRatingGroupByShortName(name);
+	/**
+	 * creates a new assessment controller (if needed) and adds a observer for error
+	 * handling
+	 */
+	public void setCurrentAssessmentController() {
+		this.assessmentController = this.systemwideController.getCurrentAssessmentController();
+		this.assessmentController.getAlertObservable().addAlertObserver(this.alertObserver);
+	}
+
+	/**
+	 * Sets the exercise ID of the selected exercise
+	 *
+	 * @param exerciseShortName (of the selected exercise in the combo)
+	 */
+	public void setExerciseID(String exerciseShortName) {
+		this.systemwideController.setExerciseId(exerciseShortName);
 	}
 
 }

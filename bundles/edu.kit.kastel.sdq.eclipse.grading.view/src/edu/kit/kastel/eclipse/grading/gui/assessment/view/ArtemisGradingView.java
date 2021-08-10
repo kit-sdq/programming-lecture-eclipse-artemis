@@ -26,7 +26,7 @@ import edu.kit.kastel.sdq.eclipse.grading.api.model.IRatingGroup;
 /**
  * This class creates the view elements for the artemis grading process. It is
  * build as a tab folder with four tabs grading, assessment, exam and backlog.
- * 
+ *
  * @see {@link ViewPart}
  *
  */
@@ -56,102 +56,102 @@ public class ArtemisGradingView extends ViewPart {
 				}));
 	}
 
-	private void createCustomButton(IRatingGroup ratingGroup, Group rgDisplay) {
-		final Button customButton = new Button(rgDisplay, SWT.PUSH);
-		customButton.setText("Custom");
-		customButton.addListener(SWT.Selection, event -> {
-			final CustomButtonDialog customDialog = new CustomButtonDialog(AssessmentUtilities.getWindowsShell(),
-					this.viewController, ratingGroup.getDisplayName());
-			customDialog.setBlockOnOpen(true);
-			customDialog.open();
-			// avoid SWT Exception
-			Display.getDefault().asyncExec(() -> this.updatePenalty(ratingGroup.getDisplayName()));
+	private void addSelectionListenerForLoadFromBacklogButton(Button btnLoadAgain) {
+		btnLoadAgain.addListener(SWT.Selection, e -> this.viewController.onLoadAgain());
+	}
+
+	private void addSelectionListenerForRefreshButton(Button refreshButton, Combo backlogCombo) {
+		refreshButton.addListener(SWT.Selection, e -> this.fillBacklogComboWithData(backlogCombo));
+
+	}
+
+	private void addSelectionListenerForReloadButton(Button btnReloadA) {
+		btnReloadA.addListener(SWT.Selection, e -> this.viewController.onReloadAssessment());
+	}
+
+	private void addSelectionListenerForSaveButton(Button btnSave) {
+		btnSave.addListener(SWT.Selection, e -> this.viewController.onSaveAssessment());
+	}
+
+	private void addSelectionListenerForStartAssessmentButton(Button startAssessmentButton) {
+		startAssessmentButton.addListener(SWT.Selection, e -> {
+			boolean started = this.viewController.onStartAssessment();
+			if (started) {
+				this.createGradingViewElements();
+				this.prepareNewAssessment();
+			}
 		});
 	}
 
-	private void updatePenalties() {
-		this.viewController.getRatingGroups().forEach(ratingGroup -> this.updatePenalty(ratingGroup.getDisplayName()));
-	}
-
-	private void createExerciseListInput(String courseShortName, Combo exerciseList) {
-		exerciseList.removeAll();
-		this.viewController.getExerciseShortNames(courseShortName)
-				.forEach(exerciseShortName -> exerciseList.add(exerciseShortName));
-		exerciseList.addListener(SWT.Selection,
-				e -> this.viewController.setExerciseID(exerciseList.getItem(exerciseList.getSelectionIndex())));
-	}
-
-	private void createGradingViewElements() {
-		this.gradingComposite.dispose();
-		this.scrolledCompositeGrading.setContent(null);
-		this.gradingComposite = new Composite(this.scrolledCompositeGrading, SWT.NONE);
-		this.viewController.setCurrentAssessmentController();
-		this.gradingComposite.setLayout(new GridLayout(3, true));
-		this.viewController.getRatingGroups().forEach(ratingGroup -> {
-			final Group rgDisplay = new Group(this.gradingComposite, SWT.NONE);
-			this.ratingGroupViewElements.put(ratingGroup.getDisplayName(), rgDisplay);
-			this.updatePenalty(ratingGroup.getDisplayName());
-			final GridLayout gridLayout = new GridLayout();
-			gridLayout.numColumns = 3;
-			rgDisplay.setLayout(gridLayout);
-			final GridData gridData = new GridData(GridData.VERTICAL_ALIGN_FILL);
-			gridData.horizontalSpan = 3;
-			rgDisplay.setLayoutData(gridData);
-			this.viewController.getMistakeTypes().forEach(mistake -> {
-				if (mistake.getRatingGroup().getDisplayName().equals(ratingGroup.getDisplayName())) {
-					final Button mistakeButton = new Button(rgDisplay, SWT.PUSH);
-					mistakeButton.setText(mistake.getButtonName());
-					this.mistakeButtons.put(mistake.getButtonName(), mistakeButton);
-					mistakeButton.setToolTipText(this.viewController.getToolTipForMistakeType(mistake));
-					mistakeButton.addListener(SWT.Selection, event -> {
-						this.viewController.addAssessmentAnnotaion(mistake, null, null, mistake.getRatingGroupName());
-						this.updatePenalty(mistake.getRatingGroupName());
-						this.updateMistakeButtonToolTips(mistake);
-					});
-				}
-			});
-			this.createCustomButton(ratingGroup, rgDisplay);
+	private void addSelectionListenerForStartFirstRound(Button btnStartRound1) {
+		btnStartRound1.addListener(SWT.Selection, e -> {
+			this.viewController.onStartCorrectionRound1();
+			this.prepareNewAssessment();
 		});
-		this.scrolledCompositeGrading.setContent(this.gradingComposite);
-		this.scrolledCompositeGrading.setMinSize(this.gradingComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 	}
 
-	private void updateMistakeButtonToolTips(IMistakeType mistakeType) {
-		Button button = this.mistakeButtons.get(mistakeType.getButtonName());
-		if (button != null) {
-			button.setToolTipText(this.viewController.getToolTipForMistakeType(mistakeType));
-		}
+	private void addSelectionListenerForStartSecondRound(Button btnStartRound2) {
+		btnStartRound2.addListener(SWT.Selection, e -> {
+			this.viewController.onStartCorrectionRound2();
+			this.prepareNewAssessment();
+		});
 	}
 
-	private void updatePenalty(String ratingGroupName) {
-		Group viewElement = this.ratingGroupViewElements.get(ratingGroupName);
-		IRatingGroup ratingGroup = this.viewController.getRatingGroupByShortName(ratingGroupName);
-		if (ratingGroup == null) {
-			return;
-		}
-		StringBuilder builder = new StringBuilder(ratingGroupName);
-		builder.append("(");
-		builder.append(this.viewController.getCurrentPenaltyForRatingGroup(ratingGroup));
-		if (ratingGroup.hasPenaltyLimit()) {
-			builder.append("/");
-			builder.append(ratingGroup.getPenaltyLimit());
-		}
-		builder.append(") penalty points");
-		Display.getDefault().asyncExec(() -> viewElement.setText(builder.toString()));
+	private void addSelectionListenerForSubmitButton(Button btnSubmit) {
+		btnSubmit.addListener(SWT.Selection, e -> this.viewController.onSubmitAssessment());
 	}
 
-	@Override
-	public void createPartControl(Composite parent) {
-		this.createView(parent);
-	}
+	private void createAssessmentTab(TabFolder tabFolder) {
+		TabItem assessmentTabItem = new TabItem(tabFolder, SWT.NONE);
+		assessmentTabItem.setText("Assessment");
 
-	private void createView(Composite parent) {
-		TabFolder tabFolder = new TabFolder(parent, SWT.NONE);
-		this.createGradingTab(tabFolder);
-		this.createAssessmentTab(tabFolder);
-		this.createExamTab(tabFolder);
-		this.createBacklogTab(tabFolder);
+		ScrolledComposite scrolledCompositeAssessment = new ScrolledComposite(tabFolder,
+				SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+		assessmentTabItem.setControl(scrolledCompositeAssessment);
+		scrolledCompositeAssessment.setExpandHorizontal(true);
+		scrolledCompositeAssessment.setExpandVertical(true);
 
+		Composite assessmentComposite = new Composite(scrolledCompositeAssessment, SWT.NONE);
+		assessmentComposite.setLayout(new GridLayout(2, false));
+
+		Label courseLabel = new Label(assessmentComposite, SWT.NONE);
+		courseLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		courseLabel.setText("Course");
+
+		Combo courseCombo = new Combo(assessmentComposite, SWT.READ_ONLY);
+		courseCombo.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
+
+		Label exerciseLabel = new Label(assessmentComposite, SWT.NONE);
+		exerciseLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		exerciseLabel.setText("Exercise");
+
+		Combo exerciseCombo = new Combo(assessmentComposite, SWT.READ_ONLY);
+		exerciseCombo.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
+
+		this.createCourseListForAssessmentTabItem(courseCombo, exerciseCombo);
+
+		Button btnStartAssessment = new Button(assessmentComposite, SWT.NONE);
+		btnStartAssessment.setText("Start");
+
+		this.addSelectionListenerForStartAssessmentButton(btnStartAssessment);
+
+		Button btnReloadA = new Button(assessmentComposite, SWT.NONE);
+		btnReloadA.setText("Reload");
+
+		this.addSelectionListenerForReloadButton(btnReloadA);
+
+		Button btnSaveAssessment = new Button(assessmentComposite, SWT.NONE);
+		btnSaveAssessment.setText("Save ");
+
+		this.addSelectionListenerForSaveButton(btnSaveAssessment);
+
+		Button btnSubmitAssessment = new Button(assessmentComposite, SWT.NONE);
+		btnSubmitAssessment.setText("Submit");
+
+		this.addSelectionListenerForSubmitButton(btnSubmitAssessment);
+
+		scrolledCompositeAssessment.setContent(assessmentComposite);
+		scrolledCompositeAssessment.setMinSize(assessmentComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 	}
 
 	private void createBacklogTab(TabFolder tabFolder) {
@@ -190,6 +190,36 @@ public class ArtemisGradingView extends ViewPart {
 
 		scrolledCompositeBacklog.setContent(backlogComposite);
 		scrolledCompositeBacklog.setMinSize(backlogComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+	}
+
+	public void createCourseListForAssessmentTabItem(Combo courseCombo, Combo exerciseCombo) {
+		this.viewController.getCourseShortNames().forEach(courseShortName -> courseCombo.add(courseShortName));
+		courseCombo.addListener(SWT.Selection,
+				e -> this.createExerciseListInput(courseCombo.getItem(courseCombo.getSelectionIndex()), exerciseCombo));
+	}
+
+	private void createCustomButton(IRatingGroup ratingGroup, Group rgDisplay) {
+		final Button customButton = new Button(rgDisplay, SWT.PUSH);
+		customButton.setText("Custom");
+		customButton.addListener(SWT.Selection, event -> {
+			final CustomButtonDialog customDialog = new CustomButtonDialog(AssessmentUtilities.getWindowsShell(),
+					this.viewController, ratingGroup.getDisplayName());
+			customDialog.setBlockOnOpen(true);
+			customDialog.open();
+			// avoid SWT Exception
+			Display.getDefault().asyncExec(() -> this.updatePenalty(ratingGroup.getDisplayName()));
+		});
+	}
+
+	private void createExamComboList(String courseTitle, Combo examCombo, Combo examExerciseCombo) {
+		examCombo.removeAll();
+		this.viewController.getExamShortNames(courseTitle).forEach(examShortName -> examCombo.add(examShortName));
+		examCombo.addListener(SWT.Selection, e -> {
+			this.viewController.getExercisesShortNamesForExam(examCombo.getItem(examCombo.getSelectionIndex()))
+					.forEach(exerciseShortName -> examExerciseCombo.add(exerciseShortName));
+		});
+		examExerciseCombo.addListener(SWT.Selection, e -> this.viewController
+				.setExerciseID(examExerciseCombo.getItem(examExerciseCombo.getSelectionIndex())));
 	}
 
 	private void createExamTab(TabFolder tabFolder) {
@@ -257,57 +287,12 @@ public class ArtemisGradingView extends ViewPart {
 		scrolledCompositeExam.setMinSize(examComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 	}
 
-	private void createAssessmentTab(TabFolder tabFolder) {
-		TabItem assessmentTabItem = new TabItem(tabFolder, SWT.NONE);
-		assessmentTabItem.setText("Assessment");
-
-		ScrolledComposite scrolledCompositeAssessment = new ScrolledComposite(tabFolder,
-				SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
-		assessmentTabItem.setControl(scrolledCompositeAssessment);
-		scrolledCompositeAssessment.setExpandHorizontal(true);
-		scrolledCompositeAssessment.setExpandVertical(true);
-
-		Composite assessmentComposite = new Composite(scrolledCompositeAssessment, SWT.NONE);
-		assessmentComposite.setLayout(new GridLayout(2, false));
-
-		Label courseLabel = new Label(assessmentComposite, SWT.NONE);
-		courseLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		courseLabel.setText("Course");
-
-		Combo courseCombo = new Combo(assessmentComposite, SWT.READ_ONLY);
-		courseCombo.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
-
-		Label exerciseLabel = new Label(assessmentComposite, SWT.NONE);
-		exerciseLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		exerciseLabel.setText("Exercise");
-
-		Combo exerciseCombo = new Combo(assessmentComposite, SWT.READ_ONLY);
-		exerciseCombo.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
-
-		this.createCourseListForAssessmentTabItem(courseCombo, exerciseCombo);
-
-		Button btnStartAssessment = new Button(assessmentComposite, SWT.NONE);
-		btnStartAssessment.setText("Start");
-
-		this.addSelectionListenerForStartAssessmentButton(btnStartAssessment);
-
-		Button btnReloadA = new Button(assessmentComposite, SWT.NONE);
-		btnReloadA.setText("Reload");
-
-		this.addSelectionListenerForReloadButton(btnReloadA);
-
-		Button btnSaveAssessment = new Button(assessmentComposite, SWT.NONE);
-		btnSaveAssessment.setText("Save ");
-
-		this.addSelectionListenerForSaveButton(btnSaveAssessment);
-
-		Button btnSubmitAssessment = new Button(assessmentComposite, SWT.NONE);
-		btnSubmitAssessment.setText("Submit");
-
-		this.addSelectionListenerForSubmitButton(btnSubmitAssessment);
-
-		scrolledCompositeAssessment.setContent(assessmentComposite);
-		scrolledCompositeAssessment.setMinSize(assessmentComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+	private void createExerciseListInput(String courseShortName, Combo exerciseList) {
+		exerciseList.removeAll();
+		this.viewController.getExerciseShortNames(courseShortName)
+				.forEach(exerciseShortName -> exerciseList.add(exerciseShortName));
+		exerciseList.addListener(SWT.Selection,
+				e -> this.viewController.setExerciseID(exerciseList.getItem(exerciseList.getSelectionIndex())));
 	}
 
 	private void createGradingTab(TabFolder tabFolder) {
@@ -324,9 +309,58 @@ public class ArtemisGradingView extends ViewPart {
 		this.scrolledCompositeGrading.setMinSize(this.gradingComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 	}
 
-	private void addSelectionListenerForRefreshButton(Button refreshButton, Combo backlogCombo) {
-		refreshButton.addListener(SWT.Selection, e -> this.fillBacklogComboWithData(backlogCombo));
+	private void createGradingViewElements() {
+		this.gradingComposite.dispose();
+		this.scrolledCompositeGrading.setContent(null);
+		this.gradingComposite = new Composite(this.scrolledCompositeGrading, SWT.NONE);
+		this.viewController.setCurrentAssessmentController();
+		this.gradingComposite.setLayout(new GridLayout(3, true));
+		this.viewController.getRatingGroups().forEach(ratingGroup -> {
+			final Group rgDisplay = new Group(this.gradingComposite, SWT.NONE);
+			this.ratingGroupViewElements.put(ratingGroup.getDisplayName(), rgDisplay);
+			this.updatePenalty(ratingGroup.getDisplayName());
+			final GridLayout gridLayout = new GridLayout();
+			gridLayout.numColumns = 3;
+			rgDisplay.setLayout(gridLayout);
+			final GridData gridData = new GridData(GridData.VERTICAL_ALIGN_FILL);
+			gridData.horizontalSpan = 3;
+			rgDisplay.setLayoutData(gridData);
+			this.viewController.getMistakeTypes().forEach(mistake -> {
+				if (mistake.getRatingGroup().getDisplayName().equals(ratingGroup.getDisplayName())) {
+					final Button mistakeButton = new Button(rgDisplay, SWT.PUSH);
+					mistakeButton.setText(mistake.getName());
+					this.mistakeButtons.put(mistake.getName(), mistakeButton);
+					mistakeButton.setToolTipText(this.viewController.getToolTipForMistakeType(mistake));
+					mistakeButton.addListener(SWT.Selection, event -> {
+						this.viewController.addAssessmentAnnotaion(mistake, null, null, mistake.getRatingGroup().getDisplayName());
+						this.updatePenalty(mistake.getRatingGroup().getDisplayName());
+						this.updateMistakeButtonToolTips(mistake);
+					});
+				}
+			});
+			this.createCustomButton(ratingGroup, rgDisplay);
+		});
+		this.scrolledCompositeGrading.setContent(this.gradingComposite);
+		this.scrolledCompositeGrading.setMinSize(this.gradingComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+	}
 
+	@Override
+	public void createPartControl(Composite parent) {
+		this.createView(parent);
+	}
+
+	private void createView(Composite parent) {
+		TabFolder tabFolder = new TabFolder(parent, SWT.NONE);
+		this.createGradingTab(tabFolder);
+		this.createAssessmentTab(tabFolder);
+		this.createExamTab(tabFolder);
+		this.createBacklogTab(tabFolder);
+
+	}
+
+	private void fillBacklogComboWithData(Combo backlogCombo) {
+		backlogCombo.removeAll();
+		this.viewController.getSubmissionsForBacklog().forEach(project -> backlogCombo.add(project));
 	}
 
 	private void initializeBacklogCombo(Combo backlogCombo) {
@@ -336,73 +370,11 @@ public class ArtemisGradingView extends ViewPart {
 				e -> this.viewController.setAssessedSubmission(backlogCombo.getItem(backlogCombo.getSelectionIndex())));
 	}
 
-	private void fillBacklogComboWithData(Combo backlogCombo) {
-		backlogCombo.removeAll();
-		this.viewController.getSubmissionsForBacklog().forEach(project -> backlogCombo.add(project));
-	}
-
 	private void loadExamComboEntries(Combo examCourseCombo, Combo examCombo, Combo examExerciseCombo) {
 		this.viewController.getCourseShortNames().forEach(courseShortName -> examCourseCombo.add(courseShortName));
 		examCourseCombo.addListener(SWT.Selection,
 				e -> this.createExamComboList(examCourseCombo.getItem(examCourseCombo.getSelectionIndex()), examCombo,
 						examExerciseCombo));
-	}
-
-	private void createExamComboList(String courseTitle, Combo examCombo, Combo examExerciseCombo) {
-		examCombo.removeAll();
-		this.viewController.getExamShortNames(courseTitle).forEach(examShortName -> examCombo.add(examShortName));
-		examCombo.addListener(SWT.Selection, e -> {
-			this.viewController.getExercisesShortNamesForExam(examCombo.getItem(examCombo.getSelectionIndex()))
-					.forEach(exerciseShortName -> examExerciseCombo.add(exerciseShortName));
-		});
-		examExerciseCombo.addListener(SWT.Selection, e -> this.viewController
-				.setExerciseID(examExerciseCombo.getItem(examExerciseCombo.getSelectionIndex())));
-	}
-
-	private void addSelectionListenerForLoadFromBacklogButton(Button btnLoadAgain) {
-		btnLoadAgain.addListener(SWT.Selection, e -> this.viewController.onLoadAgain());
-	}
-
-	private void addSelectionListenerForStartSecondRound(Button btnStartRound2) {
-		btnStartRound2.addListener(SWT.Selection, e -> {
-			this.viewController.onStartCorrectionRound2();
-			this.prepareNewAssessment();
-		});
-	}
-
-	private void addSelectionListenerForStartFirstRound(Button btnStartRound1) {
-		btnStartRound1.addListener(SWT.Selection, e -> {
-			this.viewController.onStartCorrectionRound1();
-			this.prepareNewAssessment();
-		});
-	}
-
-	private void addSelectionListenerForSubmitButton(Button btnSubmit) {
-		btnSubmit.addListener(SWT.Selection, e -> this.viewController.onSubmitAssessment());
-	}
-
-	private void addSelectionListenerForSaveButton(Button btnSave) {
-		btnSave.addListener(SWT.Selection, e -> this.viewController.onSaveAssessment());
-	}
-
-	private void addSelectionListenerForReloadButton(Button btnReloadA) {
-		btnReloadA.addListener(SWT.Selection, e -> this.viewController.onReloadAssessment());
-	}
-
-	private void addSelectionListenerForStartAssessmentButton(Button startAssessmentButton) {
-		startAssessmentButton.addListener(SWT.Selection, e -> {
-			boolean started = this.viewController.onStartAssessment();
-			if (started) {
-				this.createGradingViewElements();
-				this.prepareNewAssessment();
-			}
-		});
-	}
-
-	public void createCourseListForAssessmentTabItem(Combo courseCombo, Combo exerciseCombo) {
-		this.viewController.getCourseShortNames().forEach(courseShortName -> courseCombo.add(courseShortName));
-		courseCombo.addListener(SWT.Selection,
-				e -> this.createExerciseListInput(courseCombo.getItem(courseCombo.getSelectionIndex()), exerciseCombo));
 	}
 
 	private void prepareNewAssessment() {
@@ -413,5 +385,33 @@ public class ArtemisGradingView extends ViewPart {
 	@Override
 	public void setFocus() {
 
+	}
+
+	private void updateMistakeButtonToolTips(IMistakeType mistakeType) {
+		Button button = this.mistakeButtons.get(mistakeType.getName());
+		if (button != null) {
+			button.setToolTipText(this.viewController.getToolTipForMistakeType(mistakeType));
+		}
+	}
+
+	private void updatePenalties() {
+		this.viewController.getRatingGroups().forEach(ratingGroup -> this.updatePenalty(ratingGroup.getDisplayName()));
+	}
+
+	private void updatePenalty(String ratingGroupName) {
+		Group viewElement = this.ratingGroupViewElements.get(ratingGroupName);
+		IRatingGroup ratingGroup = this.viewController.getRatingGroupByShortName(ratingGroupName);
+		if (ratingGroup == null) {
+			return;
+		}
+		StringBuilder builder = new StringBuilder(ratingGroupName);
+		builder.append("(");
+		builder.append(this.viewController.getCurrentPenaltyForRatingGroup(ratingGroup));
+		if (ratingGroup.hasPenaltyLimit()) {
+			builder.append("/");
+			builder.append(ratingGroup.getPenaltyLimit());
+		}
+		builder.append(") penalty points");
+		Display.getDefault().asyncExec(() -> viewElement.setText(builder.toString()));
 	}
 }

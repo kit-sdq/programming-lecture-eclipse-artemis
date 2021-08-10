@@ -53,7 +53,7 @@ public class LockAndSubmitTest {
 			i++;
 			String customMsg = null;
 			Double customPenalty = null;
-			if (mistakeType.getButtonName().equals("Custom Penalty")) {
+			if (mistakeType.getName().equals("Custom Penalty")) {
 				customMsg = "my_CUSTOM_MESSAGE";
 				customPenalty = 25D;
 			}

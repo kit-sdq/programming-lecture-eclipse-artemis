@@ -11,7 +11,7 @@ import edu.kit.kastel.sdq.eclipse.grading.api.model.IRatingGroup;
 
 public class MistakeType implements IMistakeType {
 	private String shortName;
-	private String buttonName;
+	private String name;
 	private String message;
 
 	//used for deserialization
@@ -34,7 +34,7 @@ public class MistakeType implements IMistakeType {
 			@JsonProperty("appliesTo") String appliesTo) {
 		super();
 		this.shortName = shortName;
-		this.buttonName = buttonName;
+		this.name = buttonName;
 		this.message = message;
 		this.penaltyRule = penaltyRule;
 
@@ -48,7 +48,7 @@ public class MistakeType implements IMistakeType {
 			PenaltyRule penaltyType) {
 		super();
 		this.shortName = shortName;
-		this.buttonName = buttonName;
+		this.name = buttonName;
 		this.message = message;
 		this.ratingGroup = ratingGroup;
 		this.penaltyRule = penaltyType;
@@ -72,13 +72,13 @@ public class MistakeType implements IMistakeType {
 
 
 	@Override
-	public String getButtonName() {
-		return this.buttonName;
+	public String getMessage() {
+		return this.message;
 	}
 
 	@Override
-	public String getMessage() {
-		return this.message;
+	public String getName() {
+		return this.name;
 	}
 
 	public PenaltyRule getPenaltyRule() {
@@ -88,11 +88,6 @@ public class MistakeType implements IMistakeType {
 	@Override
 	public IRatingGroup getRatingGroup() {
 		return this.ratingGroup;
-	}
-
-	@Override
-	public String getRatingGroupName() {
-		return this.ratingGroup.getDisplayName();
 	}
 
 	public String getShortName() {
@@ -116,7 +111,7 @@ public class MistakeType implements IMistakeType {
 
 	@Override
 	public String toString() {
-		return "MistakeType [shortName=" + this.shortName + ", buttonName=" + this.buttonName + ", message=" + this.message
+		return "MistakeType [shortName=" + this.shortName + ", name=" + this.name + ", message=" + this.message
 				+ ", ratingGroup=" + this.ratingGroup + ", penaltyRule=" + this.penaltyRule
 				+ "]";
 	}

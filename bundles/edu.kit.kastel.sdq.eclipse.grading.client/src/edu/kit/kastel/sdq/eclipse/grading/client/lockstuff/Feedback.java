@@ -52,7 +52,7 @@ public class Feedback implements IFeedback {
 
 	@Override
 	public FeedbackType getFeedbackType() {
-		return FeedbackType.valueOfIgnoreCase(this.getType());
+		return FeedbackType.valueOfIgnoreCase(this.type);
 	}
 
 	@Override
@@ -73,11 +73,6 @@ public class Feedback implements IFeedback {
 	@Override
 	public String getText() {
 		return this.text;
-	}
-
-	@Override
-	public String getType() {
-		return this.type;
 	}
 
 	@Override

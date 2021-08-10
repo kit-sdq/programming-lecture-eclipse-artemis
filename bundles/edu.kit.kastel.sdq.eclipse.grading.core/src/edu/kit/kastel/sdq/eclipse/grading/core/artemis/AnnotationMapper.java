@@ -192,11 +192,12 @@ public class AnnotationMapper {
 				.append(".java_line:")
 				.append(annotation.getStartLine())
 				.toString();
+
 		final String detailText = new StringBuilder()
 				.append("[")
-				.append(annotation.getMistakeType().getRatingGroupName())
+				.append(annotation.getMistakeType().getRatingGroup().getDisplayName())
 				.append(":")
-				.append(annotation.getMistakeType().getButtonName())
+				.append(annotation.getMistakeType().getName())
 				.append("] ")
 				.append(annotation.getMistakeType().getMessage())
 				.append(annotation.getCustomMessage().orElse(""))	//assuming mistake type has no message in custom case!
@@ -233,7 +234,7 @@ public class AnnotationMapper {
 				if ( !Util.isZero(currentPenalty)) {
 					detailTextStringBuilder
 						.append("\n    * \"")
-						.append(mistakeType.getButtonName())
+						.append(mistakeType.getName())
 						.append("\" [")
 						.append(Util.formatDouble(currentPenalty))
 						.append("]:");
