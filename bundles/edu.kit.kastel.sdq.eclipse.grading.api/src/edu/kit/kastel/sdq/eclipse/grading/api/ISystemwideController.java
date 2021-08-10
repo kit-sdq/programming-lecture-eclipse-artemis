@@ -19,7 +19,7 @@ public interface ISystemwideController {
 	 *
 	 * @return the one artemis gui controller.
 	 */
-	IArtemisGUIController getArtemisGUIController();
+	IArtemisController getArtemisGUIController();
 
 	/**
 	 * <B>BACKLOG</B><br/>

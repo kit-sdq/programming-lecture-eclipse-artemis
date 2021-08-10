@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 
-import edu.kit.kastel.sdq.eclipse.grading.api.IArtemisGUIController;
+import edu.kit.kastel.sdq.eclipse.grading.api.IArtemisController;
 import edu.kit.kastel.sdq.eclipse.grading.api.IAssessmentController;
 import edu.kit.kastel.sdq.eclipse.grading.api.ISystemwideController;
 import edu.kit.kastel.sdq.eclipse.grading.api.PreferenceConstants;
@@ -28,7 +28,7 @@ import edu.kit.kastel.sdq.eclipse.grading.core.config.JsonFileConfigDao;
 public class SystemwideController implements ISystemwideController {
 
 	private final Map<Integer, IAssessmentController> assessmentControllers;
-	private final IArtemisGUIController artemisGUIController;
+	private final IArtemisController artemisGUIController;
 
 	private ConfigDao configDao;
 
@@ -47,7 +47,7 @@ public class SystemwideController implements ISystemwideController {
 		this.alertObservable = new AlertObservable();
 
 		this.exerciseConfigName = exerciseConfigName;
-		this.artemisGUIController = new ArtemisGUIController(this, artemisHost, username, password);
+		this.artemisGUIController = new ArtemisController(this, artemisHost, username, password);
 		this.projectFileNamingStrategy = new DefaultProjectFileNamingStrategy();		//TODO durch das ganze projekt durchreichen! NUR hier instanziieren!
 	}
 
@@ -65,7 +65,7 @@ public class SystemwideController implements ISystemwideController {
 	}
 
 	@Override
-	public IArtemisGUIController getArtemisGUIController() {
+	public IArtemisController getArtemisGUIController() {
 		return this.artemisGUIController;
 	}
 

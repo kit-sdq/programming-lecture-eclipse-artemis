@@ -154,7 +154,7 @@ public class LockAndSubmitTest {
 				this.password);
 		final int exerciseID = 1;
 		this.subscribeToAlertObservable(sysController.getAlertObservable(), "SysController");
-		this.subscribeToAlertObservable(sysController.getArtemisGUIController().getAlertObservable(), "ArtemisGUIController");
+		this.subscribeToAlertObservable(sysController.getArtemisGUIController().getAlertObservable(), "ArtemisController");
 		sysController.setCourseIdAndGetExerciseShortNames("praktikum21");
 		sysController.setExerciseId("testAufgabe1");
 
@@ -162,7 +162,7 @@ public class LockAndSubmitTest {
 		boolean startSuccessful = sysController.startAssessment();
 		this.subscribeToAlertObservable(
 				sysController.getCurrentAssessmentController().getAlertObservable(),
-				"ArtemisGUIController");
+				"ArtemisController");
 
 		if (!startSuccessful) {
 			System.out.println("######################### NO MORE SUBMISSIONS FOUND ####");
@@ -184,7 +184,7 @@ public class LockAndSubmitTest {
 		sysController.loadAgain();
 		this.subscribeToAlertObservable(
 				sysController.getCurrentAssessmentController().getAlertObservable(),
-				"ArtemisGUIController");
+				"ArtemisController");
 
 		System.out.println("Deserialized annotations:\n "
 				+ sysController.getCurrentAssessmentController().getAnnotations());

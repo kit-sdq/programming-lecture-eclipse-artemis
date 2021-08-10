@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 
-import edu.kit.kastel.sdq.eclipse.grading.api.IArtemisGUIController;
+import edu.kit.kastel.sdq.eclipse.grading.api.IArtemisController;
 import edu.kit.kastel.sdq.eclipse.grading.api.IAssessmentController;
 import edu.kit.kastel.sdq.eclipse.grading.api.alerts.IAlertObservable;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ICourse;
@@ -93,7 +93,7 @@ public class AssessmentController implements IAssessmentController {
 
 	@Override
 	public void deleteEclipseProject() {
-		IArtemisGUIController guiController =  this.systemWideController.getArtemisGUIController();
+		IArtemisController guiController =  this.systemWideController.getArtemisGUIController();
 		final Collection<ICourse> courses = guiController.getCourses();
 		final IExercise exercise = guiController.getExerciseFromCourses(courses, this.courseID, this.exerciseID);
 		final ISubmission submission = guiController.getSubmissionFromExercise(exercise, this.submissionID);

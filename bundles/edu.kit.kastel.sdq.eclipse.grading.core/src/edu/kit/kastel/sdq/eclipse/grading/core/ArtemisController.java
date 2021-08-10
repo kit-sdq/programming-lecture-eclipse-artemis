@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.CoreException;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.AbstractArtemisClient;
 import edu.kit.kastel.sdq.eclipse.grading.api.ArtemisClientException;
-import edu.kit.kastel.sdq.eclipse.grading.api.IArtemisGUIController;
+import edu.kit.kastel.sdq.eclipse.grading.api.IArtemisController;
 import edu.kit.kastel.sdq.eclipse.grading.api.IAssessmentController;
 import edu.kit.kastel.sdq.eclipse.grading.api.alerts.IAlertObservable;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.ILockResult;
@@ -37,7 +37,7 @@ import edu.kit.kastel.sdq.eclipse.grading.core.artemis.DefaultProjectFileNamingS
 import edu.kit.kastel.sdq.eclipse.grading.core.artemis.WorkspaceUtil;
 import edu.kit.kastel.sdq.eclipse.grading.core.artemis.ZeroedPenaltyCalculationStrategy;
 
-public class ArtemisGUIController implements IArtemisGUIController {
+public class ArtemisController implements IArtemisController {
 
 	private final SystemwideController systemwideController;
 	private final AbstractArtemisClient artemisClient;
@@ -46,7 +46,7 @@ public class ArtemisGUIController implements IArtemisGUIController {
 
 	private AlertObservable alertObservable;
 
-	protected ArtemisGUIController(final SystemwideController systemwideController, final String host, final String username, final String password) {
+	protected ArtemisController(final SystemwideController systemwideController, final String host, final String username, final String password) {
 		this.artemisClient = new ArtemisRESTClient(username, password, host);
 		this.systemwideController = systemwideController;
 		this.lockResults = new HashMap<>();

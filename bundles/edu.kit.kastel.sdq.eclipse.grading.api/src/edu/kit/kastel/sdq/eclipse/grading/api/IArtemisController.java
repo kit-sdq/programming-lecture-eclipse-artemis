@@ -10,9 +10,11 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IFeedback;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
 
-//TODO umbenennen in IArtemisController
-//TODO ggf in AssessmentController reinklatschen
-public interface IArtemisGUIController {
+/**
+ * Works as an interface from backend to ArtemisClient
+ *
+ */
+public interface IArtemisController {
 
 	/**
 	 * Download submissions defined by the given submissionIds
@@ -116,7 +118,7 @@ public interface IArtemisGUIController {
 
 	/**
 	 * Starts the next assessment. Which one is smh determined by artemis. Correction Round is set to 0.
-	 * @param exerciseID the exerciseID (found in your ICourse-Collection gotten via IArtemisGUIController::getCourses())
+	 * @param exerciseID the exerciseID (found in your ICourse-Collection gotten via IArtemisController::getCourses())
 	 * @return
 	 * 		<li> the submissionID which defines what is assessed.
 	 * 		<li> Optional.empty(), if no assessment is left!
@@ -125,7 +127,7 @@ public interface IArtemisGUIController {
 
 	/**
 	 * Starts the next assessment of the given correction round. Which one is smh determined by artemis.
-	 * @param exerciseID the exerciseID (found in your ICourse-Collection gotten via IArtemisGUIController::getCourses())
+	 * @param exerciseID the exerciseID (found in your ICourse-Collection gotten via IArtemisController::getCourses())
 	 * @param correctionRound for non-exams: 0. For exams: either 0 or 1
 	 * @return
 	 * 		<li> the submissionID which defines what is assessed.

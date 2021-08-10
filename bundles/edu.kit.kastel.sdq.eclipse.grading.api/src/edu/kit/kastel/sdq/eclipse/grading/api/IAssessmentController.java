@@ -109,7 +109,7 @@ public interface IAssessmentController {
 	/**
 	 * TODO requirements raus (?)
 	 * Reset annotations by reloading from Artemis state. You need to RE-LOCK, for this to have any effect!
-	 * Do so with {@link IArtemisGUIController#startAssessment(int)}, with this {@link IAssessmentController#getSubmissionID()} as param.
+	 * Do so with {@link IArtemisController#startAssessment(int)}, with this {@link IAssessmentController#getSubmissionID()} as param.
 	 */
 	void resetAndReload();
 }

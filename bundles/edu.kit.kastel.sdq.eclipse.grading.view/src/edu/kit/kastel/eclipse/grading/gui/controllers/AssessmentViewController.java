@@ -9,7 +9,7 @@ import edu.kit.kastel.eclipse.grading.gui.activator.Activator;
 import edu.kit.kastel.eclipse.grading.gui.assessment.view.ArtemisGradingView;
 import edu.kit.kastel.eclipse.grading.gui.observers.ViewAlertObserver;
 import edu.kit.kastel.eclipse.grading.gui.utilities.AssessmentUtilities;
-import edu.kit.kastel.sdq.eclipse.grading.api.IArtemisGUIController;
+import edu.kit.kastel.sdq.eclipse.grading.api.IArtemisController;
 import edu.kit.kastel.sdq.eclipse.grading.api.IAssessmentController;
 import edu.kit.kastel.sdq.eclipse.grading.api.ISystemwideController;
 import edu.kit.kastel.sdq.eclipse.grading.api.alerts.IAlertObserver;
@@ -30,7 +30,7 @@ import edu.kit.kastel.sdq.eclipse.grading.core.SystemwideController;
 public class AssessmentViewController {
 
 	private IAssessmentController assessmentController;
-	private IArtemisGUIController artemisGUIController;
+	private IArtemisController artemisGUIController;
 	private ISystemwideController systemwideController;
 	private IAlertObserver alertObserver;
 
