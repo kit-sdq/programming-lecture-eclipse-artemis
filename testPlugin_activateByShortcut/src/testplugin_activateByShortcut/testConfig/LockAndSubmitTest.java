@@ -160,14 +160,14 @@ public class LockAndSubmitTest {
 
 		this.printBegunSubmissionState(sysController, "before assessment start");
 		boolean startSuccessful = sysController.startAssessment();
-		this.subscribeToAlertObservable(
-				sysController.getCurrentAssessmentController().getAlertObservable(),
-				"ArtemisController");
-
 		if (!startSuccessful) {
 			System.out.println("######################### NO MORE SUBMISSIONS FOUND ####");
 			return this;
 		}
+		this.subscribeToAlertObservable(
+				sysController.getCurrentAssessmentController().getAlertObservable(),
+				"ArtemisController");
+
 
 		this.addSomeFakeAssessments(sysController);
 
@@ -175,6 +175,10 @@ public class LockAndSubmitTest {
 		sysController.saveAssessment();
 		this.printBegunSubmissionState(sysController, "before submit");
 		sysController.submitAssessment();
+
+
+		//TODO test if breaks
+		sysController.saveAssessment();
 
 		// check BACKLOG and deserialization
 		sysController.setCourseIdAndGetExerciseShortNames("praktikum21");

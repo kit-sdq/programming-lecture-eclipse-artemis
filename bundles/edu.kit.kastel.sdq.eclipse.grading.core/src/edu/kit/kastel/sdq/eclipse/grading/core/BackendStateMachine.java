@@ -6,63 +6,60 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import edu.kit.kastel.sdq.eclipse.grading.api.backendstate.State;
+import edu.kit.kastel.sdq.eclipse.grading.api.backendstate.Transition;
+
 public class BackendStateMachine {
 
-	public enum State {
-		ERROR_STATE													(),
-		NO_STATE													(),
-		COURSE_SET													(),
-		COURSE_EXERCISE_SET											(),
-		COURSE_EXERCISE_SUBMISSION_SET								(),
-		COURSE_EXERCISE_SUBMISSION_SET_SUBMISSION_STARTED			(),
-		COURSE_EXERCISE_SUBMISSION_SET_SUBMISSION_SAVED				();
-	}
+
+
 
 	private State currentState;
-	private Map<State, Set<State>> transitions;
+	private Map<State, Set<Transition>> transitionsNew;
 
 	public BackendStateMachine() {
 		this.currentState = State.NO_STATE;
 
-		this.transitions = new EnumMap<>(State.class);
+		this.transitionsNew = new EnumMap<>(State.class);
 		this.setUpTransitions();
+	}
+
+	public void applyTransition(Transition transition) throws NoTransitionException {
+		if (!this.transitionsNew.get(this.currentState).contains(transition)) {
+			final String message = "State transition " + transition.toString() + " (from " + this.currentState + " to " + transition.getTo() + ") not defined.";
+			this.currentState = State.ERROR_STATE;
+			throw new NoTransitionException(message);
+		}
+
+		this.currentState = transition.getTo();
+	}
+
+	public Set<Transition> getCurrentlyPossibleTransitions() {
+		return this.transitionsNew.get(this.currentState);
 	}
 
 	/**
 	 * Define the state transitions. See docs for a diagram!
 	 */
 	private void setUpTransitions() {
-		this.transitions.put(State.ERROR_STATE, 										new HashSet<>(List.of()));
-		this.transitions.put(State.NO_STATE, 											new HashSet<>(List.of(
-																							State.COURSE_SET)));
-		this.transitions.put(State.COURSE_SET, 											new HashSet<>(List.of(
-																							State.COURSE_EXERCISE_SET)));
-		this.transitions.put(State.COURSE_EXERCISE_SET, 								new HashSet<>(List.of(
-																							State.COURSE_SET,
-																							State.COURSE_EXERCISE_SUBMISSION_SET,
-																							State.COURSE_EXERCISE_SUBMISSION_SET_SUBMISSION_STARTED)));
-		this.transitions.put(State.COURSE_EXERCISE_SUBMISSION_SET, 						new HashSet<>(List.of(
-																							State.COURSE_EXERCISE_SUBMISSION_SET_SUBMISSION_STARTED)));
-		this.transitions.put(State.COURSE_EXERCISE_SUBMISSION_SET_SUBMISSION_STARTED, 	new HashSet<>(List.of(
-																							State.COURSE_EXERCISE_SUBMISSION_SET_SUBMISSION_STARTED,
-																							State.COURSE_EXERCISE_SUBMISSION_SET_SUBMISSION_SAVED,
-																							State.COURSE_EXERCISE_SET)));
-		this.transitions.put(State.COURSE_EXERCISE_SUBMISSION_SET_SUBMISSION_SAVED, 	new HashSet<>(List.of(
-																							State.COURSE_EXERCISE_SUBMISSION_SET_SUBMISSION_SAVED,
-																							State.COURSE_EXERCISE_SET)));
-	}
-
-	/**
-	 * Try transition from current State to given state. If impossible, currentState is set to {@link State#ERROR_STATE}.
-	 * @param nextState
-	 * @throws NoTransitionException if there is no transition from this state to the next state.
-	 */
-	public void transition(State nextState) throws NoTransitionException {
-		if (!this.transitions.get(this.currentState).contains(nextState)) {
-			final String message = "Transition from " + this.currentState + " to " + nextState + " not defined!";
-			this.currentState = State.ERROR_STATE;
-			throw new NoTransitionException(message);
-		}
-		this.currentState = nextState;
+		this.transitionsNew.put(State.ERROR_STATE, new HashSet<>(List.of()));
+		this.transitionsNew.put(State.NO_STATE, new HashSet<>(List.of(Transition.SET_COURSE_ID_AND_GET_EXERCISE_SHORT_NAMES)));
+		this.transitionsNew.put(State.COURSE_SET, new HashSet<>(List.of(Transition.SET_EXERCISE_ID)));
+		this.transitionsNew.put(State.COURSE_EXERCISE_SET, new HashSet<>(List.of(
+				Transition.SET_COURSE_ID_AND_GET_EXERCISE_SHORT_NAMES,
+				Transition.START_ASSESSMENT,
+				Transition.START_CORRECTION_ROUND_1,
+				Transition.START_CORRECTION_ROUND_2,
+				Transition.SET_ASSESSED_SUBMISSION_BY_PROJECT_NAME)));
+		this.transitionsNew.put(State.COURSE_EXERCISE_SUBMISSION_SET, new HashSet<>(List.of(Transition.LOAD_AGAIN)));
+		this.transitionsNew.put(State.COURSE_EXERCISE_SUBMISSION_SET_SUBMISSION_STARTED, new HashSet<>(List.of(
+				Transition.RELOAD_ASSESSMENT,
+				Transition.SAVE_ASSESSMENT,
+				Transition.SUBMIT_ASSESSMENT,
+				Transition.ON_ZERO_POINTS_FOR_ASSESSMENT)));
+		this.transitionsNew.put(State.COURSE_EXERCISE_SUBMISSION_SET_SUBMISSION_SAVED, new HashSet<>(List.of(
+				Transition.SAVE_ASSESSMENT,
+				Transition.SUBMIT_ASSESSMENT,
+				Transition.ON_ZERO_POINTS_FOR_ASSESSMENT)));
 	}
 }

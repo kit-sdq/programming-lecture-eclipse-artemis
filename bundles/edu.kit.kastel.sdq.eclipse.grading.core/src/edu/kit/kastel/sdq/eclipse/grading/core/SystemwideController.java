@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -20,7 +21,7 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ICourse;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission.Filter;
-import edu.kit.kastel.sdq.eclipse.grading.core.BackendStateMachine.State;
+import edu.kit.kastel.sdq.eclipse.grading.api.backendstate.Transition;
 import edu.kit.kastel.sdq.eclipse.grading.core.artemis.DefaultProjectFileNamingStrategy;
 import edu.kit.kastel.sdq.eclipse.grading.core.artemis.WorkspaceUtil;
 import edu.kit.kastel.sdq.eclipse.grading.core.config.ConfigDao;
@@ -63,6 +64,16 @@ public class SystemwideController implements ISystemwideController {
 				preferenceStore.getString(PreferenceConstants.P_ARTEMIS_PASSWORD));
 	}
 
+	private boolean checkTransitionNotAllowedAndNotify(Transition transition) {
+		try {
+			this.backendStateMachine.applyTransition(transition);
+		} catch (NoTransitionException e) {
+			this.alertObservable.error(e.getMessage(), e);
+			return true;
+		}
+		return false;
+	}
+
 	@Override
 	public IAlertObservable getAlertObservable() {
 		return this.alertObservable;
@@ -73,6 +84,7 @@ public class SystemwideController implements ISystemwideController {
 		return this.artemisGUIController;
 	}
 
+
 	private IAssessmentController getAssessmentController(int submissionID, String exerciseConfigName, int courseID,
 			int exerciseID) {
 		this.assessmentControllers.putIfAbsent(
@@ -80,7 +92,6 @@ public class SystemwideController implements ISystemwideController {
 				new AssessmentController(this, courseID, exerciseID, submissionID, exerciseConfigName));
 		return this.assessmentControllers.get(submissionID);
 	}
-
 
 	private Collection<ISubmission> getBegunSubmissions(ISubmission.Filter submissionFilter) {
 		if (this.nullCheckMembersAndNotify(true, true, false)) return List.of();
@@ -122,14 +133,14 @@ public class SystemwideController implements ISystemwideController {
 	}
 
 	@Override
+	public Set<Transition> getCurrentlyPossibleTransitions() {
+		return this.backendStateMachine.getCurrentlyPossibleTransitions();
+	}
+
+	@Override
 	public void loadAgain() {
+		if (this.checkTransitionNotAllowedAndNotify(Transition.LOAD_AGAIN)) return;
 		if (this.nullCheckMembersAndNotify(true, true, true)) return;
-		try {
-			this.backendStateMachine.transition(State.COURSE_EXERCISE_SUBMISSION_SET_SUBMISSION_STARTED);
-		} catch (NoTransitionException e) {
-			this.alertObservable.error(e.getMessage(), e);
-			return;
-		}
 
 		this.getArtemisGUIController().startAssessment(this.submissionID);
 		this.getArtemisGUIController().downloadExerciseAndSubmission(this.courseID, this.exerciseID, this.submissionID);
@@ -162,12 +173,7 @@ public class SystemwideController implements ISystemwideController {
 
 	@Override
 	public void onZeroPointsForAssessment() {
-		try {
-			this.backendStateMachine.transition(State.COURSE_EXERCISE_SET);
-		} catch (NoTransitionException e) {
-			this.alertObservable.error(e.getMessage(), e);
-			return;
-		}
+		if (this.checkTransitionNotAllowedAndNotify(Transition.ON_ZERO_POINTS_FOR_ASSESSMENT)) return;
 
 		if (this.artemisGUIController.saveAssessment(this.submissionID, true, true)) {
 			this.getCurrentAssessmentController().deleteEclipseProject();
@@ -177,13 +183,8 @@ public class SystemwideController implements ISystemwideController {
 
 	@Override
 	public void reloadAssessment() {
+		if (this.checkTransitionNotAllowedAndNotify(Transition.RELOAD_ASSESSMENT)) return;
 		if (this.nullCheckMembersAndNotify(true, true, true)) return;
-		try {
-			this.backendStateMachine.transition(State.COURSE_EXERCISE_SUBMISSION_SET_SUBMISSION_STARTED);
-		} catch (NoTransitionException e) {
-			this.alertObservable.error(e.getMessage(), e);
-			return;
-		}
 
 		this.getCurrentAssessmentController().deleteEclipseProject();
 
@@ -195,25 +196,15 @@ public class SystemwideController implements ISystemwideController {
 
 	@Override
 	public void saveAssessment() {
+		if (this.checkTransitionNotAllowedAndNotify(Transition.SAVE_ASSESSMENT)) return;
 		if (this.nullCheckMembersAndNotify(true, true, true)) return;
-		try {
-			this.backendStateMachine.transition(State.COURSE_EXERCISE_SUBMISSION_SET_SUBMISSION_SAVED);
-		} catch (NoTransitionException e) {
-			this.alertObservable.error(e.getMessage(), e);
-			return;
-		}
 
 		this.artemisGUIController.saveAssessment(this.submissionID, false, false);
 	}
 
 	@Override
 	public void setAssessedSubmissionByProjectName(String projectName) {
-		try {
-			this.backendStateMachine.transition(State.COURSE_EXERCISE_SUBMISSION_SET);
-		} catch (NoTransitionException e) {
-			this.alertObservable.error(e.getMessage(), e);
-			return;
-		}
+		if (this.checkTransitionNotAllowedAndNotify(Transition.SET_ASSESSED_SUBMISSION_BY_PROJECT_NAME)) return;
 
 		boolean[] found = {false};
 		this.getBegunSubmissions(Filter.ALL).forEach(submission -> {
@@ -240,12 +231,7 @@ public class SystemwideController implements ISystemwideController {
 
 	@Override
 	public Collection<String> setCourseIdAndGetExerciseShortNames(final String courseShortName) {
-		try {
-			this.backendStateMachine.transition(State.COURSE_SET);
-		} catch (NoTransitionException e) {
-			this.alertObservable.error(e.getMessage(), e);
-			return List.of();
-		}
+		if (this.checkTransitionNotAllowedAndNotify(Transition.SET_COURSE_ID_AND_GET_EXERCISE_SHORT_NAMES)) return List.of();
 
 		for (ICourse course : this.getArtemisGUIController().getCourses()) {
 			if (course.getShortName().equals(courseShortName)) {
@@ -261,12 +247,7 @@ public class SystemwideController implements ISystemwideController {
 
 	@Override
 	public void setExerciseId(final String exerciseShortName) {
-		try {
-			this.backendStateMachine.transition(State.COURSE_EXERCISE_SET);
-		} catch (NoTransitionException e) {
-			this.alertObservable.error(e.getMessage(), e);
-			return;
-		}
+		if (this.checkTransitionNotAllowedAndNotify(Transition.SET_EXERCISE_ID)) return;
 
 		for (ICourse course : this.getArtemisGUIController().getCourses()) {
 			for (IExercise exercise : course.getExercises()) {
@@ -281,17 +262,13 @@ public class SystemwideController implements ISystemwideController {
 
 	@Override
 	public boolean startAssessment() {
+		if (this.checkTransitionNotAllowedAndNotify(Transition.START_ASSESSMENT)) return false;
+
 		return this.startAssessment(0);
 	}
 
 	private boolean startAssessment(int correctionRound) {
 		if (this.nullCheckMembersAndNotify(true, true, false)) return false;
-		try {
-			this.backendStateMachine.transition(State.COURSE_EXERCISE_SUBMISSION_SET_SUBMISSION_STARTED);
-		} catch (NoTransitionException e) {
-			this.alertObservable.error(e.getMessage(), e);
-			return false;
-		}
 
 		Optional<Integer> optionalSubmissionID = this.getArtemisGUIController().startNextAssessment(this.exerciseID, correctionRound);
 		if (optionalSubmissionID.isEmpty()) {
@@ -305,23 +282,22 @@ public class SystemwideController implements ISystemwideController {
 
 	@Override
 	public boolean startCorrectionRound1() {
+		if (this.checkTransitionNotAllowedAndNotify(Transition.START_CORRECTION_ROUND_1)) return false;
+
 		return this.startAssessment(0);
 	}
 
 	@Override
 	public boolean startCorrectionRound2() {
+		if (this.checkTransitionNotAllowedAndNotify(Transition.START_CORRECTION_ROUND_2)) return false;
+
 		return this.startAssessment(1);
 	}
 
 	@Override
 	public void submitAssessment() {
+		if (this.checkTransitionNotAllowedAndNotify(Transition.SUBMIT_ASSESSMENT)) return;
 		if (this.nullCheckMembersAndNotify(true, true, true)) return;
-		try {
-			this.backendStateMachine.transition(State.COURSE_EXERCISE_SET);
-		} catch (NoTransitionException e) {
-			this.alertObservable.error(e.getMessage(), e);
-			return;
-		}
 
 		if (this.artemisGUIController.saveAssessment(this.submissionID, true, false)) {
 			this.getCurrentAssessmentController().deleteEclipseProject();

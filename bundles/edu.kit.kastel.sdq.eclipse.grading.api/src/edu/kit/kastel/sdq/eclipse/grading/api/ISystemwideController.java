@@ -2,9 +2,12 @@ package edu.kit.kastel.sdq.eclipse.grading.api;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.Set;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.alerts.IAlertObservable;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
+import edu.kit.kastel.sdq.eclipse.grading.api.backendstate.State;
+import edu.kit.kastel.sdq.eclipse.grading.api.backendstate.Transition;
 
 public interface ISystemwideController {
 
@@ -37,6 +40,12 @@ public interface ISystemwideController {
 	 *  Get assessment controller for current state (courseID, exerciseID, submissionID, exerciseConfig).
 	 */
 	IAssessmentController getCurrentAssessmentController();
+
+	/**
+	 *
+	 * @return the possible transitions, based on the current {@link State}
+	 */
+	Set<Transition> getCurrentlyPossibleTransitions();
 
 	/**
 	 * <B>BACKLOG</B><br/>
