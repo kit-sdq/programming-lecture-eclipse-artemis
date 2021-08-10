@@ -20,6 +20,7 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ICourse;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission.Filter;
+import edu.kit.kastel.sdq.eclipse.grading.core.BackendStateMachine.State;
 import edu.kit.kastel.sdq.eclipse.grading.core.artemis.DefaultProjectFileNamingStrategy;
 import edu.kit.kastel.sdq.eclipse.grading.core.artemis.WorkspaceUtil;
 import edu.kit.kastel.sdq.eclipse.grading.core.config.ConfigDao;
@@ -41,6 +42,8 @@ public class SystemwideController implements ISystemwideController {
 
 	private IProjectFileNamingStrategy projectFileNamingStrategy;
 
+	private BackendStateMachine backendStateMachine;
+
 	public SystemwideController(final File configFile, final String exerciseConfigName, final String artemisHost, final String username, final String password) {
 		this.setConfigFile(configFile);
 		this.assessmentControllers = new HashMap<>();
@@ -49,6 +52,7 @@ public class SystemwideController implements ISystemwideController {
 		this.exerciseConfigName = exerciseConfigName;
 		this.artemisGUIController = new ArtemisController(this, artemisHost, username, password);
 		this.projectFileNamingStrategy = new DefaultProjectFileNamingStrategy();		//TODO durch das ganze projekt durchreichen! NUR hier instanziieren!
+		this.backendStateMachine = new BackendStateMachine();
 	}
 
 	public SystemwideController(final IPreferenceStore preferenceStore) {
@@ -120,6 +124,13 @@ public class SystemwideController implements ISystemwideController {
 	@Override
 	public void loadAgain() {
 		if (this.nullCheckMembersAndNotify(true, true, true)) return;
+		try {
+			this.backendStateMachine.transition(State.COURSE_EXERCISE_SUBMISSION_SET_SUBMISSION_STARTED);
+		} catch (NoTransitionException e) {
+			this.alertObservable.error(e.getMessage(), e);
+			return;
+		}
+
 		this.getArtemisGUIController().startAssessment(this.submissionID);
 		this.getArtemisGUIController().downloadExerciseAndSubmission(this.courseID, this.exerciseID, this.submissionID);
 	}
@@ -151,6 +162,13 @@ public class SystemwideController implements ISystemwideController {
 
 	@Override
 	public void onZeroPointsForAssessment() {
+		try {
+			this.backendStateMachine.transition(State.COURSE_EXERCISE_SET);
+		} catch (NoTransitionException e) {
+			this.alertObservable.error(e.getMessage(), e);
+			return;
+		}
+
 		if (this.artemisGUIController.saveAssessment(this.submissionID, true, true)) {
 			this.getCurrentAssessmentController().deleteEclipseProject();
 			this.submissionID = null;
@@ -160,6 +178,12 @@ public class SystemwideController implements ISystemwideController {
 	@Override
 	public void reloadAssessment() {
 		if (this.nullCheckMembersAndNotify(true, true, true)) return;
+		try {
+			this.backendStateMachine.transition(State.COURSE_EXERCISE_SUBMISSION_SET_SUBMISSION_STARTED);
+		} catch (NoTransitionException e) {
+			this.alertObservable.error(e.getMessage(), e);
+			return;
+		}
 
 		this.getCurrentAssessmentController().deleteEclipseProject();
 
@@ -172,11 +196,25 @@ public class SystemwideController implements ISystemwideController {
 	@Override
 	public void saveAssessment() {
 		if (this.nullCheckMembersAndNotify(true, true, true)) return;
+		try {
+			this.backendStateMachine.transition(State.COURSE_EXERCISE_SUBMISSION_SET_SUBMISSION_SAVED);
+		} catch (NoTransitionException e) {
+			this.alertObservable.error(e.getMessage(), e);
+			return;
+		}
+
 		this.artemisGUIController.saveAssessment(this.submissionID, false, false);
 	}
 
 	@Override
 	public void setAssessedSubmissionByProjectName(String projectName) {
+		try {
+			this.backendStateMachine.transition(State.COURSE_EXERCISE_SUBMISSION_SET);
+		} catch (NoTransitionException e) {
+			this.alertObservable.error(e.getMessage(), e);
+			return;
+		}
+
 		boolean[] found = {false};
 		this.getBegunSubmissions(Filter.ALL).forEach(submission -> {
 			String currentProjectName = this.projectFileNamingStrategy.getProjectFileInWorkspace(
@@ -202,6 +240,13 @@ public class SystemwideController implements ISystemwideController {
 
 	@Override
 	public Collection<String> setCourseIdAndGetExerciseShortNames(final String courseShortName) {
+		try {
+			this.backendStateMachine.transition(State.COURSE_SET);
+		} catch (NoTransitionException e) {
+			this.alertObservable.error(e.getMessage(), e);
+			return List.of();
+		}
+
 		for (ICourse course : this.getArtemisGUIController().getCourses()) {
 			if (course.getShortName().equals(courseShortName)) {
 				this.courseID = course.getCourseId();
@@ -216,6 +261,13 @@ public class SystemwideController implements ISystemwideController {
 
 	@Override
 	public void setExerciseId(final String exerciseShortName) {
+		try {
+			this.backendStateMachine.transition(State.COURSE_EXERCISE_SET);
+		} catch (NoTransitionException e) {
+			this.alertObservable.error(e.getMessage(), e);
+			return;
+		}
+
 		for (ICourse course : this.getArtemisGUIController().getCourses()) {
 			for (IExercise exercise : course.getExercises()) {
 				if (exercise.getShortName().equals(exerciseShortName)) {
@@ -234,6 +286,13 @@ public class SystemwideController implements ISystemwideController {
 
 	private boolean startAssessment(int correctionRound) {
 		if (this.nullCheckMembersAndNotify(true, true, false)) return false;
+		try {
+			this.backendStateMachine.transition(State.COURSE_EXERCISE_SUBMISSION_SET_SUBMISSION_STARTED);
+		} catch (NoTransitionException e) {
+			this.alertObservable.error(e.getMessage(), e);
+			return false;
+		}
+
 		Optional<Integer> optionalSubmissionID = this.getArtemisGUIController().startNextAssessment(this.exerciseID, correctionRound);
 		if (optionalSubmissionID.isEmpty()) {
 			return false;
@@ -257,6 +316,13 @@ public class SystemwideController implements ISystemwideController {
 	@Override
 	public void submitAssessment() {
 		if (this.nullCheckMembersAndNotify(true, true, true)) return;
+		try {
+			this.backendStateMachine.transition(State.COURSE_EXERCISE_SET);
+		} catch (NoTransitionException e) {
+			this.alertObservable.error(e.getMessage(), e);
+			return;
+		}
+
 		if (this.artemisGUIController.saveAssessment(this.submissionID, true, false)) {
 			this.getCurrentAssessmentController().deleteEclipseProject();
 			this.assessmentControllers.remove(this.submissionID);
