@@ -41,7 +41,7 @@ public class RatingGroup implements IRatingGroup {
 	}
 
 	@Override
-	public Double getPenaltyLimit() {
+	public double getPenaltyLimit() {
 		//in case the caller does not call this::hasPenaltyLimit.
 		return this.penaltyLimit != null ? this.penaltyLimit : Double.MAX_VALUE;
 	}

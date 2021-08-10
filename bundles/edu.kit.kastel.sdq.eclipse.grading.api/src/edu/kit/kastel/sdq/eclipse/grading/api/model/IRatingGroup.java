@@ -18,7 +18,7 @@ public interface IRatingGroup {
 	 *
 	 * @return the maximum penalty that all {@link IMistakeType}s belonging to one {@link IRatingGroup} can reach in sum
 	 */
-	Double getPenaltyLimit();
+	double getPenaltyLimit();
 
 	/**
 	 *
