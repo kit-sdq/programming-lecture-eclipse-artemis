@@ -93,14 +93,13 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 	 * @return
 	 */
 	private String convertRepositoryUrl(String repositoryURLWithStudentName) {
-		final String httpsPrefix = "https://";
-		return repositoryURLWithStudentName.replaceFirst(httpsPrefix + USERNAME_REGEX + "@", httpsPrefix);
+		return repositoryURLWithStudentName.replaceFirst(Constants.HTTPS_PREFIX + USERNAME_REGEX + "@", Constants.HTTPS_PREFIX);
 	}
 
 	//TODO download testRepo
 	private void downloadExercise(IExercise exercise, File directory) throws GitException {
 		//TODO remove hardcoded
-		new EgitGitHandler(exercise.getTestRepositoryUrl()).cloneRepo(directory, "master");
+		new EgitGitHandler(exercise.getTestRepositoryUrl()).cloneRepo(directory, Constants.MASTER_BRANCH_NAME);
 	}
 
 	@Override
@@ -120,11 +119,11 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 	}
 
 	protected void downloadSubmission(ISubmission submission, File directory) throws GitException {
-		new EgitGitHandler(this.convertRepositoryUrl(submission.getRepositoryUrl())).cloneRepo(directory, "master");
+		new EgitGitHandler(this.convertRepositoryUrl(submission.getRepositoryUrl())).cloneRepo(directory, Constants.MASTER_BRANCH_NAME);
 	}
 
 	private String getApiRoot() {
-		return new StringBuilder("https://").append(this.getArtemisHostname()).append("/api").toString();
+		return new StringBuilder(Constants.HTTPS_PREFIX).append(this.getArtemisHostname()).append("/api").toString();
 	}
 
 	@Override
