@@ -96,7 +96,7 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 		return repositoryURLWithStudentName.replaceFirst(Constants.HTTPS_PREFIX + USERNAME_REGEX + "@", Constants.HTTPS_PREFIX);
 	}
 
-	//TODO download testRepo
+	//TODO rename: download testRepo
 	private void downloadExercise(IExercise exercise, File directory) throws GitException {
 		//TODO remove hardcoded
 		new EgitGitHandler(exercise.getTestRepositoryUrl()).cloneRepo(directory, Constants.MASTER_BRANCH_NAME);

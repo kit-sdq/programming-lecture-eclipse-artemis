@@ -138,6 +138,21 @@ public class SystemwideController implements ISystemwideController {
 	}
 
 	@Override
+	public String getCurrentProjectName() {
+		if (this.nullCheckMembersAndNotify(true, true, true)) return null;
+
+		return this.projectFileNamingStrategy.getProjectFileInWorkspace(
+				WorkspaceUtil.getWorkspaceFile(),
+				this.getCurrentExercise(),
+				this.getCurrentSubmission()).getName();
+	}
+
+	private ISubmission getCurrentSubmission() {
+		if (this.nullCheckMembersAndNotify(true, true, true)) return null;
+		return this.getArtemisGUIController().getSubmissionFromExercise(this.getCurrentExercise(), this.submissionID);
+	}
+
+	@Override
 	public void loadAgain() {
 		if (this.checkTransitionNotAllowedAndNotify(Transition.LOAD_AGAIN)) return;
 		if (this.nullCheckMembersAndNotify(true, true, true)) return;
