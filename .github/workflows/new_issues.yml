@@ -12,4 +12,4 @@ jobs:
         with:
           project: Development
           column: ToDo
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          repo-token: ${{ secrets.GH_TOKEN_FOR_PROJECTS }}
