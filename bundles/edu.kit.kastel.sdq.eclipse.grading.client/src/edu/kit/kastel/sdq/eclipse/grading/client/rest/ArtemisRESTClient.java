@@ -96,19 +96,13 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 		return repositoryURLWithStudentName.replaceFirst(Constants.HTTPS_PREFIX + USERNAME_REGEX + "@", Constants.HTTPS_PREFIX);
 	}
 
-	//TODO rename: download testRepo
-	private void downloadExercise(IExercise exercise, File directory) throws GitException {
-		//TODO remove hardcoded
-		new EgitGitHandler(exercise.getTestRepositoryUrl()).cloneRepo(directory, Constants.MASTER_BRANCH_NAME);
-	}
-
 	@Override
 	public void downloadExerciseAndSubmission(IExercise exercise, ISubmission submission,
 			File directory, IProjectFileNamingStrategy projectFileNamingStrategy) throws ArtemisClientException {
 
 		final File projectDirectory = projectFileNamingStrategy.getProjectFileInWorkspace(directory, exercise, submission);
 		try {
-			this.downloadExercise(exercise, projectDirectory);
+			this.downloadTestRepo(exercise, projectDirectory);
 			//download submission inside the exercise project directory
 			this.downloadSubmission(submission, projectFileNamingStrategy.getAssignmentFileInProjectDirectory(projectDirectory));
 		} catch (GitException e) {
@@ -120,6 +114,10 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 
 	protected void downloadSubmission(ISubmission submission, File directory) throws GitException {
 		new EgitGitHandler(this.convertRepositoryUrl(submission.getRepositoryUrl())).cloneRepo(directory, Constants.MASTER_BRANCH_NAME);
+	}
+
+	private void downloadTestRepo(IExercise exercise, File directory) throws GitException {
+		new EgitGitHandler(exercise.getTestRepositoryUrl()).cloneRepo(directory, Constants.MASTER_BRANCH_NAME);
 	}
 
 	private String getApiRoot() {
