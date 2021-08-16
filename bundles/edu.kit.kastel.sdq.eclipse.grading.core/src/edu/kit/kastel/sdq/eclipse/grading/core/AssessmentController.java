@@ -247,13 +247,17 @@ public class AssessmentController implements IAssessmentController {
 	}
 
 	@Override
-	public void resetAndReload() {
+	public void resetAndRestartAssessment() {
+		this.deleteEclipseProject();
+		this.systemWideController.getArtemisGUIController().startAssessment(this.submissionID);
+		this.systemWideController.getArtemisGUIController().downloadExerciseAndSubmission(this.courseID, this.exerciseID, this.submissionID);
+
 		this.annotationDao = new DefaultAnnotationDao();
 
 		try {
 			this.initializeWithDeserializedAnnotations();
 		} catch (IOException e) {
-			this.alertObservable.warn("Deserializing Annotations from Artemis failed: " + e.getMessage());
+			this.alertObservable.info("Deserializing Annotations from Artemis failed: " + e.getMessage());
 		}
 	}
 }

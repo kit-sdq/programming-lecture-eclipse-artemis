@@ -201,12 +201,7 @@ public class SystemwideController implements ISystemwideController {
 		if (this.checkTransitionNotAllowedAndNotify(Transition.RELOAD_ASSESSMENT)) return;
 		if (this.nullCheckMembersAndNotify(true, true, true)) return;
 
-		this.getCurrentAssessmentController().deleteEclipseProject();
-
-		this.getArtemisGUIController().startAssessment(this.submissionID);
-		this.getArtemisGUIController().downloadExerciseAndSubmission(this.courseID, this.exerciseID, this.submissionID);
-
-		this.getCurrentAssessmentController().resetAndReload();
+		this.getCurrentAssessmentController().resetAndRestartAssessment();
 	}
 
 	@Override
