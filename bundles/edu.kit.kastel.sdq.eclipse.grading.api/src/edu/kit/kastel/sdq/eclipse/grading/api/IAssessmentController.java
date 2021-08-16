@@ -79,6 +79,8 @@ public interface IAssessmentController {
 	 */
 	Collection<IMistakeType> getMistakes();
 
+	IRatingGroup getRatingGroupByDisplayName(String displayName);
+
 	IRatingGroup getRatingGroupByShortName(String shortName);
 
 	/**

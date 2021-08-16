@@ -149,6 +149,18 @@ public class AssessmentController implements IAssessmentController {
 	}
 
 	@Override
+	public IRatingGroup getRatingGroupByDisplayName(final String displayName) {
+		Optional<IRatingGroup> ratingGroupOptional = this.getRatingGroups().stream()
+				.filter(ratingGroup -> ratingGroup.getDisplayName().equals(displayName))
+				.findFirst();
+		if (ratingGroupOptional.isPresent()) {
+			return ratingGroupOptional.get();
+		}
+		this.alertObservable.error("Rating Group \"" + displayName + "\" not found in config!", null);
+		return null;
+	}
+
+	@Override
 	public IRatingGroup getRatingGroupByShortName(final String shortName) {
 		Optional<IRatingGroup> ratingGroupOptional = this.getRatingGroups().stream()
 				.filter(ratingGroup -> ratingGroup.getShortName().equals(shortName))
