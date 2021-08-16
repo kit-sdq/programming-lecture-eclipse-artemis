@@ -2,17 +2,28 @@ package edu.kit.kastel.sdq.eclipse.grading.client.mappings;
 
 import java.util.Collection;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
 
 public class ArtemisExercise implements IExercise {
 
-
+	@JsonProperty(value = "id")
 	private int exerciseId;
 	private String title;
 	private String shortName;
 	private String testRepositoryUrl;
-	private Collection<ISubmission> submissions;
+	private transient Collection<ISubmission> submissions;
+
+
+	/**
+	 * For Auto-Deserialization
+	 * Need to call this::init thereafter!
+	 */
+	public ArtemisExercise() {
+
+	}
 
 	public ArtemisExercise(int exerciseId, String title, String shortName, String testRepositoryUrl, Collection<ISubmission> submissions) {
 		this.exerciseId = exerciseId;
@@ -45,6 +56,10 @@ public class ArtemisExercise implements IExercise {
 	@Override
 	public String getTitle() {
 		return this.title;
+	}
+
+	public void init(Collection<ISubmission> submissions) {
+		this.submissions = submissions;
 	}
 
 	/**

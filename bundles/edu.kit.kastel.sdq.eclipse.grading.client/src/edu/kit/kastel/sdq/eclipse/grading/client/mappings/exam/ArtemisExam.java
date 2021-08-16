@@ -7,12 +7,17 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExerciseGroup;
 
 public class ArtemisExam implements IExam {
 
-	private Collection<IExerciseGroup> exerciseGroups;
+	private transient Collection<IExerciseGroup> exerciseGroups;
 	private int examId;
 	private String title;
 
 	public ArtemisExam(Collection<IExerciseGroup> exerciseGroups, int examId,  String title) {
 		this.exerciseGroups = exerciseGroups;
+		this.examId = examId;
+		this.title = title;
+	}
+
+	public ArtemisExam(int examId,  String title) {
 		this.examId = examId;
 		this.title = title;
 	}
@@ -30,6 +35,10 @@ public class ArtemisExam implements IExam {
 	@Override
 	public String getTitle() {
 		return this.title;
+	}
+
+	public void init(Collection<IExerciseGroup> exerciseGroups) {
+		this.exerciseGroups = exerciseGroups;
 	}
 
 	@Override
