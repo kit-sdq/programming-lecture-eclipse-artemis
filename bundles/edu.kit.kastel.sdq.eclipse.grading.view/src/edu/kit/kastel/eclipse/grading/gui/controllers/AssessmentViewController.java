@@ -1,6 +1,7 @@
 package edu.kit.kastel.eclipse.grading.gui.controllers;
 
 import java.util.Collection;
+import java.util.Set;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.text.ITextSelection;
@@ -15,10 +16,10 @@ import edu.kit.kastel.sdq.eclipse.grading.api.ISystemwideController;
 import edu.kit.kastel.sdq.eclipse.grading.api.alerts.IAlertObserver;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ICourse;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission.Filter;
+import edu.kit.kastel.sdq.eclipse.grading.api.backendstate.Transition;
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IAnnotation;
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IMistakeType;
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IRatingGroup;
-import edu.kit.kastel.sdq.eclipse.grading.core.SystemwideController;
 
 /**
  * This class is the controller for the grading view. It creates the marker for
@@ -35,7 +36,7 @@ public class AssessmentViewController {
 	private IAlertObserver alertObserver;
 
 	public AssessmentViewController() {
-		this.systemwideController = new SystemwideController(Activator.getDefault().getPreferenceStore());
+		this.systemwideController = Activator.getDefault().getSystemwideController();
 		this.alertObserver = new ViewAlertObserver();
 		this.artemisGUIController = this.systemwideController.getArtemisGUIController();
 		this.systemwideController.getAlertObservable().addAlertObserver(this.alertObserver);
@@ -73,7 +74,8 @@ public class AssessmentViewController {
 			marker.setAttribute("start", startLine + 1);
 			marker.setAttribute("end", endLine + 1);
 			marker.setAttribute("className", AssessmentUtilities.getClassNameForAnnotation());
-			marker.setAttribute("ratingGroup", mistake == null ? ratingGroupName : mistake.getRatingGroup().getDisplayName());
+			marker.setAttribute("ratingGroup",
+					mistake == null ? ratingGroupName : mistake.getRatingGroup().getDisplayName());
 			if (customMessage != null) {
 				marker.setAttribute("customMessage", customMessage);
 			}
@@ -206,8 +208,8 @@ public class AssessmentViewController {
 		return this.assessmentController.getMistakes();
 	}
 
-	public IRatingGroup getRatingGroupByShortName(String name) {
-		return this.assessmentController.getRatingGroupByShortName(name);
+	public IRatingGroup getRatingGroupByDisplayName(String displayName) {
+		return this.assessmentController.getRatingGroupByDisplayName(displayName);
 	}
 
 	/**
@@ -307,6 +309,10 @@ public class AssessmentViewController {
 	 */
 	public void setExerciseID(String exerciseShortName) {
 		this.systemwideController.setExerciseId(exerciseShortName);
+	}
+
+	public Set<Transition> getPossiblyTransitions() {
+		return this.systemwideController.getCurrentlyPossibleTransitions();
 	}
 
 }

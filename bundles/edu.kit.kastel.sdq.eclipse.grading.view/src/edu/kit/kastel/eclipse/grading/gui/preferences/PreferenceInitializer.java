@@ -20,14 +20,13 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 	@Override
 	public void initializeDefaultPreferences() {
 		IPreferenceStore store = Activator.getDefault().getPreferenceStore();
-		store.setDefault(PreferenceConstants.P_ABSOLUTE_CONFIG_PATH,
-				"C:\\Users\\Ruessmann\\Desktop\\programming-lecture-eclipse-artemis-grading\\bundles\\edu.kit.kastel.sdq.eclipse.grading.view\\resources\\config_v3.json");
-		store.setDefault(PreferenceConstants.P_RELATIVE_CONFIG_PATH, "");
-		store.setDefault(PreferenceConstants.P_IS_RELATIVE_CONFIG_PATH, "false");
-		store.setDefault(PreferenceConstants.P_ARTEMIS_URL, "artemis-test.ipd.kit.edu");
-		store.setDefault(PreferenceConstants.P_ARTEMIS_USER, "uyduk");
-		store.setDefault(PreferenceConstants.P_ARTEMIS_PASSWORD, "arTem155");
-		store.setDefault(PreferenceConstants.P_CONFIG_NAME, "Final Task 2");
+		store.setDefault(PreferenceConstants.ABSOLUTE_CONFIG_PATH,
+				"C:\\Users\\Ruessmann\\Desktop\\programming-lecture-eclipse-artemis-grading\\bundles\\edu.kit.kastel.sdq.eclipse.grading.view\\resources\\config_v4.json");
+		store.setDefault(PreferenceConstants.RELATIVE_CONFIG_PATH, "");
+		store.setDefault(PreferenceConstants.IS_RELATIVE_CONFIG_PATH, "false");
+		store.setDefault(PreferenceConstants.ARTEMIS_URL, "artemis-test.ipd.kit.edu");
+		store.setDefault(PreferenceConstants.ARTEMIS_USER, "uyduk");
+		store.setDefault(PreferenceConstants.ARTEMIS_PASSWORD, "arTem155");
 	}
 
 }

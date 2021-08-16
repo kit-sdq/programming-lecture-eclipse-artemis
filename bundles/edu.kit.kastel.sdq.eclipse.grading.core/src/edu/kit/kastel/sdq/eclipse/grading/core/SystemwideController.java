@@ -56,10 +56,10 @@ public class SystemwideController implements ISystemwideController {
 
 	public SystemwideController(final IPreferenceStore preferenceStore) {
 		this(new File(
-				preferenceStore.getString(PreferenceConstants.P_ABSOLUTE_CONFIG_PATH)),
-				preferenceStore.getString(PreferenceConstants.P_ARTEMIS_URL),
-				preferenceStore.getString(PreferenceConstants.P_ARTEMIS_USER),
-				preferenceStore.getString(PreferenceConstants.P_ARTEMIS_PASSWORD));
+				preferenceStore.getString(PreferenceConstants.ABSOLUTE_CONFIG_PATH)),
+				preferenceStore.getString(PreferenceConstants.ARTEMIS_URL),
+				preferenceStore.getString(PreferenceConstants.ARTEMIS_USER),
+				preferenceStore.getString(PreferenceConstants.ARTEMIS_PASSWORD));
 	}
 
 	private boolean checkTransitionNotAllowedAndNotify(Transition transition) {

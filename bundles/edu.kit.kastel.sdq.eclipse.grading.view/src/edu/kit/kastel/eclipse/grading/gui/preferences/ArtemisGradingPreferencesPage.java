@@ -42,29 +42,25 @@ public class ArtemisGradingPreferencesPage extends FieldEditorPreferencePage imp
 	@Override
 	public void createFieldEditors() {
 
-		this.absoluteConfigPath = new FileFieldEditor(PreferenceConstants.P_ABSOLUTE_CONFIG_PATH,
+		this.absoluteConfigPath = new FileFieldEditor(PreferenceConstants.ABSOLUTE_CONFIG_PATH,
 				"Absolute config path: ", this.getFieldEditorParent());
 
-		this.isRelativeConfigPath = new BooleanFieldEditor(PreferenceConstants.P_IS_RELATIVE_CONFIG_PATH,
+		this.isRelativeConfigPath = new BooleanFieldEditor(PreferenceConstants.IS_RELATIVE_CONFIG_PATH,
 				"Use relative config path", this.getFieldEditorParent());
 
-		this.relativeConfigPath = new StringFieldEditor(PreferenceConstants.P_RELATIVE_CONFIG_PATH,
+		this.relativeConfigPath = new StringFieldEditor(PreferenceConstants.RELATIVE_CONFIG_PATH,
 				"Relative config path: ", this.getFieldEditorParent());
 
-		StringFieldEditor artemisUrl = new StringFieldEditor(PreferenceConstants.P_ARTEMIS_URL, "Artemis URL: ",
+		StringFieldEditor artemisUrl = new StringFieldEditor(PreferenceConstants.ARTEMIS_URL, "Artemis URL: ",
 				this.getFieldEditorParent());
 
-		StringFieldEditor artemisUser = new StringFieldEditor(PreferenceConstants.P_ARTEMIS_USER, "Artemis username: ",
+		StringFieldEditor artemisUser = new StringFieldEditor(PreferenceConstants.ARTEMIS_USER, "Artemis username: ",
 				this.getFieldEditorParent());
 
-		StringFieldEditor artemisPassword = new StringFieldEditor(PreferenceConstants.P_ARTEMIS_PASSWORD,
+		StringFieldEditor artemisPassword = new StringFieldEditor(PreferenceConstants.ARTEMIS_PASSWORD,
 				"Artemis password: ", this.getFieldEditorParent());
 
-		StringFieldEditor configNameField = new StringFieldEditor(PreferenceConstants.P_CONFIG_NAME, "Config name: ",
-				this.getFieldEditorParent());
-
 		this.addField(this.absoluteConfigPath);
-		this.addField(configNameField);
 		this.addField(this.relativeConfigPath);
 		this.addField(this.isRelativeConfigPath);
 		this.addField(artemisUrl);
