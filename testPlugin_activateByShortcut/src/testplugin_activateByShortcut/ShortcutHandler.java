@@ -30,7 +30,7 @@ import testplugin_activateByShortcut.testConfig.LockAndSubmitTest;
 
 public class ShortcutHandler extends AbstractHandler {
 
-	public static final String CONFIG_PATH = "Lala/src/config_v3.json";
+	public static final String CONFIG_PATH = "Lala/src/config_v4.json";
 
 	public void artemisTest() {
 		Pair<String, String> credentials = CredentialsGetter.getCredentials();

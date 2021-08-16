@@ -126,10 +126,7 @@ public class LockAndSubmitTest {
 		System.out.println("Got ASSessor\n" + assessor);
 
 		System.out.println("################################AnnotationMapper stufff###########################");
-		ExerciseConfig exerciseConfig = this.configDao.getExerciseConfigs().stream()
-				.filter(config -> config.getShortName().endsWith("1"))
-				.findAny()
-				.get();
+		ExerciseConfig exerciseConfig = this.configDao.getExerciseConfig();
 
 
 		final Collection<IAnnotation> forgedAnnotations = this.getForgedAnnotations(exerciseConfig);
@@ -145,10 +142,8 @@ public class LockAndSubmitTest {
 	}
 
 	public LockAndSubmitTest testNextAssessment() {
-		final String exerciseConfigShortName = "Final Task 1";
 		final ISystemwideController sysController = new SystemwideController(
 				new File(this.eclipseWorkspaceRoot, ShortcutHandler.CONFIG_PATH),
-				exerciseConfigShortName,
 				this.host,
 				this.username,
 				this.password);

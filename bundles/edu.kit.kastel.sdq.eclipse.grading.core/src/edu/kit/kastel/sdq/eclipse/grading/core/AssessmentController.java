@@ -24,7 +24,6 @@ import edu.kit.kastel.sdq.eclipse.grading.core.artemis.DefaultPenaltyCalculation
 import edu.kit.kastel.sdq.eclipse.grading.core.artemis.DefaultProjectFileNamingStrategy;
 import edu.kit.kastel.sdq.eclipse.grading.core.artemis.WorkspaceUtil;
 import edu.kit.kastel.sdq.eclipse.grading.core.config.ConfigDao;
-import edu.kit.kastel.sdq.eclipse.grading.core.config.ExerciseConfig;
 import edu.kit.kastel.sdq.eclipse.grading.core.model.annotation.AnnotationException;
 import edu.kit.kastel.sdq.eclipse.grading.core.model.annotation.DefaultAnnotationDao;
 import edu.kit.kastel.sdq.eclipse.grading.core.model.annotation.IAnnotationDao;
@@ -41,15 +40,13 @@ public class AssessmentController implements IAssessmentController {
 	private final int courseID;
 	private final int exerciseID;
 
-	private String exerciseConfigShortName;
-
 	/**
 	 * Protected, because the way to get a specific assessment controller should be over a SystemwideController.
 	 *
 	 * @param configFile path to the config file
 	 * @param exerciseName the shortName of the exercise (must be same in the config file).
 	 */
-	protected AssessmentController(SystemwideController systemWideController, int courseID, int exerciseID, int submissionID,String exerciseConfigName) {
+	protected AssessmentController(SystemwideController systemWideController, int courseID, int exerciseID, int submissionID) {
 		this.systemWideController = systemWideController;
 		this.submissionID = submissionID;
 		this.annotationDao = new DefaultAnnotationDao();
@@ -58,8 +55,6 @@ public class AssessmentController implements IAssessmentController {
 
 		this.exerciseID = exerciseID;
 		this.courseID = courseID;
-
-		this.exerciseConfigShortName = exerciseConfigName;
 
 		try {
 			this.initializeWithDeserializedAnnotations();
@@ -138,14 +133,6 @@ public class AssessmentController implements IAssessmentController {
 		return this.courseID;
 	}
 
-	/**
-	 *
-	 * @return the shortName (identifier) used to retrieve the corresponding exercise config from the ConfigDao.
-	 */
-	public String getExerciseConfigShortName() {
-		return this.exerciseConfigShortName;
-	}
-
 	@Override
 	public int getExerciseID() {
 		return this.exerciseID;
@@ -153,21 +140,12 @@ public class AssessmentController implements IAssessmentController {
 
 	@Override
 	public Collection<IMistakeType> getMistakes(){
-		Optional<ExerciseConfig> exerciseConfigOptional;
 		try {
-			exerciseConfigOptional = this.getConfigDao().getExerciseConfigs().stream()
-					.filter(exerciseConfig -> exerciseConfig.getShortName().equals(this.exerciseConfigShortName))
-					.findFirst();
+			return this.getConfigDao().getExerciseConfig().getIMistakeTypes();
 		} catch (IOException e) {
-			this.alertObservable.error(e.getMessage(), e);
+			this.alertObservable.error("Exercise Config not parseable: " + e.getMessage(), e);
 			return List.of();
 		}
-
-		if (exerciseConfigOptional.isPresent()) {
-			return exerciseConfigOptional.get().getIMistakeTypes();
-		}
-		this.alertObservable.error("ExerciseConfigShortName " + this.exerciseConfigShortName + " not found in config!", null);
-		return List.of();
 	}
 
 	@Override
@@ -184,21 +162,12 @@ public class AssessmentController implements IAssessmentController {
 
 	@Override
 	public Collection<IRatingGroup> getRatingGroups() {
-
-		Optional<ExerciseConfig> exerciseConfigOptional;
 		try {
-			exerciseConfigOptional = this.getConfigDao().getExerciseConfigs().stream()
-					.filter(exerciseConfig -> exerciseConfig.getShortName().equals(this.exerciseConfigShortName))
-					.findFirst();
+			return this.getConfigDao().getExerciseConfig().getIRatingGroups();
 		} catch (IOException e) {
-			this.alertObservable.error(e.getMessage(), e);
+			this.alertObservable.error("Exercise Config not parseable: " + e.getMessage(), e);
 			return List.of();
 		}
-		if (exerciseConfigOptional.isPresent()) {
-			return exerciseConfigOptional.get().getIRatingGroups();
-		}
-		this.alertObservable.error("ExerciseConfigShortName " + this.exerciseConfigShortName + " not found in config!", null);
-		return List.of();
 	}
 
 	@Override

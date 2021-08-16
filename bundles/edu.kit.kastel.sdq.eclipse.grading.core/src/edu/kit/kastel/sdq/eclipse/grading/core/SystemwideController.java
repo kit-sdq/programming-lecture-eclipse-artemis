@@ -37,7 +37,6 @@ public class SystemwideController implements ISystemwideController {
 	private Integer courseID;
 	private Integer exerciseID;
 	private Integer submissionID;
-	private String exerciseConfigName;
 
 	private AlertObservable alertObservable;
 
@@ -45,20 +44,19 @@ public class SystemwideController implements ISystemwideController {
 
 	private BackendStateMachine backendStateMachine;
 
-	public SystemwideController(final File configFile, final String exerciseConfigName, final String artemisHost, final String username, final String password) {
+	public SystemwideController(final File configFile, final String artemisHost, final String username, final String password) {
 		this.setConfigFile(configFile);
 		this.assessmentControllers = new HashMap<>();
 		this.alertObservable = new AlertObservable();
 
-		this.exerciseConfigName = exerciseConfigName;
 		this.artemisGUIController = new ArtemisController(this, artemisHost, username, password);
 		this.projectFileNamingStrategy = new DefaultProjectFileNamingStrategy();		//TODO durch das ganze projekt durchreichen! NUR hier instanziieren!
 		this.backendStateMachine = new BackendStateMachine();
 	}
 
 	public SystemwideController(final IPreferenceStore preferenceStore) {
-		this(new File(preferenceStore.getString(PreferenceConstants.P_ABSOLUTE_CONFIG_PATH)),
-				preferenceStore.getString(PreferenceConstants.P_CONFIG_NAME),
+		this(new File(
+				preferenceStore.getString(PreferenceConstants.P_ABSOLUTE_CONFIG_PATH)),
 				preferenceStore.getString(PreferenceConstants.P_ARTEMIS_URL),
 				preferenceStore.getString(PreferenceConstants.P_ARTEMIS_USER),
 				preferenceStore.getString(PreferenceConstants.P_ARTEMIS_PASSWORD));
@@ -85,11 +83,11 @@ public class SystemwideController implements ISystemwideController {
 	}
 
 
-	private IAssessmentController getAssessmentController(int submissionID, String exerciseConfigName, int courseID,
+	private IAssessmentController getAssessmentController(int submissionID, int courseID,
 			int exerciseID) {
 		this.assessmentControllers.putIfAbsent(
 				submissionID,
-				new AssessmentController(this, courseID, exerciseID, submissionID, exerciseConfigName));
+				new AssessmentController(this, courseID, exerciseID, submissionID));
 		return this.assessmentControllers.get(submissionID);
 	}
 
@@ -123,7 +121,7 @@ public class SystemwideController implements ISystemwideController {
 	@Override
 	public IAssessmentController getCurrentAssessmentController() {
 		if (this.nullCheckMembersAndNotify(true, true, true)) return null;
-		return this.getAssessmentController(this.submissionID, this.exerciseConfigName, this.courseID, this.exerciseID);
+		return this.getAssessmentController(this.submissionID, this.courseID, this.exerciseID);
 	}
 
 	private IExercise getCurrentExercise() {

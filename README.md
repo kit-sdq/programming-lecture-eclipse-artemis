@@ -9,7 +9,7 @@ The Update Site is located here: https://kit-sdq.github.io/programming-lecture-e
 
 ## Configuration File
 To Configure mistake types, rating groups and whatnot, we use a config file.
-See testPlugin_activateByShortcut/src/main/resources/config_v3.json for an example configuration (TODO Path will change..)
+See testPlugin_activateByShortcut/src/main/resources/config_v4.json for an example configuration (TODO Path will change..)
 
 
 ## Development
