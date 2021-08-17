@@ -1,4 +1,4 @@
-package edu.kit.kastel.eclipse.grading.gui.preferences;
+package edu.kit.kastel.eclipse.grading.view.preferences;
 
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
@@ -7,7 +7,7 @@ import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
-import edu.kit.kastel.eclipse.grading.gui.activator.Activator;
+import edu.kit.kastel.eclipse.grading.view.activator.Activator;
 import edu.kit.kastel.sdq.eclipse.grading.api.PreferenceConstants;
 
 /**

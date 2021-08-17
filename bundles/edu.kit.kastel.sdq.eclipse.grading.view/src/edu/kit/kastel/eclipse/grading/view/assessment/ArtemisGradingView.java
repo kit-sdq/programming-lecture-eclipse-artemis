@@ -1,4 +1,4 @@
-package edu.kit.kastel.eclipse.grading.gui.assessment.view;
+package edu.kit.kastel.eclipse.grading.view.assessment;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -21,8 +21,8 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.part.ViewPart;
 
-import edu.kit.kastel.eclipse.grading.gui.controllers.AssessmentViewController;
-import edu.kit.kastel.eclipse.grading.gui.utilities.AssessmentUtilities;
+import edu.kit.kastel.eclipse.grading.view.controllers.AssessmentViewController;
+import edu.kit.kastel.eclipse.grading.view.utilities.AssessmentUtilities;
 import edu.kit.kastel.sdq.eclipse.grading.api.backendstate.Transition;
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IMistakeType;
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IRatingGroup;
@@ -73,6 +73,8 @@ public class ArtemisGradingView extends ViewPart {
 	private void addSelectionListenerForLoadFromBacklogButton(Button btnLoadAgain) {
 		btnLoadAgain.addListener(SWT.Selection, e -> {
 			this.viewController.onLoadAgain();
+			this.createGradingViewElements();
+			this.prepareNewAssessment();
 			this.updateState();
 		});
 	}
@@ -420,8 +422,6 @@ public class ArtemisGradingView extends ViewPart {
 	}
 
 	private void initializeBacklogCombo(Combo backlogCombo) {
-		this.fillBacklogComboWithData(backlogCombo);
-
 		backlogCombo.addListener(SWT.Selection, e -> {
 			this.viewController.setAssessedSubmission(backlogCombo.getItem(backlogCombo.getSelectionIndex()));
 			this.updateState();

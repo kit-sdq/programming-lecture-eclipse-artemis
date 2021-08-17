@@ -1,8 +1,8 @@
-package edu.kit.kastel.eclipse.grading.gui.observers;
+package edu.kit.kastel.eclipse.grading.view.observers;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 
-import edu.kit.kastel.eclipse.grading.gui.utilities.AssessmentUtilities;
+import edu.kit.kastel.eclipse.grading.view.utilities.AssessmentUtilities;
 import edu.kit.kastel.sdq.eclipse.grading.api.alerts.IAlertObserver;
 
 public class ViewAlertObserver implements IAlertObserver {

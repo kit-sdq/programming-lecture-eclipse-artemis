@@ -1,4 +1,4 @@
-package edu.kit.kastel.eclipse.grading.gui.utilities;
+package edu.kit.kastel.eclipse.grading.view.utilities;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspace;
@@ -27,7 +27,15 @@ import org.eclipse.ui.texteditor.ITextEditor;
  */
 public class AssessmentUtilities {
 
-	public static final String MARKER_NAME = "gui.assessment.marker";
+	public static final String MARKER_NAME = "view.assessment.marker";
+	public static final String MARKER_ATTRIBUTE_ERROR = "errorType";
+	public static final String MARKER_ATTRIBUTE_ERROR_DESCRIPTION = "errorTypeDescription";
+	public static final String MARKER_ATTRIBUTE_CLASS_NAME = "className";
+	public static final String MARKER_ATTRIBUTE_RATING_GROUP = "ratingGroup";
+	public static final String MARKER_ATTRIBUTE_CUSTOM_PENALTY = "customPenalty";
+	public static final String MARKER_ATTRIBUTE_CUSTOM_MESSAGE = "customMessage";
+	public static final String MARKER_ATTRIBUTE_START = "start";
+	public static final String MARKER_ATTRIBUTE_END = "end";
 
 	/**
 	 * Creates a tooltip for a marker with the given parameters
@@ -77,8 +85,8 @@ public class AssessmentUtilities {
 		return builder.toString();
 	}
 
-	public static IFile getFile(String path) {
-		return ResourcesPlugin.getWorkspace().getRoot().getProjects()[0].getFile("assignment/" + path);
+	public static IFile getFile(String path, String projectName) {
+		return ResourcesPlugin.getWorkspace().getRoot().getProject(projectName).getFile("assignment/" + path);
 	}
 
 	public static String getClassNameForAnnotation() {
@@ -92,7 +100,7 @@ public class AssessmentUtilities {
 	 * 
 	 * @return IFile instance of the current open file in the editor
 	 */
-	public static IFile getCurrentFile() {
+	public static IFile getCurrentlyOpenFile() {
 		final IWorkbenchPart workbenchPart = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
 				.getActivePart();
 		return workbenchPart.getSite().getPage().getActiveEditor().getEditorInput().getAdapter(IFile.class);

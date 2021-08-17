@@ -1,4 +1,4 @@
-package edu.kit.kastel.eclipse.grading.gui.controllers;
+package edu.kit.kastel.eclipse.grading.view.controllers;
 
 import java.util.Collection;
 import java.util.Set;
@@ -6,10 +6,10 @@ import java.util.Set;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.text.ITextSelection;
 
-import edu.kit.kastel.eclipse.grading.gui.activator.Activator;
-import edu.kit.kastel.eclipse.grading.gui.assessment.view.ArtemisGradingView;
-import edu.kit.kastel.eclipse.grading.gui.observers.ViewAlertObserver;
-import edu.kit.kastel.eclipse.grading.gui.utilities.AssessmentUtilities;
+import edu.kit.kastel.eclipse.grading.view.activator.Activator;
+import edu.kit.kastel.eclipse.grading.view.assessment.ArtemisGradingView;
+import edu.kit.kastel.eclipse.grading.view.observers.ViewAlertObserver;
+import edu.kit.kastel.eclipse.grading.view.utilities.AssessmentUtilities;
 import edu.kit.kastel.sdq.eclipse.grading.api.IArtemisController;
 import edu.kit.kastel.sdq.eclipse.grading.api.IAssessmentController;
 import edu.kit.kastel.sdq.eclipse.grading.api.ISystemwideController;
@@ -64,7 +64,7 @@ public class AssessmentViewController {
 		final Integer endLine = textSelection.getEndLine();
 		final Integer lenght = textSelection.getLength();
 		try {
-			IMarker marker = AssessmentUtilities.getCurrentFile().createMarker("gui.assessment.marker");
+			IMarker marker = AssessmentUtilities.getCurrentlyOpenFile().createMarker(AssessmentUtilities.MARKER_NAME);
 			marker.setAttribute(IMarker.CHAR_START, AssessmentUtilities.getLineOffSet(startLine));
 			marker.setAttribute(IMarker.CHAR_END, AssessmentUtilities.getLineOffSet(startLine) + lenght + 10);
 			if (mistake != null) {
@@ -114,8 +114,9 @@ public class AssessmentViewController {
 		String customMessage = annotation.getCustomMessage().orElse("");
 		Double customPenalty = annotation.getCustomPenalty().orElse(0.0);
 		try {
-			IMarker marker = AssessmentUtilities.getFile(annotation.getClassFilePath())
-					.createMarker("gui.assessment.marker");
+			IMarker marker = AssessmentUtilities
+					.getFile(annotation.getClassFilePath(), this.systemwideController.getCurrentProjectName())
+					.createMarker(AssessmentUtilities.MARKER_NAME);
 			marker.setAttribute(IMarker.CHAR_START, annotation.getMarkerCharStart());
 			marker.setAttribute(IMarker.CHAR_END, annotation.getMarkerCharEnd());
 			marker.setAttribute("start", startLine + 1);

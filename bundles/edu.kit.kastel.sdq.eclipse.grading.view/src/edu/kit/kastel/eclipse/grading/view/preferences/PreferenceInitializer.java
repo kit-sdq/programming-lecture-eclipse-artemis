@@ -1,9 +1,9 @@
-package edu.kit.kastel.eclipse.grading.gui.preferences;
+package edu.kit.kastel.eclipse.grading.view.preferences;
 
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
 
-import edu.kit.kastel.eclipse.grading.gui.activator.Activator;
+import edu.kit.kastel.eclipse.grading.view.activator.Activator;
 import edu.kit.kastel.sdq.eclipse.grading.api.PreferenceConstants;
 
 /**

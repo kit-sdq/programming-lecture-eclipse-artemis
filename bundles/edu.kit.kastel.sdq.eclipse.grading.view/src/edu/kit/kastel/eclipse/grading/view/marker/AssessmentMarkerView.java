@@ -1,4 +1,4 @@
-package edu.kit.kastel.eclipse.grading.gui.marker;
+package edu.kit.kastel.eclipse.grading.view.marker;
 
 import org.eclipse.ui.views.markers.MarkerSupportView;
 
@@ -11,7 +11,7 @@ import org.eclipse.ui.views.markers.MarkerSupportView;
 public class AssessmentMarkerView extends MarkerSupportView {
 
 	public AssessmentMarkerView() {
-		super("gui.annotationMarkerGenerator");
+		super("view.annotationMarkerGenerator");
 	}
 
 }

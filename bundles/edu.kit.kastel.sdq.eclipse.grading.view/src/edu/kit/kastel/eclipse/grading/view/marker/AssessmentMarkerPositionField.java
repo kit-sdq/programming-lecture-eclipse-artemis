@@ -1,4 +1,4 @@
-package edu.kit.kastel.eclipse.grading.gui.marker;
+package edu.kit.kastel.eclipse.grading.view.marker;
 
 import org.eclipse.ui.views.markers.MarkerField;
 import org.eclipse.ui.views.markers.MarkerItem;

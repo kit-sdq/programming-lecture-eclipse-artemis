@@ -1,4 +1,4 @@
-package edu.kit.kastel.eclipse.grading.gui.assessment.view;
+package edu.kit.kastel.eclipse.grading.view.assessment;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
@@ -11,7 +11,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 
-import edu.kit.kastel.eclipse.grading.gui.controllers.AssessmentViewController;
+import edu.kit.kastel.eclipse.grading.view.controllers.AssessmentViewController;
 
 public class CustomButtonDialog extends Dialog {
 
