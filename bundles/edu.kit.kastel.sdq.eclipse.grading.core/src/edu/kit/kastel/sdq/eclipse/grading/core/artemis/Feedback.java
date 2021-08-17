@@ -71,6 +71,11 @@ public class Feedback implements IFeedback {
 	}
 
 	@Override
+	public String getType() {
+		return this.type;
+	}
+
+	@Override
 	public String getVisibility() {
 		return this.visibility;
 	}

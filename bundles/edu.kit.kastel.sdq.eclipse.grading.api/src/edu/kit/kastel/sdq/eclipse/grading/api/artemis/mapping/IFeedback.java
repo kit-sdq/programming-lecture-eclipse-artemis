@@ -74,6 +74,12 @@ public interface IFeedback {
 	String getText();
 
 	/**
+	 * This is NECESSARY! for serialization to artemiz.
+	 * @return
+	 */
+	String getType();
+
+	/**
 	 * TODO ggf enum draus machen, falls irgendwann mal benutzt
 	 * @return not sure what. Unimportant for now.<br/>
 	 *  <b>null</b> for {@link FeedbackType#MANUAL} and {@link FeedbackType#MANUAL_UNREFERENCED}

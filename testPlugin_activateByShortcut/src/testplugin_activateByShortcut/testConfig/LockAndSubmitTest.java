@@ -167,26 +167,39 @@ public class LockAndSubmitTest {
 		this.addSomeFakeAssessments(sysController);
 
 		this.printBegunSubmissionState(sysController, "before save");
+
+		System.out.println("Before save. lockresults: ");
+		System.out.println(sysController.getArtemisGUIController().getAllFeedbacksGottenFromLocking(sysController.getCurrentAssessmentController().getSubmissionID()));
+
 		sysController.saveAssessment();
 		this.printBegunSubmissionState(sysController, "before submit");
+//		sysController.submitAssessment();
+
+
+
+		//TODO this is debug
+		sysController.reloadAssessment();
+		System.out.println("After reload. lockresults: ");
+		System.out.println(sysController.getArtemisGUIController().getAllFeedbacksGottenFromLocking(sysController.getCurrentAssessmentController().getSubmissionID()));
+
+
 		sysController.submitAssessment();
 
 
-		//TODO test if breaks
-//		sysController.saveAssessment();
 
-		// check BACKLOG and deserialization
-		sysController.setCourseIdAndGetExerciseShortNames("praktikum21");
-		sysController.setExerciseId("testAufgabe1");
-		this.printBegunSubmissionState(sysController, "after submit");
-		sysController.setAssessedSubmissionByProjectName("exercise-1-testAufgabe1_submission-89-test-student");
-		sysController.loadAgain();
-		this.subscribeToAlertObservable(
-				sysController.getCurrentAssessmentController().getAlertObservable(),
-				"ArtemisController");
 
-		System.out.println("Deserialized annotations:\n "
-				+ sysController.getCurrentAssessmentController().getAnnotations());
+//		// check BACKLOG and deserialization
+//		sysController.setCourseIdAndGetExerciseShortNames("praktikum21");
+//		sysController.setExerciseId("testAufgabe1");
+//		this.printBegunSubmissionState(sysController, "after submit");
+//		sysController.setAssessedSubmissionByProjectName("exercise-1-testAufgabe1_submission-89-test-student");
+//		sysController.loadAgain();
+//		this.subscribeToAlertObservable(
+//				sysController.getCurrentAssessmentController().getAlertObservable(),
+//				"ArtemisController");
+//
+//		System.out.println("Deserialized annotations:\n "
+//				+ sysController.getCurrentAssessmentController().getAnnotations());
 
 		return this;
 	}
