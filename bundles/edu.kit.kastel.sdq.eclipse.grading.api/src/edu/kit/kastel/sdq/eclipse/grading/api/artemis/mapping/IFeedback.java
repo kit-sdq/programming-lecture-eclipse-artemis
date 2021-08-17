@@ -19,7 +19,7 @@ public interface IFeedback {
 		MANUAL, MANUAL_UNREFERENCED, AUTOMATIC;
 
 		public static FeedbackType valueOfIgnoreCase(String str) {
-			return FeedbackType.valueOf(str.toUpperCase());
+			return str != null ? FeedbackType.valueOf(str.toUpperCase()) : null;
 		}
 	}
 
