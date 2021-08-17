@@ -274,7 +274,7 @@ public class ArtemisController implements IArtemisController {
 		} catch (IOException e) {
 			this.alertObservable.error("Local backend failed to format the annotations: " + e.getMessage(), e);
 			return false;
-		} catch (Exception e) {
+		} catch (ArtemisClientException e) {
 			this.alertObservable.error("Assessor could not be retrieved from Artemis: " + e.getMessage(), e);
 			return false;
 		}
