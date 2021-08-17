@@ -11,8 +11,11 @@ public class ArtemisExercise implements IExercise {
 
 	@JsonProperty(value = "id")
 	private int exerciseId;
+	@JsonProperty
 	private String title;
+	@JsonProperty
 	private String shortName;
+	@JsonProperty
 	private String testRepositoryUrl;
 	private transient Collection<ISubmission> submissions;
 

@@ -12,7 +12,9 @@ public class ArtemisCourse implements ICourse {
 
 	@JsonProperty(value = "id")
 	private int courseId;
+	@JsonProperty
 	private String title;
+	@JsonProperty
 	private String shortName;
 	private transient Collection<IExercise> exercises;
 	private transient Collection<IExam> exams;
