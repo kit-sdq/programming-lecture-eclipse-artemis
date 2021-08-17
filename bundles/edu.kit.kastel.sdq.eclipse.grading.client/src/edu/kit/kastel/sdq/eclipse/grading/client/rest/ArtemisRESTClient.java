@@ -7,7 +7,6 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import javax.security.sasl.AuthenticationException;
 import javax.ws.rs.client.ClientBuilder;
@@ -179,11 +178,10 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 		this.throwIfStatusUnsuccessful(rsp);
 		String rspString = rsp.readEntity(String.class);
 
-		Collection<ArtemisCourse> courses;
+		ArtemisCourse[] coursesArray;
 		try {
-			ArtemisCourse[] coursesArray = this.deserializingObjectMapper.readValue(rspString, ArtemisCourse[].class);
-			courses = Arrays.asList(coursesArray);
-			for (ArtemisCourse course : courses) {
+			coursesArray = this.deserializingObjectMapper.readValue(rspString, ArtemisCourse[].class);
+			for (ArtemisCourse course : coursesArray) {
 				course.init(
 						this.getExercisesForCourse(course),
 						this.getExamsForCourse(course));
@@ -191,9 +189,7 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 		} catch (JsonProcessingException e) {
 			throw new ArtemisClientException(JSON_PARSE_ERROR_MESSAGE + e.getMessage(), e);
 		}
-		return courses.stream()
-				.map(ICourse.class::cast)
-				.collect(Collectors.toList());
+		return Arrays.asList(coursesArray);
 	}
 
 	private Collection<IExam> getExamsForCourse(ArtemisCourse course) throws AuthenticationException, JsonProcessingException, ArtemisClientException {
@@ -206,18 +202,12 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 				.invoke(); // synchronous call
 		this.throwIfStatusUnsuccessful(examsRsp);
 
-		Collection<ArtemisExam> exams;
-
 		ArtemisExam[] examsArray = this.deserializingObjectMapper.readValue(examsRsp.readEntity(String.class), ArtemisExam[].class);
-		exams = Arrays.asList(examsArray);
-
-		for (ArtemisExam exam : exams) {
+		for (ArtemisExam exam : examsArray) {
 			exam.init(this.getExerciseGroupsForExam(exam, course.getCourseId()));
 		}
 
-		return exams.stream()
-				.map(IExam.class::cast)
-				.collect(Collectors.toList());
+		return Arrays.asList(examsArray);
 	}
 
 	// for exams
@@ -230,19 +220,13 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 		JsonNode exercisesJsonArray = exerciseGroupJsonNode.get(EXERCISES_PATHPART);
 		if (!exercisesJsonArray.isArray()) throw new ArtemisClientException(JSON_PARSE_ERROR_MESSAGE_CORRUPT_JSON_STRUCTURE);
 
-		Collection<ArtemisExercise> exercises;
 		ArtemisExercise[] exercisesArray = this.deserializingObjectMapper.readValue(exercisesJsonArray.toString(), ArtemisExercise[].class);
-		exercises = Arrays.asList(exercisesArray);
-
-
-		for (ArtemisExercise exercise : exercises) {
+		for (ArtemisExercise exercise : exercisesArray) {
 			exercise.init(this.getSubmissionsForExercise(exercise));
 		}
 
 		return new ArtemisExerciseGroup(exerciseGroupId,
-				exercises.stream()
-					.map(IExercise.class::cast)
-					.collect(Collectors.toList()),
+				Arrays.asList(exercisesArray),
 				title,
 				isMandatory);
 	}
@@ -294,17 +278,12 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 		if (!exercisesJsonArray.isArray()) throw new ArtemisClientException(JSON_PARSE_ERROR_MESSAGE_CORRUPT_JSON_STRUCTURE);
 
 		// deserialize
-		Collection<ArtemisExercise> exercises;
 		ArtemisExercise[] exercisesArray = this.deserializingObjectMapper.readValue(exercisesJsonArray.toString(), ArtemisExercise[].class);
-		exercises = Arrays.asList(exercisesArray);
-
-		for (ArtemisExercise exercise : exercises) {
+		for (ArtemisExercise exercise : exercisesArray) {
 			exercise.init(this.getSubmissionsForExercise(exercise));
 		}
 
-		return exercises.stream()
-				.map(IExercise.class::cast)
-				.collect(Collectors.toList());
+		return Arrays.asList(exercisesArray);
 	}
 
 	@Override
@@ -322,22 +301,18 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 		this.throwIfStatusUnsuccessful(rsp);
 
 		final String rspEntity = rsp.readEntity(String.class);
-		Collection<ArtemisSubmission> submissions = new LinkedList<>();
+		ArtemisSubmission[] submissionsArray;
 		try {
-			ArtemisSubmission[] submissionsArray = this.deserializingObjectMapper.readValue(rspEntity, ArtemisSubmission[].class);
-			submissions = Arrays.asList(submissionsArray);
+			submissionsArray = this.deserializingObjectMapper.readValue(rspEntity, ArtemisSubmission[].class);
 		} catch (JsonProcessingException e) {
 			throw new ArtemisClientException(JSON_PARSE_ERROR_MESSAGE + e.getMessage(), e);
 		}
 
-		for (ArtemisSubmission submission : submissions) {
+		for (ArtemisSubmission submission : submissionsArray) {
 			submission.init();
 		}
 
-		return submissions.stream()
-		.map(ISubmission.class::cast)
-		.collect(Collectors.toList());
-
+		return Arrays.asList(submissionsArray);
 	}
 
 	private Collection<ISubmission> getSubmissionsForExercise(ArtemisExercise exercise) throws AuthenticationException, JsonProcessingException {
@@ -357,19 +332,12 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 
 
 		final String rspEntity = rsp.readEntity(String.class);
-//		System.out.println("rspEntity submission=" + rspEntity);
-		Collection<ArtemisSubmission> submissions = new LinkedList<>();
 		ArtemisSubmission[] submissionsArray = this.deserializingObjectMapper.readValue(rspEntity, ArtemisSubmission[].class);
-		submissions = Arrays.asList(submissionsArray);
-
-
-		for (ArtemisSubmission submission : submissions) {
+		for (ArtemisSubmission submission : submissionsArray) {
 			submission.init();
 		}
 
-		return submissions.stream()
-		.map(ISubmission.class::cast)
-		.collect(Collectors.toList());
+		return Arrays.asList(submissionsArray);
 	}
 
 	private boolean isStatusSuccessful(final Response response) {
