@@ -280,6 +280,8 @@ public class SystemwideController implements ISystemwideController {
 
 		Optional<Integer> optionalSubmissionID = this.getArtemisGUIController().startNextAssessment(this.exerciseID, correctionRound);
 		if (optionalSubmissionID.isEmpty()) {
+			//revert!
+			this.backendStateMachine.revertLatestTransition();
 			return false;
 		}
 		this.submissionID = optionalSubmissionID.get();

@@ -11,13 +11,12 @@ import edu.kit.kastel.sdq.eclipse.grading.api.backendstate.Transition;
 
 public class BackendStateMachine {
 
-
-
-
+	private State previousState;
 	private State currentState;
 	private Map<State, Set<Transition>> transitionsNew;
 
 	public BackendStateMachine() {
+		this.previousState = State.ERROR_STATE;
 		this.currentState = State.NO_STATE;
 
 		this.transitionsNew = new EnumMap<>(State.class);
@@ -27,15 +26,27 @@ public class BackendStateMachine {
 	public void applyTransition(Transition transition) throws NoTransitionException {
 		if (!this.transitionsNew.get(this.currentState).contains(transition)) {
 			final String message = "State transition " + transition.toString() + " (from " + this.currentState + " to " + transition.getTo() + ") not defined.";
-			this.currentState = State.ERROR_STATE;
+			this.changeState(State.ERROR_STATE);
 			throw new NoTransitionException(message);
 		}
+		this.changeState(transition.getTo());
+	}
 
-		this.currentState = transition.getTo();
+	private void changeState(final State nextState) {
+		this.previousState = this.currentState;
+		this.currentState = nextState;
 	}
 
 	public Set<Transition> getCurrentlyPossibleTransitions() {
 		return this.transitionsNew.get(this.currentState);
+	}
+
+	/**
+	 * In case an operation fails, but not erroneously, the previous state must be restored.
+	 */
+	public void revertLatestTransition() {
+		this.currentState = this.previousState;
+		this.previousState = State.ERROR_STATE;
 	}
 
 	/**
