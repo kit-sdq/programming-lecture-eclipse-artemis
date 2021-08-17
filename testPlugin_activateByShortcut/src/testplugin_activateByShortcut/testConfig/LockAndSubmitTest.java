@@ -173,20 +173,20 @@ public class LockAndSubmitTest {
 
 
 		//TODO test if breaks
-		sysController.saveAssessment();
+//		sysController.saveAssessment();
 
 		// check BACKLOG and deserialization
-		sysController.setCourseIdAndGetExerciseShortNames("praktikum21");
-		sysController.setExerciseId("testAufgabe1");
-		this.printBegunSubmissionState(sysController, "after submit");
-		sysController.setAssessedSubmissionByProjectName("exercise-1-testAufgabe1_submission-89-test-student");
-		sysController.loadAgain();
-		this.subscribeToAlertObservable(
-				sysController.getCurrentAssessmentController().getAlertObservable(),
-				"ArtemisController");
-
-		System.out.println("Deserialized annotations:\n "
-				+ sysController.getCurrentAssessmentController().getAnnotations());
+//		sysController.setCourseIdAndGetExerciseShortNames("praktikum21");
+//		sysController.setExerciseId("testAufgabe1");
+//		this.printBegunSubmissionState(sysController, "after submit");
+//		sysController.setAssessedSubmissionByProjectName("exercise-1-testAufgabe1_submission-89-test-student");
+//		sysController.loadAgain();
+//		this.subscribeToAlertObservable(
+//				sysController.getCurrentAssessmentController().getAlertObservable(),
+//				"ArtemisController");
+//
+//		System.out.println("Deserialized annotations:\n "
+//				+ sysController.getCurrentAssessmentController().getAnnotations());
 
 		return this;
 	}
