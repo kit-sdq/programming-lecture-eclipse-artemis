@@ -261,6 +261,7 @@ public class AnnotationMapper {
 
 	private Collection<IFeedback> getFilteredPreexistentFeedbacks(FeedbackType feedbackType) {
 		return this.lockResult.getPreexistentFeedbacks().stream()
+				.filter(feedback -> feedback.getFeedbackType() != null) // client data feedbacks
 				.filter(feedback -> feedback.getFeedbackType().equals(feedbackType)).collect(Collectors.toList());
 	}
 
