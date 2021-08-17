@@ -182,9 +182,7 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 		try {
 			coursesArray = this.deserializingObjectMapper.readValue(rspString, ArtemisCourse[].class);
 			for (ArtemisCourse course : coursesArray) {
-				course.init(
-						this.getExercisesForCourse(course),
-						this.getExamsForCourse(course));
+				course.init(this);
 			}
 		} catch (JsonProcessingException e) {
 			throw new ArtemisClientException(JSON_PARSE_ERROR_MESSAGE + e.getMessage(), e);
@@ -192,7 +190,7 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 		return Arrays.asList(coursesArray);
 	}
 
-	private Collection<IExam> getExamsForCourse(ArtemisCourse course) throws AuthenticationException, JsonProcessingException, ArtemisClientException {
+	public Collection<IExam> getExamsForCourse(ArtemisCourse course) throws AuthenticationException, JsonProcessingException, ArtemisClientException {
 		final Response examsRsp = this.rootApiTarget
 				.path(COURSES_PATHPART)
 				.path(String.valueOf(course.getCourseId()))
@@ -204,7 +202,7 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 
 		ArtemisExam[] examsArray = this.deserializingObjectMapper.readValue(examsRsp.readEntity(String.class), ArtemisExam[].class);
 		for (ArtemisExam exam : examsArray) {
-			exam.init(this.getExerciseGroupsForExam(exam, course.getCourseId()));
+			exam.init(this, course.getCourseId());
 		}
 
 		return Arrays.asList(examsArray);
@@ -222,7 +220,7 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 
 		ArtemisExercise[] exercisesArray = this.deserializingObjectMapper.readValue(exercisesJsonArray.toString(), ArtemisExercise[].class);
 		for (ArtemisExercise exercise : exercisesArray) {
-			exercise.init(this.getSubmissionsForExercise(exercise));
+			exercise.init(this);
 		}
 
 		return new ArtemisExerciseGroup(exerciseGroupId,
@@ -231,7 +229,7 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 				isMandatory);
 	}
 
-	private Collection<IExerciseGroup> getExerciseGroupsForExam(ArtemisExam exam, int courseId) throws AuthenticationException, JsonProcessingException, ArtemisClientException {
+	public Collection<IExerciseGroup> getExerciseGroupsForExam(ArtemisExam exam, int courseId) throws AuthenticationException, JsonProcessingException, ArtemisClientException {
 		this.checkAuthentication();
 		final Response rsp = this.rootApiTarget
 				.path(COURSES_PATHPART)
@@ -261,7 +259,7 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 		return exerciseGroups;
 	}
 
-	private Collection<IExercise> getExercisesForCourse(ArtemisCourse course) throws AuthenticationException, JsonProcessingException, ArtemisClientException {
+	public Collection<IExercise> getExercisesForCourse(ArtemisCourse course) throws AuthenticationException, JsonProcessingException, ArtemisClientException {
 		this.checkAuthentication();
 		final Response exercisesAndParticipationsRsp = this.rootApiTarget
 				.path(COURSES_PATHPART)
@@ -280,7 +278,7 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 		// deserialize
 		ArtemisExercise[] exercisesArray = this.deserializingObjectMapper.readValue(exercisesJsonArray.toString(), ArtemisExercise[].class);
 		for (ArtemisExercise exercise : exercisesArray) {
-			exercise.init(this.getSubmissionsForExercise(exercise));
+			exercise.init(this);
 		}
 
 		return Arrays.asList(exercisesArray);
@@ -315,7 +313,7 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 		return Arrays.asList(submissionsArray);
 	}
 
-	private Collection<ISubmission> getSubmissionsForExercise(ArtemisExercise exercise) throws AuthenticationException, JsonProcessingException {
+	public Collection<ISubmission> getSubmissionsForExercise(ArtemisExercise exercise) throws AuthenticationException, JsonProcessingException {
 		this.checkAuthentication();
 		final Response rsp = this.rootApiTarget
 				.path(EXERCISES_PATHPART)

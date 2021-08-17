@@ -2,10 +2,15 @@ package edu.kit.kastel.sdq.eclipse.grading.client.mappings.exam;
 
 import java.util.Collection;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.security.sasl.AuthenticationException;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonProcessingException;
+
+import edu.kit.kastel.sdq.eclipse.grading.api.ArtemisClientException;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExam;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExerciseGroup;
+import edu.kit.kastel.sdq.eclipse.grading.client.rest.ArtemisRESTClient;
 
 public class ArtemisExam implements IExam {
 
@@ -42,8 +47,8 @@ public class ArtemisExam implements IExam {
 		return this.title;
 	}
 
-	public void init(Collection<IExerciseGroup> exerciseGroups) {
-		this.exerciseGroups = exerciseGroups;
+	public void init(ArtemisRESTClient artemisRESTClient, int courseID) throws AuthenticationException, JsonProcessingException, ArtemisClientException {
+		this.exerciseGroups = artemisRESTClient.getExerciseGroupsForExam(this, courseID);
 	}
 
 	@Override
