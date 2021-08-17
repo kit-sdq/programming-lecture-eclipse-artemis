@@ -67,6 +67,9 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 	private WebTarget rootApiTarget;
 	private Optional<IDToken> idToken;
 
+	private ObjectMapper deserializingObjectMapper;
+	private ObjectMapper unconfiguredObjectMapper;
+
 	/**
 	 *
 	 * @param username
@@ -80,6 +83,9 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 			.build()
 			.target(this.getApiRoot());
 		this.idToken = Optional.empty();
+		this.deserializingObjectMapper = new ObjectMapper()
+				.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		this.unconfiguredObjectMapper = new ObjectMapper();
 	}
 
 	private void checkAuthentication() throws AuthenticationException {
@@ -175,9 +181,7 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 
 		Collection<ArtemisCourse> courses;
 		try {
-			ArtemisCourse[] coursesArray = new ObjectMapper()
-				.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-				.readValue(rspString, ArtemisCourse[].class);
+			ArtemisCourse[] coursesArray = this.deserializingObjectMapper.readValue(rspString, ArtemisCourse[].class);
 			courses = Arrays.asList(coursesArray);
 			for (ArtemisCourse course : courses) {
 				course.init(
@@ -204,9 +208,7 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 
 		Collection<ArtemisExam> exams;
 
-		ArtemisExam[] examsArray = new ObjectMapper()
-			.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-			.readValue(examsRsp.readEntity(String.class), ArtemisExam[].class);
+		ArtemisExam[] examsArray = this.deserializingObjectMapper.readValue(examsRsp.readEntity(String.class), ArtemisExam[].class);
 		exams = Arrays.asList(examsArray);
 
 		for (ArtemisExam exam : exams) {
@@ -229,9 +231,7 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 		if (!exercisesJsonArray.isArray()) throw new ArtemisClientException(JSON_PARSE_ERROR_MESSAGE_CORRUPT_JSON_STRUCTURE);
 
 		Collection<ArtemisExercise> exercises;
-		ArtemisExercise[] exercisesArray = new ObjectMapper()
-				.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-				.readValue(exercisesJsonArray.toString(), ArtemisExercise[].class);
+		ArtemisExercise[] exercisesArray = this.deserializingObjectMapper.readValue(exercisesJsonArray.toString(), ArtemisExercise[].class);
 		exercises = Arrays.asList(exercisesArray);
 
 
@@ -260,7 +260,7 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 				.invoke(); // synchronous variant
 		this.throwIfStatusUnsuccessful(rsp);
 
-		JsonNode detailledExamJsonNode = new ObjectMapper().readTree(rsp.readEntity(String.class));
+		JsonNode detailledExamJsonNode = this.unconfiguredObjectMapper.readTree(rsp.readEntity(String.class));
 
 		JsonNode exerciseGroupsJsonArray = detailledExamJsonNode.get("exerciseGroups");
 		if (!exerciseGroupsJsonArray.isArray()) throw new ArtemisClientException(JSON_PARSE_ERROR_MESSAGE_CORRUPT_JSON_STRUCTURE);
@@ -289,16 +289,13 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 		this.throwIfStatusUnsuccessful(exercisesAndParticipationsRsp);
 
 		// get the part of the json that we want to deserialize
-		final JsonNode exercisesAndParticipationsJsonNode = new ObjectMapper()
-				.readTree(exercisesAndParticipationsRsp.readEntity(String.class));
+		final JsonNode exercisesAndParticipationsJsonNode = this.unconfiguredObjectMapper.readTree(exercisesAndParticipationsRsp.readEntity(String.class));
 		JsonNode exercisesJsonArray = exercisesAndParticipationsJsonNode.get(EXERCISES_PATHPART);
 		if (!exercisesJsonArray.isArray()) throw new ArtemisClientException(JSON_PARSE_ERROR_MESSAGE_CORRUPT_JSON_STRUCTURE);
 
 		// deserialize
 		Collection<ArtemisExercise> exercises;
-		ArtemisExercise[] exercisesArray = new ObjectMapper()
-				.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-				.readValue(exercisesJsonArray.toString(), ArtemisExercise[].class);
+		ArtemisExercise[] exercisesArray = this.deserializingObjectMapper.readValue(exercisesJsonArray.toString(), ArtemisExercise[].class);
 		exercises = Arrays.asList(exercisesArray);
 
 		for (ArtemisExercise exercise : exercises) {
@@ -327,9 +324,7 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 		final String rspEntity = rsp.readEntity(String.class);
 		Collection<ArtemisSubmission> submissions = new LinkedList<>();
 		try {
-			ArtemisSubmission[] submissionsArray = new ObjectMapper()
-					.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-					.readValue(rspEntity, ArtemisSubmission[].class);
+			ArtemisSubmission[] submissionsArray = this.deserializingObjectMapper.readValue(rspEntity, ArtemisSubmission[].class);
 			submissions = Arrays.asList(submissionsArray);
 		} catch (JsonProcessingException e) {
 			throw new ArtemisClientException(JSON_PARSE_ERROR_MESSAGE + e.getMessage(), e);
@@ -364,9 +359,7 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 		final String rspEntity = rsp.readEntity(String.class);
 //		System.out.println("rspEntity submission=" + rspEntity);
 		Collection<ArtemisSubmission> submissions = new LinkedList<>();
-		ArtemisSubmission[] submissionsArray = new ObjectMapper()
-				.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-				.readValue(rspEntity, ArtemisSubmission[].class);
+		ArtemisSubmission[] submissionsArray = this.deserializingObjectMapper.readValue(rspEntity, ArtemisSubmission[].class);
 		submissions = Arrays.asList(submissionsArray);
 
 
@@ -391,22 +384,18 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 		this.throwIfStatusUnsuccessful(authenticationResponse);
 		final String authRspEntity = authenticationResponse.readEntity(String.class);
 		try {
-			this.idToken = Optional.of(new IDToken(new ObjectMapper().readTree(authRspEntity).get("id_token").asText()));
+			this.idToken = Optional.of(new IDToken(this.unconfiguredObjectMapper.readTree(authRspEntity).get("id_token").asText()));
 		} catch (IOException e1) {
 			throw new AuthenticationException("Authentication to \"" + this.getApiRoot() + "\" failed: No token could be retrieved in server response.");
 		}
 	}
 
 	private IAssessor parseAssessorResult(final String jsonString) throws JsonProcessingException {
-		return new ObjectMapper()
-				.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-				.readValue(jsonString, Assessor.class);
+		return this.deserializingObjectMapper.readValue(jsonString, Assessor.class);
 	}
 
 	private ILockResult parseLockResult(final String jsonString) throws JsonProcessingException {
-		return new ObjectMapper()
-				.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-				.readValue(jsonString, LockResult.class);
+		return this.deserializingObjectMapper.readValue(jsonString, LockResult.class);
 	}
 
 	@Override
