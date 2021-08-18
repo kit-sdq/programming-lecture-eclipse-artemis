@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
@@ -208,27 +207,6 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 		return Arrays.asList(examsArray);
 	}
 
-	// for exams
-	private IExerciseGroup getExerciseGroupFromJsonNode(JsonNode exerciseGroupJsonNode) throws ArtemisClientException, AuthenticationException, JsonProcessingException {
-
-		final int exerciseGroupId = exerciseGroupJsonNode.get("id").intValue();
-		final String title = exerciseGroupJsonNode.get(TITLE_FIELD).asText();
-		final boolean isMandatory = exerciseGroupJsonNode.get("isMandatory").booleanValue();
-
-		JsonNode exercisesJsonArray = exerciseGroupJsonNode.get(EXERCISES_PATHPART);
-		if (!exercisesJsonArray.isArray()) throw new ArtemisClientException(JSON_PARSE_ERROR_MESSAGE_CORRUPT_JSON_STRUCTURE);
-
-		ArtemisExercise[] exercisesArray = this.deserializingObjectMapper.readValue(exercisesJsonArray.toString(), ArtemisExercise[].class);
-		for (ArtemisExercise exercise : exercisesArray) {
-			exercise.init(this);
-		}
-
-		return new ArtemisExerciseGroup(exerciseGroupId,
-				Arrays.asList(exercisesArray),
-				title,
-				isMandatory);
-	}
-
 	public Collection<IExerciseGroup> getExerciseGroupsForExam(ArtemisExam exam, int courseId) throws AuthenticationException, JsonProcessingException, ArtemisClientException {
 		this.checkAuthentication();
 		final Response rsp = this.rootApiTarget
@@ -242,22 +220,24 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 				.invoke(); // synchronous variant
 		this.throwIfStatusUnsuccessful(rsp);
 
+		//need to retrieve the exerciseGroups array root node to deserialize it!
 		JsonNode detailledExamJsonNode = this.unconfiguredObjectMapper.readTree(rsp.readEntity(String.class));
-
 		JsonNode exerciseGroupsJsonArray = detailledExamJsonNode.get("exerciseGroups");
+		if (exerciseGroupsJsonArray == null) {
+			//exam has no exercise groups!
+			return List.of();
+		}
 		if (!exerciseGroupsJsonArray.isArray()) throw new ArtemisClientException(JSON_PARSE_ERROR_MESSAGE_CORRUPT_JSON_STRUCTURE);
 
-		final Collection<IExerciseGroup> exerciseGroups = new LinkedList<>();
-
-		exerciseGroupsJsonArray.forEach(exerciseGroupJsonNode -> {
-			try {
-				exerciseGroups.add(this.getExerciseGroupFromJsonNode(exerciseGroupJsonNode));
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		});
-		return exerciseGroups;
+		ArtemisExerciseGroup[] exerciseGroupsArray = this.deserializingObjectMapper
+				.readValue(exerciseGroupsJsonArray.toString(), ArtemisExerciseGroup[].class);
+		for (ArtemisExerciseGroup exerciseGroup : exerciseGroupsArray) {
+			exerciseGroup.init(this);
+		}
+		return Arrays.asList(exerciseGroupsArray);
 	}
+
+//	private Collection
 
 	public Collection<IExercise> getExercisesForCourse(ArtemisCourse course) throws AuthenticationException, JsonProcessingException, ArtemisClientException {
 		this.checkAuthentication();
@@ -273,6 +253,10 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 		// get the part of the json that we want to deserialize
 		final JsonNode exercisesAndParticipationsJsonNode = this.unconfiguredObjectMapper.readTree(exercisesAndParticipationsRsp.readEntity(String.class));
 		JsonNode exercisesJsonArray = exercisesAndParticipationsJsonNode.get(EXERCISES_PATHPART);
+		if (exercisesJsonArray == null) {
+			//course has no exercises!
+			return List.of();
+		}
 		if (!exercisesJsonArray.isArray()) throw new ArtemisClientException(JSON_PARSE_ERROR_MESSAGE_CORRUPT_JSON_STRUCTURE);
 
 		// deserialize
