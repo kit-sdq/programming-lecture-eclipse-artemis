@@ -32,13 +32,13 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExerciseGroup;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
 import edu.kit.kastel.sdq.eclipse.grading.client.git.EgitGitHandler;
 import edu.kit.kastel.sdq.eclipse.grading.client.git.GitException;
-import edu.kit.kastel.sdq.eclipse.grading.client.lockstuff.Assessor;
-import edu.kit.kastel.sdq.eclipse.grading.client.lockstuff.LockResult;
 import edu.kit.kastel.sdq.eclipse.grading.client.mappings.ArtemisCourse;
 import edu.kit.kastel.sdq.eclipse.grading.client.mappings.ArtemisExercise;
 import edu.kit.kastel.sdq.eclipse.grading.client.mappings.ArtemisSubmission;
 import edu.kit.kastel.sdq.eclipse.grading.client.mappings.exam.ArtemisExam;
 import edu.kit.kastel.sdq.eclipse.grading.client.mappings.exam.ArtemisExerciseGroup;
+import edu.kit.kastel.sdq.eclipse.grading.client.mappings.lock.Assessor;
+import edu.kit.kastel.sdq.eclipse.grading.client.mappings.lock.LockResult;
 
 public class ArtemisRESTClient extends AbstractArtemisClient  {
 

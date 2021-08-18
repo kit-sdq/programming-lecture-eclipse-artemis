@@ -1,4 +1,4 @@
-package edu.kit.kastel.sdq.eclipse.grading.client.lockstuff;
+package edu.kit.kastel.sdq.eclipse.grading.client.mappings.lock;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
