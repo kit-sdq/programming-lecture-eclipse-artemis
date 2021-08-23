@@ -1,4 +1,4 @@
-package edu.kit.kastel.sdq.eclipse.grading.client.lockstuff;
+package edu.kit.kastel.sdq.eclipse.grading.client.mappings.lock;
 
 import java.util.Collection;
 import java.util.LinkedList;

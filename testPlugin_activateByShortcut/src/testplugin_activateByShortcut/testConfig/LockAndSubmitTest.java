@@ -100,17 +100,19 @@ public class LockAndSubmitTest {
 
 			@Override
 			public void error(String errorMsg, Throwable cause) {
-				System.out.println("====" + upFront + ":" + errorMsg);
+				System.out.println("==err==" + upFront + ":" + errorMsg);
+				if (cause != null)
+					cause.printStackTrace(System.out);
 			}
 
 			@Override
 			public void info(String infoMsg) {
-				System.out.println("====" + upFront + ":" + infoMsg);
+				System.out.println("==inf==" + upFront + ":" + infoMsg);
 			}
 
 			@Override
 			public void warn(String warningMsg) {
-				System.out.println("====" + upFront + ":" + warningMsg);
+				System.out.println("==wrn==" + upFront + ":" + warningMsg);
 
 			}
 		});

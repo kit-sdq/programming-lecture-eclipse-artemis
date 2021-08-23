@@ -4,10 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import javax.security.sasl.AuthenticationException;
 import javax.ws.rs.client.ClientBuilder;
@@ -34,13 +32,13 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExerciseGroup;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
 import edu.kit.kastel.sdq.eclipse.grading.client.git.EgitGitHandler;
 import edu.kit.kastel.sdq.eclipse.grading.client.git.GitException;
-import edu.kit.kastel.sdq.eclipse.grading.client.lockstuff.Assessor;
-import edu.kit.kastel.sdq.eclipse.grading.client.lockstuff.LockResult;
 import edu.kit.kastel.sdq.eclipse.grading.client.mappings.ArtemisCourse;
 import edu.kit.kastel.sdq.eclipse.grading.client.mappings.ArtemisExercise;
 import edu.kit.kastel.sdq.eclipse.grading.client.mappings.ArtemisSubmission;
 import edu.kit.kastel.sdq.eclipse.grading.client.mappings.exam.ArtemisExam;
 import edu.kit.kastel.sdq.eclipse.grading.client.mappings.exam.ArtemisExerciseGroup;
+import edu.kit.kastel.sdq.eclipse.grading.client.mappings.lock.Assessor;
+import edu.kit.kastel.sdq.eclipse.grading.client.mappings.lock.LockResult;
 
 public class ArtemisRESTClient extends AbstractArtemisClient  {
 
@@ -67,6 +65,9 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 	private WebTarget rootApiTarget;
 	private Optional<IDToken> idToken;
 
+	private ObjectMapper deserializingObjectMapper;
+	private ObjectMapper unconfiguredObjectMapper;
+
 	/**
 	 *
 	 * @param username
@@ -80,6 +81,9 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 			.build()
 			.target(this.getApiRoot());
 		this.idToken = Optional.empty();
+		this.deserializingObjectMapper = new ObjectMapper()
+				.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		this.unconfiguredObjectMapper = new ObjectMapper();
 	}
 
 	private void checkAuthentication() throws AuthenticationException {
@@ -173,26 +177,19 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 		this.throwIfStatusUnsuccessful(rsp);
 		String rspString = rsp.readEntity(String.class);
 
-		Collection<ArtemisCourse> courses;
+		ArtemisCourse[] coursesArray;
 		try {
-			ArtemisCourse[] coursesArray = new ObjectMapper()
-				.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-				.readValue(rspString, ArtemisCourse[].class);
-			courses = Arrays.asList(coursesArray);
-			for (ArtemisCourse course : courses) {
-				course.init(
-						this.getExercisesForCourse(course),
-						this.getExamsForCourse(course));
+			coursesArray = this.deserializingObjectMapper.readValue(rspString, ArtemisCourse[].class);
+			for (ArtemisCourse course : coursesArray) {
+				course.init(this);
 			}
 		} catch (JsonProcessingException e) {
 			throw new ArtemisClientException(JSON_PARSE_ERROR_MESSAGE + e.getMessage(), e);
 		}
-		return courses.stream()
-				.map(ICourse.class::cast)
-				.collect(Collectors.toList());
+		return Arrays.asList(coursesArray);
 	}
 
-	private Collection<IExam> getExamsForCourse(ArtemisCourse course) throws AuthenticationException, JsonProcessingException, ArtemisClientException {
+	public Collection<IExam> getExamsForCourse(ArtemisCourse course) throws AuthenticationException, JsonProcessingException, ArtemisClientException {
 		final Response examsRsp = this.rootApiTarget
 				.path(COURSES_PATHPART)
 				.path(String.valueOf(course.getCourseId()))
@@ -202,52 +199,15 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 				.invoke(); // synchronous call
 		this.throwIfStatusUnsuccessful(examsRsp);
 
-		Collection<ArtemisExam> exams;
-
-		ArtemisExam[] examsArray = new ObjectMapper()
-			.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-			.readValue(examsRsp.readEntity(String.class), ArtemisExam[].class);
-		exams = Arrays.asList(examsArray);
-
-		for (ArtemisExam exam : exams) {
-			exam.init(this.getExerciseGroupsForExam(exam, course.getCourseId()));
+		ArtemisExam[] examsArray = this.deserializingObjectMapper.readValue(examsRsp.readEntity(String.class), ArtemisExam[].class);
+		for (ArtemisExam exam : examsArray) {
+			exam.init(this, course.getCourseId());
 		}
 
-		return exams.stream()
-				.map(IExam.class::cast)
-				.collect(Collectors.toList());
+		return Arrays.asList(examsArray);
 	}
 
-	// for exams
-	private IExerciseGroup getExerciseGroupFromJsonNode(JsonNode exerciseGroupJsonNode) throws ArtemisClientException, AuthenticationException, JsonProcessingException {
-
-		final int exerciseGroupId = exerciseGroupJsonNode.get("id").intValue();
-		final String title = exerciseGroupJsonNode.get(TITLE_FIELD).asText();
-		final boolean isMandatory = exerciseGroupJsonNode.get("isMandatory").booleanValue();
-
-		JsonNode exercisesJsonArray = exerciseGroupJsonNode.get(EXERCISES_PATHPART);
-		if (!exercisesJsonArray.isArray()) throw new ArtemisClientException(JSON_PARSE_ERROR_MESSAGE_CORRUPT_JSON_STRUCTURE);
-
-		Collection<ArtemisExercise> exercises;
-		ArtemisExercise[] exercisesArray = new ObjectMapper()
-				.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-				.readValue(exercisesJsonArray.toString(), ArtemisExercise[].class);
-		exercises = Arrays.asList(exercisesArray);
-
-
-		for (ArtemisExercise exercise : exercises) {
-			exercise.init(this.getSubmissionsForExercise(exercise));
-		}
-
-		return new ArtemisExerciseGroup(exerciseGroupId,
-				exercises.stream()
-					.map(IExercise.class::cast)
-					.collect(Collectors.toList()),
-				title,
-				isMandatory);
-	}
-
-	private Collection<IExerciseGroup> getExerciseGroupsForExam(ArtemisExam exam, int courseId) throws AuthenticationException, JsonProcessingException, ArtemisClientException {
+	public Collection<IExerciseGroup> getExerciseGroupsForExam(ArtemisExam exam, int courseId) throws AuthenticationException, JsonProcessingException, ArtemisClientException {
 		this.checkAuthentication();
 		final Response rsp = this.rootApiTarget
 				.path(COURSES_PATHPART)
@@ -260,24 +220,26 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 				.invoke(); // synchronous variant
 		this.throwIfStatusUnsuccessful(rsp);
 
-		JsonNode detailledExamJsonNode = new ObjectMapper().readTree(rsp.readEntity(String.class));
-
+		//need to retrieve the exerciseGroups array root node to deserialize it!
+		JsonNode detailledExamJsonNode = this.unconfiguredObjectMapper.readTree(rsp.readEntity(String.class));
 		JsonNode exerciseGroupsJsonArray = detailledExamJsonNode.get("exerciseGroups");
+		if (exerciseGroupsJsonArray == null) {
+			//exam has no exercise groups!
+			return List.of();
+		}
 		if (!exerciseGroupsJsonArray.isArray()) throw new ArtemisClientException(JSON_PARSE_ERROR_MESSAGE_CORRUPT_JSON_STRUCTURE);
 
-		final Collection<IExerciseGroup> exerciseGroups = new LinkedList<>();
-
-		exerciseGroupsJsonArray.forEach(exerciseGroupJsonNode -> {
-			try {
-				exerciseGroups.add(this.getExerciseGroupFromJsonNode(exerciseGroupJsonNode));
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		});
-		return exerciseGroups;
+		ArtemisExerciseGroup[] exerciseGroupsArray = this.deserializingObjectMapper
+				.readValue(exerciseGroupsJsonArray.toString(), ArtemisExerciseGroup[].class);
+		for (ArtemisExerciseGroup exerciseGroup : exerciseGroupsArray) {
+			exerciseGroup.init(this);
+		}
+		return Arrays.asList(exerciseGroupsArray);
 	}
 
-	private Collection<IExercise> getExercisesForCourse(ArtemisCourse course) throws AuthenticationException, JsonProcessingException, ArtemisClientException {
+//	private Collection
+
+	public Collection<IExercise> getExercisesForCourse(ArtemisCourse course) throws AuthenticationException, JsonProcessingException, ArtemisClientException {
 		this.checkAuthentication();
 		final Response exercisesAndParticipationsRsp = this.rootApiTarget
 				.path(COURSES_PATHPART)
@@ -289,25 +251,21 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 		this.throwIfStatusUnsuccessful(exercisesAndParticipationsRsp);
 
 		// get the part of the json that we want to deserialize
-		final JsonNode exercisesAndParticipationsJsonNode = new ObjectMapper()
-				.readTree(exercisesAndParticipationsRsp.readEntity(String.class));
+		final JsonNode exercisesAndParticipationsJsonNode = this.unconfiguredObjectMapper.readTree(exercisesAndParticipationsRsp.readEntity(String.class));
 		JsonNode exercisesJsonArray = exercisesAndParticipationsJsonNode.get(EXERCISES_PATHPART);
+		if (exercisesJsonArray == null) {
+			//course has no exercises!
+			return List.of();
+		}
 		if (!exercisesJsonArray.isArray()) throw new ArtemisClientException(JSON_PARSE_ERROR_MESSAGE_CORRUPT_JSON_STRUCTURE);
 
 		// deserialize
-		Collection<ArtemisExercise> exercises;
-		ArtemisExercise[] exercisesArray = new ObjectMapper()
-				.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-				.readValue(exercisesJsonArray.toString(), ArtemisExercise[].class);
-		exercises = Arrays.asList(exercisesArray);
-
-		for (ArtemisExercise exercise : exercises) {
-			exercise.init(this.getSubmissionsForExercise(exercise));
+		ArtemisExercise[] exercisesArray = this.deserializingObjectMapper.readValue(exercisesJsonArray.toString(), ArtemisExercise[].class);
+		for (ArtemisExercise exercise : exercisesArray) {
+			exercise.init(this);
 		}
 
-		return exercises.stream()
-				.map(IExercise.class::cast)
-				.collect(Collectors.toList());
+		return Arrays.asList(exercisesArray);
 	}
 
 	@Override
@@ -325,27 +283,21 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 		this.throwIfStatusUnsuccessful(rsp);
 
 		final String rspEntity = rsp.readEntity(String.class);
-		Collection<ArtemisSubmission> submissions = new LinkedList<>();
+		ArtemisSubmission[] submissionsArray;
 		try {
-			ArtemisSubmission[] submissionsArray = new ObjectMapper()
-					.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-					.readValue(rspEntity, ArtemisSubmission[].class);
-			submissions = Arrays.asList(submissionsArray);
+			submissionsArray = this.deserializingObjectMapper.readValue(rspEntity, ArtemisSubmission[].class);
 		} catch (JsonProcessingException e) {
 			throw new ArtemisClientException(JSON_PARSE_ERROR_MESSAGE + e.getMessage(), e);
 		}
 
-		for (ArtemisSubmission submission : submissions) {
+		for (ArtemisSubmission submission : submissionsArray) {
 			submission.init();
 		}
 
-		return submissions.stream()
-		.map(ISubmission.class::cast)
-		.collect(Collectors.toList());
-
+		return Arrays.asList(submissionsArray);
 	}
 
-	private Collection<ISubmission> getSubmissionsForExercise(ArtemisExercise exercise) throws AuthenticationException, JsonProcessingException {
+	public Collection<ISubmission> getSubmissionsForExercise(ArtemisExercise exercise) throws AuthenticationException, JsonProcessingException {
 		this.checkAuthentication();
 		final Response rsp = this.rootApiTarget
 				.path(EXERCISES_PATHPART)
@@ -362,21 +314,12 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 
 
 		final String rspEntity = rsp.readEntity(String.class);
-//		System.out.println("rspEntity submission=" + rspEntity);
-		Collection<ArtemisSubmission> submissions = new LinkedList<>();
-		ArtemisSubmission[] submissionsArray = new ObjectMapper()
-				.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-				.readValue(rspEntity, ArtemisSubmission[].class);
-		submissions = Arrays.asList(submissionsArray);
-
-
-		for (ArtemisSubmission submission : submissions) {
+		ArtemisSubmission[] submissionsArray = this.deserializingObjectMapper.readValue(rspEntity, ArtemisSubmission[].class);
+		for (ArtemisSubmission submission : submissionsArray) {
 			submission.init();
 		}
 
-		return submissions.stream()
-		.map(ISubmission.class::cast)
-		.collect(Collectors.toList());
+		return Arrays.asList(submissionsArray);
 	}
 
 	private boolean isStatusSuccessful(final Response response) {
@@ -391,22 +334,18 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 		this.throwIfStatusUnsuccessful(authenticationResponse);
 		final String authRspEntity = authenticationResponse.readEntity(String.class);
 		try {
-			this.idToken = Optional.of(new IDToken(new ObjectMapper().readTree(authRspEntity).get("id_token").asText()));
+			this.idToken = Optional.of(new IDToken(this.unconfiguredObjectMapper.readTree(authRspEntity).get("id_token").asText()));
 		} catch (IOException e1) {
 			throw new AuthenticationException("Authentication to \"" + this.getApiRoot() + "\" failed: No token could be retrieved in server response.");
 		}
 	}
 
 	private IAssessor parseAssessorResult(final String jsonString) throws JsonProcessingException {
-		return new ObjectMapper()
-				.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-				.readValue(jsonString, Assessor.class);
+		return this.deserializingObjectMapper.readValue(jsonString, Assessor.class);
 	}
 
 	private ILockResult parseLockResult(final String jsonString) throws JsonProcessingException {
-		return new ObjectMapper()
-				.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-				.readValue(jsonString, LockResult.class);
+		return this.deserializingObjectMapper.readValue(jsonString, LockResult.class);
 	}
 
 	@Override

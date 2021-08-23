@@ -2,10 +2,14 @@ package edu.kit.kastel.sdq.eclipse.grading.client.mappings;
 
 import java.util.Collection;
 
+import javax.security.sasl.AuthenticationException;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
+import edu.kit.kastel.sdq.eclipse.grading.client.rest.ArtemisRESTClient;
 
 public class ArtemisExercise implements IExercise {
 
@@ -61,8 +65,8 @@ public class ArtemisExercise implements IExercise {
 		return this.title;
 	}
 
-	public void init(Collection<ISubmission> submissions) {
-		this.submissions = submissions;
+	public void init(ArtemisRESTClient artemisRESTClient) throws AuthenticationException, JsonProcessingException {
+		this.submissions = artemisRESTClient.getSubmissionsForExercise(this);
 	}
 
 	/**

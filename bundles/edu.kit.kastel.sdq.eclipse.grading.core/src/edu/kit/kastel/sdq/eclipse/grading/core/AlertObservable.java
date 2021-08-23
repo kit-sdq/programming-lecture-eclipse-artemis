@@ -8,6 +8,12 @@ import edu.kit.kastel.sdq.eclipse.grading.api.alerts.IAlertObserver;
 
 public class AlertObservable implements IAlertObservable {
 
+	static class PlaceHolderException extends Exception {
+		public PlaceHolderException() {
+			super();
+		}
+	}
+
 	private Set<IAlertObserver> observers;
 
 	public AlertObservable() {
@@ -25,8 +31,13 @@ public class AlertObservable implements IAlertObservable {
 	 * @param cause
 	 */
 	void error(String errorMsg, Throwable cause) {
-		this.observers.forEach(observer -> observer.error(errorMsg, cause));
-		this.printToConsoleIfNoObserversRegistered(errorMsg, cause);
+		Throwable[] nonNullCause = {cause};
+		if (cause == null) {
+			//retrieve the stacktrace by abusing Throwable functionality
+			try { throw new PlaceHolderException(); } catch (PlaceHolderException e) {nonNullCause[0] = e;}
+		}
+		this.observers.forEach(observer -> observer.error(errorMsg, nonNullCause[0]));
+		this.printToConsoleIfNoObserversRegistered(errorMsg, nonNullCause[0]);
 	}
 
 	/**

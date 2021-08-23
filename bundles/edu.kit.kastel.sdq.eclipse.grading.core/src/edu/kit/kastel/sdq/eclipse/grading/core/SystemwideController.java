@@ -85,9 +85,8 @@ public class SystemwideController implements ISystemwideController {
 
 	private IAssessmentController getAssessmentController(int submissionID, int courseID,
 			int exerciseID) {
-		this.assessmentControllers.putIfAbsent(
-				submissionID,
-				new AssessmentController(this, courseID, exerciseID, submissionID));
+		//not equivalent to putIfAbsent!
+		this.assessmentControllers.computeIfAbsent(submissionID, submissionIDParam -> new AssessmentController(this, courseID, exerciseID, submissionID));
 		return this.assessmentControllers.get(submissionID);
 	}
 
