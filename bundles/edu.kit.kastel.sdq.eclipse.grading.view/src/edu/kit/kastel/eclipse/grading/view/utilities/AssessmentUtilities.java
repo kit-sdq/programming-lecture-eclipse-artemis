@@ -37,6 +37,8 @@ public class AssessmentUtilities {
 	public static final String MARKER_ATTRIBUTE_START = "start";
 	public static final String MARKER_ATTRIBUTE_END = "end";
 
+	public static final int BACKLOG_COMBO_WIDTH = 300;
+
 	/**
 	 * Creates a tooltip for a marker with the given parameters
 	 * 
@@ -50,18 +52,8 @@ public class AssessmentUtilities {
 	 */
 	public static String createMarkerTooltip(int startLine, int endline, String errorTypeName, String ratingGroupName,
 			String message, String classPath) {
-		final StringBuilder out = new StringBuilder();
-		final String position = "[" + startLine + "," + endline + "]";
-		out.append(position);
-		out.append(",");
-		out.append(classPath == null ? getClassNameForAnnotation() : classPath);
-		out.append(",");
-		out.append(ratingGroupName);
-		out.append(",");
-		out.append(errorTypeName);
-		out.append(",");
-		out.append(message);
-		return out.toString();
+		return String.format("[%s,%s], %s, %s, %s, %s", startLine, endline,
+				classPath == null ? getClassNameForAnnotation() : classPath, ratingGroupName, errorTypeName, message);
 	}
 
 	/**
@@ -75,15 +67,7 @@ public class AssessmentUtilities {
 	 */
 	public static String createMarkerTooltipForCustomButton(int startLine, int endline, String customMessage,
 			Double customPenalty) {
-		final StringBuilder builder = new StringBuilder();
-		final String position = "[" + startLine + "," + endline + "]";
-		builder.append(position);
-		builder.append(",");
-		builder.append(customMessage);
-		builder.append(",");
-		builder.append(customPenalty);
-		builder.append(",");
-		return builder.toString();
+		return String.format("[%s,%s], %s, %s", startLine, endline, customMessage, customPenalty);
 	}
 
 	public static IFile getFile(String path, String projectName) {

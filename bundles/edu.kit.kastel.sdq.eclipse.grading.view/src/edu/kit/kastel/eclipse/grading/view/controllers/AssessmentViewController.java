@@ -60,27 +60,29 @@ public class AssessmentViewController {
 			this.alertObserver.error("Text selection needed to add a new annotation", null);
 			return;
 		}
-		final Integer startLine = textSelection.getStartLine();
-		final Integer endLine = textSelection.getEndLine();
-		final Integer lenght = textSelection.getLength();
+		final int startLine = textSelection.getStartLine();
+		final int endLine = textSelection.getEndLine();
+		final int lenght = textSelection.getLength();
+
 		try {
 			IMarker marker = AssessmentUtilities.getCurrentlyOpenFile().createMarker(AssessmentUtilities.MARKER_NAME);
 			marker.setAttribute(IMarker.CHAR_START, AssessmentUtilities.getLineOffSet(startLine));
 			marker.setAttribute(IMarker.CHAR_END, AssessmentUtilities.getLineOffSet(startLine) + lenght + 10);
 			if (mistake != null) {
-				marker.setAttribute("errorTypeDescription", mistake.getMessage());
-				marker.setAttribute("errorType", mistake.getName());
+				marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_ERROR_DESCRIPTION, mistake.getMessage());
+				marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_ERROR, mistake.getName());
 			}
-			marker.setAttribute("start", startLine + 1);
-			marker.setAttribute("end", endLine + 1);
-			marker.setAttribute("className", AssessmentUtilities.getClassNameForAnnotation());
-			marker.setAttribute("ratingGroup",
+			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_START, startLine + 1);
+			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_END, endLine + 1);
+			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_CLASS_NAME,
+					AssessmentUtilities.getClassNameForAnnotation());
+			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_RATING_GROUP,
 					mistake == null ? ratingGroupName : mistake.getRatingGroup().getDisplayName());
 			if (customMessage != null) {
-				marker.setAttribute("customMessage", customMessage);
+				marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_CUSTOM_MESSAGE, customMessage);
 			}
 			if (customPenalty != null) {
-				marker.setAttribute("customPenalty", customPenalty);
+				marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_CUSTOM_PENALTY, customPenalty);
 			}
 			if (mistake != null) {
 				marker.setAttribute(IMarker.MESSAGE, AssessmentUtilities.createMarkerTooltip(startLine + 1, endLine + 1,
@@ -93,6 +95,7 @@ public class AssessmentViewController {
 					AssessmentUtilities.getPathForAnnotation(), customMessage, customPenalty,
 					AssessmentUtilities.getLineOffSet(startLine),
 					AssessmentUtilities.getLineOffSet(startLine) + lenght + 10);
+			// TODO: Error handling -> more specific!
 		} catch (Exception e) {
 			this.alertObserver.error("Unable to create marker for annotation", e);
 		}
@@ -119,19 +122,20 @@ public class AssessmentViewController {
 					.createMarker(AssessmentUtilities.MARKER_NAME);
 			marker.setAttribute(IMarker.CHAR_START, annotation.getMarkerCharStart());
 			marker.setAttribute(IMarker.CHAR_END, annotation.getMarkerCharEnd());
-			marker.setAttribute("start", startLine + 1);
-			marker.setAttribute("end", endLine + 1);
-			marker.setAttribute("className", annotation.getClassFilePath());
+			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_START, startLine + 1);
+			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_END, endLine + 1);
+			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_CLASS_NAME, annotation.getClassFilePath());
 			if (customMessage != null) {
-				marker.setAttribute("customMessage", customMessage);
+				marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_CUSTOM_MESSAGE, customMessage);
 			}
 			if (customPenalty != null) {
-				marker.setAttribute("customPenalty", customPenalty);
+				marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_CUSTOM_PENALTY, customPenalty);
 			}
 			if (mistake != null) {
-				marker.setAttribute("errorTypeDescription", mistake.getMessage());
-				marker.setAttribute("errorType", mistake.getName());
-				marker.setAttribute("ratingGroup", mistake.getRatingGroup().getDisplayName());
+				marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_ERROR_DESCRIPTION, mistake.getMessage());
+				marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_ERROR, mistake.getName());
+				marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_RATING_GROUP,
+						mistake.getRatingGroup().getDisplayName());
 				marker.setAttribute(IMarker.MESSAGE,
 						AssessmentUtilities.createMarkerTooltip(startLine + 1, endLine + 1, mistake.getName(),
 								mistake.getRatingGroup().getDisplayName(), mistake.getMessage(),

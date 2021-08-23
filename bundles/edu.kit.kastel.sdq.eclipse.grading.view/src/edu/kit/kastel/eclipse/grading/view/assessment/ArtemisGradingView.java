@@ -211,7 +211,7 @@ public class ArtemisGradingView extends ViewPart {
 
 		Combo backlogCombo = new Combo(backlogComposite, SWT.READ_ONLY);
 		GridData gdBacklogCombo = new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1);
-		gdBacklogCombo.widthHint = 152;
+		gdBacklogCombo.widthHint = 300;
 		backlogCombo.setLayoutData(gdBacklogCombo);
 
 		this.initializeBacklogCombo(backlogCombo);
@@ -295,7 +295,8 @@ public class ArtemisGradingView extends ViewPart {
 		Combo examCombo = new Combo(examComposite, SWT.READ_ONLY);
 		examCombo.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
 
-		this.addControlToPossibleActions(examCombo, Transition.SET_COURSE_ID_AND_GET_EXERCISE_SHORT_NAMES);
+		// this.addControlToPossibleActions(examCombo,
+		// Transition.SET_COURSE_ID_AND_GET_EXERCISE_SHORT_NAMES);
 
 		Label lblExercise = new Label(examComposite, SWT.NONE);
 		lblExercise.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
