@@ -82,7 +82,6 @@ public class ArtemisGradingPreferencesPage extends FieldEditorPreferencePage imp
 	@Override
 	protected void initialize() {
 		super.initialize();
-		this.relativeConfigPath.setEnabled(false, this.getFieldEditorParent());
 		this.isRelativeConfigPath.setPropertyChangeListener(event -> {
 			final boolean isRelative = ((Boolean) event.getNewValue()).booleanValue();
 			if (isRelative) {
@@ -96,7 +95,11 @@ public class ArtemisGradingPreferencesPage extends FieldEditorPreferencePage imp
 
 		final boolean isRelativeSelected = this.isRelativeConfigPath.getBooleanValue();
 		if (isRelativeSelected) {
+			this.relativeConfigPath.setEnabled(true, this.getFieldEditorParent());
 			this.absoluteConfigPath.setEnabled(false, this.getFieldEditorParent());
+		} else {
+			this.relativeConfigPath.setEnabled(false, this.getFieldEditorParent());
+			this.absoluteConfigPath.setEnabled(true, this.getFieldEditorParent());
 		}
 
 	}

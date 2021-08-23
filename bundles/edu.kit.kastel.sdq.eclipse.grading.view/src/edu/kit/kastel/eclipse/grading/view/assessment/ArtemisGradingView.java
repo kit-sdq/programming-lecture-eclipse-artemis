@@ -29,7 +29,7 @@ import edu.kit.kastel.sdq.eclipse.grading.api.model.IRatingGroup;
 
 /**
  * This class creates the view elements for the artemis grading process. It is
- * build as a tab folder with four tabs grading, assessment, exam and backlog.
+ * build as a tab folder with four tabs: grading, assessment, exam and backlog.
  *
  * @see {@link ViewPart}
  *
@@ -55,7 +55,7 @@ public class ArtemisGradingView extends ViewPart {
 	private void initializePossibleActions() {
 		for (int i = 0; i < Transition.values().length; i++) {
 			Transition current = Transition.values()[i];
-			this.possibleActions.put(current, new HashSet<Control>());
+			this.possibleActions.put(current, new HashSet<>());
 		}
 	}
 
@@ -73,7 +73,6 @@ public class ArtemisGradingView extends ViewPart {
 	private void addSelectionListenerForLoadFromBacklogButton(Button btnLoadAgain) {
 		btnLoadAgain.addListener(SWT.Selection, e -> {
 			this.viewController.onLoadAgain();
-			this.createGradingViewElements();
 			this.prepareNewAssessment();
 			this.updateState();
 		});
@@ -87,6 +86,7 @@ public class ArtemisGradingView extends ViewPart {
 	private void addSelectionListenerForReloadButton(Button btnReloadA) {
 		btnReloadA.addListener(SWT.Selection, e -> {
 			this.viewController.onReloadAssessment();
+			this.prepareNewAssessment();
 			this.updateState();
 		});
 	}
@@ -102,7 +102,6 @@ public class ArtemisGradingView extends ViewPart {
 		startAssessmentButton.addListener(SWT.Selection, e -> {
 			boolean started = this.viewController.onStartAssessment();
 			if (started) {
-				this.createGradingViewElements();
 				this.prepareNewAssessment();
 			}
 			this.updateState();
@@ -439,6 +438,7 @@ public class ArtemisGradingView extends ViewPart {
 	}
 
 	private void prepareNewAssessment() {
+		this.createGradingViewElements();
 		this.viewController.createAnnotationsMarkers();
 		this.viewController.getRatingGroups().forEach(ratingGroup -> this.updatePenalty(ratingGroup.getDisplayName()));
 	}
@@ -477,12 +477,9 @@ public class ArtemisGradingView extends ViewPart {
 	}
 
 	private void updateState() {
-		this.possibleActions.values().forEach(set -> {
-			set.forEach(control -> control.setEnabled(false));
-		});
-		this.viewController.getPossiblyTransitions().forEach(transition -> {
-			this.possibleActions.get(transition).forEach(control -> control.setEnabled(true));
-		});
+		this.possibleActions.values().forEach(set -> set.forEach(control -> control.setEnabled(false)));
+		this.viewController.getPossiblyTransitions().forEach(
+				transition -> this.possibleActions.get(transition).forEach(control -> control.setEnabled(true)));
 	}
 
 	private void addControlToPossibleActions(Control control, Transition transition) {

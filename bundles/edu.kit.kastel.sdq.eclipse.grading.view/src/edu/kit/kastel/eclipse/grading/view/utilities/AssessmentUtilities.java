@@ -45,15 +45,16 @@ public class AssessmentUtilities {
 	 * @param errorTypeName
 	 * @param ratingGroupName
 	 * @param message
+	 * @param classPath
 	 * @return the tooltip for the marker as string
 	 */
 	public static String createMarkerTooltip(int startLine, int endline, String errorTypeName, String ratingGroupName,
-			String message) {
+			String message, String classPath) {
 		final StringBuilder out = new StringBuilder();
 		final String position = "[" + startLine + "," + endline + "]";
 		out.append(position);
 		out.append(",");
-		out.append(AssessmentUtilities.getClassNameForAnnotation());
+		out.append(classPath == null ? getClassNameForAnnotation() : classPath);
 		out.append(",");
 		out.append(ratingGroupName);
 		out.append(",");

@@ -84,7 +84,7 @@ public class AssessmentViewController {
 			}
 			if (mistake != null) {
 				marker.setAttribute(IMarker.MESSAGE, AssessmentUtilities.createMarkerTooltip(startLine + 1, endLine + 1,
-						mistake.getName(), mistake.getRatingGroup().getDisplayName(), mistake.getMessage()));
+						mistake.getName(), mistake.getRatingGroup().getDisplayName(), mistake.getMessage(), null));
 			} else {
 				marker.setAttribute(IMarker.MESSAGE, AssessmentUtilities
 						.createMarkerTooltipForCustomButton(startLine + 1, endLine + 1, customMessage, customPenalty));
@@ -132,8 +132,10 @@ public class AssessmentViewController {
 				marker.setAttribute("errorTypeDescription", mistake.getMessage());
 				marker.setAttribute("errorType", mistake.getName());
 				marker.setAttribute("ratingGroup", mistake.getRatingGroup().getDisplayName());
-				marker.setAttribute(IMarker.MESSAGE, AssessmentUtilities.createMarkerTooltip(startLine + 1, endLine + 1,
-						mistake.getName(), mistake.getRatingGroup().getDisplayName(), mistake.getMessage()));
+				marker.setAttribute(IMarker.MESSAGE,
+						AssessmentUtilities.createMarkerTooltip(startLine + 1, endLine + 1, mistake.getName(),
+								mistake.getRatingGroup().getDisplayName(), mistake.getMessage(),
+								annotation.getClassFilePath()));
 			}
 		} catch (Exception e) {
 			this.alertObserver.error("Unable to create marker for given annotation:" + annotation.toString(), e);
@@ -249,7 +251,6 @@ public class AssessmentViewController {
 	 */
 	public void onReloadAssessment() {
 		this.systemwideController.reloadAssessment();
-		this.getAnnotations().forEach(this::createMarkerForAnnotation);
 	}
 
 	/**
