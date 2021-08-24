@@ -70,18 +70,20 @@ public interface IArtemisController {
 	 */
 	IExercise getExerciseFromCourses(Collection<ICourse> courses, int courseID, int exerciseID);
 
+	Collection<IExercise> getExercisesFromExam(String examTitle);
+
 	/**
 	 *
 	 * @return the {@link IExercise#getShortName()}s of the given {@link ICourse}
 	 */
 	Collection<String> getExerciseShortNames(String courseShortName);
 
+
 	/**
 	 *
 	 * @return the {@link IExercise#getShortName()}s of the given {@link IExam}
 	 */
 	Collection<String> getExerciseShortNamesFromExam(String examTitle);
-
 
 	/**
 	 * Pre-condition: You need to have called startAssessment or startNextAssessment prior to calling this method!
@@ -124,6 +126,7 @@ public interface IArtemisController {
 	 * 		<li> Optional.empty(), if no assessment is left!
 	 */
 	Optional<Integer> startNextAssessment(int exerciseID);
+
 
 	/**
 	 * Starts the next assessment of the given correction round. Which one is smh determined by artemis.

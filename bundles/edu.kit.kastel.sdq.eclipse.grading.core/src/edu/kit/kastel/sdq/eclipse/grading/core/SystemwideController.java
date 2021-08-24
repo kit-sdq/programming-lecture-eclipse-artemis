@@ -18,7 +18,9 @@ import edu.kit.kastel.sdq.eclipse.grading.api.PreferenceConstants;
 import edu.kit.kastel.sdq.eclipse.grading.api.alerts.IAlertObservable;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IProjectFileNamingStrategy;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ICourse;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExam;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExerciseGroup;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission.Filter;
 import edu.kit.kastel.sdq.eclipse.grading.api.backendstate.Transition;
@@ -257,13 +259,26 @@ public class SystemwideController implements ISystemwideController {
 		if (this.checkTransitionNotAllowedAndNotify(Transition.SET_EXERCISE_ID)) return;
 
 		for (ICourse course : this.getArtemisGUIController().getCourses()) {
+			//normal exercises
 			for (IExercise exercise : course.getExercises()) {
 				if (exercise.getShortName().equals(exerciseShortName)) {
 					this.exerciseID = exercise.getExerciseId();
 					return;
 				}
 			}
+			//TODOexam exercises
+			for (IExam exam: course.getExams()) {
+				for (IExerciseGroup exerciseGroup: exam.getExerciseGroups()) {
+					for ( IExercise exercise : exerciseGroup.getExercises()) {
+						if (exercise.getShortName().equals(exerciseShortName)) {
+							this.exerciseID = exercise.getExerciseId();
+							return;
+						}
+					}
+				}
+			}
 		}
+
 		this.alertObservable.error("No Exercise with the given shortName \"" + exerciseShortName + "\" found.", null);
 	}
 

@@ -183,17 +183,7 @@ public class ArtemisController implements IArtemisController {
 	}
 
 	@Override
-	public Collection<String> getExerciseShortNames(final String courseShortName) {
-		ICourse course = this.getCourseByShortName(courseShortName);
-		if (course == null) return List.of();
-
-		return course.getExercises().stream()
-				.map(IExercise::getShortName)
-				.collect(Collectors.toList());
-	}
-
-	@Override
-	public Collection<String> getExerciseShortNamesFromExam(final String examTitle) {
+	public Collection<IExercise> getExercisesFromExam(final String examTitle) {
 		IExam foundExam = null;
 		for (ICourse course : this.getCourses()) {
 			final Collection<IExam> filteredExams = course.getExams().stream()
@@ -213,9 +203,25 @@ public class ArtemisController implements IArtemisController {
 		return foundExam.getExerciseGroups().stream()
 			.map(IExerciseGroup::getExercises)
 			.flatMap(Collection::stream)
-			.map(IExercise::getShortName)
 			.collect(Collectors.toList());
 
+	}
+
+	@Override
+	public Collection<String> getExerciseShortNames(final String courseShortName) {
+		ICourse course = this.getCourseByShortName(courseShortName);
+		if (course == null) return List.of();
+
+		return course.getExercises().stream()
+				.map(IExercise::getShortName)
+				.collect(Collectors.toList());
+	}
+
+	@Override
+	public Collection<String> getExerciseShortNamesFromExam(final String examTitle) {
+		return this.getExercisesFromExam(examTitle).stream()
+				.map(IExercise::getShortName)
+				.collect(Collectors.toList());
 	}
 
 	@Override
