@@ -274,15 +274,15 @@ public class AssessmentViewController {
 	/**
 	 * Starts the first correction round of an exam
 	 */
-	public void onStartCorrectionRound1() {
-		this.systemwideController.startCorrectionRound1();
+	public boolean onStartCorrectionRound1() {
+		return this.systemwideController.startCorrectionRound1();
 	}
 
 	/**
 	 * Starts the second correction round of an exam
 	 */
-	public void onStartCorrectionRound2() {
-		this.systemwideController.startCorrectionRound2();
+	public boolean onStartCorrectionRound2() {
+		return this.systemwideController.startCorrectionRound2();
 	}
 
 	/**

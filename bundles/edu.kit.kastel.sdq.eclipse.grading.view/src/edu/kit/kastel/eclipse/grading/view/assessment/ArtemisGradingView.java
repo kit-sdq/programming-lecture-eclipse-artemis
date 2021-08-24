@@ -110,16 +110,20 @@ public class ArtemisGradingView extends ViewPart {
 
 	private void addSelectionListenerForStartFirstRound(Button btnStartRound1) {
 		btnStartRound1.addListener(SWT.Selection, e -> {
-			this.viewController.onStartCorrectionRound1();
-			this.prepareNewAssessment();
+			boolean started = this.viewController.onStartCorrectionRound1();
+			if (started) {
+				this.prepareNewAssessment();
+			}
 			this.updateState();
 		});
 	}
 
 	private void addSelectionListenerForStartSecondRound(Button btnStartRound2) {
 		btnStartRound2.addListener(SWT.Selection, e -> {
-			this.viewController.onStartCorrectionRound2();
-			this.prepareNewAssessment();
+			boolean started = this.viewController.onStartCorrectionRound2();
+			if (started) {
+				this.prepareNewAssessment();
+			}
 			this.updateState();
 		});
 	}
@@ -211,7 +215,7 @@ public class ArtemisGradingView extends ViewPart {
 
 		Combo backlogCombo = new Combo(backlogComposite, SWT.READ_ONLY);
 		GridData gdBacklogCombo = new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1);
-		gdBacklogCombo.widthHint = 300;
+		gdBacklogCombo.widthHint = AssessmentUtilities.BACKLOG_COMBO_WIDTH;
 		backlogCombo.setLayoutData(gdBacklogCombo);
 
 		this.initializeBacklogCombo(backlogCombo);
@@ -254,8 +258,12 @@ public class ArtemisGradingView extends ViewPart {
 
 	private void createExamComboList(String courseTitle, Combo examCombo, Combo examExerciseCombo) {
 		examCombo.removeAll();
+		examExerciseCombo.removeAll();
+		this.viewController.getExerciseShortNames(courseTitle)
+				.forEach(exerciseShortName -> examExerciseCombo.add(exerciseShortName));
 		this.viewController.getExamShortNames(courseTitle).forEach(examShortName -> examCombo.add(examShortName));
 		examCombo.addListener(SWT.Selection, e -> {
+			examExerciseCombo.removeAll();
 			this.viewController.getExercisesShortNamesForExam(examCombo.getItem(examCombo.getSelectionIndex()))
 					.forEach(exerciseShortName -> examExerciseCombo.add(exerciseShortName));
 			this.updateState();
@@ -295,8 +303,8 @@ public class ArtemisGradingView extends ViewPart {
 		Combo examCombo = new Combo(examComposite, SWT.READ_ONLY);
 		examCombo.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
 
-		// this.addControlToPossibleActions(examCombo,
-		// Transition.SET_COURSE_ID_AND_GET_EXERCISE_SHORT_NAMES);
+		// TODO: comment
+		this.addControlToPossibleActions(examCombo, Transition.SET_COURSE_ID_AND_GET_EXERCISE_SHORT_NAMES);
 
 		Label lblExercise = new Label(examComposite, SWT.NONE);
 		lblExercise.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
