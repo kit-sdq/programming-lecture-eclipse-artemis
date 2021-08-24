@@ -266,7 +266,7 @@ public class SystemwideController implements ISystemwideController {
 					return;
 				}
 			}
-			//TODOexam exercises
+			//exam exercises
 			for (IExam exam: course.getExams()) {
 				for (IExerciseGroup exerciseGroup: exam.getExerciseGroups()) {
 					for ( IExercise exercise : exerciseGroup.getExercises()) {
@@ -296,12 +296,12 @@ public class SystemwideController implements ISystemwideController {
 		if (optionalSubmissionID.isEmpty()) {
 			//revert!
 			this.backendStateMachine.revertLatestTransition();
+			this.alertObservable.info("No more submissions available for Correction Round " + correctionRound + "!");
 			return false;
 		}
 		this.submissionID = optionalSubmissionID.get();
 		this.getArtemisGUIController().downloadExerciseAndSubmission(this.courseID, this.exerciseID, this.submissionID);
 		return true;
-
 	}
 
 	@Override
