@@ -169,7 +169,7 @@ public class ArtemisController implements IArtemisController {
 			this.alertObservable.error("No course found for courseID=" + courseID, null);
 			return null;
 		}
-		final Collection<IExercise> filteredExercises = course.getExercises().stream()
+		final Collection<IExercise> filteredExercises = this.getExercises(course, true).stream()
 				.filter(exercise -> (exercise.getExerciseId() == exerciseID))
 				.collect(Collectors.toList());
 		if (filteredExercises.isEmpty()) {
@@ -183,10 +183,7 @@ public class ArtemisController implements IArtemisController {
 		return filteredExercises.iterator().next();
 	}
 
-	@Override
-	public Collection<IExercise> getExercises(final int courseID, boolean withExamExercises) {
-		ICourse course = this.getCourseFromCourses(this.getCourses(), courseID);
-
+	private Collection<IExercise> getExercises(final ICourse course, boolean withExamExercises) {
 		if (course == null) return List.of();
 
 		Collection<IExercise> allExercises = new LinkedList<>();
@@ -200,6 +197,12 @@ public class ArtemisController implements IArtemisController {
 				.collect(Collectors.toList()));
 		}
 		return allExercises;
+	}
+
+	@Override
+	public Collection<IExercise> getExercises(final int courseID, boolean withExamExercises) {
+		return this.getExercises(this.getCourseFromCourses(this.getCourses(), courseID), withExamExercises);
+
 	}
 
 	@Override
