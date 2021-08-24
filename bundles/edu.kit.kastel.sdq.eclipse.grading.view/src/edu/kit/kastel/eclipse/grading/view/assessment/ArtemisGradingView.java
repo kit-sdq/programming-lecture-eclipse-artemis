@@ -98,16 +98,6 @@ public class ArtemisGradingView extends ViewPart {
 		});
 	}
 
-	private void addSelectionListenerForStartAssessmentButton(Button startAssessmentButton) {
-		startAssessmentButton.addListener(SWT.Selection, e -> {
-			boolean started = this.viewController.onStartAssessment();
-			if (started) {
-				this.prepareNewAssessment();
-			}
-			this.updateState();
-		});
-	}
-
 	private void addSelectionListenerForStartFirstRound(Button btnStartRound1) {
 		btnStartRound1.addListener(SWT.Selection, e -> {
 			boolean started = this.viewController.onStartCorrectionRound1();
@@ -133,67 +123,6 @@ public class ArtemisGradingView extends ViewPart {
 			this.viewController.onSubmitAssessment();
 			this.updateState();
 		});
-	}
-
-	private void createAssessmentTab(TabFolder tabFolder) {
-		TabItem assessmentTabItem = new TabItem(tabFolder, SWT.NONE);
-		assessmentTabItem.setText("Assessment");
-
-		ScrolledComposite scrolledCompositeAssessment = new ScrolledComposite(tabFolder,
-				SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
-		assessmentTabItem.setControl(scrolledCompositeAssessment);
-		scrolledCompositeAssessment.setExpandHorizontal(true);
-		scrolledCompositeAssessment.setExpandVertical(true);
-
-		Composite assessmentComposite = new Composite(scrolledCompositeAssessment, SWT.NONE);
-		assessmentComposite.setLayout(new GridLayout(2, false));
-
-		Label courseLabel = new Label(assessmentComposite, SWT.NONE);
-		courseLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		courseLabel.setText("Course");
-
-		Combo courseCombo = new Combo(assessmentComposite, SWT.READ_ONLY);
-		courseCombo.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
-
-		this.addControlToPossibleActions(courseCombo, Transition.SET_COURSE_ID_AND_GET_EXERCISE_SHORT_NAMES);
-
-		Label exerciseLabel = new Label(assessmentComposite, SWT.NONE);
-		exerciseLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		exerciseLabel.setText("Exercise");
-
-		Combo exerciseCombo = new Combo(assessmentComposite, SWT.READ_ONLY);
-		exerciseCombo.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
-
-		this.addControlToPossibleActions(exerciseCombo, Transition.SET_EXERCISE_ID);
-
-		this.createCourseListForAssessmentTabItem(courseCombo, exerciseCombo);
-
-		Button btnStartAssessment = new Button(assessmentComposite, SWT.NONE);
-		btnStartAssessment.setText("Start");
-
-		this.addSelectionListenerForStartAssessmentButton(btnStartAssessment);
-		this.addControlToPossibleActions(btnStartAssessment, Transition.START_ASSESSMENT);
-
-		Button btnReloadA = new Button(assessmentComposite, SWT.NONE);
-		btnReloadA.setText("Reload");
-
-		this.addSelectionListenerForReloadButton(btnReloadA);
-		this.addControlToPossibleActions(btnReloadA, Transition.RELOAD_ASSESSMENT);
-
-		Button btnSaveAssessment = new Button(assessmentComposite, SWT.NONE);
-		btnSaveAssessment.setText("Save ");
-
-		this.addSelectionListenerForSaveButton(btnSaveAssessment);
-		this.addControlToPossibleActions(btnSaveAssessment, Transition.SAVE_ASSESSMENT);
-
-		Button btnSubmitAssessment = new Button(assessmentComposite, SWT.NONE);
-		btnSubmitAssessment.setText("Submit");
-
-		this.addSelectionListenerForSubmitButton(btnSubmitAssessment);
-		this.addControlToPossibleActions(btnSubmitAssessment, Transition.SUBMIT_ASSESSMENT);
-
-		scrolledCompositeAssessment.setContent(assessmentComposite);
-		scrolledCompositeAssessment.setMinSize(assessmentComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 	}
 
 	private void createBacklogTab(TabFolder tabFolder) {
@@ -235,14 +164,6 @@ public class ArtemisGradingView extends ViewPart {
 		scrolledCompositeBacklog.setMinSize(backlogComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 	}
 
-	public void createCourseListForAssessmentTabItem(Combo courseCombo, Combo exerciseCombo) {
-		this.viewController.getCourseShortNames().forEach(courseShortName -> courseCombo.add(courseShortName));
-		courseCombo.addListener(SWT.Selection, e -> {
-			this.createExerciseListInput(courseCombo.getItem(courseCombo.getSelectionIndex()), exerciseCombo);
-			this.updateState();
-		});
-	}
-
 	private void createCustomButton(IRatingGroup ratingGroup, Group rgDisplay) {
 		final Button customButton = new Button(rgDisplay, SWT.PUSH);
 		customButton.setText("Custom");
@@ -261,8 +182,12 @@ public class ArtemisGradingView extends ViewPart {
 		examExerciseCombo.removeAll();
 		this.viewController.getExerciseShortNames(courseTitle)
 				.forEach(exerciseShortName -> examExerciseCombo.add(exerciseShortName));
+		examCombo.add("No exam");
 		this.viewController.getExamShortNames(courseTitle).forEach(examShortName -> examCombo.add(examShortName));
 		examCombo.addListener(SWT.Selection, e -> {
+			if (examCombo.getItem(examCombo.getSelectionIndex()).equals("No exam")) {
+				return;
+			}
 			examExerciseCombo.removeAll();
 			this.viewController.getExercisesShortNamesForExam(examCombo.getItem(examCombo.getSelectionIndex()))
 					.forEach(exerciseShortName -> examExerciseCombo.add(exerciseShortName));
@@ -274,90 +199,83 @@ public class ArtemisGradingView extends ViewPart {
 		});
 	}
 
-	private void createExamTab(TabFolder tabFolder) {
-		TabItem tbtmExam = new TabItem(tabFolder, SWT.NONE);
-		tbtmExam.setText("Exam");
+	private void createAssessmentTab(TabFolder tabFolder) {
+		TabItem tbtmAssessment = new TabItem(tabFolder, SWT.NONE);
+		tbtmAssessment.setText("Assessment");
 
-		ScrolledComposite scrolledCompositeExam = new ScrolledComposite(tabFolder,
+		ScrolledComposite scrolledCompositeAssessment = new ScrolledComposite(tabFolder,
 				SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
-		tbtmExam.setControl(scrolledCompositeExam);
-		scrolledCompositeExam.setExpandHorizontal(true);
-		scrolledCompositeExam.setExpandVertical(true);
+		tbtmAssessment.setControl(scrolledCompositeAssessment);
+		scrolledCompositeAssessment.setExpandHorizontal(true);
+		scrolledCompositeAssessment.setExpandVertical(true);
 
-		Composite examComposite = new Composite(scrolledCompositeExam, SWT.NONE);
-		examComposite.setLayout(new GridLayout(2, false));
+		Composite assessmentComposite = new Composite(scrolledCompositeAssessment, SWT.NONE);
+		assessmentComposite.setLayout(new GridLayout(2, false));
 
-		Label lblCourse = new Label(examComposite, SWT.NONE);
+		Label lblCourse = new Label(assessmentComposite, SWT.NONE);
 		lblCourse.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblCourse.setText("Course");
 
-		Combo comboCourseForExam = new Combo(examComposite, SWT.READ_ONLY);
-		comboCourseForExam.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
+		Combo courseCombo = new Combo(assessmentComposite, SWT.READ_ONLY);
+		courseCombo.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
 
-		this.addControlToPossibleActions(comboCourseForExam, Transition.SET_COURSE_ID_AND_GET_EXERCISE_SHORT_NAMES);
+		this.addControlToPossibleActions(courseCombo, Transition.SET_COURSE_ID_AND_GET_EXERCISE_SHORT_NAMES);
 
-		Label lblExam = new Label(examComposite, SWT.NONE);
+		Label lblExam = new Label(assessmentComposite, SWT.NONE);
 		lblExam.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblExam.setText("Exam");
 
-		Combo examCombo = new Combo(examComposite, SWT.READ_ONLY);
+		Combo examCombo = new Combo(assessmentComposite, SWT.READ_ONLY);
 		examCombo.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
 
-		// TODO: comment
+		/*
+		 * The exam combo does not really have an influence on the backend state, but
+		 * should be disabled after a new assessment is started
+		 */
 		this.addControlToPossibleActions(examCombo, Transition.SET_COURSE_ID_AND_GET_EXERCISE_SHORT_NAMES);
 
-		Label lblExercise = new Label(examComposite, SWT.NONE);
+		Label lblExercise = new Label(assessmentComposite, SWT.NONE);
 		lblExercise.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblExercise.setText("Exercise");
 
-		Combo examExerciseCombo = new Combo(examComposite, SWT.READ_ONLY);
-		examExerciseCombo.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
+		Combo exerciseCombo = new Combo(assessmentComposite, SWT.READ_ONLY);
+		exerciseCombo.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
 
-		this.loadExamComboEntries(comboCourseForExam, examCombo, examExerciseCombo);
-		this.addControlToPossibleActions(examExerciseCombo, Transition.SET_EXERCISE_ID);
+		this.loadExamComboEntries(courseCombo, examCombo, exerciseCombo);
+		this.addControlToPossibleActions(exerciseCombo, Transition.SET_EXERCISE_ID);
 
-		Button btnReloadExam = new Button(examComposite, SWT.NONE);
-		btnReloadExam.setText("Reload");
+		Button btnReloadAssessment = new Button(assessmentComposite, SWT.NONE);
+		btnReloadAssessment.setText("Reload");
 
-		this.addSelectionListenerForReloadButton(btnReloadExam);
-		this.addControlToPossibleActions(btnReloadExam, Transition.RELOAD_ASSESSMENT);
+		this.addSelectionListenerForReloadButton(btnReloadAssessment);
+		this.addControlToPossibleActions(btnReloadAssessment, Transition.RELOAD_ASSESSMENT);
 
-		Button btnSaveExam = new Button(examComposite, SWT.NONE);
-		btnSaveExam.setText("Save");
+		Button btnSaveAssessment = new Button(assessmentComposite, SWT.NONE);
+		btnSaveAssessment.setText("Save");
 
-		this.addSelectionListenerForSaveButton(btnSaveExam);
-		this.addControlToPossibleActions(btnSaveExam, Transition.SAVE_ASSESSMENT);
+		this.addSelectionListenerForSaveButton(btnSaveAssessment);
+		this.addControlToPossibleActions(btnSaveAssessment, Transition.SAVE_ASSESSMENT);
 
-		Button btnStartFirstRound = new Button(examComposite, SWT.NONE);
+		Button btnStartFirstRound = new Button(assessmentComposite, SWT.NONE);
 		btnStartFirstRound.setText("Start Correction Round 1");
 
 		this.addSelectionListenerForStartFirstRound(btnStartFirstRound);
 		this.addControlToPossibleActions(btnStartFirstRound, Transition.START_CORRECTION_ROUND_1);
 
-		Button btnStartSecondRound = new Button(examComposite, SWT.NONE);
+		Button btnStartSecondRound = new Button(assessmentComposite, SWT.NONE);
 		btnStartSecondRound.setText("Start Correction Round 2");
 
 		this.addSelectionListenerForStartSecondRound(btnStartSecondRound);
 		this.addControlToPossibleActions(btnStartSecondRound, Transition.START_CORRECTION_ROUND_2);
 
-		Button btnSubmitExam = new Button(examComposite, SWT.NONE);
-		btnSubmitExam.setText("Submit");
+		Button btnSubmitAssessment = new Button(assessmentComposite, SWT.NONE);
+		btnSubmitAssessment.setText("Submit");
 
-		this.addSelectionListenerForSubmitButton(btnSubmitExam);
-		this.addControlToPossibleActions(btnSubmitExam, Transition.SUBMIT_ASSESSMENT);
+		this.addSelectionListenerForSubmitButton(btnSubmitAssessment);
+		this.addControlToPossibleActions(btnSubmitAssessment, Transition.SUBMIT_ASSESSMENT);
 
-		scrolledCompositeExam.setContent(examComposite);
-		scrolledCompositeExam.setMinSize(examComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-	}
-
-	private void createExerciseListInput(String courseShortName, Combo exerciseList) {
-		exerciseList.removeAll();
-		this.viewController.getExerciseShortNames(courseShortName)
-				.forEach(exerciseShortName -> exerciseList.add(exerciseShortName));
-		exerciseList.addListener(SWT.Selection, e -> {
-			this.viewController.setExerciseID(exerciseList.getItem(exerciseList.getSelectionIndex()));
-			this.updateState();
-		});
+		scrolledCompositeAssessment.setContent(assessmentComposite);
+		scrolledCompositeAssessment.setMinSize(assessmentComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 	}
 
 	private void createGradingTab(TabFolder tabFolder) {
@@ -419,7 +337,6 @@ public class ArtemisGradingView extends ViewPart {
 		TabFolder tabFolder = new TabFolder(parent, SWT.NONE);
 		this.createGradingTab(tabFolder);
 		this.createAssessmentTab(tabFolder);
-		this.createExamTab(tabFolder);
 		this.createBacklogTab(tabFolder);
 		this.updateState();
 	}
