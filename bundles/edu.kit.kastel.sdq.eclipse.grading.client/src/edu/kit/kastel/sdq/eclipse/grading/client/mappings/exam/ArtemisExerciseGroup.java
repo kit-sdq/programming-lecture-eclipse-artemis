@@ -48,6 +48,9 @@ public class ArtemisExerciseGroup implements IExerciseGroup {
 	}
 
 	public void init(ArtemisRESTClient artemisRESTClient) throws AuthenticationException, JsonProcessingException {
+		this.exercises = this.exercises.stream()
+				.filter(exercise -> exercise.getShortName() != null) //happens sometimes...
+				.collect(Collectors.toList());
 		for (ArtemisExercise artemisExercise : this.exercises) artemisExercise.init(artemisRESTClient);
 	}
 
