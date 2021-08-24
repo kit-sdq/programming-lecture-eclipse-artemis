@@ -156,7 +156,10 @@ public class LockAndSubmitTest {
 		sysController.setExerciseId("testAufgabe1");
 
 		this.printBegunSubmissionState(sysController, "before assessment start");
+		System.out.println("Possible Transitions before start: " + sysController.getCurrentlyPossibleTransitions());
+		try {Thread.sleep(20000); } catch (InterruptedException e) {}
 		boolean startSuccessful = sysController.startAssessment();
+
 		if (!startSuccessful) {
 			System.out.println("######################### NO MORE SUBMISSIONS FOUND ####");
 			return this;

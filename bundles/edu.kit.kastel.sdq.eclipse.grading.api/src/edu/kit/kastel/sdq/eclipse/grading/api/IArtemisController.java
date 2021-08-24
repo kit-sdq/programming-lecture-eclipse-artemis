@@ -70,14 +70,16 @@ public interface IArtemisController {
 	 */
 	IExercise getExerciseFromCourses(Collection<ICourse> courses, int courseID, int exerciseID);
 
+	Collection<IExercise> getExercises(int courseID, boolean withExamExercises);
+
 	Collection<IExercise> getExercisesFromExam(String examTitle);
+
 
 	/**
 	 *
 	 * @return the {@link IExercise#getShortName()}s of the given {@link ICourse}
 	 */
 	Collection<String> getExerciseShortNames(String courseShortName);
-
 
 	/**
 	 *
@@ -117,6 +119,7 @@ public interface IArtemisController {
 	 * @param submissionID
 	 */
 	void startAssessment(int submissionID);
+
 
 	/**
 	 * Starts the next assessment. Which one is smh determined by artemis. Correction Round is set to 0.

@@ -64,7 +64,7 @@ public class SystemwideController implements ISystemwideController {
 				preferenceStore.getString(PreferenceConstants.ARTEMIS_PASSWORD));
 	}
 
-	private boolean checkTransitionNotAllowedAndNotify(Transition transition) {
+	private boolean applyTransitionAndNotifyIfNotAllowed(Transition transition) {
 		try {
 			this.backendStateMachine.applyTransition(transition);
 		} catch (NoTransitionException e) {
@@ -133,7 +133,17 @@ public class SystemwideController implements ISystemwideController {
 
 	@Override
 	public Set<Transition> getCurrentlyPossibleTransitions() {
-		return this.backendStateMachine.getCurrentlyPossibleTransitions();
+		//TODO its best if this is altered based on what correction rounds are enabled
+		boolean secondCorrectionRoundEnabled[] = {false};
+		if (this.exerciseID != null) {
+			this.artemisGUIController.getExercises(this.courseID, true).stream()
+				.filter(exercise -> exercise.getExerciseId() == this.exerciseID)
+				.findAny()
+				.ifPresent(exercise -> secondCorrectionRoundEnabled[0] = exercise.getSecondCorrectionEnabled());
+		}
+		return this.backendStateMachine.getCurrentlyPossibleTransitions().stream()
+				.filter(transition -> !transition.equals(Transition.START_CORRECTION_ROUND_2) || secondCorrectionRoundEnabled[0])
+				.collect(Collectors.toSet());
 	}
 
 	@Override
@@ -153,7 +163,7 @@ public class SystemwideController implements ISystemwideController {
 
 	@Override
 	public void loadAgain() {
-		if (this.checkTransitionNotAllowedAndNotify(Transition.LOAD_AGAIN)) return;
+		if (this.applyTransitionAndNotifyIfNotAllowed(Transition.LOAD_AGAIN)) return;
 		if (this.nullCheckMembersAndNotify(true, true, true)) return;
 
 		this.getArtemisGUIController().startAssessment(this.submissionID);
@@ -187,7 +197,7 @@ public class SystemwideController implements ISystemwideController {
 
 	@Override
 	public void onZeroPointsForAssessment() {
-		if (this.checkTransitionNotAllowedAndNotify(Transition.ON_ZERO_POINTS_FOR_ASSESSMENT)) return;
+		if (this.applyTransitionAndNotifyIfNotAllowed(Transition.ON_ZERO_POINTS_FOR_ASSESSMENT)) return;
 
 		if (this.artemisGUIController.saveAssessment(this.submissionID, true, true)) {
 			this.getCurrentAssessmentController().deleteEclipseProject();
@@ -197,7 +207,7 @@ public class SystemwideController implements ISystemwideController {
 
 	@Override
 	public void reloadAssessment() {
-		if (this.checkTransitionNotAllowedAndNotify(Transition.RELOAD_ASSESSMENT)) return;
+		if (this.applyTransitionAndNotifyIfNotAllowed(Transition.RELOAD_ASSESSMENT)) return;
 		if (this.nullCheckMembersAndNotify(true, true, true)) return;
 
 		this.getCurrentAssessmentController().resetAndRestartAssessment();
@@ -205,7 +215,7 @@ public class SystemwideController implements ISystemwideController {
 
 	@Override
 	public void saveAssessment() {
-		if (this.checkTransitionNotAllowedAndNotify(Transition.SAVE_ASSESSMENT)) return;
+		if (this.applyTransitionAndNotifyIfNotAllowed(Transition.SAVE_ASSESSMENT)) return;
 		if (this.nullCheckMembersAndNotify(true, true, true)) return;
 
 		this.artemisGUIController.saveAssessment(this.submissionID, false, false);
@@ -213,7 +223,7 @@ public class SystemwideController implements ISystemwideController {
 
 	@Override
 	public void setAssessedSubmissionByProjectName(String projectName) {
-		if (this.checkTransitionNotAllowedAndNotify(Transition.SET_ASSESSED_SUBMISSION_BY_PROJECT_NAME)) return;
+		if (this.applyTransitionAndNotifyIfNotAllowed(Transition.SET_ASSESSED_SUBMISSION_BY_PROJECT_NAME)) return;
 
 		boolean[] found = {false};
 		this.getBegunSubmissions(Filter.ALL).forEach(submission -> {
@@ -240,7 +250,7 @@ public class SystemwideController implements ISystemwideController {
 
 	@Override
 	public Collection<String> setCourseIdAndGetExerciseShortNames(final String courseShortName) {
-		if (this.checkTransitionNotAllowedAndNotify(Transition.SET_COURSE_ID_AND_GET_EXERCISE_SHORT_NAMES)) return List.of();
+		if (this.applyTransitionAndNotifyIfNotAllowed(Transition.SET_COURSE_ID_AND_GET_EXERCISE_SHORT_NAMES)) return List.of();
 
 		for (ICourse course : this.getArtemisGUIController().getCourses()) {
 			if (course.getShortName().equals(courseShortName)) {
@@ -256,7 +266,7 @@ public class SystemwideController implements ISystemwideController {
 
 	@Override
 	public void setExerciseId(final String exerciseShortName) {
-		if (this.checkTransitionNotAllowedAndNotify(Transition.SET_EXERCISE_ID)) return;
+		if (this.applyTransitionAndNotifyIfNotAllowed(Transition.SET_EXERCISE_ID)) return;
 
 		for (ICourse course : this.getArtemisGUIController().getCourses()) {
 			//normal exercises
@@ -284,7 +294,7 @@ public class SystemwideController implements ISystemwideController {
 
 	@Override
 	public boolean startAssessment() {
-		if (this.checkTransitionNotAllowedAndNotify(Transition.START_ASSESSMENT)) return false;
+		if (this.applyTransitionAndNotifyIfNotAllowed(Transition.START_ASSESSMENT)) return false;
 
 		return this.startAssessment(0);
 	}
@@ -306,21 +316,21 @@ public class SystemwideController implements ISystemwideController {
 
 	@Override
 	public boolean startCorrectionRound1() {
-		if (this.checkTransitionNotAllowedAndNotify(Transition.START_CORRECTION_ROUND_1)) return false;
+		if (this.applyTransitionAndNotifyIfNotAllowed(Transition.START_CORRECTION_ROUND_1)) return false;
 
 		return this.startAssessment(0);
 	}
 
 	@Override
 	public boolean startCorrectionRound2() {
-		if (this.checkTransitionNotAllowedAndNotify(Transition.START_CORRECTION_ROUND_2)) return false;
+		if (this.applyTransitionAndNotifyIfNotAllowed(Transition.START_CORRECTION_ROUND_2)) return false;
 
 		return this.startAssessment(1);
 	}
 
 	@Override
 	public void submitAssessment() {
-		if (this.checkTransitionNotAllowedAndNotify(Transition.SUBMIT_ASSESSMENT)) return;
+		if (this.applyTransitionAndNotifyIfNotAllowed(Transition.SUBMIT_ASSESSMENT)) return;
 		if (this.nullCheckMembersAndNotify(true, true, true)) return;
 
 		if (this.artemisGUIController.saveAssessment(this.submissionID, true, false)) {

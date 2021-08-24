@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -183,9 +184,32 @@ public class ArtemisController implements IArtemisController {
 	}
 
 	@Override
+	public Collection<IExercise> getExercises(final int courseID, boolean withExamExercises) {
+		ICourse course = this.getCourseFromCourses(this.getCourses(), courseID);
+
+		if (course == null) return List.of();
+
+		Collection<IExercise> allExercises = new LinkedList<>();
+		allExercises.addAll(course.getExercises());
+		if (withExamExercises) {
+			allExercises.addAll(course.getExams().stream()
+				.map(IExam::getExerciseGroups)
+				.flatMap(Collection::stream)			//stream of Collections of Exercise Groups ==> stream of Exercise Groups
+				.map(IExerciseGroup::getExercises)
+				.flatMap(Collection::stream)			// stream of Collections of Exercises ==> stream of Exercises
+				.collect(Collectors.toList()));
+		}
+		return allExercises;
+	}
+
+	@Override
 	public Collection<IExercise> getExercisesFromExam(final String examTitle) {
+		return this.getExercisesFromExam(examTitle, this.getCourses());
+	}
+
+	private  Collection<IExercise> getExercisesFromExam(final String examTitle, Collection<ICourse> courses) {
 		IExam foundExam = null;
-		for (ICourse course : this.getCourses()) {
+		for (ICourse course : courses) {
 			final Collection<IExam> filteredExams = course.getExams().stream()
 				.filter(exam -> exam.getTitle().equals(examTitle))
 				.collect(Collectors.toList());

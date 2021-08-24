@@ -6,6 +6,8 @@ public interface IExercise {
 
 	int getExerciseId();
 
+	Boolean getSecondCorrectionEnabled();
+
 	String getShortName();
 
 	Collection<ISubmission> getSubmissions();

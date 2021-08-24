@@ -21,6 +21,8 @@ public class ArtemisExercise implements IExercise {
 	private String shortName;
 	@JsonProperty
 	private String testRepositoryUrl;
+	@JsonProperty
+	private Boolean secondCorrectionEnabled;
 	private transient Collection<ISubmission> submissions;
 
 
@@ -43,6 +45,11 @@ public class ArtemisExercise implements IExercise {
 	@Override
 	public int getExerciseId() {
 		return this.exerciseId;
+	}
+
+	@Override
+	public Boolean getSecondCorrectionEnabled() {
+		return this.secondCorrectionEnabled;
 	}
 
 	@Override
