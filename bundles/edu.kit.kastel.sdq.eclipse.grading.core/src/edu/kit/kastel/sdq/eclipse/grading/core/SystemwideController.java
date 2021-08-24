@@ -102,6 +102,15 @@ public class SystemwideController implements ISystemwideController {
 
 	@Override
 	public Collection<String> getBegunSubmissionsProjectNames(ISubmission.Filter submissionFilter) {
+		//sondercase: refresh
+		if (this.courseID == null || this.exerciseID == null) {
+			this.alertObservable.info("You need to choose a"
+				+ (this.courseID == null 							? "course" 		: "")
+				+ (this.courseID == null && this.exerciseID == null ? " and an " 	: "")
+				+ (this.exerciseID == null 							? "exercise" 	: "."));
+			return List.of();
+		}
+
 		return this.getBegunSubmissions(submissionFilter)
 				.stream()
 				.map(submission -> this.projectFileNamingStrategy.getProjectFileInWorkspace(
