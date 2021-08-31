@@ -15,7 +15,7 @@ The Update Site is located here: https://kit-sdq.github.io/programming-lecture-e
 
 #### Configuration File
 To Configure mistake types, rating groups and whatnot, we use a config file.
-See [docs/config_v4.json](docs/config_v4.json) for an example configuration.
+See [docs/config_v4.json](docs/examples/config_v4.json) for an example configuration.
 
 There are rating groups, mistake types and penalty rules.
 The main config features are explained in the following.
@@ -92,17 +92,19 @@ TODO Frontend Config (gui)
 2. Adjust your Run Configuration accordingly ("Plugins->Select All" will do)
 
 ### Architecture
-TODO architecture doc. (tolles Bild)
+The architectural idea is based on having three plugins and an API plugin over which those plugins communicate:
+<img src="docs/architecture.png" alt="backend state machine" width="600"/>
 
 #### State Machine
 
 For keeping the backend state sane and consistent, we use a state machine. That allows for greying out buttons in the gui:
 ![backend state machine](docs/Zustandshaltung-Automat.png)
 TODO Further explain the state machine (code-wise)
-* On every state-modifying call to *edu.kit.kastel.sdq.eclipse.grading.core.SystemwideController* (represented by edges in the state machine graph), the according transition is applied in the state machine. If it isn't possible, the transition is not applied and the GUI is notified.
+* On every state-modifying call to *edu.kit.kastel.sdq.eclipse.grading.core.SystemwideController* (represented by transitions (edges) in the state machine graph), the according transition is applied in the state machine. If it isn't possible, the transition is not applied and the GUI is notified.
+* Transitions represent button clicks in the Artemis Grading view
 * Each "transition class" (represented by its name) has **one single** *next_state* and multiple *from_state*s.
 * In every state, it is known, which transitions are allowed. These are retrieved via ISystemwideController::getCurrentlyPossibleTransitions() by the GUI.
-* In certain situations, a state is changed but then reverted. This is not done across calls, so the gui does not notice that.
+* In certain situations, a state is changed but then reverted. This is not done across calls, so the gui does not notice it.
 
 ### Creating a new PenaltyRule
 
