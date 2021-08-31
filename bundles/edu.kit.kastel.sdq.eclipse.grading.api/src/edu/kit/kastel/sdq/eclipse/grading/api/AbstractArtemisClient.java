@@ -48,6 +48,18 @@ public abstract class AbstractArtemisClient {
 		return this.artemisPassword;
 	}
 
+	protected String getArtemisPasswordEscaped() {
+		return this.artemisPassword
+				.replace("\\", "\\\\")
+				.replace("\t", "\\t")
+				.replace("\b", "\\b")
+				.replace("\n", "\\n")
+				.replace("\r", "\\r")
+				.replace("\f", "\\f")
+				.replace("\'", "\\'")
+				.replace("\"", "\\\"");
+	}
+
 	protected String getArtemisUsername() {
 		return this.artemisUsername;
 	}

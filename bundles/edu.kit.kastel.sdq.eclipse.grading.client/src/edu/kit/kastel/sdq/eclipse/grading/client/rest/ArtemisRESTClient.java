@@ -160,7 +160,7 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 		//TODO use a json lib!
 		final String entityString = new StringBuilder().append("{")
 				.append("\"username\":\"").append(this.getArtemisUsername()).append("\",")
-				.append("\"password\":\"").append(this.getArtemisPassword()).append("\",")
+				.append("\"password\":\"").append(this.getArtemisPasswordEscaped()).append("\",")
 				.append("\"rememberMe\":true")
 				.append("}")
 				.toString();
