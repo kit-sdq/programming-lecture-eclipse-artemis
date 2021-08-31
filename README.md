@@ -61,7 +61,6 @@ A mistake type belongs to a rating group and has a penalty rule that defines the
 </code></pre>
 See the Development chapter for more info about creating a new PenaltyRule.
 
-
 #### Penalty Calculation/ Artemis Mapping
 
 Currently, there are two penalty rule types you may use in your config:
@@ -80,11 +79,7 @@ Penalty Calculation is done rating-group-wise. For each rating group:
 ### Frontend Configuration
 TODO Frontend Config (gui)
 
-
-
 ## Development
-
-
 
 ### Setting up Eclipse
 
@@ -92,7 +87,9 @@ TODO Frontend Config (gui)
 2. Adjust your Run Configuration accordingly ("Plugins->Select All" will do)
 
 ### Architecture
-The architectural idea is based on having three plugins and an API plugin over which those plugins communicate:
+The architectural idea is based on having three plugins and an API plugin over which those plugins communicate.
+That allows for more easily exchanging view, core/ backend or client and also clearly defines borders, making parallel work easier and reducing coupling.
+
 <img src="docs/architecture.png" alt="backend state machine" width="600"/>
 
 #### State Machine
