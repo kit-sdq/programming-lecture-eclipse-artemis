@@ -69,7 +69,8 @@ public class AssessmentViewController {
 			marker.setAttribute(IMarker.CHAR_START, AssessmentUtilities.getLineOffSet(startLine));
 			marker.setAttribute(IMarker.CHAR_END, AssessmentUtilities.getLineOffSet(startLine) + lenght + 10);
 			if (mistake != null) {
-				marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_ERROR_DESCRIPTION, mistake.getMessage());
+				marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_ERROR_DESCRIPTION,
+						mistake.getName().equals("Custom Penalty") ? "" : mistake.getMessage());
 				marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_ERROR, mistake.getName());
 			}
 			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_START, startLine + 1);
@@ -82,9 +83,9 @@ public class AssessmentViewController {
 				marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_CUSTOM_MESSAGE, customMessage);
 			}
 			if (customPenalty != null) {
-				marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_CUSTOM_PENALTY, customPenalty);
+				marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_CUSTOM_PENALTY, customPenalty.toString());
 			}
-			if (mistake != null) {
+			if (!mistake.getName().equals("Custom Penalty")) {
 				marker.setAttribute(IMarker.MESSAGE, AssessmentUtilities.createMarkerTooltip(startLine + 1, endLine + 1,
 						mistake.getName(), mistake.getRatingGroup().getDisplayName(), mistake.getMessage(), null));
 			} else {
@@ -97,6 +98,7 @@ public class AssessmentViewController {
 					AssessmentUtilities.getLineOffSet(startLine) + lenght + 10);
 			// TODO: Error handling -> more specific!
 		} catch (Exception e) {
+			e.printStackTrace();
 			this.alertObserver.error("Unable to create marker for annotation", e);
 		}
 

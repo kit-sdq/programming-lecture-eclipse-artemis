@@ -12,6 +12,7 @@ import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 
 import edu.kit.kastel.eclipse.grading.view.controllers.AssessmentViewController;
+import edu.kit.kastel.sdq.eclipse.grading.api.model.IMistakeType;
 
 public class CustomButtonDialog extends Dialog {
 
@@ -19,13 +20,16 @@ public class CustomButtonDialog extends Dialog {
 	private Spinner customPenaltyInputField;
 	private String customMessage;
 	private Double customPenalty;
+	private IMistakeType customMistake;
 	private final AssessmentViewController viewController;
 	private final String ratingGroupName;
 
-	public CustomButtonDialog(Shell parentShell, AssessmentViewController viewController, String ratingGroupName) {
+	public CustomButtonDialog(Shell parentShell, AssessmentViewController viewController, String ratingGroupName,
+			IMistakeType mistake) {
 		super(parentShell);
 		this.viewController = viewController;
 		this.ratingGroupName = ratingGroupName;
+		this.customMistake = mistake;
 	}
 
 	@Override
@@ -76,7 +80,8 @@ public class CustomButtonDialog extends Dialog {
 	protected void okPressed() {
 		this.customMessage = this.customMessageInputField.getText();
 		this.customPenalty = Double.parseDouble(this.customPenaltyInputField.getText().replace(',', '.'));
-		this.viewController.addAssessmentAnnotaion(null, this.customMessage, this.customPenalty, this.ratingGroupName);
+		this.viewController.addAssessmentAnnotaion(this.customMistake, this.customMessage, this.customPenalty,
+				this.ratingGroupName);
 		super.okPressed();
 	}
 }

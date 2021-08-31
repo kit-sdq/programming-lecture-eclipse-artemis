@@ -33,6 +33,9 @@
       <attribute
             name="errorTypeDescription">
       </attribute>
+      <persistent
+            value="true">
+      </persistent>
    </extension>
    <extension
          point="org.eclipse.ui.editors.annotationTypes">
