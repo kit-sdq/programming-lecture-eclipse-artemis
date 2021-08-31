@@ -9,6 +9,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.preference.IPreferenceStore;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.IArtemisController;
@@ -46,22 +47,46 @@ public class SystemwideController implements ISystemwideController {
 
 	private BackendStateMachine backendStateMachine;
 
+	private IPreferenceStore preferenceStore;
+
 	public SystemwideController(final File configFile, final String artemisHost, final String username, final String password) {
+		this(artemisHost, username, password);
 		this.setConfigFile(configFile);
+	}
+
+	public SystemwideController(final IPreferenceStore preferenceStore) {
+		this(
+				preferenceStore.getString(PreferenceConstants.ARTEMIS_URL),
+				preferenceStore.getString(PreferenceConstants.ARTEMIS_USER),
+				preferenceStore.getString(PreferenceConstants.ARTEMIS_PASSWORD));
+		this.preferenceStore = preferenceStore;
+
+		//initialize config
+		this.updateConfigFile();
+
+
+		//change preferences ! TODO we dont need that. We always poll on  downloading!
+//		this.preferenceStore.addPropertyChangeListener(new IPropertyChangeListener() {
+//			@Override
+//			public void propertyChange(PropertyChangeEvent event) {
+//				if (event.getProperty().equals(PreferenceConstants.ABSOLUTE_CONFIG_PATH)
+//						|| event.getProperty().equals(PreferenceConstants.RELATIVE_CONFIG_PATH)
+//						|| event.getProperty().equals(PreferenceConstants.IS_RELATIVE_CONFIG_PATH)) {
+//					updateConfigFile();
+//				}
+//
+//			}
+//		});
+	}
+
+	private SystemwideController(final String artemisHost, final String username, final String password) {
 		this.assessmentControllers = new HashMap<>();
 		this.alertObservable = new AlertObservable();
 
 		this.artemisGUIController = new ArtemisController(this, artemisHost, username, password);
 		this.projectFileNamingStrategy = new DefaultProjectFileNamingStrategy();		//TODO durch das ganze projekt durchreichen! NUR hier instanziieren!
 		this.backendStateMachine = new BackendStateMachine();
-	}
 
-	public SystemwideController(final IPreferenceStore preferenceStore) {
-		this(new File(
-				preferenceStore.getString(PreferenceConstants.ABSOLUTE_CONFIG_PATH)),
-				preferenceStore.getString(PreferenceConstants.ARTEMIS_URL),
-				preferenceStore.getString(PreferenceConstants.ARTEMIS_USER),
-				preferenceStore.getString(PreferenceConstants.ARTEMIS_PASSWORD));
 	}
 
 	private boolean applyTransitionAndNotifyIfNotAllowed(Transition transition) {
@@ -84,13 +109,13 @@ public class SystemwideController implements ISystemwideController {
 		return this.artemisGUIController;
 	}
 
-
 	private IAssessmentController getAssessmentController(int submissionID, int courseID,
 			int exerciseID) {
 		//not equivalent to putIfAbsent!
 		this.assessmentControllers.computeIfAbsent(submissionID, submissionIDParam -> new AssessmentController(this, courseID, exerciseID, submissionID));
 		return this.assessmentControllers.get(submissionID);
 	}
+
 
 	private Collection<ISubmission> getBegunSubmissions(ISubmission.Filter submissionFilter) {
 		if (this.nullCheckMembersAndNotify(true, true, false)) return List.of();
@@ -218,6 +243,7 @@ public class SystemwideController implements ISystemwideController {
 	public void reloadAssessment() {
 		if (this.applyTransitionAndNotifyIfNotAllowed(Transition.RELOAD_ASSESSMENT)) return;
 		if (this.nullCheckMembersAndNotify(true, true, true)) return;
+		this.updateConfigFile();
 
 		this.getCurrentAssessmentController().resetAndRestartAssessment();
 	}
@@ -310,6 +336,7 @@ public class SystemwideController implements ISystemwideController {
 
 	private boolean startAssessment(int correctionRound) {
 		if (this.nullCheckMembersAndNotify(true, true, false)) return false;
+		this.updateConfigFile();
 
 		Optional<Integer> optionalSubmissionID = this.getArtemisGUIController().startNextAssessment(this.exerciseID, correctionRound);
 		if (optionalSubmissionID.isEmpty()) {
@@ -352,6 +379,20 @@ public class SystemwideController implements ISystemwideController {
 			this.getCurrentAssessmentController().deleteEclipseProject();
 			this.assessmentControllers.remove(this.submissionID);
 			this.submissionID = null;
+		}
+	}
+
+	private void updateConfigFile() {
+		if (this.preferenceStore.getBoolean(PreferenceConstants.IS_RELATIVE_CONFIG_PATH)) {
+			if (this.courseID != null && this.exerciseID != null && this.submissionID != null) {
+				//not the case at startup with rel config path chosen!
+				this.setConfigFile(new File(
+						ResourcesPlugin.getWorkspace().getRoot().getProject(this.getCurrentProjectName()).getLocation().toFile(),
+						this.preferenceStore.getString(PreferenceConstants.RELATIVE_CONFIG_PATH)));
+			}
+		} else {
+			this.setConfigFile(new File(this.preferenceStore.getString(PreferenceConstants.ABSOLUTE_CONFIG_PATH)));
+
 		}
 	}
 }
