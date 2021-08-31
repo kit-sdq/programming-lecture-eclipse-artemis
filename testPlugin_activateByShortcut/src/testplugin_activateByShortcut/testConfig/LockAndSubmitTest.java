@@ -4,7 +4,9 @@ import java.io.File;
 import java.util.Collection;
 import java.util.LinkedList;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.AbstractArtemisClient;
 import edu.kit.kastel.sdq.eclipse.grading.api.ISystemwideController;
@@ -53,7 +55,7 @@ public class LockAndSubmitTest {
 			i++;
 			String customMsg = null;
 			Double customPenalty = null;
-			if (mistakeType.getButtonName().equals("Custom Penalty")) {
+			if (mistakeType.getName().equals("Custom Penalty")) {
 				customMsg = "my_CUSTOM_MESSAGE";
 				customPenalty = 25D;
 			}
@@ -100,17 +102,19 @@ public class LockAndSubmitTest {
 
 			@Override
 			public void error(String errorMsg, Throwable cause) {
-				System.out.println("====" + upFront + ":" + errorMsg);
+				System.out.println("==err==" + upFront + ":" + errorMsg);
+				if (cause != null)
+					cause.printStackTrace(System.out);
 			}
 
 			@Override
 			public void info(String infoMsg) {
-				System.out.println("====" + upFront + ":" + infoMsg);
+				System.out.println("==inf==" + upFront + ":" + infoMsg);
 			}
 
 			@Override
 			public void warn(String warningMsg) {
-				System.out.println("====" + upFront + ":" + warningMsg);
+				System.out.println("==wrn==" + upFront + ":" + warningMsg);
 
 			}
 		});
@@ -126,10 +130,7 @@ public class LockAndSubmitTest {
 		System.out.println("Got ASSessor\n" + assessor);
 
 		System.out.println("################################AnnotationMapper stufff###########################");
-		ExerciseConfig exerciseConfig = this.configDao.getExerciseConfigs().stream()
-				.filter(config -> config.getShortName().endsWith("1"))
-				.findAny()
-				.get();
+		ExerciseConfig exerciseConfig = this.configDao.getExerciseConfig();
 
 
 		final Collection<IAnnotation> forgedAnnotations = this.getForgedAnnotations(exerciseConfig);
@@ -145,49 +146,81 @@ public class LockAndSubmitTest {
 	}
 
 	public LockAndSubmitTest testNextAssessment() {
-		final String exerciseConfigShortName = "Final Task 1";
 		final ISystemwideController sysController = new SystemwideController(
 				new File(this.eclipseWorkspaceRoot, ShortcutHandler.CONFIG_PATH),
-				exerciseConfigShortName,
 				this.host,
 				this.username,
 				this.password);
 		final int exerciseID = 1;
 		this.subscribeToAlertObservable(sysController.getAlertObservable(), "SysController");
-		this.subscribeToAlertObservable(sysController.getArtemisGUIController().getAlertObservable(), "ArtemisGUIController");
+		this.subscribeToAlertObservable(sysController.getArtemisGUIController().getAlertObservable(), "ArtemisController");
 		sysController.setCourseIdAndGetExerciseShortNames("praktikum21");
 		sysController.setExerciseId("testAufgabe1");
 
 		this.printBegunSubmissionState(sysController, "before assessment start");
+		System.out.println("Possible Transitions before start: " + sysController.getCurrentlyPossibleTransitions());
+//		try {Thread.sleep(20000); } catch (InterruptedException e) {}
 		boolean startSuccessful = sysController.startAssessment();
-		this.subscribeToAlertObservable(
-				sysController.getCurrentAssessmentController().getAlertObservable(),
-				"ArtemisGUIController");
 
 		if (!startSuccessful) {
 			System.out.println("######################### NO MORE SUBMISSIONS FOUND ####");
 			return this;
 		}
+		this.subscribeToAlertObservable(
+				sysController.getCurrentAssessmentController().getAlertObservable(),
+				"ArtemisController");
+
 
 		this.addSomeFakeAssessments(sysController);
 
 		this.printBegunSubmissionState(sysController, "before save");
+
+		System.out.println("Before save. lockresults: ");
+		System.out.println(sysController.getArtemisGUIController().getAllFeedbacksGottenFromLocking(sysController.getCurrentAssessmentController().getSubmissionID()));
+
 		sysController.saveAssessment();
 		this.printBegunSubmissionState(sysController, "before submit");
+//		sysController.submitAssessment();
+
+		//TODO debug
+
+		System.out.println("Before reload. DELETing NOW");
+        final IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject("exercise-1-testAufgabe1_submission-90-uyduk");
+        File projectLocation = project.getLocation().toFile();
+        try {
+			project.delete(true, null);
+		} catch (CoreException e1) {
+			e1.printStackTrace();
+		}
+		System.out.println("Before reload. after delete");
+		try {Thread.sleep(20000); } catch (InterruptedException e) {}
+
+
+
+
+		//reload stuff
+		sysController.reloadAssessment();
+		System.out.println("After reload. lockresults: ");
+		System.out.println(sysController.getArtemisGUIController().getAllFeedbacksGottenFromLocking(sysController.getCurrentAssessmentController().getSubmissionID()));
+
+
 		sysController.submitAssessment();
 
-		// check BACKLOG and deserialization
-		sysController.setCourseIdAndGetExerciseShortNames("praktikum21");
-		sysController.setExerciseId("testAufgabe1");
-		this.printBegunSubmissionState(sysController, "after submit");
-		sysController.setAssessedSubmissionByProjectName("exercise-1-testAufgabe1_submission-89-test-student");
-		sysController.loadAgain();
-		this.subscribeToAlertObservable(
-				sysController.getCurrentAssessmentController().getAlertObservable(),
-				"ArtemisGUIController");
 
-		System.out.println("Deserialized annotations:\n "
-				+ sysController.getCurrentAssessmentController().getAnnotations());
+
+
+//		// check BACKLOG and deserialization
+//		sysController.setCourseIdAndGetExerciseShortNames("praktikum21");
+//		sysController.setExerciseId("testAufgabe1");
+//		this.printBegunSubmissionState(sysController, "after submit");
+//		sysController.setAssessedSubmissionByProjectName("exercise-1-testAufgabe1_submission-89-test-student");
+//		sysController.loadAgain();
+//		this.subscribeToAlertObservable(
+//				sysController.getCurrentAssessmentController().getAlertObservable(),
+//				"ArtemisController");
+//
+//		System.out.println("Deserialized annotations:\n "
+//				+ sysController.getCurrentAssessmentController().getAnnotations());
 
 		return this;
 	}

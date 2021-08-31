@@ -76,8 +76,11 @@ public class WorkspaceUtil {
      */
     public static final void deleteEclipseProject(final String projectName) throws CoreException, IOException {
         final IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
+        if (project == null || !project.exists()) {
+        	//doesnt exist ==> nothing to be done
+        	return;
+        }
         File projectLocation = project.getLocation().toFile();
-
         project.delete(true, null);
 
         if (projectLocation.exists()) {

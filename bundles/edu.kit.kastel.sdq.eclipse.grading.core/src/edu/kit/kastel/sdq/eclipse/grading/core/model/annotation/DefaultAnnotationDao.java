@@ -59,8 +59,9 @@ public class DefaultAnnotationDao implements IAnnotationDao {
 
 	@Override
 	public void removeAnnotation(int annotationId) {
-		final IAnnotation foundAnnotation = this.getAnnotation(annotationId);
-		this.annotations.remove(foundAnnotation);
+		if (this.idExists(annotationId)) {
+			this.annotations.remove(this.getAnnotation(annotationId));
+		}
 	}
 
 }

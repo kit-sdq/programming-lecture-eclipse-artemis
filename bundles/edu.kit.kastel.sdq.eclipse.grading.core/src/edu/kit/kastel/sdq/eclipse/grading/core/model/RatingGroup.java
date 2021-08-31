@@ -2,10 +2,12 @@ package edu.kit.kastel.sdq.eclipse.grading.core.model;
 
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import edu.kit.kastel.sdq.eclipse.grading.api.model.IMistakeType;
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IRatingGroup;
 
 public class RatingGroup implements IRatingGroup {
@@ -36,12 +38,13 @@ public class RatingGroup implements IRatingGroup {
 		return this.displayName;
 	}
 
-	public Collection<MistakeType> getMistakeTypes() {
-		return this.mistakeTypes;
+	@Override
+	public Collection<IMistakeType> getMistakeTypes() {
+		return this.mistakeTypes.stream().map(IMistakeType.class::cast).collect(Collectors.toList());
 	}
 
 	@Override
-	public Double getPenaltyLimit() {
+	public double getPenaltyLimit() {
 		//in case the caller does not call this::hasPenaltyLimit.
 		return this.penaltyLimit != null ? this.penaltyLimit : Double.MAX_VALUE;
 	}

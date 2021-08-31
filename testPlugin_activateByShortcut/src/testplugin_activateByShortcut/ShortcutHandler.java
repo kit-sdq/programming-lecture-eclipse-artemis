@@ -22,6 +22,7 @@ import edu.kit.kastel.sdq.eclipse.grading.client.mappings.ArtemisSubmission;
 import edu.kit.kastel.sdq.eclipse.grading.client.rest.ArtemisRESTClient;
 import edu.kit.kastel.sdq.eclipse.grading.core.artemis.DefaultProjectFileNamingStrategy;
 import edu.kit.kastel.sdq.eclipse.grading.core.artemis.WorkspaceUtil;
+import testplugin_activateByShortcut.testConfig.CoursesTest;
 import testplugin_activateByShortcut.testConfig.LockAndSubmitTest;
 
 //import org.glassfish.jersey.jackson.
@@ -30,7 +31,7 @@ import testplugin_activateByShortcut.testConfig.LockAndSubmitTest;
 
 public class ShortcutHandler extends AbstractHandler {
 
-	public static final String CONFIG_PATH = "Lala/src/config_v3.json";
+	public static final String CONFIG_PATH = "Lala/src/config_v4.json";
 
 	public void artemisTest() {
 		Pair<String, String> credentials = CredentialsGetter.getCredentials();
@@ -100,7 +101,7 @@ public class ShortcutHandler extends AbstractHandler {
 		// you need to import the file into a new Lala-Project.
 		System.out.println("##########--[                 CoursesTest                  ]--##########");
 		System.out.println(
-//				new CoursesTest(configFile, "artemis-test.ipd.kit.edu", "uyduk", "arTem155").getCoursesTest()
+				new CoursesTest(configFile, "artemis-test.ipd.kit.edu", "uyduk", "arTem155").getCoursesTest()
 		);
 
 

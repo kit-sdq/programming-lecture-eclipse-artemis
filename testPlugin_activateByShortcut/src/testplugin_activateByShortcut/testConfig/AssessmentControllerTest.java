@@ -35,7 +35,7 @@ public class AssessmentControllerTest {
 
 	public AssessmentControllerTest(File configFile, String exerciseName) {
 		//TODO this test currently wont work since Ass controller getting was refactored
-		SystemwideController sysC = new SystemwideController(configFile, exerciseName, null, null, null);
+		SystemwideController sysC = new SystemwideController(configFile, null, null, null);
 //		this.assessmentController = sysC.getAssessmentController(5555, exerciseName, -1, -1);
 		this.assessmentController.getAlertObservable().addAlertObserver(this.myAlertObserver);
 		sysC.getArtemisGUIController().getAlertObservable().addAlertObserver(this.myAlertObserver);
@@ -73,7 +73,7 @@ public class AssessmentControllerTest {
 			for (IMistakeType mistakeType : mistakeTypes) {
 				System.out.println("  Testing mistakeType " + mistakeType.toString());
 				//todo add custom shit
-				if (mistakeType.getButtonName().equals("Custom Penalty")) {
+				if (mistakeType.getName().equals("Custom Penalty")) {
 					this.assessmentController.addAnnotation(idcount++, mistakeType, 0, 22, "class.name", "myCustomMessage", 25D, 2000, 2082);
 				} else {
 					this.assessmentController.addAnnotation(idcount++, mistakeType, 0, 22, "class.name", null, null, 2000, 2082);

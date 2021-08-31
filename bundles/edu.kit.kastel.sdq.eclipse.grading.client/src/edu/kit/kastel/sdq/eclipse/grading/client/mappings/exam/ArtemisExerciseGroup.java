@@ -1,25 +1,34 @@
 package edu.kit.kastel.sdq.eclipse.grading.client.mappings.exam;
 
 import java.util.Collection;
+import java.util.stream.Collectors;
+
+import javax.security.sasl.AuthenticationException;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExerciseGroup;
+import edu.kit.kastel.sdq.eclipse.grading.client.mappings.ArtemisExercise;
+import edu.kit.kastel.sdq.eclipse.grading.client.rest.ArtemisRESTClient;
 
 public class ArtemisExerciseGroup implements IExerciseGroup {
 
+	@JsonProperty(value = "id")
 	private int exerciseGroupId;
-	private Collection<IExercise> exercises;
+	@JsonProperty
 	private String title;
+	@JsonProperty
 	private boolean isMandatory;
+	@JsonProperty
+	private Collection<ArtemisExercise> exercises;
 
-	public ArtemisExerciseGroup(int exerciseGroupId, Collection<IExercise> exercises, String title,
-			boolean isMandatory) {
-		super();
-		this.exerciseGroupId = exerciseGroupId;
-		this.exercises = exercises;
-		this.title = title;
-		this.isMandatory = isMandatory;
-	}
+	/**
+	 * For Auto-Deserialization
+	 * Need to call this::init thereafter!
+	 */
+	public ArtemisExerciseGroup() {	}
 
 	@Override
 	public int getExerciseGroupId() {
@@ -28,12 +37,21 @@ public class ArtemisExerciseGroup implements IExerciseGroup {
 
 	@Override
 	public Collection<IExercise> getExercises() {
-		return this.exercises;
+		return this.exercises.stream()
+				.map(IExercise.class::cast)
+				.collect(Collectors.toList());
 	}
 
 	@Override
 	public String getTitle() {
 		return this.title;
+	}
+
+	public void init(ArtemisRESTClient artemisRESTClient) throws AuthenticationException, JsonProcessingException {
+		this.exercises = this.exercises.stream()
+				.filter(exercise -> exercise.getShortName() != null) //happens sometimes...
+				.collect(Collectors.toList());
+		for (ArtemisExercise artemisExercise : this.exercises) artemisExercise.init(artemisRESTClient);
 	}
 
 	@Override

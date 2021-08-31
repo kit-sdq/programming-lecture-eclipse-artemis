@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 
-import edu.kit.kastel.sdq.eclipse.grading.api.IArtemisGUIController;
+import edu.kit.kastel.sdq.eclipse.grading.api.IArtemisController;
 import edu.kit.kastel.sdq.eclipse.grading.api.IAssessmentController;
 import edu.kit.kastel.sdq.eclipse.grading.api.alerts.IAlertObservable;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ICourse;
@@ -24,7 +24,6 @@ import edu.kit.kastel.sdq.eclipse.grading.core.artemis.DefaultPenaltyCalculation
 import edu.kit.kastel.sdq.eclipse.grading.core.artemis.DefaultProjectFileNamingStrategy;
 import edu.kit.kastel.sdq.eclipse.grading.core.artemis.WorkspaceUtil;
 import edu.kit.kastel.sdq.eclipse.grading.core.config.ConfigDao;
-import edu.kit.kastel.sdq.eclipse.grading.core.config.ExerciseConfig;
 import edu.kit.kastel.sdq.eclipse.grading.core.model.annotation.AnnotationException;
 import edu.kit.kastel.sdq.eclipse.grading.core.model.annotation.DefaultAnnotationDao;
 import edu.kit.kastel.sdq.eclipse.grading.core.model.annotation.IAnnotationDao;
@@ -41,15 +40,13 @@ public class AssessmentController implements IAssessmentController {
 	private final int courseID;
 	private final int exerciseID;
 
-	private String exerciseConfigShortName;
-
 	/**
 	 * Protected, because the way to get a specific assessment controller should be over a SystemwideController.
 	 *
 	 * @param configFile path to the config file
 	 * @param exerciseName the shortName of the exercise (must be same in the config file).
 	 */
-	protected AssessmentController(SystemwideController systemWideController, int courseID, int exerciseID, int submissionID,String exerciseConfigName) {
+	protected AssessmentController(SystemwideController systemWideController, int courseID, int exerciseID, int submissionID) {
 		this.systemWideController = systemWideController;
 		this.submissionID = submissionID;
 		this.annotationDao = new DefaultAnnotationDao();
@@ -58,8 +55,6 @@ public class AssessmentController implements IAssessmentController {
 
 		this.exerciseID = exerciseID;
 		this.courseID = courseID;
-
-		this.exerciseConfigShortName = exerciseConfigName;
 
 		try {
 			this.initializeWithDeserializedAnnotations();
@@ -93,7 +88,7 @@ public class AssessmentController implements IAssessmentController {
 
 	@Override
 	public void deleteEclipseProject() {
-		IArtemisGUIController guiController =  this.systemWideController.getArtemisGUIController();
+		IArtemisController guiController =  this.systemWideController.getArtemisGUIController();
 		final Collection<ICourse> courses = guiController.getCourses();
 		final IExercise exercise = guiController.getExerciseFromCourses(courses, this.courseID, this.exerciseID);
 		final ISubmission submission = guiController.getSubmissionFromExercise(exercise, this.submissionID);
@@ -138,14 +133,6 @@ public class AssessmentController implements IAssessmentController {
 		return this.courseID;
 	}
 
-	/**
-	 *
-	 * @return the shortName (identifier) used to retrieve the corresponding exercise config from the ConfigDao.
-	 */
-	public String getExerciseConfigShortName() {
-		return this.exerciseConfigShortName;
-	}
-
 	@Override
 	public int getExerciseID() {
 		return this.exerciseID;
@@ -153,21 +140,24 @@ public class AssessmentController implements IAssessmentController {
 
 	@Override
 	public Collection<IMistakeType> getMistakes(){
-		Optional<ExerciseConfig> exerciseConfigOptional;
 		try {
-			exerciseConfigOptional = this.getConfigDao().getExerciseConfigs().stream()
-					.filter(exerciseConfig -> exerciseConfig.getShortName().equals(this.exerciseConfigShortName))
-					.findFirst();
+			return this.getConfigDao().getExerciseConfig().getIMistakeTypes();
 		} catch (IOException e) {
-			this.alertObservable.error(e.getMessage(), e);
+			this.alertObservable.error("Exercise Config not parseable: " + e.getMessage(), e);
 			return List.of();
 		}
+	}
 
-		if (exerciseConfigOptional.isPresent()) {
-			return exerciseConfigOptional.get().getIMistakeTypes();
+	@Override
+	public IRatingGroup getRatingGroupByDisplayName(final String displayName) {
+		Optional<IRatingGroup> ratingGroupOptional = this.getRatingGroups().stream()
+				.filter(ratingGroup -> ratingGroup.getDisplayName().equals(displayName))
+				.findFirst();
+		if (ratingGroupOptional.isPresent()) {
+			return ratingGroupOptional.get();
 		}
-		this.alertObservable.error("ExerciseConfigShortName " + this.exerciseConfigShortName + " not found in config!", null);
-		return List.of();
+		this.alertObservable.error("Rating Group \"" + displayName + "\" not found in config!", null);
+		return null;
 	}
 
 	@Override
@@ -184,21 +174,12 @@ public class AssessmentController implements IAssessmentController {
 
 	@Override
 	public Collection<IRatingGroup> getRatingGroups() {
-
-		Optional<ExerciseConfig> exerciseConfigOptional;
 		try {
-			exerciseConfigOptional = this.getConfigDao().getExerciseConfigs().stream()
-					.filter(exerciseConfig -> exerciseConfig.getShortName().equals(this.exerciseConfigShortName))
-					.findFirst();
+			return this.getConfigDao().getExerciseConfig().getIRatingGroups();
 		} catch (IOException e) {
-			this.alertObservable.error(e.getMessage(), e);
+			this.alertObservable.error("Exercise Config not parseable: " + e.getMessage(), e);
 			return List.of();
 		}
-		if (exerciseConfigOptional.isPresent()) {
-			return exerciseConfigOptional.get().getIRatingGroups();
-		}
-		this.alertObservable.error("ExerciseConfigShortName " + this.exerciseConfigShortName + " not found in config!", null);
-		return List.of();
 	}
 
 	@Override
@@ -247,13 +228,17 @@ public class AssessmentController implements IAssessmentController {
 	}
 
 	@Override
-	public void resetAndReload() {
+	public void resetAndRestartAssessment() {
+		this.deleteEclipseProject();
+		this.systemWideController.getArtemisGUIController().startAssessment(this.submissionID);
+		this.systemWideController.getArtemisGUIController().downloadExerciseAndSubmission(this.courseID, this.exerciseID, this.submissionID);
+
 		this.annotationDao = new DefaultAnnotationDao();
 
 		try {
 			this.initializeWithDeserializedAnnotations();
 		} catch (IOException e) {
-			this.alertObservable.warn("Deserializing Annotations from Artemis failed: " + e.getMessage());
+			this.alertObservable.info("Deserializing Annotations from Artemis failed: " + e.getMessage());
 		}
 	}
 }

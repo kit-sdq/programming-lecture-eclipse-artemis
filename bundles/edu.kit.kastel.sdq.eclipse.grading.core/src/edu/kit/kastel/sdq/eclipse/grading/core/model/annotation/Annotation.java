@@ -123,7 +123,7 @@ public class Annotation implements IAnnotation {
 	 */
 	public String getMistakeTypeString() {
 		//mistakeTypeString is needed for deserialization
-		return this.mistakeType != null ? this.mistakeType.getButtonName() : this.mistakeTypeString;
+		return this.mistakeType != null ? this.mistakeType.getName() : this.mistakeTypeString;
 	}
 
 	@Override

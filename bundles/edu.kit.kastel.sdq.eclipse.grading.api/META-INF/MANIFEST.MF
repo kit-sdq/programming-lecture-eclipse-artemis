@@ -8,5 +8,6 @@ Export-Package: edu.kit.kastel.sdq.eclipse.grading.api,
  edu.kit.kastel.sdq.eclipse.grading.api.alerts,
  edu.kit.kastel.sdq.eclipse.grading.api.artemis,
  edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping,
+ edu.kit.kastel.sdq.eclipse.grading.api.backendstate,
  edu.kit.kastel.sdq.eclipse.grading.api.model
 Automatic-Module-Name: edu.kit.kastel.sdq.eclipse.grading.api

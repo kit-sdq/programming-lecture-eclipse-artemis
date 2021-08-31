@@ -1,8 +1,11 @@
 package edu.kit.kastel.sdq.eclipse.grading.core.artemis;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -23,19 +26,20 @@ import edu.kit.kastel.sdq.eclipse.grading.core.model.annotation.Annotation;
 public class AnnotationDeserializer {
 
 	private static final String FEEDBACK_TEXT = "CLIENT_DATA";
-	private Collection<IMistakeType> mistakeTypes;
+	private Map<String, IMistakeType> mistakeTypesMap;
 
 	public AnnotationDeserializer(Collection<IMistakeType> mistakeTypes) {
-		this.mistakeTypes = mistakeTypes;
+		this.mistakeTypesMap = new HashMap<>();
+		mistakeTypes.forEach(mistakeType -> this.mistakeTypesMap.put(mistakeType.getName(), mistakeType));
 	}
 
 	/**
 	 * Deserialize a given Collection of IFeedbacks (that contain json blobs in the detailText field) into our model Annotations.
 	 * @param feedbacks
 	 * @return
-	 * @throws JsonProcessingException if parsing the json blob fails.
+	 * @throws IOException
 	 */
-	public Collection<IAnnotation> deserialize(Collection<IFeedback> feedbacks) throws JsonProcessingException {
+	public Collection<IAnnotation> deserialize(Collection<IFeedback> feedbacks) throws IOException {
 		final List<IFeedback> matchingFeedbacks = feedbacks.stream()
 				.filter(feedback -> {
 					String text = feedback.getText();
@@ -48,7 +52,7 @@ public class AnnotationDeserializer {
 		}
 
 		JsonProcessingException[] foundException = {null};
-		Collection<IAnnotation> deserializedAnnotations = matchingFeedbacks.stream()
+		Collection<Annotation> deserializedAnnotations = matchingFeedbacks.stream()
 			.map(IFeedback::getDetailText)	// get the json blob
 			.map(feedbackDetailText -> { 					//transform the json blob to multiple annotations
 				try {
@@ -61,12 +65,23 @@ public class AnnotationDeserializer {
 			})
 			.map(Arrays::asList)
 			.flatMap(List::stream)							// Stream of List of annotations ==> Stream of annotations.
-			.map(IAnnotation.class::cast)
 			.collect(Collectors.toList());
 
 		if (foundException[0] != null) {
 			throw foundException[0];
 		}
-		return deserializedAnnotations;
+
+		// add mistaketypes!
+		for (Annotation annotation : deserializedAnnotations) {
+			final String mistakeTypeName = annotation.getMistakeTypeString();
+			if (!this.mistakeTypesMap.containsKey(mistakeTypeName)) {
+				throw new IOException("Trying to deserialize MistakeType \"" + mistakeTypeName + "\". It was not found in local config!");
+			}
+			annotation.setMistakeType(this.mistakeTypesMap.get(mistakeTypeName));
+		}
+
+		return deserializedAnnotations.stream()
+				.map(IAnnotation.class::cast)
+				.collect(Collectors.toList());
 	}
 }

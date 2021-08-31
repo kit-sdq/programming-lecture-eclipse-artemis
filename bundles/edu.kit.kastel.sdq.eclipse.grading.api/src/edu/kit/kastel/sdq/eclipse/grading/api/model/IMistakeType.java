@@ -17,27 +17,27 @@ public interface IMistakeType {
 
 	/**
 	 *
-	 * @return what should be shown on the button.
-	 */
-	String getButtonName();
-
-	/**
-	 *
 	 * @return a more elaborate explanation of what the mistake is.
 	 */
 	String getMessage();
 
 	/**
 	 *
-	 * @return the {@link IRatingGroup} this {@link IMistakeType} belongs to, which may introduce a {@link IRatingGroup#getPenaltyLimit()}!
+	 * @return what should be shown on the button.
 	 */
-	IRatingGroup getRatingGroup();
+	String getName();
 
 	/**
 	 *
-	 * @return this {@link IRatingGroup}s display name.
+	 * @return the name of the penalty this MistakeType uses.
 	 */
-	String getRatingGroupName();
+	String getPenaltyName();
+
+	/**
+	 *
+	 * @return the {@link IRatingGroup} this {@link IMistakeType} belongs to, which may introduce a {@link IRatingGroup#getPenaltyLimit()}!
+	 */
+	IRatingGroup getRatingGroup();
 
 	/**
 	 *
