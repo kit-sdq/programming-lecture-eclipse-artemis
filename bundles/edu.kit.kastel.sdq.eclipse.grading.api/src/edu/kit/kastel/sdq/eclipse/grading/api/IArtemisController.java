@@ -19,8 +19,9 @@ public interface IArtemisController {
 	/**
 	 * Download submissions defined by the given submissionIds
 	 * @param submissionIds
+	 * @return whether download was successful or not
 	 */
-	void downloadExerciseAndSubmission(int courseID, int exerciseID, int submissionID);
+	boolean downloadExerciseAndSubmission(int courseID, int exerciseID, int submissionID);
 
 
 	/**

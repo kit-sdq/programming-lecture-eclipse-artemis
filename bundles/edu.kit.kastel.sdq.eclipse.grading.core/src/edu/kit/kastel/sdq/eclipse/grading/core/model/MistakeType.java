@@ -81,6 +81,11 @@ public class MistakeType implements IMistakeType {
 		return this.name;
 	}
 
+	@Override
+	public String getPenaltyName() {
+		return this.penaltyRule.getShortName();
+	}
+
 	public PenaltyRule getPenaltyRule() {
 		return this.penaltyRule;
 	}

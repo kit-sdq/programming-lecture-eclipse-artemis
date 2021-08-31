@@ -29,6 +29,12 @@ public interface IMistakeType {
 
 	/**
 	 *
+	 * @return the name of the penalty this MistakeType uses.
+	 */
+	String getPenaltyName();
+
+	/**
+	 *
 	 * @return the {@link IRatingGroup} this {@link IMistakeType} belongs to, which may introduce a {@link IRatingGroup#getPenaltyLimit()}!
 	 */
 	IRatingGroup getRatingGroup();

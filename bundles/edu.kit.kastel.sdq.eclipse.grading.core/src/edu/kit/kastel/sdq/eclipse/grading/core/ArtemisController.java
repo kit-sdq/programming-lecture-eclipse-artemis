@@ -56,7 +56,7 @@ public class ArtemisController implements IArtemisController {
 	}
 
 	@Override
-	public void downloadExerciseAndSubmission(int courseID, int exerciseID, int submissionID) {
+	public boolean downloadExerciseAndSubmission(int courseID, int exerciseID, int submissionID) {
 		final File eclipseWorkspaceRoot =  ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile();
 		final IProjectFileNamingStrategy defaultProjectFileNamingStrategy = new DefaultProjectFileNamingStrategy();
 
@@ -64,12 +64,17 @@ public class ArtemisController implements IArtemisController {
 		final IExercise exercise = this.getExerciseFromCourses(courses, courseID, exerciseID);
 		final ISubmission submission = this.getSubmissionFromExercise(exercise, submissionID);
 
+		//abort if directory already exists.
+		if (this.existsAndNotify(defaultProjectFileNamingStrategy.getProjectFileInWorkspace(eclipseWorkspaceRoot, exercise, submission))) {
+			return false;
+		}
+
 		try {
 		this.artemisClient.downloadExerciseAndSubmission(exercise, submission, eclipseWorkspaceRoot,
 				defaultProjectFileNamingStrategy);
 		} catch (ArtemisClientException e) {
 			this.alertObservable.error(e.getMessage(), e);
-			return;
+			return false;
 		}
 		try {
 		WorkspaceUtil.createEclipseProject(
@@ -77,7 +82,17 @@ public class ArtemisController implements IArtemisController {
 		} catch (CoreException e) {
 			this.alertObservable.error("Project could not be created: " + e.getMessage(), null);
 		}
+		return true;
+	}
 
+	private boolean existsAndNotify(File file) {
+		if (file.exists()) {
+			this.alertObservable.warn(
+					"Project " + file.getName() + " could not be cloned since the workspace "
+					+ "already contains a project with that name. Please delete it and retry.");
+			return true;
+		}
+		return false;
 	}
 
 	@Override

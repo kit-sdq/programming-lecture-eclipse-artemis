@@ -315,11 +315,17 @@ public class SystemwideController implements ISystemwideController {
 		if (optionalSubmissionID.isEmpty()) {
 			//revert!
 			this.backendStateMachine.revertLatestTransition();
-			this.alertObservable.info("No more submissions available for Correction Round " + correctionRound + "!");
+			this.alertObservable.info("No more submissions available for Correction Round " + (correctionRound + 1) + "!");
 			return false;
 		}
 		this.submissionID = optionalSubmissionID.get();
-		this.getArtemisGUIController().downloadExerciseAndSubmission(this.courseID, this.exerciseID, this.submissionID);
+
+
+		//perform download. Revert state if that fails.
+		if (!this.getArtemisGUIController().downloadExerciseAndSubmission(this.courseID, this.exerciseID, this.submissionID)) {
+			this.backendStateMachine.revertLatestTransition();
+			return false;
+		}
 		return true;
 	}
 

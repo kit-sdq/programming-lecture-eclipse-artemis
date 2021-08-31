@@ -109,7 +109,12 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 
 		final File projectDirectory = projectFileNamingStrategy.getProjectFileInWorkspace(directory, exercise, submission);
 		try {
+			if (projectDirectory.exists()) {
+				throw new ArtemisClientException("Could not clone project " + projectDirectory.getName() + ", " + "directory already exists!");
+			}
+
 			this.downloadTestRepo(exercise, projectDirectory);
+
 			//download submission inside the exercise project directory
 			this.downloadSubmission(submission, projectFileNamingStrategy.getAssignmentFileInProjectDirectory(projectDirectory));
 		} catch (GitException e) {

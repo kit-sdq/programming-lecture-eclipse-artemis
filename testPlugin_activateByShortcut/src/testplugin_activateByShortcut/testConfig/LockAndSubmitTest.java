@@ -4,7 +4,9 @@ import java.io.File;
 import java.util.Collection;
 import java.util.LinkedList;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.AbstractArtemisClient;
 import edu.kit.kastel.sdq.eclipse.grading.api.ISystemwideController;
@@ -157,7 +159,7 @@ public class LockAndSubmitTest {
 
 		this.printBegunSubmissionState(sysController, "before assessment start");
 		System.out.println("Possible Transitions before start: " + sysController.getCurrentlyPossibleTransitions());
-		try {Thread.sleep(20000); } catch (InterruptedException e) {}
+//		try {Thread.sleep(20000); } catch (InterruptedException e) {}
 		boolean startSuccessful = sysController.startAssessment();
 
 		if (!startSuccessful) {
@@ -180,9 +182,23 @@ public class LockAndSubmitTest {
 		this.printBegunSubmissionState(sysController, "before submit");
 //		sysController.submitAssessment();
 
+		//TODO debug
+
+		System.out.println("Before reload. DELETing NOW");
+        final IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject("exercise-1-testAufgabe1_submission-90-uyduk");
+        File projectLocation = project.getLocation().toFile();
+        try {
+			project.delete(true, null);
+		} catch (CoreException e1) {
+			e1.printStackTrace();
+		}
+		System.out.println("Before reload. after delete");
+		try {Thread.sleep(20000); } catch (InterruptedException e) {}
 
 
-		//TODO this is debug
+
+
+		//reload stuff
 		sysController.reloadAssessment();
 		System.out.println("After reload. lockresults: ");
 		System.out.println(sysController.getArtemisGUIController().getAllFeedbacksGottenFromLocking(sysController.getCurrentAssessmentController().getSubmissionID()));
