@@ -98,6 +98,11 @@ TODO architecture doc. (tolles Bild)
 
 For keeping the backend state sane and consistent, we use a state machine. That allows for greying out buttons in the gui:
 ![backend state machine](docs/Zustandshaltung-Automat.png)
+TODO Further explain the state machine (code-wise)
+* On every state-modifying call to *edu.kit.kastel.sdq.eclipse.grading.core.SystemwideController* (represented by edges in the state machine graph), the according transition is applied in the state machine. If it isn't possible, the transition is not applied and the GUI is notified.
+* Each "transition class" (represented by its name) has **one single** *next_state* and multiple *from_state*s.
+* In every state, it is known, which transitions are allowed. These are retrieved via ISystemwideController::getCurrentlyPossibleTransitions() by the GUI.
+* In certain situations, a state is changed but then reverted. This is not done across calls, so the gui does not notice that.
 
 ### Creating a new PenaltyRule
 
