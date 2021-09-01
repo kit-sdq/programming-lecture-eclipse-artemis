@@ -169,3 +169,12 @@ TODO Further explain the state machine (code-wise)
 * Each "transition class" (represented by its name) has **one single** *next_state* and multiple *from_state*s.
 * In every state, it is known, which transitions are allowed. These are retrieved via ISystemwideController::getCurrentlyPossibleTransitions() by the GUI.
 * In certain situations, a state is changed but then reverted. This is not done across calls, so the GUI does not notice it.
+
+### Further Development
+
+See our [Github Issues](https://github.com/kit-sdq/programming-lecture-eclipse-artemis-grading/issues) (especially feature requests/ enhancements and bugs).
+
+## Authors
+
+* Paul Rüssmann
+* Robin Schulz
