@@ -9,7 +9,11 @@ The Update Site is located here: https://kit-sdq.github.io/programming-lecture-e
 ### How do i run the plugin?
 
 * Our Github CI run builds eclipse distros (linux, OS X, Windows) containing the plugin. Download it [here](https://github.com/kit-sdq/programming-lecture-eclipse-artemis-grading/actions/workflows/products.yml).
+* In case you are using OS X, you might need to add our target platform to run the plugin. It can be found [here](docs/workingTargetDefinition.target).
 * TODO marketplace or so?
+
+### Working with the GUI
+**===TODO===**
 
 ### Backend Configuration
 
@@ -76,9 +80,6 @@ Penalty Calculation is done rating-group-wise. For each rating group:
 * Each Rating group generates a MANUAL_UNREFERENCED feedback, visible *below* the editor (in the browser artemis client). Here, penalty points are given.
 * Also, one (or more) MANUAL_UNREFERENCED feedback (invisible for students) is generated, which is used as a database for this client (containing serialized client-specific annotation data, including model identifiers, gui markers, startLine, endLine, ...)
 
-### Frontend Configuration
-TODO Frontend Config (gui)
-
 ## Development
 
 ### Setting up Eclipse
@@ -92,16 +93,23 @@ That allows for more easily exchanging view, core/ backend or client and also cl
 
 <img src="docs/architecture.png" alt="backend state machine" width="600"/>
 
-#### State Machine
+#### Core/ Backend
 
-For keeping the backend state sane and consistent, we use a state machine. That allows for greying out buttons in the gui:
-![backend state machine](docs/Zustandshaltung-Automat.png)
-TODO Further explain the state machine (code-wise)
-* On every state-modifying call to *edu.kit.kastel.sdq.eclipse.grading.core.SystemwideController* (represented by transitions (edges) in the state machine graph), the according transition is applied in the state machine. If it isn't possible, the transition is not applied and the GUI is notified.
-* Transitions represent button clicks in the Artemis Grading view
-* Each "transition class" (represented by its name) has **one single** *next_state* and multiple *from_state*s.
-* In every state, it is known, which transitions are allowed. These are retrieved via ISystemwideController::getCurrentlyPossibleTransitions() by the GUI.
-* In certain situations, a state is changed but then reverted. This is not done across calls, so the gui does not notice it.
+Our backend (core package) provides functionality for
+
+* managing annotations
+* calculating penalties
+* serializing and deserializing annotations (via artemis client as a network interface)
+* mapping plugin-internal state to artemis-internal state
+* keeping track of state
+
+#### Artemis Client
+
+The Artemis Client provides certain calls to artemis needed by the backend.
+
+#### GUI
+
+**===TODO===**
 
 ### Creating a new PenaltyRule
 
@@ -133,3 +141,31 @@ TODO Further explain the state machine (code-wise)
             }
         ]
     </code></pre>
+
+### Controllers
+There are three Controllers:
+
+* The AssessmentController controlls a single assessment in terms of managing annotations. It provides Methods like
+    * *addAnnotation(..)*
+    * *getAnnotations()*
+    * *resetAndRestartAssessment()*
+    * *...*
+* The ArtemisController handles artemis-related stuff, including
+    * managing Locks and *Feedbacks* which contain data gotten from locking a submission.
+    * retrieving information about Courses, Submissions, Exercises, Exams, ... from the artemis client
+    * starting, saving and submitting assessments.
+* The SystemwideController holds and manages the backend state.
+  It acts as the main interface to the GUI.
+  All calls relevant to our backend state (see section about the backend state machine) go through here.
+  
+### Backend State Machine
+
+For keeping the backend state sane and consistent, we use a state machine. That also allows for greying out buttons in the gui:
+![backend state machine](docs/Zustandshaltung-Automat.png)
+TODO Further explain the state machine (code-wise)
+
+* On every state-modifying call to *edu.kit.kastel.sdq.eclipse.grading.core.SystemwideController* (represented by transitions (edges) in the state machine graph), the according transition is applied in the state machine. If it isn't possible, the transition is not applied and the GUI is notified.
+* Transitions are designed to represent button clicks in the GUI, which in turn are mapped to one backend call each.
+* Each "transition class" (represented by its name) has **one single** *next_state* and multiple *from_state*s.
+* In every state, it is known, which transitions are allowed. These are retrieved via ISystemwideController::getCurrentlyPossibleTransitions() by the GUI.
+* In certain situations, a state is changed but then reverted. This is not done across calls, so the GUI does not notice it.
