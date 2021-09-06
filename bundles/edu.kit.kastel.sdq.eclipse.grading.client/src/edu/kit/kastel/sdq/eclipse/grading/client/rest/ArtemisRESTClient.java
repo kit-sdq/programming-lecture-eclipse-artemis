@@ -19,6 +19,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.AbstractArtemisClient;
 import edu.kit.kastel.sdq.eclipse.grading.api.ArtemisClientException;
@@ -157,16 +158,13 @@ public class ArtemisRESTClient extends AbstractArtemisClient  {
 
 
 	private Entity<String> getAuthenticationEntity() {
-		//TODO use a json lib!
-		final String entityString = new StringBuilder().append("{")
-				.append("\"username\":\"").append(this.getArtemisUsername()).append("\",")
-				.append("\"password\":\"").append(this.getArtemisPasswordEscaped()).append("\",")
-				.append("\"rememberMe\":true")
-				.append("}")
-				.toString();
+		final ObjectNode authenticationNode = this.unconfiguredObjectMapper.createObjectNode();
+		authenticationNode.put("username", this.getArtemisUsername());
+		authenticationNode.put("password", this.getArtemisPassword());
+		authenticationNode.put("rememberMe", true);
 
 		return Entity.entity(
-				entityString,
+				authenticationNode.toString(),
 				MediaType.APPLICATION_JSON_TYPE);
 	}
 
