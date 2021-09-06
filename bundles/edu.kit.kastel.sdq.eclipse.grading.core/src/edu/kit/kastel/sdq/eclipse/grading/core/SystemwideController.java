@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.util.IPropertyChangeListener;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.IArtemisController;
 import edu.kit.kastel.sdq.eclipse.grading.api.IAssessmentController;
@@ -33,7 +34,7 @@ import edu.kit.kastel.sdq.eclipse.grading.core.config.JsonFileConfigDao;
 public class SystemwideController implements ISystemwideController {
 
 	private final Map<Integer, IAssessmentController> assessmentControllers;
-	private final IArtemisController artemisGUIController;
+	private IArtemisController artemisGUIController;
 
 	private ConfigDao configDao;
 
@@ -64,21 +65,27 @@ public class SystemwideController implements ISystemwideController {
 		//initialize config
 		this.updateConfigFile();
 
+		final SystemwideController thisSysController = this;
+
 
 		//change preferences ! TODO we dont need that. We always poll on  downloading!
-//		this.preferenceStore.addPropertyChangeListener(new IPropertyChangeListener() {
-//			@Override
-//			public void propertyChange(PropertyChangeEvent event) {
-//				if (event.getProperty().equals(PreferenceConstants.ABSOLUTE_CONFIG_PATH)
-//						|| event.getProperty().equals(PreferenceConstants.RELATIVE_CONFIG_PATH)
-//						|| event.getProperty().equals(PreferenceConstants.IS_RELATIVE_CONFIG_PATH)) {
-//					updateConfigFile();
-//				}
-//
-//			}
-//		});
-	}
+		this.preferenceStore.addPropertyChangeListener(new IPropertyChangeListener() {
+			@Override
+			public void propertyChange(org.eclipse.jface.util.PropertyChangeEvent event) {
 
+				if (event.getProperty().equals(PreferenceConstants.ARTEMIS_URL)
+						|| event.getProperty().equals(PreferenceConstants.ARTEMIS_USER)
+						|| event.getProperty().equals(PreferenceConstants.ARTEMIS_PASSWORD)) {
+					thisSysController.setArtemisController(new ArtemisController(
+							thisSysController,
+							preferenceStore.getString(PreferenceConstants.ARTEMIS_URL),
+							preferenceStore.getString(PreferenceConstants.ARTEMIS_USER),
+							preferenceStore.getString(PreferenceConstants.ARTEMIS_PASSWORD)));
+				}
+
+			}
+		});
+	}
 	private SystemwideController(final String artemisHost, final String username, final String password) {
 		this.assessmentControllers = new HashMap<>();
 		this.alertObservable = new AlertObservable();
@@ -116,7 +123,6 @@ public class SystemwideController implements ISystemwideController {
 		return this.assessmentControllers.get(submissionID);
 	}
 
-
 	private Collection<ISubmission> getBegunSubmissions(ISubmission.Filter submissionFilter) {
 		if (this.nullCheckMembersAndNotify(true, true, false)) return List.of();
 
@@ -124,6 +130,7 @@ public class SystemwideController implements ISystemwideController {
 				.filter(submissionFilter.getFilterPredicate())
 				.collect(Collectors.toList());
 	}
+
 
 	@Override
 	public Collection<String> getBegunSubmissionsProjectNames(ISubmission.Filter submissionFilter) {
@@ -254,6 +261,11 @@ public class SystemwideController implements ISystemwideController {
 		if (this.nullCheckMembersAndNotify(true, true, true)) return;
 
 		this.artemisGUIController.saveAssessment(this.submissionID, false, false);
+	}
+
+	public void setArtemisController(IArtemisController artemisController) {
+		//TODO reset whole state maybe needed...
+		this.artemisGUIController = artemisController;
 	}
 
 	@Override

@@ -164,12 +164,12 @@ public class ArtemisGradingView extends ViewPart {
 		scrolledCompositeBacklog.setMinSize(backlogComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 	}
 
-	private void createCustomButton(IRatingGroup ratingGroup, Group rgDisplay) {
+	private void createCustomButton(IRatingGroup ratingGroup, Group rgDisplay, IMistakeType mistake) {
 		final Button customButton = new Button(rgDisplay, SWT.PUSH);
-		customButton.setText("Custom");
+		customButton.setText(mistake.getName());
 		customButton.addListener(SWT.Selection, event -> {
 			final CustomButtonDialog customDialog = new CustomButtonDialog(AssessmentUtilities.getWindowsShell(),
-					this.viewController, ratingGroup.getDisplayName());
+					this.viewController, ratingGroup.getDisplayName(), mistake);
 			customDialog.setBlockOnOpen(true);
 			customDialog.open();
 			// avoid SWT Exception
@@ -310,6 +310,10 @@ public class ArtemisGradingView extends ViewPart {
 			rgDisplay.setLayoutData(gridData);
 			this.viewController.getMistakeTypes().forEach(mistake -> {
 				if (mistake.getRatingGroup().getDisplayName().equals(ratingGroup.getDisplayName())) {
+					if (mistake.getName().equals("Custom Penalty")) {
+						this.createCustomButton(ratingGroup, rgDisplay, mistake);
+						return;
+					}
 					final Button mistakeButton = new Button(rgDisplay, SWT.PUSH);
 					mistakeButton.setText(mistake.getName());
 					this.mistakeButtons.put(mistake.getName(), mistakeButton);
@@ -322,7 +326,7 @@ public class ArtemisGradingView extends ViewPart {
 					});
 				}
 			});
-			this.createCustomButton(ratingGroup, rgDisplay);
+			// this.createCustomButton(ratingGroup, rgDisplay);
 		});
 		this.scrolledCompositeGrading.setContent(this.gradingComposite);
 		this.scrolledCompositeGrading.setMinSize(this.gradingComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
