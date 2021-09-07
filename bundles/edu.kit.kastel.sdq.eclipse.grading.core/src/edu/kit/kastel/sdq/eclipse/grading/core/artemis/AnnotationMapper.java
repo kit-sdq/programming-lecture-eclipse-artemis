@@ -169,7 +169,7 @@ public class AnnotationMapper {
 		// only add preexistent automatic feedback (unit tests etc) and manual feedback.										arTem155
 		//this should work indepently of invalid or not. if invalid, there should just be no feedbacks.
 		final Collection<IFeedback> allFeedbacks = this.calculateAllFeedbacks();
-		final double absoluteScore = submissionIsInvalid ? 0.D : this.calculateAbsoluteScore(allFeedbacks);
+		final double absoluteScore = submissionIsInvalid ? 0.D : Math.max(0.D, this.calculateAbsoluteScore(allFeedbacks));
 		final double relativeScore = submissionIsInvalid ? 0.D : this.calculateRelativeScore(absoluteScore);
 
 		return new AssessmentResult(
