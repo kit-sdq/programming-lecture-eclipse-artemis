@@ -33,7 +33,7 @@ public class ShortcutHandler extends AbstractHandler {
 
 	public static final String CONFIG_PATH = "Lala/src/config_v4.json";
 
-	public void artemisTest() {
+	public void artemisTest() throws ArtemisClientException {
 		Pair<String, String> credentials = CredentialsGetter.getCredentials();
 		AbstractArtemisClient artemisClient = new ArtemisRESTClient(credentials.L, credentials.R, "artemis-test.ipd.kit.edu");
 		List<Integer> submissionIds = new LinkedList<Integer>();
@@ -57,7 +57,7 @@ public class ShortcutHandler extends AbstractHandler {
 
 	}
 
-	public void coursesTest(Collection<ICourse> courses) {
+	public void coursesTest(Collection<ICourse> courses) throws ArtemisClientException {
 		System.out.println("-----Courses-----");
 		for (ICourse course : courses) {
 			System.out.println("  Course " + course.toString());
@@ -112,7 +112,11 @@ public class ShortcutHandler extends AbstractHandler {
 //		act.testMistakesEtc();
 
 		System.out.println("##########--[                 ArtemisTest                  ]--##########");
-		this.artemisTest();
+		try {
+			this.artemisTest();
+		} catch (ArtemisClientException e) {
+			e.printStackTrace();
+		}
 		return null;
 	}
 }
