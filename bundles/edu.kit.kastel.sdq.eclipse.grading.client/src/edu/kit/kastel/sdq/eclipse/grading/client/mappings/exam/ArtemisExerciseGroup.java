@@ -1,20 +1,20 @@
 package edu.kit.kastel.sdq.eclipse.grading.client.mappings.exam;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.security.sasl.AuthenticationException;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExerciseGroup;
 import edu.kit.kastel.sdq.eclipse.grading.client.mappings.ArtemisExercise;
-import edu.kit.kastel.sdq.eclipse.grading.client.rest.ArtemisRESTClient;
+import edu.kit.kastel.sdq.eclipse.grading.client.mappings.IMappingLoader;
 
-public class ArtemisExerciseGroup implements IExerciseGroup {
+public class ArtemisExerciseGroup implements IExerciseGroup, Serializable {
+    private static final long serialVersionUID = 1797252671567588724L;
 
     @JsonProperty(value = "id")
     private int exerciseGroupId;
@@ -26,10 +26,10 @@ public class ArtemisExerciseGroup implements IExerciseGroup {
     private Collection<ArtemisExercise> exercises;
 
     /**
-	 * For Auto-Deserialization
-	 * Need to call this::init thereafter!
+     * For Auto-Deserialization Need to call this::init thereafter!
      */
-	public ArtemisExerciseGroup() {	}
+    public ArtemisExerciseGroup() {
+    }
 
     @Override
     public int getExerciseGroupId() {
@@ -38,9 +38,7 @@ public class ArtemisExerciseGroup implements IExerciseGroup {
 
     @Override
     public Collection<IExercise> getExercises() {
-		return this.exercises.stream()
-				.map(IExercise.class::cast)
-				.collect(Collectors.toList());
+        return new ArrayList<>(exercises);
     }
 
     @Override
@@ -48,14 +46,17 @@ public class ArtemisExerciseGroup implements IExerciseGroup {
         return this.title;
     }
 
-    public void init(ArtemisRESTClient artemisRESTClient) throws AuthenticationException, JsonProcessingException {
+    public void init(IMappingLoader client) {
         if (exercises == null) {
             exercises = List.of();
+            return;
         }
         this.exercises = this.exercises.stream()
-                .filter(exercise -> exercise.getShortName() != null) // happens sometimes...
-                .collect(Collectors.toList());
-		for (ArtemisExercise artemisExercise : this.exercises) artemisExercise.init(artemisRESTClient);
+            .filter(exercise -> exercise.getShortName() != null) // happens sometimes...
+            .collect(Collectors.toList());
+        for (ArtemisExercise artemisExercise : this.exercises) {
+            artemisExercise.init(client);
+        }
     }
 
     @Override
@@ -65,7 +66,7 @@ public class ArtemisExerciseGroup implements IExerciseGroup {
 
     @Override
     public String toString() {
-		return "ArtemisExerciseGroup [exerciseGroupId=" + this.exerciseGroupId + ", exercises=" + this.exercises + ", title="
-				+ this.title + ", isMandatory=" + this.isMandatory + "]";
+        return "ArtemisExerciseGroup [exerciseGroupId=" + this.exerciseGroupId + ", exercises=" + this.exercises
+                + ", title=" + this.title + ", isMandatory=" + this.isMandatory + "]";
     }
 }

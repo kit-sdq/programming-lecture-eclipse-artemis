@@ -1,58 +1,67 @@
 package edu.kit.kastel.sdq.eclipse.grading.client.mappings.exam;
 
+import java.io.Serializable;
 import java.util.Collection;
 
-import javax.security.sasl.AuthenticationException;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.ArtemisClientException;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ICourse;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExam;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExerciseGroup;
-import edu.kit.kastel.sdq.eclipse.grading.client.rest.ArtemisRESTClient;
+import edu.kit.kastel.sdq.eclipse.grading.client.mappings.IMappingLoader;
 
-public class ArtemisExam implements IExam {
+public class ArtemisExam implements IExam, Serializable {
 
-	private transient Collection<IExerciseGroup> exerciseGroups;
-	@JsonProperty(value = "id")
-	private int examId;
-	@JsonProperty
-	private String title;
+    private static final long serialVersionUID = 97898730702942861L;
 
-	/**
-	 * For Auto-Deserialization
-	 * Need to call this::init thereafter!
-	 */
-	public ArtemisExam() { }
+    @JsonProperty(value = "id")
+    private int examId;
+    @JsonProperty
+    private String title;
 
-	public ArtemisExam(Collection<IExerciseGroup> exerciseGroups, int examId,  String title) {
-		this.exerciseGroups = exerciseGroups;
-		this.examId = examId;
-		this.title = title;
-	}
+    private transient ICourse course;
+    private transient Collection<IExerciseGroup> exerciseGroups;
+    private transient IMappingLoader client;
 
-	@Override
-	public int getExamId() {
-		return this.examId;
-	}
+    /**
+     * For Auto-Deserialization Need to call this::init thereafter!
+     */
+    public ArtemisExam() {
+    }
 
-	@Override
-	public Collection<IExerciseGroup> getExerciseGroups() {
-		return this.exerciseGroups;
-	}
+    public ArtemisExam(Collection<IExerciseGroup> exerciseGroups, int examId, String title) {
+        this.exerciseGroups = exerciseGroups;
+        this.examId = examId;
+        this.title = title;
+    }
 
-	@Override
-	public String getTitle() {
-		return this.title;
-	}
+    @Override
+    public int getExamId() {
+        return this.examId;
+    }
 
-	public void init(ArtemisRESTClient artemisRESTClient, int courseID) throws AuthenticationException, JsonProcessingException, ArtemisClientException {
-		this.exerciseGroups = artemisRESTClient.getExerciseGroupsForExam(this, courseID);
-	}
+    @Override
+    public Collection<IExerciseGroup> getExerciseGroups() throws ArtemisClientException {
+        if (exerciseGroups == null) {
+            this.exerciseGroups = client.getExerciseGroupsForExam(this, course);
+        }
+        return this.exerciseGroups;
+    }
 
-	@Override
-	public String toString() {
-		return "ArtemisExam [exerciseGroups=" + this.exerciseGroups + ", examId=" + this.examId + ", title=" + this.title + "]";
-	}
+    @Override
+    public String getTitle() {
+        return this.title;
+    }
+
+    public void init(IMappingLoader client, ICourse course) {
+        this.course = course;
+        this.client = client;
+    }
+
+    @Override
+    public String toString() {
+        return "ArtemisExam [exerciseGroups=" + this.exerciseGroups + ", examId=" + this.examId + ", title="
+                + this.title + "]";
+    }
 }

@@ -2,17 +2,19 @@ package edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping;
 
 import java.util.Collection;
 
+import edu.kit.kastel.sdq.eclipse.grading.api.ArtemisClientException;
+
 public interface IExercise {
 
-	int getExerciseId();
+    int getExerciseId();
 
-	Boolean getSecondCorrectionEnabled();
+    Boolean getSecondCorrectionEnabled();
 
-	String getShortName();
+    String getShortName();
 
-	Collection<ISubmission> getSubmissions();
+    Collection<ISubmission> getSubmissions() throws ArtemisClientException;
 
-	String getTestRepositoryUrl();
+    String getTestRepositoryUrl();
 
-	String getTitle();
+    String getTitle();
 }
