@@ -173,6 +173,7 @@ public class ArtemisGradingView extends ViewPart {
 
     private void createCustomButton(IRatingGroup ratingGroup, Group rgDisplay, IMistakeType mistake) {
         final Button customButton = new Button(rgDisplay, SWT.PUSH);
+        customButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
         customButton.setText(mistake.getName());
         customButton.addListener(SWT.Selection, event -> {
             final CustomButtonDialog customDialog = new CustomButtonDialog(AssessmentUtilities.getWindowsShell(),
@@ -315,7 +316,7 @@ public class ArtemisGradingView extends ViewPart {
         this.scrolledCompositeGrading.setContent(null);
         this.gradingComposite = new Composite(this.scrolledCompositeGrading, SWT.NONE);
         this.viewController.setCurrentAssessmentController();
-        this.gradingComposite.setLayout(new GridLayout(3, true));
+        this.gradingComposite.setLayout(new GridLayout(1, true));
         this.viewController.getRatingGroups()
             .forEach(ratingGroup -> {
                 final Group rgDisplay = new Group(this.gradingComposite, SWT.NONE);
@@ -324,8 +325,7 @@ public class ArtemisGradingView extends ViewPart {
                 final GridLayout gridLayout = new GridLayout();
                 gridLayout.numColumns = 3;
                 rgDisplay.setLayout(gridLayout);
-                final GridData gridData = new GridData(GridData.VERTICAL_ALIGN_FILL);
-                gridData.horizontalSpan = 3;
+                final GridData gridData = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
                 rgDisplay.setLayoutData(gridData);
                 this.viewController.getMistakeTypes()
                     .forEach(mistake -> {
@@ -338,6 +338,8 @@ public class ArtemisGradingView extends ViewPart {
                             }
                             final Button mistakeButton = new Button(rgDisplay, SWT.PUSH);
                             mistakeButton.setText(mistake.getName());
+                            mistakeButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+
                             this.mistakeButtons.put(mistake.getName(), mistakeButton);
                             mistakeButton.setToolTipText(this.viewController.getToolTipForMistakeType(mistake));
                             mistakeButton.addListener(SWT.Selection, event -> {
