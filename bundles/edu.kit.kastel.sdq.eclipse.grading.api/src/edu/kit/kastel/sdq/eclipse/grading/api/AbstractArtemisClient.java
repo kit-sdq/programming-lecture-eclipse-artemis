@@ -4,8 +4,6 @@ import java.io.File;
 import java.util.Collection;
 import java.util.Optional;
 
-import javax.security.sasl.AuthenticationException;
-
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.ILockResult;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IProjectFileNamingStrategy;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IAssessor;
@@ -60,8 +58,6 @@ public abstract class AbstractArtemisClient {
      * @return the artemis "assessor" object (needed for submitting the assessment).
      * @throws ArtemisClientException
      *             if some errors occur while parsing the result.
-     * @throws AuthenticationException
-     *             if authentication fails.
      */
     public abstract IAssessor getAssessor() throws ArtemisClientException;
 
@@ -70,8 +66,6 @@ public abstract class AbstractArtemisClient {
      * @return all available courses, containing exercises and available submissions
      * @throws ArtemisClientException
      *             if some errors occur while parsing the result.
-     * @throws AuthenticationException
-     *             if authentication fails.
      */
     public abstract Collection<ICourse> getCourses() throws ArtemisClientException;
 
@@ -84,8 +78,6 @@ public abstract class AbstractArtemisClient {
      * @return submissions for the given exerciseID, filterable.
      * @throws ArtemisClientException
      *             if some errors occur while parsing the result.
-     * @throws AuthenticationException
-     *             if authentication fails.
      */
     public abstract Collection<ISubmission> getSubmissions(int exerciseID, boolean assessedByTutor)
             throws ArtemisClientException;
@@ -115,8 +107,6 @@ public abstract class AbstractArtemisClient {
      *         ({@link #saveAssessment(int, boolean, String)}
      * @throws ArtemisClientException
      *             if some errors occur while parsing the result.
-     * @throws AuthenticationException
-     *             if authentication fails.
      */
 
     public abstract ILockResult startAssessment(int submissionID) throws ArtemisClientException;

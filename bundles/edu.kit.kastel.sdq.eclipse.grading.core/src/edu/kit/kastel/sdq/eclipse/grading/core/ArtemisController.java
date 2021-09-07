@@ -10,8 +10,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import javax.security.sasl.AuthenticationException;
-
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 
@@ -374,14 +372,13 @@ public class ArtemisController implements IArtemisController {
                             invalidSubmission ? new ZeroedPenaltyCalculationStrategy()
                                     : new DefaultPenaltyCalculationStrategy(annotations, mistakeTypes))
                                         .mapToJsonFormattedString());
-        } catch (AuthenticationException e) {
-            this.alertObservable.error("Authentication to Artemis failed: " + e.getMessage(), e);
-            return false;
         } catch (IOException e) {
             this.alertObservable.error("Local backend failed to format the annotations: " + e.getMessage(), e);
             return false;
         } catch (ArtemisClientException e) {
-            this.alertObservable.error("Assessor could not be retrieved from Artemis: " + e.getMessage(), e);
+            this.alertObservable
+                .error("Assessor could not be retrieved from Artemis or Authentication to Artemis failed:"
+                        + e.getMessage(), e);
             return false;
         }
 
