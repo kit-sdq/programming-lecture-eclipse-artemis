@@ -18,6 +18,8 @@ Karlsruhe Institute of Technology (KIT), Software Design and Quality, Karlsruhe,
    </configIni>
 
    <launcherArgs>
+      <programArgs>-perspective edu.kit.kastel.eclipse.grading.view.perspective.Perspective
+      </programArgs>
       <vmArgs>--add-modules=ALL-SYSTEM -Dosgi.requiredJavaVersion=11 -Xms512m -Xmx2048m
       </vmArgs>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts
@@ -359,9 +361,9 @@ version(s), and exceptions or additional permissions here}.&quot;
       <plugin id="org.eclipse.equinox.common" autoStart="true" startLevel="2" />
       <plugin id="org.eclipse.equinox.event" autoStart="true" startLevel="2" />
       <plugin id="org.eclipse.equinox.simpleconfigurator" autoStart="true" startLevel="1" />
+      <property name="osgi.instance.area.default" value="@user.home/workspace-grading" />
       <property name="org.eclipse.ui/org.eclipse.ui.edit.text.encoding" value="UTF-8" />
       <property name="org.eclipse.core.resources/encoding" value="UTF-8" />
-      <property name="osgi.instance.area.default" value="@user.home/workspace-grading" />
    </configurations>
 
    <preferencesInfo>

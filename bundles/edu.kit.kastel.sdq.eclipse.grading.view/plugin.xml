@@ -69,13 +69,13 @@
          point="org.eclipse.ui.views">
       <view
             class="edu.kit.kastel.eclipse.grading.view.marker.AssessmentMarkerView"
-            id="view.annotaion.marker.view"
+            id="edu.kit.kastel.eclipse.grading.view.marker.AssessmentMarkerView"
             name="Assessment Annotations"
             restorable="true">
       </view>
       <view
             class="edu.kit.kastel.eclipse.grading.view.assessment.ArtemisGradingView"
-            id="view.button.selection.view"
+            id="edu.kit.kastel.eclipse.grading.view.assessment.ArtemisGradingView"
             name="Artemis Grading"
             restorable="true">
       </view>
@@ -163,5 +163,13 @@
             class="edu.kit.kastel.eclipse.grading.view.preferences.PreferenceInitializer">
       </initializer>
    </extension>
-
+<extension
+         point="org.eclipse.ui.perspectives">
+         <perspective
+            class="edu.kit.kastel.eclipse.grading.view.perspective.Perspective"
+            fixed="false"
+            id="edu.kit.kastel.eclipse.grading.view.perspective.Perspective"
+            name="Artemis Perspective">
+      </perspective>
+   </extension>
 </plugin>
