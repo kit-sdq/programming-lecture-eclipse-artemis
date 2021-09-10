@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="edu.kit.kastel.sdq.eclipse.jvm.feature"
+      label="edu.kit.kastel.sdq.eclipse.jvm.feature"
+      version="11.0.4"
+      provider-name="KIT SDQ">
+
+   <plugin
+         id="edu.kit.kastel.sdq.eclipse.jvm.linux.x86_64"
+         os="linux"
+         arch="x86_64"
+         optional="true"
+		 unpack="true"
+         version="0.0.0"/>
+
+   <plugin
+         id="edu.kit.kastel.sdq.eclipse.jvm.macosx.x86_64"
+         os="macosx"
+         arch="x86_64"
+         optional="true"
+		 unpack="true"
+         version="0.0.0"/>
+
+   <plugin
+         id="edu.kit.kastel.sdq.eclipse.jvm.win32.x86_64"
+         os="win32"
+         arch="x86_64"
+         optional="true"
+		 unpack="true"
+         version="0.0.0"/>
+</feature>

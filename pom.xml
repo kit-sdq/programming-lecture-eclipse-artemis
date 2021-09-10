@@ -12,8 +12,8 @@
 	<modules>
 		<module>bundles</module>
 		<module>features</module>
-		<!--<module>tests</module>-->
 		<module>releng</module>
+		<module>jvm</module>
 	</modules>
 	
 	<properties>

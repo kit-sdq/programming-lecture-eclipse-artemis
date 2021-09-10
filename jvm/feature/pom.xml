@@ -1,0 +1,28 @@
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://maven.apache.org/POM/4.0.0">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>edu.kit.kastel.sdq.grading</groupId>
+		<artifactId>edu.kit.kastel.sdq.eclipse.jvm</artifactId>
+		<version>11.0.4</version>
+		<relativePath>..</relativePath>
+	</parent>
+
+	<artifactId>edu.kit.kastel.sdq.eclipse.jvm.feature</artifactId>
+	<packaging>eclipse-feature</packaging>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.eclipse.tycho.extras</groupId>
+				<artifactId>tycho-source-feature-plugin</artifactId>
+				<version>${tycho.version}</version>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>

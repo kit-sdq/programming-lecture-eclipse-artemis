@@ -353,6 +353,7 @@ version(s), and exceptions or additional permissions here}.&quot;
       <feature id="org.eclipse.m2e.sse.ui.feature" installMode="root"/>
       <feature id="org.eclipse.jgit.ssh.apache" installMode="root"/>
       <feature id="org.eclipse.jgit.gpg.bc" installMode="root"/>
+      <feature id="edu.kit.kastel.sdq.eclipse.jvm.feature"/>
    </features>
 
    <configurations>
