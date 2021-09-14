@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -187,7 +188,7 @@ public class ArtemisRESTClient extends AbstractArtemisClient implements IMapping
         this.throwIfStatusUnsuccessful(rsp);
         String rspString = rsp.readEntity(String.class);
 
-        ArtemisCourse[] coursesArray = read(rspString, ArtemisCourse[].class);
+        ArtemisCourse[] coursesArray = this.read(rspString, ArtemisCourse[].class);
         for (ArtemisCourse course : coursesArray) {
             course.init(this);
         }
@@ -206,7 +207,7 @@ public class ArtemisRESTClient extends AbstractArtemisClient implements IMapping
             .invoke(); // synchronous call
         this.throwIfStatusUnsuccessful(examsRsp);
 
-        ArtemisExam[] examsArray = read(examsRsp.readEntity(String.class), ArtemisExam[].class);
+        ArtemisExam[] examsArray = this.read(examsRsp.readEntity(String.class), ArtemisExam[].class);
         for (ArtemisExam exam : examsArray) {
             exam.init(this, course);
         }
@@ -231,7 +232,7 @@ public class ArtemisRESTClient extends AbstractArtemisClient implements IMapping
         this.throwIfStatusUnsuccessful(rsp);
 
         // need to retrieve the exerciseGroups array root node to deserialize it!
-        JsonNode detailledExamJsonNode = readTree(rsp.readEntity(String.class));
+        JsonNode detailledExamJsonNode = this.readTree(rsp.readEntity(String.class));
         JsonNode exerciseGroupsJsonArray = detailledExamJsonNode.get("exerciseGroups");
         if (exerciseGroupsJsonArray == null) {
             // exam has no exercise groups!
@@ -241,7 +242,7 @@ public class ArtemisRESTClient extends AbstractArtemisClient implements IMapping
             throw new ArtemisClientException(JSON_PARSE_ERROR_MESSAGE_CORRUPT_JSON_STRUCTURE);
         }
 
-        ArtemisExerciseGroup[] exerciseGroupsArray = read(exerciseGroupsJsonArray.toString(),
+        ArtemisExerciseGroup[] exerciseGroupsArray = this.read(exerciseGroupsJsonArray.toString(),
                 ArtemisExerciseGroup[].class);
         for (ArtemisExerciseGroup exerciseGroup : exerciseGroupsArray) {
             exerciseGroup.init(this);
@@ -265,7 +266,7 @@ public class ArtemisRESTClient extends AbstractArtemisClient implements IMapping
         this.throwIfStatusUnsuccessful(exercisesAndParticipationsRsp);
 
         // get the part of the json that we want to deserialize
-        final JsonNode exercisesAndParticipationsJsonNode = readTree(
+        final JsonNode exercisesAndParticipationsJsonNode = this.readTree(
                 exercisesAndParticipationsRsp.readEntity(String.class));
         JsonNode exercisesJsonArray = exercisesAndParticipationsJsonNode.get(EXERCISES_PATHPART);
         if (exercisesJsonArray == null) {
@@ -277,12 +278,14 @@ public class ArtemisRESTClient extends AbstractArtemisClient implements IMapping
         }
 
         // deserialize
-        ArtemisExercise[] exercisesArray = read(exercisesJsonArray.toString(), ArtemisExercise[].class);
+        ArtemisExercise[] exercisesArray = this.read(exercisesJsonArray.toString(), ArtemisExercise[].class);
         for (ArtemisExercise exercise : exercisesArray) {
             exercise.init(this);
         }
 
-        return Arrays.asList(exercisesArray);
+        return Arrays.stream(exercisesArray)
+        		.filter(exercise -> exercise.getType().equals("programming"))
+        		.collect(Collectors.toList());
     }
 
     @Override
@@ -302,7 +305,7 @@ public class ArtemisRESTClient extends AbstractArtemisClient implements IMapping
         this.throwIfStatusUnsuccessful(rsp);
 
         final String rspEntity = rsp.readEntity(String.class);
-        ArtemisSubmission[] submissionsArray = read(rspEntity, ArtemisSubmission[].class);
+        ArtemisSubmission[] submissionsArray = this.read(rspEntity, ArtemisSubmission[].class);
 
         for (ArtemisSubmission submission : submissionsArray) {
             submission.init();
@@ -329,7 +332,7 @@ public class ArtemisRESTClient extends AbstractArtemisClient implements IMapping
         }
 
         final String rspEntity = rsp.readEntity(String.class);
-        ArtemisSubmission[] submissionsArray = read(rspEntity, ArtemisSubmission[].class);
+        ArtemisSubmission[] submissionsArray = this.read(rspEntity, ArtemisSubmission[].class);
         for (ArtemisSubmission submission : submissionsArray) {
             submission.init();
         }
@@ -366,6 +369,22 @@ public class ArtemisRESTClient extends AbstractArtemisClient implements IMapping
 
     private ILockResult parseLockResult(final String jsonString) throws JsonProcessingException {
         return this.deserializingObjectMapper.readValue(jsonString, LockResult.class);
+    }
+
+    private <E> E read(String rspEntity, Class<E> clazz) throws ArtemisClientException {
+        try {
+            return this.deserializingObjectMapper.readValue(rspEntity, clazz);
+        } catch (Exception e) {
+            throw new ArtemisClientException(e.getMessage(), e);
+        }
+    }
+
+    private JsonNode readTree(String readEntity) throws ArtemisClientException {
+        try {
+            return this.unconfiguredObjectMapper.readTree(readEntity);
+        } catch (JsonProcessingException e) {
+            throw new ArtemisClientException(e.getMessage(), e);
+        }
     }
 
     @Override
@@ -445,22 +464,6 @@ public class ArtemisRESTClient extends AbstractArtemisClient implements IMapping
     private Entity<String> toJsonStringEntity(String jsonString) {
 
         return Entity.entity(jsonString, MediaType.APPLICATION_JSON_TYPE);
-    }
-
-    private <E> E read(String rspEntity, Class<E> clazz) throws ArtemisClientException {
-        try {
-            return this.deserializingObjectMapper.readValue(rspEntity, clazz);
-        } catch (Exception e) {
-            throw new ArtemisClientException(e.getMessage(), e);
-        }
-    }
-
-    private JsonNode readTree(String readEntity) throws ArtemisClientException {
-        try {
-            return this.unconfiguredObjectMapper.readTree(readEntity);
-        } catch (JsonProcessingException e) {
-            throw new ArtemisClientException(e.getMessage(), e);
-        }
     }
 
 }

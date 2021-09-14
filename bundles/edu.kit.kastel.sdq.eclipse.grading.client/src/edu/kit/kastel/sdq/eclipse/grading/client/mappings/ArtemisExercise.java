@@ -22,6 +22,8 @@ public class ArtemisExercise implements IExercise, Serializable {
     private String testRepositoryUrl;
     @JsonProperty
     private Boolean secondCorrectionEnabled;
+    @JsonProperty
+    private String type;
 
     private transient Collection<ISubmission> submissions;
     private transient IMappingLoader client;
@@ -54,8 +56,7 @@ public class ArtemisExercise implements IExercise, Serializable {
 
     @Override
     public String getShortName() {
-        // TODO Just a bugfix . Filter non programming exercises by using the type field !!
-        if (shortName == null) {
+        if (this.shortName == null) {
             return this.title;
         }
         return this.shortName;
@@ -63,8 +64,8 @@ public class ArtemisExercise implements IExercise, Serializable {
 
     @Override
     public Collection<ISubmission> getSubmissions() throws ArtemisClientException {
-        if (submissions == null) {
-            this.submissions = client.getSubmissionsForExercise(this);
+        if (this.submissions == null) {
+            this.submissions = this.client.getSubmissionsForExercise(this);
         }
         return this.submissions;
     }
@@ -77,6 +78,11 @@ public class ArtemisExercise implements IExercise, Serializable {
     @Override
     public String getTitle() {
         return this.title;
+    }
+
+    @Override
+    public String getType() {
+    	return this.type;
     }
 
     public void init(IMappingLoader client) {

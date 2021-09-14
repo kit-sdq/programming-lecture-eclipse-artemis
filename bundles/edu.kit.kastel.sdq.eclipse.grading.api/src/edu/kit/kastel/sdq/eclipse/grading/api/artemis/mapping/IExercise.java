@@ -17,4 +17,6 @@ public interface IExercise {
     String getTestRepositoryUrl();
 
     String getTitle();
+
+	String getType();
 }
