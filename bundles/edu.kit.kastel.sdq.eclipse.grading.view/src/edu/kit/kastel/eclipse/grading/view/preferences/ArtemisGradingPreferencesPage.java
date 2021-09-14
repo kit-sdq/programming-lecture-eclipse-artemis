@@ -60,6 +60,8 @@ public class ArtemisGradingPreferencesPage extends FieldEditorPreferencePage imp
 		StringFieldEditor artemisPassword = new StringFieldEditor(PreferenceConstants.ARTEMIS_PASSWORD,
 				"Artemis password: ", this.getFieldEditorParent());
 
+		artemisPassword.getTextControl(this.getFieldEditorParent()).setEchoChar('*');
+
 		this.addField(this.absoluteConfigPath);
 		this.addField(this.relativeConfigPath);
 		this.addField(this.isRelativeConfigPath);
