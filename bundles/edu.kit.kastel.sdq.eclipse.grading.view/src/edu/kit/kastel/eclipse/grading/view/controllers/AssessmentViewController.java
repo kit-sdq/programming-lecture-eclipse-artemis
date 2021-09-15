@@ -38,7 +38,12 @@ public class AssessmentViewController {
 	private IAlertObserver alertObserver;
 
 	public AssessmentViewController() {
+		Activator.getDefault().createSystemWideController();
 		this.systemwideController = Activator.getDefault().getSystemwideController();
+		this.initializeControllersAndObserver();
+	}
+
+	private void initializeControllersAndObserver() {
 		this.alertObserver = new ViewAlertObserver();
 		this.artemisGUIController = this.systemwideController.getArtemisGUIController();
 		this.systemwideController.getAlertObservable().addAlertObserver(this.alertObserver);
