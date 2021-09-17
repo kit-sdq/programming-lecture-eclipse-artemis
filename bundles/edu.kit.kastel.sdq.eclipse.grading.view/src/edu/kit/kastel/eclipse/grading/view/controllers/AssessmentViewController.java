@@ -73,6 +73,7 @@ public class AssessmentViewController {
 
 		try {
 			IMarker marker = AssessmentUtilities.getCurrentlyOpenFile().createMarker(AssessmentUtilities.MARKER_NAME);
+			marker.setAttribute("annotationID", (int) marker.getId());
 			marker.setAttribute(IMarker.CHAR_START, AssessmentUtilities.getLineOffSet(startLine));
 			marker.setAttribute(IMarker.CHAR_END, AssessmentUtilities.getLineOffSet(startLine) + lenght + 10);
 			if (mistake != null) {
@@ -129,6 +130,7 @@ public class AssessmentViewController {
 			IMarker marker = AssessmentUtilities
 					.getFile(annotation.getClassFilePath(), this.systemwideController.getCurrentProjectName())
 					.createMarker(AssessmentUtilities.MARKER_NAME);
+			marker.setAttribute("annotationID", annotation.getId());
 			marker.setAttribute(IMarker.CHAR_START, annotation.getMarkerCharStart());
 			marker.setAttribute(IMarker.CHAR_END, annotation.getMarkerCharEnd());
 			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_START, startLine + 1);

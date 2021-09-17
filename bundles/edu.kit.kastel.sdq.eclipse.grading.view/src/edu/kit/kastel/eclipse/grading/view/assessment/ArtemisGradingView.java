@@ -69,7 +69,7 @@ public class ArtemisGradingView extends ViewPart {
 				.asList(event.findMarkerDeltas(AssessmentUtilities.MARKER_NAME, true)).forEach(marker -> {
 					// check if marker is deleted
 					if (marker.getKind() == 2) {
-						this.viewController.deleteAnnotation(marker.getId());
+						this.viewController.deleteAnnotation((int) marker.getAttribute("annotationID"));
 						this.updatePenalties();
 					}
 				}));
@@ -188,17 +188,18 @@ public class ArtemisGradingView extends ViewPart {
 		});
 	}
 
-	private void createExamComboList(String courseTitle, Combo examCombo, Combo examExerciseCombo) {
+	private void createExamComboList(Combo courseCombo, Combo examCombo, Combo examExerciseCombo) {
 		examCombo.removeAll();
 		examExerciseCombo.removeAll();
-		this.viewController.getExerciseShortNames(courseTitle)
+		this.viewController.getExerciseShortNames(courseCombo.getItem(courseCombo.getSelectionIndex()))
 				.forEach(exerciseShortName -> examExerciseCombo.add(exerciseShortName));
 		examCombo.add("None");
-		this.viewController.getExamShortNames(courseTitle).forEach(examShortName -> examCombo.add(examShortName));
+		this.viewController.getExamShortNames(courseCombo.getItem(courseCombo.getSelectionIndex()))
+				.forEach(examShortName -> examCombo.add(examShortName));
 		examCombo.addListener(SWT.Selection, e -> {
 			examExerciseCombo.removeAll();
 			if ("None".equals(examCombo.getItem(examCombo.getSelectionIndex()))) {
-				this.viewController.getExerciseShortNames(courseTitle)
+				this.viewController.getExerciseShortNames(courseCombo.getItem(courseCombo.getSelectionIndex()))
 						.forEach(exerciseShortName -> examExerciseCombo.add(exerciseShortName));
 			} else {
 				this.viewController.getExercisesShortNamesForExam(examCombo.getItem(examCombo.getSelectionIndex()))
@@ -396,8 +397,7 @@ public class ArtemisGradingView extends ViewPart {
 	private void loadExamComboEntries(Combo examCourseCombo, Combo examCombo, Combo examExerciseCombo) {
 		this.viewController.getCourseShortNames().forEach(courseShortName -> examCourseCombo.add(courseShortName));
 		examCourseCombo.addListener(SWT.Selection, e -> {
-			this.createExamComboList(examCourseCombo.getItem(examCourseCombo.getSelectionIndex()), examCombo,
-					examExerciseCombo);
+			this.createExamComboList(this.courseCombo, examCombo, examExerciseCombo);
 			this.updateState();
 		});
 
