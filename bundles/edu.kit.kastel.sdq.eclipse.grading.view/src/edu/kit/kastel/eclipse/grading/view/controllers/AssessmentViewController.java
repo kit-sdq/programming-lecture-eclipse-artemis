@@ -17,7 +17,7 @@ import edu.kit.kastel.sdq.eclipse.grading.api.IAssessmentController;
 import edu.kit.kastel.sdq.eclipse.grading.api.ISystemwideController;
 import edu.kit.kastel.sdq.eclipse.grading.api.alerts.IAlertObserver;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ICourse;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission.Filter;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
 import edu.kit.kastel.sdq.eclipse.grading.api.backendstate.Transition;
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IAnnotation;
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IMistakeType;
@@ -245,8 +245,8 @@ public class AssessmentViewController {
 	/**
 	 * @return all submissions for the given filter
 	 */
-	public Collection<String> getSubmissionsForBacklog() {
-		return this.systemwideController.getBegunSubmissionsProjectNames(Filter.ALL);
+	public Collection<String> getSubmissionsForBacklog(ISubmission.Filter filter) {
+		return this.systemwideController.getBegunSubmissionsProjectNames(filter);
 	}
 
 	/**

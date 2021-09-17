@@ -24,6 +24,8 @@ import org.eclipse.ui.part.ViewPart;
 
 import edu.kit.kastel.eclipse.grading.view.controllers.AssessmentViewController;
 import edu.kit.kastel.eclipse.grading.view.utilities.AssessmentUtilities;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission.Filter;
 import edu.kit.kastel.sdq.eclipse.grading.api.backendstate.Transition;
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IMistakeType;
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IRatingGroup;
@@ -83,9 +85,8 @@ public class ArtemisGradingView extends ViewPart {
 		});
 	}
 
-	private void addSelectionListenerForRefreshButton(Button refreshButton, Combo backlogCombo) {
-		refreshButton.addListener(SWT.Selection, e -> this.fillBacklogComboWithData(backlogCombo));
-
+	private void addSelectionListenerForRefreshButton(Button refreshButton, Combo backlogCombo, Combo filterCombo) {
+		refreshButton.addListener(SWT.Selection, e -> this.fillBacklogComboWithData(backlogCombo, filterCombo));
 	}
 
 	private void addSelectionListenerForReloadButton(Button btnReloadA) {
@@ -143,27 +144,39 @@ public class ArtemisGradingView extends ViewPart {
 		Composite backlogComposite = new Composite(scrolledCompositeBacklog, SWT.NONE);
 		backlogComposite.setLayout(new GridLayout(2, false));
 
+		Label lblFilter = new Label(backlogComposite, SWT.NONE);
+		lblFilter.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblFilter.setText("Filter Selection");
+
+		Combo filterCombo = new Combo(backlogComposite, SWT.READ_ONLY);
+		GridData gdFilterCombo = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
+		filterCombo.setLayoutData(gdFilterCombo);
+
+		filterCombo.add("SUBMITTED");
+		filterCombo.add("NOT_SUBMITTED");
+
 		Label lblSubmitted = new Label(backlogComposite, SWT.NONE);
 		lblSubmitted.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblSubmitted.setText("Submitted");
+		lblSubmitted.setText("Submissions");
 
 		Combo backlogCombo = new Combo(backlogComposite, SWT.READ_ONLY);
 		this.backlogCombo = backlogCombo;
 		GridData gdBacklogCombo = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
-		gdBacklogCombo.widthHint = AssessmentUtilities.BACKLOG_COMBO_WIDTH;
 		backlogCombo.setLayoutData(gdBacklogCombo);
 
 		this.initializeBacklogCombo(backlogCombo);
 		this.addControlToPossibleActions(backlogCombo, Transition.SET_ASSESSED_SUBMISSION_BY_PROJECT_NAME);
+
+		this.addSelectionListenerForFilterCombo(backlogCombo, filterCombo);
 
 		Composite buttons = new Composite(backlogComposite, SWT.NONE);
 		buttons.setLayout(new GridLayout(2, true));
 		buttons.setLayoutData(new GridData(SWT.CENTER, SWT.FILL, true, true, 2, 1));
 
 		Button refreshButton = new Button(buttons, SWT.NONE);
-		refreshButton.setText("Refresh Submitted");
+		refreshButton.setText("Refresh Submissions");
 
-		this.addSelectionListenerForRefreshButton(refreshButton, backlogCombo);
+		this.addSelectionListenerForRefreshButton(refreshButton, backlogCombo, filterCombo);
 
 		Button btnLoadAgain = new Button(buttons, SWT.NONE);
 		btnLoadAgain.setText("Load again");
@@ -172,6 +185,15 @@ public class ArtemisGradingView extends ViewPart {
 
 		scrolledCompositeBacklog.setContent(backlogComposite);
 		scrolledCompositeBacklog.setMinSize(backlogComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+	}
+
+	private void addSelectionListenerForFilterCombo(Combo backlogCombo, Combo filterCombo) {
+		filterCombo.addListener(SWT.Selection, e -> {
+			if (backlogCombo.getItemCount() == 0) {
+				return;
+			}
+			this.fillBacklogComboWithData(backlogCombo, filterCombo);
+		});
 	}
 
 	private void createCustomButton(IRatingGroup ratingGroup, Group rgDisplay, IMistakeType mistake) {
@@ -382,9 +404,16 @@ public class ArtemisGradingView extends ViewPart {
 		this.updateState();
 	}
 
-	private void fillBacklogComboWithData(Combo backlogCombo) {
+	private void fillBacklogComboWithData(Combo backlogCombo, Combo filterCombo) {
 		backlogCombo.removeAll();
-		this.viewController.getSubmissionsForBacklog().forEach(project -> backlogCombo.add(project));
+		ISubmission.Filter filter = Filter.ALL;
+		if (filterCombo.getItem(filterCombo.getSelectionIndex()).equals("SUBMITTED")) {
+			filter = Filter.SAVED_AND_SUBMITTED;
+		}
+		if (filterCombo.getItem(filterCombo.getSelectionIndex()).equals("NOT_SUBMITTED")) {
+			filter = Filter.NOT_SUBMITTED;
+		}
+		this.viewController.getSubmissionsForBacklog(filter).forEach(project -> backlogCombo.add(project));
 	}
 
 	private void initializeBacklogCombo(Combo backlogCombo) {
