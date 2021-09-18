@@ -89,30 +89,30 @@
             id="edu.kit.kastel.eclipse.grading.view.annotationMarkerGenerator"
             name="Assessment Marker View Generator">
          <markerTypeReference
-               id="view.assessment.marker">
+               id="edu.kit.kastel.eclipse.grading.view.assessment.marker">
          </markerTypeReference>
          <markerFieldReference
-               id="view.marker.className">
+               id="edu.kit.kastel.eclipse.grading.view.marker.className">
          </markerFieldReference>
          <markerFieldReference
-               id="view.markerPositionField"
+               id="edu.kit.kastel.eclipse.grading.view.markerPositionField"
                visible="true">
          </markerFieldReference>
          <markerFieldReference
-               id="view.marker.ratingGroupField">
+               id="edu.kit.kastel.eclipse.grading.view.marker.ratingGroupField">
          </markerFieldReference>
          <markerFieldReference
-               id="view.markerErrorTypeField"
+               id="edu.kit.kastel.eclipse.grading.view.markerErrorTypeField"
                visible="true">
          </markerFieldReference>
          <markerFieldReference
-               id="view.marker.customErrorTypeDescription">
+               id="edu.kit.kastel.eclipse.grading.view.marker.customErrorTypeDescription">
          </markerFieldReference>
          <markerFieldReference
-               id="view.marker.customMessageField">
+               id="edu.kit.kastel.eclipse.grading.view.marker.customMessageField">
          </markerFieldReference>
          <markerFieldReference
-               id="view.marker.customPenalty">
+               id="edu.kit.kastel.eclipse.grading.view.marker.customPenalty">
          </markerFieldReference>
       </markerContentGenerator>
       <markerField
