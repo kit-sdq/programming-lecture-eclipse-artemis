@@ -54,7 +54,9 @@ public class BackendStateMachine {
 	 */
 	private void setUpTransitions() {
 		this.transitions.put(State.ERROR_STATE, new HashSet<>(List.of()));
-		this.transitions.put(State.NO_STATE, new HashSet<>(List.of(Transition.SET_COURSE_ID_AND_GET_EXERCISE_SHORT_NAMES)));
+		this.transitions.put(State.NO_STATE, new HashSet<>(List.of(
+				Transition.SET_COURSE_ID_AND_GET_EXERCISE_SHORT_NAMES,
+				Transition.ON_RESET)));
 		this.transitions.put(State.COURSE_SET, new HashSet<>(List.of(
 				Transition.SET_EXERCISE_ID,
 				Transition.SET_COURSE_ID_AND_GET_EXERCISE_SHORT_NAMES,
