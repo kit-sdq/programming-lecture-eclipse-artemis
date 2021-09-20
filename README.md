@@ -13,7 +13,57 @@ The Update Site is located here: https://kit-sdq.github.io/programming-lecture-e
 * TODO marketplace or so?
 
 ### Working with the GUI
-**===TODO===**
+The gui consists (mainly) of two parts:
+
+* Artemis Grading View
+* Assessment Annotations View
+
+Both can be open directly by open the Artemis Perspective.
+
+#### Artemis Grading View
+
+The Artemis Grading View is a tab folder with three tabs:
+
+* Grading
+* Assessment
+* Backlog
+
+#### Grading
+
+The grading tab can be used to create annotations for the downloaded submission. The tab is generated whenever a new submission is downloaded.
+For creating a new annotation do the following:
+
+* Mark the lines, where the annotation should be
+* Click on the mistake button in the certain rating group
+* After that you should see the new annotation in the assessment annotation view.
+
+<img src="docs/grading_tab.png" alt="Grading tab with the certain rating groups and mistake types" width="400" heigth="600"/>
+
+#### Assessment
+The assesment tab has the following functions:
+
+* Select course, exercise and exam
+* Start assessment (correction round 1 or 2)
+* Refresh artemis state (if something changed)
+
+After a new assessment is started, it is possible to reload, save or submit the started assesment (using the buttons).
+
+<img src="docs/assessment_tab.png" alt="Assessment tab" width="600" heigth="400"/>
+
+#### Backlog
+
+The backlog tab can be used to reload submissions that are already started, saved or submitted. One can filter the submission by selecting a filter in the first combo. 
+
+It is important to selected the specified course and exercise in the assessment tab, otherwise the submission cannot be loaded. After a submission is loaded again, it can be graded and submitted normally. 
+
+<img src="docs/backlog_tab.png" alt="Backlog tab" width="600" heigth="400"/>
+
+#### Assessment Annotation View
+
+The assessment annotation view shows the annotations of the downloaded submission. 
+The annotation can be deleted by deleting the marker. 
+
+<img src="docs/annotation_marker.png" alt="Two annotations and the corresponding view" width="600" heigth="400"/>
 
 ### Backend Configuration
 
@@ -109,7 +159,53 @@ The Artemis Client provides certain calls to artemis needed by the backend.
 
 #### GUI
 
-**===TODO===**
+### Creating new view elements
+New view elements (buttons, tabs, etc.) should be added to the *ArtemisGradingView* class. 
+Every tab has got his own method (e.g *createBacklogTab(...)* ).
+
+IMPORTANT:
+
+If the new view element is state-dependent, you have to update the state machine and add it to the set in the view. Otherwise it will not be updated during the *updateState()* method. Use:
+
+<pre><code>
+
+	// replace YOUR_TRANSITION with the certain transition
+	this.addControlToPossibleActions(yourNewViewElement, Transition.YOUR_TRANSITION);
+	
+</pre></code>
+
+### New calls to the backend
+
+New calls to the backend can be realized through the *ArtemisViewController* class. Then call the method in the view using the *ArtemisViewController*. 
+
+When the class is getting to messy, it would be a good idea to separate the calls according to the backend controllers 
+
+### Changing Preferences
+
+The preference page is defined in the *ArtemisGradingPreferencesPage* class. 
+A new field can be added in the *createFieldEditors()* method. 
+The initial values are set in the *PreferenceInitializer* class.
+
+An example with the field for the absolute config path:
+
+<pre><code>
+
+	public void createFieldEditors() {
+		this.absoluteConfigPath = new FileFieldEditor(PreferenceConstants.ABSOLUTE_CONFIG_PATH,
+				"Absolute config path: ", this.getFieldEditorParent());
+		this.addField(this.absoluteConfigPath);
+	}
+
+</pre></code>
+
+### Adding marker attributes
+
+A new attribute to the marker can be added in the plugin.xml. If the field should appear in the Assessment Annotation View, a class needs to be created for the field and it must be added to the *markerSupportGenerator* in the plugin.xml. 
+
+To make the name of the attribute easy to change, it should be defined as constant in the *AssessmentUtilities* class. The attribute should be set in the *addAssessmentAnnotaion(...)* method and the *createMarkerForAnnotation(...)* method in the *ArtemisViewController* class.
+
+For examples just look in the plugin.xml at the *org.eclipse.ui.ide.markerSupport* extension and the *edu.kit.kastel.eclipse.grading.view.marker* package for the field classes.
+
 
 ### Creating a new PenaltyRule
 
@@ -176,5 +272,5 @@ See our [Github Issues](https://github.com/kit-sdq/programming-lecture-eclipse-a
 
 ## Authors
 
-* Paul RÃ¼ssmann
+* Paul Rüssmann
 * Robin Schulz
