@@ -3,7 +3,7 @@
 <plugin>
 
    <extension
-         id="view.assessment.marker"
+         id="edu.kit.kastel.eclipse.grading.view.assessment.marker"
          name="Assessment Marker"
          point="org.eclipse.core.resources.markers">
       <super
@@ -33,6 +33,9 @@
       <attribute
             name="errorTypeDescription">
       </attribute>
+      <attribute
+            name="annotationID">
+      </attribute>
       <persistent
             value="true">
       </persistent>
@@ -40,7 +43,7 @@
    <extension
          point="org.eclipse.ui.editors.annotationTypes">
       <type
-            markerType="view.assessment.marker"
+            markerType="edu.kit.kastel.eclipse.grading.view.assessment.marker"
             name="Assessment Annotation">
       </type>
    </extension>
@@ -58,7 +61,7 @@
             overviewRulerPreferenceValue="true"
             presentationLayer="0"
             textPreferenceKey="key4"
-            textPreferenceValue="true"
+            textPreferenceValue="false"
             textStylePreferenceKey="key20"
             textStylePreferenceValue="BOX"
             verticalRulerPreferenceKey="key3"
@@ -83,68 +86,68 @@
    <extension
          point="org.eclipse.ui.ide.markerSupport">
       <markerContentGenerator
-            id="view.annotationMarkerGenerator"
+            id="edu.kit.kastel.eclipse.grading.view.annotationMarkerGenerator"
             name="Assessment Marker View Generator">
          <markerTypeReference
-               id="view.assessment.marker">
+               id="edu.kit.kastel.eclipse.grading.view.assessment.marker">
          </markerTypeReference>
          <markerFieldReference
-               id="view.marker.className">
+               id="edu.kit.kastel.eclipse.grading.view.marker.className">
          </markerFieldReference>
          <markerFieldReference
-               id="view.markerPositionField"
+               id="edu.kit.kastel.eclipse.grading.view.markerPositionField"
                visible="true">
          </markerFieldReference>
          <markerFieldReference
-               id="view.marker.ratingGroupField">
+               id="edu.kit.kastel.eclipse.grading.view.marker.ratingGroupField">
          </markerFieldReference>
          <markerFieldReference
-               id="view.markerErrorTypeField"
+               id="edu.kit.kastel.eclipse.grading.view.markerErrorTypeField"
                visible="true">
          </markerFieldReference>
          <markerFieldReference
-               id="view.marker.customErrorTypeDescription">
+               id="edu.kit.kastel.eclipse.grading.view.marker.customErrorTypeDescription">
          </markerFieldReference>
          <markerFieldReference
-               id="view.marker.customMessageField">
+               id="edu.kit.kastel.eclipse.grading.view.marker.customMessageField">
          </markerFieldReference>
          <markerFieldReference
-               id="view.marker.customPenalty">
+               id="edu.kit.kastel.eclipse.grading.view.marker.customPenalty">
          </markerFieldReference>
       </markerContentGenerator>
       <markerField
             class="edu.kit.kastel.eclipse.grading.view.marker.AssessmentMarkerPositionField"
-            id="view.markerPositionField"
+            id="edu.kit.kastel.eclipse.grading.view.markerPositionField"
             name="Position">
       </markerField>
       <markerField
             class="edu.kit.kastel.eclipse.grading.view.marker.AssessmentRatingGroupField"
-            id="view.marker.ratingGroupField"
+            id="edu.kit.kastel.eclipse.grading.view.marker.ratingGroupField"
             name="Rating Group ">
       </markerField>
       <markerField
             class="edu.kit.kastel.eclipse.grading.view.marker.AssessmentErrorTypeField"
-            id="view.markerErrorTypeField"
+            id="edu.kit.kastel.eclipse.grading.view.markerErrorTypeField"
             name="Error Type">
       </markerField>
       <markerField
             class="edu.kit.kastel.eclipse.grading.view.marker.AssessmentErrorTypeDescriptionField"
-            id="view.marker.customErrorTypeDescription"
+            id="edu.kit.kastel.eclipse.grading.view.marker.customErrorTypeDescription"
             name="Error Type Description">
       </markerField>
       <markerField
             class="edu.kit.kastel.eclipse.grading.view.marker.AssessmentMarkerCustomMessageField"
-            id="view.marker.customMessageField"
+            id="edu.kit.kastel.eclipse.grading.view.marker.customMessageField"
             name="Custom Message">
       </markerField>
       <markerField
             class="edu.kit.kastel.eclipse.grading.view.marker.AssessmentMarkerClassNameField"
-            id="view.marker.className"
+            id="edu.kit.kastel.eclipse.grading.view.marker.className"
             name="Class Name">
       </markerField>
       <markerField
             class="edu.kit.kastel.eclipse.grading.view.marker.AssessmentMarkerCustomPenalyField"
-            id="view.marker.customPenalty"
+            id="edu.kit.kastel.eclipse.grading.view.marker.customPenalty"
             name="Custom Penalty">
       </markerField>
    </extension>
@@ -152,7 +155,7 @@
          point="org.eclipse.ui.preferencePages">
       <page
             class="edu.kit.kastel.eclipse.grading.view.preferences.ArtemisGradingPreferencesPage"
-            id="view.preferences.SamplePreferencePage"
+            id="edu.kit.kastel.eclipse.grading.view.preferences.SamplePreferencePage"
             name="Artemis Grading">
       </page>
    </extension>

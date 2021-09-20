@@ -27,7 +27,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
  */
 public class AssessmentUtilities {
 
-	public static final String MARKER_NAME = "view.assessment.marker";
+	public static final String MARKER_NAME = "edu.kit.kastel.eclipse.grading.view.assessment.marker";
 	public static final String MARKER_ATTRIBUTE_ERROR = "errorType";
 	public static final String MARKER_ATTRIBUTE_ERROR_DESCRIPTION = "errorTypeDescription";
 	public static final String MARKER_ATTRIBUTE_CLASS_NAME = "className";
@@ -36,6 +36,8 @@ public class AssessmentUtilities {
 	public static final String MARKER_ATTRIBUTE_CUSTOM_MESSAGE = "customMessage";
 	public static final String MARKER_ATTRIBUTE_START = "start";
 	public static final String MARKER_ATTRIBUTE_END = "end";
+
+	public static final String MARKER_VIEW_ID = "edu.kit.kastel.eclipse.grading.view.annotationMarkerGenerator";
 
 	public static final int BACKLOG_COMBO_WIDTH = 300;
 

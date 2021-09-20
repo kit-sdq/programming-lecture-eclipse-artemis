@@ -37,7 +37,6 @@ public class Activator extends AbstractUIPlugin {
 		super.start(context);
 		plugin = this;
 
-		this.createSystemWideController();
 	}
 
 	@Override

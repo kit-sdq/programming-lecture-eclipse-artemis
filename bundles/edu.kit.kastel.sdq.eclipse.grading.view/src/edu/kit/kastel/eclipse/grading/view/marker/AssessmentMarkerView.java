@@ -2,6 +2,8 @@ package edu.kit.kastel.eclipse.grading.view.marker;
 
 import org.eclipse.ui.views.markers.MarkerSupportView;
 
+import edu.kit.kastel.eclipse.grading.view.utilities.AssessmentUtilities;
+
 /**
  * Class of the marker view
  * 
@@ -11,7 +13,7 @@ import org.eclipse.ui.views.markers.MarkerSupportView;
 public class AssessmentMarkerView extends MarkerSupportView {
 
 	public AssessmentMarkerView() {
-		super("view.annotationMarkerGenerator");
+		super(AssessmentUtilities.MARKER_VIEW_ID);
 	}
 
 }
