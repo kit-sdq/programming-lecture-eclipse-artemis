@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * This is only used in the json deserialization process. Much like {@link ParticipationDummy}
- *	TODO ==> ExerciseDTO, implements IExercise
  */
 public class ExerciseDummy {
 
