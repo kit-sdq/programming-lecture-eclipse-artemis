@@ -21,8 +21,6 @@ import edu.kit.kastel.sdq.eclipse.grading.api.model.IRatingGroup;
  * Maps Annotations to Artemis-accepted json-formatted strings.
  */
 public class AnnotationMapper {
-
-	// TODO maybe put into a constants class.
 	// keep this up to date with  https://github.com/ls1intum/Artemis/blob/develop/src/main/java/de/tum/in/www1/artemis/config/Constants.java#L121
 	private static final int FEEDBACK_DETAIL_TEXT_MAX_CHARACTERS = 5000;
 	private final Collection<IAnnotation> annotations;

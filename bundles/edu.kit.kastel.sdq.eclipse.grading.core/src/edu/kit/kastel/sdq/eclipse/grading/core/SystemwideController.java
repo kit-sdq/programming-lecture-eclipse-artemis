@@ -67,7 +67,7 @@ public class SystemwideController implements ISystemwideController {
 
         final SystemwideController thisSysController = this;
 
-        // change preferences ! TODO we dont need that. We always poll on downloading!
+        // change preferences
         this.preferenceStore.addPropertyChangeListener(event -> {
 
             if (PreferenceConstants.ARTEMIS_URL.equals(event.getProperty())
@@ -180,8 +180,7 @@ public class SystemwideController implements ISystemwideController {
 
     @Override
     public Set<Transition> getCurrentlyPossibleTransitions() {
-        // TODO its best if this is altered based on what correction rounds are enabled
-        boolean secondCorrectionRoundEnabled[] = { false };
+        boolean[] secondCorrectionRoundEnabled = { false };
         if (this.exerciseID != null) {
             this.artemisGUIController.getExercises(this.courseID, true)
                 .stream()
@@ -298,7 +297,6 @@ public class SystemwideController implements ISystemwideController {
     }
 
     public void setArtemisController(IArtemisController artemisController) {
-        // TODO reset whole state maybe needed...
         this.artemisGUIController = artemisController;
     }
 
