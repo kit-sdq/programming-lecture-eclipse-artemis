@@ -87,11 +87,7 @@ public class SystemwideController implements ISystemwideController {
         this.alertObservable = new AlertObservable();
 
         this.artemisGUIController = new ArtemisController(this, artemisHost, username, password);
-        this.projectFileNamingStrategy = new DefaultProjectFileNamingStrategy(); // TODO durch das
-                                                                                 // ganze projekt
-                                                                                 // durchreichen!
-                                                                                 // NUR hier
-                                                                                 // instanziieren!
+        this.projectFileNamingStrategy = new DefaultProjectFileNamingStrategy();
         this.backendStateMachine = new BackendStateMachine();
 
     }
