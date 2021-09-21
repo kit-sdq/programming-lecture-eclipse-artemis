@@ -487,7 +487,6 @@ public class ArtemisGradingView extends ViewPart {
 		this.viewController = new AssessmentViewController();
 		this.resetCombos();
 		this.updateState();
-
 	}
 
 	private void resetCombos() {

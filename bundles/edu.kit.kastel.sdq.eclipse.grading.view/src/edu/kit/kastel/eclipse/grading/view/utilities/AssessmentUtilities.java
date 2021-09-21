@@ -23,7 +23,8 @@ import org.eclipse.ui.texteditor.ITextEditor;
 /**
  * 
  * This class includes only static methods (or constants) for the assessment
- * process
+ * process. It also contains methods (or constant) for the view controller to
+ * keep the class clean.
  */
 public class AssessmentUtilities {
 

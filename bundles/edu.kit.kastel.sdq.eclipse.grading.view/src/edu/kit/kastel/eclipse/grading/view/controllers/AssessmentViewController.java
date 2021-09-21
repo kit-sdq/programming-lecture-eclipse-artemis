@@ -104,8 +104,12 @@ public class AssessmentViewController {
 					AssessmentUtilities.getPathForAnnotation(), customMessage, customPenalty,
 					AssessmentUtilities.getLineOffSet(startLine),
 					AssessmentUtilities.getLineOffSet(startLine) + lenght + 10);
-			// TODO: Error handling -> more specific!
 		} catch (Exception e) {
+
+			/*
+			 * Future Work: the error handling should be more specific (maybe for each
+			 * setAttribute(...)) without getting a too messy code
+			 */
 			e.printStackTrace();
 			this.alertObserver.error("Unable to create marker for annotation", e);
 		}
