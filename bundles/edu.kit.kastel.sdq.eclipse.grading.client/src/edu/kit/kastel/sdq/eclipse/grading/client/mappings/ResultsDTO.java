@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * <li> hasSavedAssessment;
  *
  */
-public class ResultsDummy {
+public class ResultsDTO {
 
 
 	@JsonProperty
@@ -17,5 +17,5 @@ public class ResultsDummy {
 	@JsonProperty
 	public Boolean hasFeedback;
 
-	public ResultsDummy() { }
+	public ResultsDTO() { }
 }
