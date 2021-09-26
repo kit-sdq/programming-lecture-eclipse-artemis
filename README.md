@@ -10,7 +10,6 @@ The Update Site is located here: https://kit-sdq.github.io/programming-lecture-e
 
 * Our Github CI run builds eclipse distros (linux, OS X, Windows) containing the plugin. Download it [here](https://github.com/kit-sdq/programming-lecture-eclipse-artemis-grading/actions/workflows/products.yml).
 * In case you are using OS X, you might need to add our target platform to run the plugin. It can be found [here](docs/workingTargetDefinition.target).
-* TODO marketplace or so?
 
 ### Working with the GUI
 The gui consists (mainly) of two parts:
@@ -264,7 +263,6 @@ There are three Controllers:
 
 For keeping the backend state sane and consistent, we use a state machine. That also allows for greying out buttons in the gui:
 ![backend state machine](docs/Zustandshaltung-Automat.png)
-TODO Further explain the state machine (code-wise)
 
 * On every state-modifying call to *edu.kit.kastel.sdq.eclipse.grading.core.SystemwideController* (represented by transitions (edges) in the state machine graph), the according transition is applied in the state machine. If it isn't possible, the transition is not applied and the GUI is notified.
 * Transitions are designed to represent button clicks in the GUI, which in turn are mapped to one backend call each.

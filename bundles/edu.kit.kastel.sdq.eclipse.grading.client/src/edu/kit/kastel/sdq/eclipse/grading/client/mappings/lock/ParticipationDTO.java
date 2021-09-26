@@ -4,15 +4,15 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * Only used for deserializing LockResult (retrieving participationID). Much like {@link ExerciseDummy}
+ * Only used for deserializing LockResult (retrieving participationID). Much like {@link ExerciseDTO}
  */
-public class ParticipationDummy {
+public class ParticipationDTO {
 
 	private int participationID;
 	private double exerciseMaxPoints;
 
 	@JsonCreator
-	public ParticipationDummy(@JsonProperty("id") int participationID, @JsonProperty("exercise") ExerciseDummy exerciseDummy) {
+	public ParticipationDTO(@JsonProperty("id") int participationID, @JsonProperty("exercise") ExerciseDTO exerciseDummy) {
 		this.participationID = participationID;
 		this.exerciseMaxPoints = exerciseDummy.getMaxPoints();
 	}
