@@ -58,6 +58,12 @@ It is important to selected the specified course and exercise in the assessment 
 
 <img src="docs/backlog_tab.png" alt="Backlog tab" width="600" heigth="400"/>
 
+#### Artemis Grading Preferences
+
+User data are persisted in the Artemis Grading Preferences. You can what you need to fill in down below. The relative path of the config refers to the downloaded project and can be activated by the check box. To update the preferences, the "Refresh Artemis State" button must be pressed in the Assessment tab. Otherwise the changes will only take effect after a restart.
+
+<img src="docs/preferences.png" alt="Artemis Preferences" width="600" heigth="400"/>
+
 #### Assessment Annotation View
 
 The assessment annotation view shows the annotations of the downloaded submission. 
