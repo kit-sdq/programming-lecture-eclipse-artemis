@@ -117,7 +117,7 @@ public class AssessmentViewController {
 	}
 
 	/**
-	 * creates marker for current annotations in the backend
+	 * creates markers for current annotations in the backend
 	 */
 	public void createAnnotationsMarkers() {
 		this.getAnnotations().forEach(this::createMarkerForAnnotation);
@@ -341,6 +341,11 @@ public class AssessmentViewController {
 		}
 	}
 
+	/**
+	 * Request all possible transitions of the current state
+	 * 
+	 * @return the possible transitions
+	 */
 	public Set<Transition> getPossiblyTransitions() {
 		return this.systemwideController.getCurrentlyPossibleTransitions();
 	}

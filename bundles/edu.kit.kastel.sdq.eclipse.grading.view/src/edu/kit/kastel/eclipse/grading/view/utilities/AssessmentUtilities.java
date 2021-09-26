@@ -73,10 +73,18 @@ public class AssessmentUtilities {
 		return String.format("[%s,%s], %s, %s", startLine, endline, customMessage, customPenalty);
 	}
 
+	/**
+	 * @param path        (of the file)
+	 * @param projectName (of the currently downloaded project)
+	 * @return An IFile instance of the file determined by the path
+	 */
 	public static IFile getFile(String path, String projectName) {
 		return ResourcesPlugin.getWorkspace().getRoot().getProject(projectName).getFile("assignment/" + path);
 	}
 
+	/**
+	 * @return the class name of the currently active file in the editor
+	 */
 	public static String getClassNameForAnnotation() {
 		final IWorkbenchPart workbenchPart = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
 				.getActivePart();
@@ -94,6 +102,12 @@ public class AssessmentUtilities {
 		return workbenchPart.getSite().getPage().getActiveEditor().getEditorInput().getAdapter(IFile.class);
 	}
 
+	/**
+	 * This method gets the offset for the marker creation.
+	 * 
+	 * @param startLine (of the annotation)
+	 * @return the number of chars until the start line
+	 */
 	public static Integer getLineOffSet(Integer startLine) {
 		final IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		final IWorkbench workbench = PlatformUI.getWorkbench();
@@ -118,6 +132,9 @@ public class AssessmentUtilities {
 		return -1;
 	}
 
+	/**
+	 * @return the path of the currently open file
+	 */
 	public static String getPathForAnnotation() {
 		final IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 
@@ -148,6 +165,9 @@ public class AssessmentUtilities {
 		return "";
 	}
 
+	/**
+	 * @return the currently selected text
+	 */
 	public static ITextSelection getTextSelection() {
 		final IEditorPart part = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
 		if (part instanceof ITextEditor) {

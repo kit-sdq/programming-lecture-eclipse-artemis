@@ -14,6 +14,11 @@ import org.eclipse.swt.widgets.Text;
 import edu.kit.kastel.eclipse.grading.view.controllers.AssessmentViewController;
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IMistakeType;
 
+/**
+ * This class is the view class for the custom penalty dialog. It has two
+ * fields, custom message and custom penalty.
+ *
+ */
 public class CustomButtonDialog extends Dialog {
 
 	private Text customMessageInputField;
