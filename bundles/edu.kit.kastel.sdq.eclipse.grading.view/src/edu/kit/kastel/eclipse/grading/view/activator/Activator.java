@@ -54,6 +54,9 @@ public class Activator extends AbstractUIPlugin {
 		return plugin;
 	}
 
+	/**
+	 * Creates a new instance of the SystemWideController
+	 */
 	public void createSystemWideController() {
 		this.systemwideController = new SystemwideController(this.getPreferenceStore());
 	}

@@ -16,7 +16,7 @@ public class ArtemisSubmission implements ISubmission, Serializable {
 
     // for constructing hasSubmittedAssessment and hasSavedAssessment
     @JsonProperty
-    private ResultsDummy[] results;
+    private ResultsDTO[] results;
 
     // for getting participantIdentifier, participantName, repositoryUrl
     @JsonProperty(value = "participation", required = true)
@@ -67,7 +67,7 @@ public class ArtemisSubmission implements ISubmission, Serializable {
 
     public void init() {
         if (this.results.length > 0) {
-            ResultsDummy lastResult = this.results[this.results.length - 1];
+            ResultsDTO lastResult = this.results[this.results.length - 1];
 
             this.hasSubmittedAssessment = lastResult.completionDate != null;
             this.hasSavedAssessment = lastResult.hasFeedback != null && lastResult.hasFeedback;

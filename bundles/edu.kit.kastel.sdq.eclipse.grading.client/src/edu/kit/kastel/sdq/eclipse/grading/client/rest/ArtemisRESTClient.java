@@ -44,14 +44,7 @@ import edu.kit.kastel.sdq.eclipse.grading.client.mappings.lock.LockResult;
 
 public class ArtemisRESTClient extends AbstractArtemisClient implements IMappingLoader {
 
-    /**
-     * TODO review this. Dont know what usernames are to be expected... TODO nicht das verwenden.
-     * Ich habe den Benutzernamen!
-     */
     private static final String USERNAME_REGEX = "[0-9A-Za-z.\\-]+";
-
-    // json fields
-    private static final String TITLE_FIELD = "title";
 
     // paths
     private static final String PROGRAMMING_SUBMISSION_PATHPART = "programming-submissions";
@@ -61,7 +54,6 @@ public class ArtemisRESTClient extends AbstractArtemisClient implements IMapping
 
     private static final String AUTHORIZATION_NAME = "Authorization";
 
-    private static final String JSON_PARSE_ERROR_MESSAGE = "Error parsing json: ";
     private static final String JSON_PARSE_ERROR_MESSAGE_CORRUPT_JSON_STRUCTURE = "Error parsing json: Corrupt Json Structure";
 
     private WebTarget rootApiTarget;
@@ -295,7 +287,7 @@ public class ArtemisRESTClient extends AbstractArtemisClient implements IMapping
         final Response rsp = this.rootApiTarget.path(EXERCISES_PATHPART)
             .path(String.valueOf(exerciseID))
             .path(PROGRAMMING_SUBMISSION_PATHPART)
-            // .queryParam("submittedOnly", submittedOnly) TODO change to true
+            // .queryParam("submittedOnly", submittedOnly)
             .queryParam("assessedByTutor", assessedByTutor)
             .request()
             .header(AUTHORIZATION_NAME, this.idToken.get()
@@ -320,7 +312,7 @@ public class ArtemisRESTClient extends AbstractArtemisClient implements IMapping
         final Response rsp = this.rootApiTarget.path(EXERCISES_PATHPART)
             .path(String.valueOf(exercise.getExerciseId()))
             .path(PROGRAMMING_SUBMISSION_PATHPART)
-            // .queryParam("submittedOnly", true) //TODO auf true setzen!
+            // .queryParam("submittedOnly", true)
             .request()
             .header(AUTHORIZATION_NAME, this.idToken.get()
                 .getHeaderString())
@@ -357,7 +349,7 @@ public class ArtemisRESTClient extends AbstractArtemisClient implements IMapping
             this.idToken = Optional.of(new IDToken(this.unconfiguredObjectMapper.readTree(authRspEntity)
                 .get("id_token")
                 .asText()));
-        } catch (IOException _e) {
+        } catch (IOException e) {
             throw new ArtemisClientException("Authentication to \"" + this.getApiRoot()
                     + "\" failed: No token could be retrieved in server response.");
         }

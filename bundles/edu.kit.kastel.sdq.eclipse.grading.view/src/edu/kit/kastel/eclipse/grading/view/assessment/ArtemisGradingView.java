@@ -391,6 +391,9 @@ public class ArtemisGradingView extends ViewPart {
 		this.scrolledCompositeGrading.setMinSize(this.gradingComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 	}
 
+	/**
+	 * This methods creates the whole view components.
+	 */
 	@Override
 	public void createPartControl(Composite parent) {
 		this.createView(parent);
@@ -487,7 +490,6 @@ public class ArtemisGradingView extends ViewPart {
 		this.viewController = new AssessmentViewController();
 		this.resetCombos();
 		this.updateState();
-
 	}
 
 	private void resetCombos() {

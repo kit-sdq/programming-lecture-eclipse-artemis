@@ -104,8 +104,12 @@ public class AssessmentViewController {
 					AssessmentUtilities.getPathForAnnotation(), customMessage, customPenalty,
 					AssessmentUtilities.getLineOffSet(startLine),
 					AssessmentUtilities.getLineOffSet(startLine) + lenght + 10);
-			// TODO: Error handling -> more specific!
 		} catch (Exception e) {
+
+			/*
+			 * Future Work: the error handling should be more specific (maybe for each
+			 * setAttribute(...)) without getting a too messy code
+			 */
 			e.printStackTrace();
 			this.alertObserver.error("Unable to create marker for annotation", e);
 		}
@@ -113,7 +117,7 @@ public class AssessmentViewController {
 	}
 
 	/**
-	 * creates marker for current annotations in the backend
+	 * creates markers for current annotations in the backend
 	 */
 	public void createAnnotationsMarkers() {
 		this.getAnnotations().forEach(this::createMarkerForAnnotation);
@@ -337,6 +341,11 @@ public class AssessmentViewController {
 		}
 	}
 
+	/**
+	 * Request all possible transitions of the current state
+	 * 
+	 * @return the possible transitions
+	 */
 	public Set<Transition> getPossiblyTransitions() {
 		return this.systemwideController.getCurrentlyPossibleTransitions();
 	}

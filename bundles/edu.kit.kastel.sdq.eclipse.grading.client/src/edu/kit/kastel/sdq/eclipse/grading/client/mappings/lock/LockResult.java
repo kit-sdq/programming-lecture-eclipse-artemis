@@ -21,7 +21,7 @@ public class LockResult implements ILockResult {
 	public LockResult(
 			@JsonProperty("id") int submissionID,
 			@JsonProperty("results") List<LockCallAssessmentResult> previousAssessmentresults,
-			@JsonProperty("participation") ParticipationDummy participationDummy) {
+			@JsonProperty("participation") ParticipationDTO participationDummy) {
 		this.submissionID = submissionID;
 		this.participationID = participationDummy.getParticipationID();
 		this.maxPoints = participationDummy.getExerciseMaxPoints();
