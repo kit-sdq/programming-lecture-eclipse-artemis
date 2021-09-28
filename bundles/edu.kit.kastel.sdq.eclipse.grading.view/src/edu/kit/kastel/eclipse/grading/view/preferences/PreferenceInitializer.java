@@ -22,7 +22,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		IPreferenceStore store = Activator.getDefault().getPreferenceStore();
 		store.setDefault(PreferenceConstants.ABSOLUTE_CONFIG_PATH, "");
 		store.setDefault(PreferenceConstants.RELATIVE_CONFIG_PATH, "");
-		store.setDefault(PreferenceConstants.IS_RELATIVE_CONFIG_PATH, "");
+		store.setDefault(PreferenceConstants.IS_RELATIVE_CONFIG_PATH, "false");
 		store.setDefault(PreferenceConstants.ARTEMIS_URL, "");
 		store.setDefault(PreferenceConstants.ARTEMIS_USER, "");
 		store.setDefault(PreferenceConstants.ARTEMIS_PASSWORD, "");
