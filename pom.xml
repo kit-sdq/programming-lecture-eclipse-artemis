@@ -15,7 +15,7 @@
 		<module>releng</module>
 		<module>jvm</module>
 	</modules>
-	
+
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -26,7 +26,7 @@
 		<xtext.version>2.19.0</xtext.version>
 		<tycho.version>2.1.0</tycho.version>
 	</properties>
-	
+
 	<repositories>
 		<repository>
 			<id>Eclipse</id>
@@ -38,8 +38,13 @@
 			<layout>p2</layout>
 			<url>https://download.eclipse.org/tools/orbit/downloads/drops/R20210602031627/repository</url>
 		</repository>
+		<repository>
+			<id>CheckStyle</id>
+			<layout>p2</layout>
+			<url>https://checkstyle.org/eclipse-cs-update-site</url>
+		</repository>
 	</repositories>
-	
+
 	<build>
 		<plugins>
 
@@ -60,7 +65,7 @@
 				<version>${tycho.version}</version>
 				<extensions>true</extensions>
 			</plugin>
-			
+
 			<!-- Creates source versions of bundles -->
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
@@ -75,7 +80,7 @@
 					</execution>
 				</executions>
 			</plugin>
-			
+
 			<!-- Creates source versions of features -->
 			<plugin>
 				<groupId>org.eclipse.tycho.extras</groupId>
@@ -91,7 +96,7 @@
 					</execution>
 				</executions>
 			</plugin>
-			
+
 			<!-- Correctly handles source features on p2 update site -->
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
