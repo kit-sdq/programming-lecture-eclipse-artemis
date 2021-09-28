@@ -26,7 +26,7 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExerciseGroup;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission.Filter;
 import edu.kit.kastel.sdq.eclipse.grading.api.backendstate.Transition;
-import edu.kit.kastel.sdq.eclipse.grading.core.artemis.DefaultProjectFileNamingStrategy;
+import edu.kit.kastel.sdq.eclipse.grading.core.artemis.ProjectFileNamingStrategies;
 import edu.kit.kastel.sdq.eclipse.grading.core.artemis.WorkspaceUtil;
 import edu.kit.kastel.sdq.eclipse.grading.core.config.ConfigDao;
 import edu.kit.kastel.sdq.eclipse.grading.core.config.JsonFileConfigDao;
@@ -87,7 +87,7 @@ public class SystemwideController implements ISystemwideController {
         this.alertObservable = new AlertObservable();
 
         this.artemisGUIController = new ArtemisController(this, artemisHost, username, password);
-        this.projectFileNamingStrategy = new DefaultProjectFileNamingStrategy();
+        this.projectFileNamingStrategy = ProjectFileNamingStrategies.DEFAULT.get();
         this.backendStateMachine = new BackendStateMachine();
 
     }
@@ -223,7 +223,8 @@ public class SystemwideController implements ISystemwideController {
         this.getArtemisGUIController()
             .startAssessment(this.submissionID);
         this.getArtemisGUIController()
-            .downloadExerciseAndSubmission(this.courseID, this.exerciseID, this.submissionID);
+            .downloadExerciseAndSubmission(this.courseID, this.exerciseID, this.submissionID,
+                    this.projectFileNamingStrategy);
     }
 
     /**
@@ -261,7 +262,7 @@ public class SystemwideController implements ISystemwideController {
 
         if (this.artemisGUIController.saveAssessment(this.submissionID, true, true)) {
             this.getCurrentAssessmentController()
-                .deleteEclipseProject();
+                .deleteEclipseProject(this.projectFileNamingStrategy);
             this.submissionID = null;
         }
     }
@@ -277,7 +278,7 @@ public class SystemwideController implements ISystemwideController {
         this.updateConfigFile();
 
         this.getCurrentAssessmentController()
-            .resetAndRestartAssessment();
+            .resetAndRestartAssessment(this.projectFileNamingStrategy);
     }
 
     @Override
@@ -408,7 +409,8 @@ public class SystemwideController implements ISystemwideController {
 
         // perform download. Revert state if that fails.
         if (!this.getArtemisGUIController()
-            .downloadExerciseAndSubmission(this.courseID, this.exerciseID, this.submissionID)) {
+            .downloadExerciseAndSubmission(this.courseID, this.exerciseID, this.submissionID,
+                    this.projectFileNamingStrategy)) {
             this.backendStateMachine.revertLatestTransition();
             return false;
         }
@@ -444,7 +446,7 @@ public class SystemwideController implements ISystemwideController {
 
         if (this.artemisGUIController.saveAssessment(this.submissionID, true, false)) {
             this.getCurrentAssessmentController()
-                .deleteEclipseProject();
+                .deleteEclipseProject(this.projectFileNamingStrategy);
             this.assessmentControllers.remove(this.submissionID);
             this.submissionID = null;
         }

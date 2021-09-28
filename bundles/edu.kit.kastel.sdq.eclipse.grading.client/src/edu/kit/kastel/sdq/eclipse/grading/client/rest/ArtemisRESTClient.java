@@ -44,8 +44,6 @@ import edu.kit.kastel.sdq.eclipse.grading.client.mappings.lock.LockResult;
 
 public class ArtemisRESTClient extends AbstractArtemisClient implements IMappingLoader {
 
-    private static final String USERNAME_REGEX = "[0-9A-Za-z.\\-]+";
-
     // paths
     private static final String PROGRAMMING_SUBMISSION_PATHPART = "programming-submissions";
     private static final String EXERCISES_PATHPART = "exercises";
@@ -87,20 +85,6 @@ public class ArtemisRESTClient extends AbstractArtemisClient implements IMapping
         }
     }
 
-    /**
-     * Example:
-     * https://test-student@artemis-test-git.ipd.kit.edu/PRAKTIKUM21TESTAUFGABE1/praktikum21testaufgabe1-test-student.git
-     * ==>
-     * https://artemis-test-git.ipd.kit.edu/PRAKTIKUM21TESTAUFGABE1/praktikum21testaufgabe1-test-student.git
-     *
-     * @param repositoryURLWithStudentName
-     * @return
-     */
-    private String convertRepositoryUrl(String repositoryURLWithStudentName) {
-        return repositoryURLWithStudentName.replaceFirst(Constants.HTTPS_PREFIX + USERNAME_REGEX + "@",
-                Constants.HTTPS_PREFIX);
-    }
-
     @Override
     public void downloadExerciseAndSubmission(IExercise exercise, ISubmission submission, File directory,
             IProjectFileNamingStrategy projectFileNamingStrategy) throws ArtemisClientException {
@@ -125,8 +109,7 @@ public class ArtemisRESTClient extends AbstractArtemisClient implements IMapping
     }
 
     protected void downloadSubmission(ISubmission submission, File directory) throws GitException {
-        new EgitGitHandler(this.convertRepositoryUrl(submission.getRepositoryUrl())).cloneRepo(directory,
-                Constants.MASTER_BRANCH_NAME);
+        new EgitGitHandler(submission.getRepositoryUrl()).cloneRepo(directory, Constants.MASTER_BRANCH_NAME);
     }
 
     private void downloadTestRepo(IExercise exercise, File directory) throws GitException {
@@ -258,8 +241,8 @@ public class ArtemisRESTClient extends AbstractArtemisClient implements IMapping
         this.throwIfStatusUnsuccessful(exercisesAndParticipationsRsp);
 
         // get the part of the json that we want to deserialize
-        final JsonNode exercisesAndParticipationsJsonNode = this.readTree(
-                exercisesAndParticipationsRsp.readEntity(String.class));
+        final JsonNode exercisesAndParticipationsJsonNode = this
+            .readTree(exercisesAndParticipationsRsp.readEntity(String.class));
         JsonNode exercisesJsonArray = exercisesAndParticipationsJsonNode.get(EXERCISES_PATHPART);
         if (exercisesJsonArray == null) {
             // course has no exercises!
@@ -276,8 +259,8 @@ public class ArtemisRESTClient extends AbstractArtemisClient implements IMapping
         }
 
         return Arrays.stream(exercisesArray)
-        		.filter(exercise -> exercise.getType().equals("programming"))
-        		.collect(Collectors.toList());
+            .filter(exercise -> "programming".equals(exercise.getType()))
+            .collect(Collectors.toList());
     }
 
     @Override

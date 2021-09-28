@@ -32,7 +32,6 @@ import edu.kit.kastel.sdq.eclipse.grading.api.model.IMistakeType;
 import edu.kit.kastel.sdq.eclipse.grading.client.rest.ArtemisRESTClient;
 import edu.kit.kastel.sdq.eclipse.grading.core.artemis.AnnotationMapper;
 import edu.kit.kastel.sdq.eclipse.grading.core.artemis.DefaultPenaltyCalculationStrategy;
-import edu.kit.kastel.sdq.eclipse.grading.core.artemis.DefaultProjectFileNamingStrategy;
 import edu.kit.kastel.sdq.eclipse.grading.core.artemis.WorkspaceUtil;
 import edu.kit.kastel.sdq.eclipse.grading.core.artemis.ZeroedPenaltyCalculationStrategy;
 
@@ -55,33 +54,31 @@ public class ArtemisController implements IArtemisController {
     }
 
     @Override
-    public boolean downloadExerciseAndSubmission(int courseID, int exerciseID, int submissionID) {
+    public boolean downloadExerciseAndSubmission(int courseID, int exerciseID, int submissionID,
+            IProjectFileNamingStrategy projectNaming) {
         final File eclipseWorkspaceRoot = ResourcesPlugin.getWorkspace()
             .getRoot()
             .getLocation()
             .toFile();
-        final IProjectFileNamingStrategy defaultProjectFileNamingStrategy = new DefaultProjectFileNamingStrategy();
 
         final Collection<ICourse> courses = this.getCourses();
         final IExercise exercise = this.getExerciseFromCourses(courses, courseID, exerciseID);
         final ISubmission submission = this.getSubmissionFromExercise(exercise, submissionID);
 
         // abort if directory already exists.
-        if (this.existsAndNotify(defaultProjectFileNamingStrategy.getProjectFileInWorkspace(eclipseWorkspaceRoot,
-                exercise, submission))) {
+        if (this.existsAndNotify(projectNaming.getProjectFileInWorkspace(eclipseWorkspaceRoot, exercise, submission))) {
             return false;
         }
 
         try {
-            this.artemisClient.downloadExerciseAndSubmission(exercise, submission, eclipseWorkspaceRoot,
-                    defaultProjectFileNamingStrategy);
+            this.artemisClient.downloadExerciseAndSubmission(exercise, submission, eclipseWorkspaceRoot, projectNaming);
         } catch (ArtemisClientException e) {
             this.alertObservable.error(e.getMessage(), e);
             return false;
         }
         try {
-            WorkspaceUtil.createEclipseProject(defaultProjectFileNamingStrategy
-                .getProjectFileInWorkspace(eclipseWorkspaceRoot, exercise, submission));
+            WorkspaceUtil.createEclipseProject(
+                    projectNaming.getProjectFileInWorkspace(eclipseWorkspaceRoot, exercise, submission));
         } catch (CoreException e) {
             this.alertObservable.error("Project could not be created: " + e.getMessage(), null);
         }

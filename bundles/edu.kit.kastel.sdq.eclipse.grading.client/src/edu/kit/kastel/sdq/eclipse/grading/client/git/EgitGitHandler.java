@@ -1,32 +1,48 @@
 package edu.kit.kastel.sdq.eclipse.grading.client.git;
 
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
-import java.net.URISyntaxException;
+import java.io.IOException;
 
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.egit.core.op.CloneOperation;
+import org.eclipse.jgit.api.CloneCommand;
+import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.transport.URIish;
+import org.eclipse.jgit.util.FileUtils;
 
 public class EgitGitHandler extends AbstractGitHandler {
 
-	private static final String REMOTE_NAME = "origin";
+    private static final String REMOTE_NAME = "origin";
 
-	public EgitGitHandler(String repoURL) {
-		super(repoURL);
-	}
+    public EgitGitHandler(String repoURL) {
+        super(repoURL);
+    }
 
-	@Override
-	public void cloneRepo(final File destination, final String branch) throws GitException {
-		try {
-			new CloneOperation(this.getURIish(), true, null, destination, branch, REMOTE_NAME, 0).run(new NullProgressMonitor());
-		} catch (InvocationTargetException | InterruptedException | URISyntaxException e) {
-			throw new GitException("Git clone failed with exception [" + e.getClass() + "]:"+ e.getMessage(), e);
-		}
-	}
+    @Override
+    public void cloneRepo(final File destination, final String branch) throws GitException {
+        Repository repository = null;
+        try {
+            CloneCommand cloneRepository = Git.cloneRepository();
+            cloneRepository.setBranch(branch);
+            cloneRepository.setDirectory(destination);
+            cloneRepository.setRemote(REMOTE_NAME);
+            cloneRepository.setURI(new URIish(this.getRepoURL()).toString());
+            cloneRepository.setCloneAllBranches(true);
+            cloneRepository.setCloneSubmodules(false);
+            Git git = cloneRepository.call();
+            repository = git.getRepository();
+        } catch (final Exception e) {
+            try {
+                FileUtils.delete(destination, FileUtils.RECURSIVE);
+            } catch (IOException ioe) {
+                throw new GitException("Git clone failed with exception" + ioe.getMessage(), ioe);
+            }
+            throw new GitException("Git clone failed with exception" + e.getMessage(), e);
+        } finally {
+            if (repository != null) {
+                repository.close();
+            }
+        }
 
-	private URIish getURIish() throws URISyntaxException {
-		return new URIish(this.getRepoURL());
-	}
+    }
 
 }
