@@ -158,7 +158,9 @@ public class AssessmentViewController {
 	 * @param id (of the annotation)
 	 */
 	public void deleteAnnotation(long id) {
-		this.assessmentController.removeAnnotation((int) id);
+		if (this.assessmentController != null) {
+			this.assessmentController.removeAnnotation((int) id);
+		}
 	}
 
 	/**

@@ -23,7 +23,15 @@ public class LockResult implements ILockResult {
 		this.participation = participation;
 
 		this.preexistentFeedbacks = new LinkedList<>();
-		previousAssessmentresults.stream().forEach(prevAssessment -> this.preexistentFeedbacks.addAll(prevAssessment.getFeedbacks()));
+		LockCallAssessmentResult latestResult = previousAssessmentresults.isEmpty() //
+				? null //
+				: previousAssessmentresults.get(previousAssessmentresults.size() - 1);
+
+		if (latestResult != null) {
+			this.preexistentFeedbacks.addAll(latestResult.getFeedbacks());
+		}
+		// previousAssessmentresults.stream().forEach(prevAssessment ->
+		// this.preexistentFeedbacks.addAll(prevAssessment.getFeedbacks()));
 	}
 
 	@Override

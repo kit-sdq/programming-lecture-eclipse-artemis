@@ -1,6 +1,7 @@
 package edu.kit.kastel.sdq.eclipse.grading.api;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,6 +35,13 @@ public interface IArtemisClient {
 	 */
 	List<ICourse> getCourses() throws ArtemisClientException;
 
+	default List<ISubmission> getSubmissions(IExercise exercise, boolean assessedByTutor) throws ArtemisClientException {
+		List<ISubmission> submissions = new ArrayList<>();
+		submissions.addAll(this.getSubmissions(exercise, assessedByTutor, 0));
+		submissions.addAll(this.getSubmissions(exercise, assessedByTutor, 1));
+		return submissions;
+	}
+
 	/**
 	 *
 	 * @param exerciseID
@@ -42,7 +50,7 @@ public interface IArtemisClient {
 	 * @return submissions for the given exerciseID, filterable.
 	 * @throws ArtemisClientException if some errors occur while parsing the result.
 	 */
-	List<ISubmission> getSubmissions(IExercise exercise, boolean assessedByTutor) throws ArtemisClientException;
+	List<ISubmission> getSubmissions(IExercise exercise, boolean assessedByTutor, int correctionRound) throws ArtemisClientException;
 
 	/**
 	 * Submit the assessment to Artemis. Must have been started by

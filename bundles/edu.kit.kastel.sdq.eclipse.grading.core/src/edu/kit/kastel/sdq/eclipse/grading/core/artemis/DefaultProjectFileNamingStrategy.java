@@ -36,6 +36,9 @@ public class DefaultProjectFileNamingStrategy implements IProjectFileNamingStrat
             .append(submission.getSubmissionId())
             .append("-")
             .append(submission.getParticipantIdentifier())
+            .append("-")
+            .append("round")
+            .append(submission.getCorrectionRound() + 1)
             .toString());
     }
 

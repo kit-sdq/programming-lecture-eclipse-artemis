@@ -23,4 +23,6 @@ public interface ISubmission {
 	 *         "submitted".
 	 */
 	boolean hasSubmittedAssessment();
+
+	int getCorrectionRound();
 }

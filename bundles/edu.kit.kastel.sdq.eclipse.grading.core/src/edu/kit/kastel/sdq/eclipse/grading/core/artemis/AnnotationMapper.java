@@ -228,7 +228,6 @@ public class AnnotationMapper {
 
 	private List<IFeedback> getFilteredPreexistentFeedbacks(FeedbackType feedbackType) {
 		List<IFeedback> feedbacks = new ArrayList<>();
-		// TODO Check Filter for duplicates
 		for (IFeedback feedback : this.lock.getPreexistentFeedbacks()) {
 			if (feedback.getFeedbackType() == null || feedback.getFeedbackType() != feedbackType) {
 				continue;

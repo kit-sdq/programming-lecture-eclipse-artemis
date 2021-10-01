@@ -405,10 +405,11 @@ public class ArtemisGradingView extends ViewPart {
 	private void fillBacklogComboWithData(Combo backlogCombo, Combo filterCombo) {
 		backlogCombo.removeAll();
 		SubmissionFilter filter = SubmissionFilter.ALL;
-		if (filterCombo.getItem(filterCombo.getSelectionIndex()).equals("SUBMITTED")) {
+		int idx = filterCombo.getSelectionIndex();
+		if (idx >= 0 && filterCombo.getItem(idx).equals("SUBMITTED")) {
 			filter = SubmissionFilter.SAVED_AND_SUBMITTED;
 		}
-		if (filterCombo.getItem(filterCombo.getSelectionIndex()).equals("NOT_SUBMITTED")) {
+		if (idx >= 0 && filterCombo.getItem(idx).equals("NOT_SUBMITTED")) {
 			filter = SubmissionFilter.NOT_SUBMITTED;
 		}
 		this.viewController.getSubmissionsForBacklog(filter).forEach(project -> backlogCombo.add(project));

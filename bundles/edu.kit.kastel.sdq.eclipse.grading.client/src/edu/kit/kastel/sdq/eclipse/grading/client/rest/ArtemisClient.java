@@ -184,11 +184,13 @@ public class ArtemisClient extends AbstractArtemisClient implements IMappingLoad
 	}
 
 	@Override
-	public List<ISubmission> getSubmissions(IExercise exercise, boolean assessedByTutor) throws ArtemisClientException {
-		// TODO Set assessed by tutor to false ? iff instructor of the course ?!
+	public List<ISubmission> getSubmissions(IExercise exercise, boolean assessedByTutor, int correctionRound) throws ArtemisClientException {
+		// TODO Set assessed by tutor to false !!
 		this.checkAuthentication();
-		final Response rsp = this.endpoint.path(EXERCISES_PATHPART).path(String.valueOf(exercise.getExerciseId())).path(PROGRAMMING_SUBMISSION_PATHPART)
-				.queryParam("assessedByTutor", assessedByTutor).request().header(AUTHORIZATION_NAME, this.token).buildGet().invoke();
+		final Response rsp = this.endpoint.path(EXERCISES_PATHPART).path(String.valueOf(exercise.getExerciseId())).path(PROGRAMMING_SUBMISSION_PATHPART) //
+				.queryParam("assessedByTutor", assessedByTutor) //
+				.queryParam("correction-round", correctionRound) //
+				.request().header(AUTHORIZATION_NAME, this.token).buildGet().invoke();
 
 		this.throwIfStatusUnsuccessful(rsp);
 
@@ -196,16 +198,18 @@ public class ArtemisClient extends AbstractArtemisClient implements IMappingLoad
 		ArtemisSubmission[] submissionsArray = this.read(rspEntity, ArtemisSubmission[].class);
 
 		for (ArtemisSubmission submission : submissionsArray) {
-			submission.init();
+			submission.init(correctionRound);
 		}
 
 		return Arrays.asList(submissionsArray);
 	}
 
 	@Override
-	public List<ISubmission> getSubmissionsForExercise(IExercise exercise) throws ArtemisClientException {
+	public List<ISubmission> getSubmissionsForExercise(IExercise exercise, int correctionRound) throws ArtemisClientException {
 		this.checkAuthentication();
+
 		final Response rsp = this.endpoint.path(EXERCISES_PATHPART).path(String.valueOf(exercise.getExerciseId())).path(PROGRAMMING_SUBMISSION_PATHPART)
+				.queryParam("correction-round", correctionRound) //
 				.request().header(AUTHORIZATION_NAME, this.token).buildGet().invoke(); // synchronous variant
 		if (!this.isStatusSuccessful(rsp)) {
 			// may happen sometimes
@@ -215,7 +219,7 @@ public class ArtemisClient extends AbstractArtemisClient implements IMappingLoad
 		final String rspEntity = rsp.readEntity(String.class);
 		ArtemisSubmission[] submissionsArray = this.read(rspEntity, ArtemisSubmission[].class);
 		for (ArtemisSubmission submission : submissionsArray) {
-			submission.init();
+			submission.init(correctionRound);
 		}
 
 		return Arrays.asList(submissionsArray);
