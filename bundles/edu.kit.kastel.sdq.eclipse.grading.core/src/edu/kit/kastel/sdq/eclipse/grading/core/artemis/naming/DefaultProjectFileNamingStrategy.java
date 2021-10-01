@@ -1,4 +1,4 @@
-package edu.kit.kastel.sdq.eclipse.grading.core.artemis;
+package edu.kit.kastel.sdq.eclipse.grading.core.artemis.naming;
 
 import java.io.File;
 

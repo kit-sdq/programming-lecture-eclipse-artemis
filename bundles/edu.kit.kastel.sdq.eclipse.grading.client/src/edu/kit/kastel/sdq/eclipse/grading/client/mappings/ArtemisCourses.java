@@ -22,9 +22,4 @@ public class ArtemisCourses {
 	public String getTitle() {
 		return this.title;
 	}
-
-	@Override
-	public String toString() {
-		return "ArtemisCourses{title=" + this.title + ", path=" + this.path + ", message=" + this.message + "}";
-	}
 }

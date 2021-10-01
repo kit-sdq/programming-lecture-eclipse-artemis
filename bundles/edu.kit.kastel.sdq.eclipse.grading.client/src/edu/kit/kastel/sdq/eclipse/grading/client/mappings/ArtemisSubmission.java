@@ -20,7 +20,7 @@ public class ArtemisSubmission implements ISubmission, Serializable {
 
 	// for getting participantIdentifier, participantName, repositoryUrl
 	@JsonProperty(value = "participation", required = true)
-	private ParticipationDummy participation;
+	private ParticipationDTO participation;
 
 	private transient Boolean hasSubmittedAssessment;
 	private transient Boolean hasSavedAssessment;
@@ -31,6 +31,7 @@ public class ArtemisSubmission implements ISubmission, Serializable {
 	 * For Auto-Deserialization Need to call this::init thereafter!
 	 */
 	public ArtemisSubmission() {
+		// NOP
 	}
 
 	protected String getCommitHash() {
@@ -94,10 +95,4 @@ public class ArtemisSubmission implements ISubmission, Serializable {
 		return this.correctionRound;
 	}
 
-	@Override
-	public String toString() {
-		return "ArtemisSubmission [submissionId=" + this.submissionId + ", participantIdentifier=" + this.getParticipantIdentifier() + ", participantName="
-				+ this.getParticipantName() + ", repositoryUrl=" + this.getRepositoryUrl() + ", commitHash=" + this.commitHash + ", hasSubmittedAssessment="
-				+ this.hasSubmittedAssessment + ", hasSavedAssessment=" + this.hasSavedAssessment + "]";
-	}
 }

@@ -1,4 +1,4 @@
-package edu.kit.kastel.sdq.eclipse.grading.api;
+package edu.kit.kastel.sdq.eclipse.grading.api.controller;
 
 import java.util.ArrayList;
 import java.util.List;

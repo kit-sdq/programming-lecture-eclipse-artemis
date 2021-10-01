@@ -17,7 +17,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import edu.kit.kastel.sdq.eclipse.grading.api.AbstractArtemisClient;
 import edu.kit.kastel.sdq.eclipse.grading.api.ArtemisClientException;
 import edu.kit.kastel.sdq.eclipse.grading.api.Constants;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.AssessmentResult;
@@ -30,8 +29,9 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExerciseGroup;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IParticipation;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
-import edu.kit.kastel.sdq.eclipse.grading.client.git.EgitGitHandler;
+import edu.kit.kastel.sdq.eclipse.grading.api.client.AbstractArtemisClient;
 import edu.kit.kastel.sdq.eclipse.grading.client.git.GitException;
+import edu.kit.kastel.sdq.eclipse.grading.client.git.GitHandler;
 import edu.kit.kastel.sdq.eclipse.grading.client.mappings.ArtemisCourse;
 import edu.kit.kastel.sdq.eclipse.grading.client.mappings.ArtemisExercise;
 import edu.kit.kastel.sdq.eclipse.grading.client.mappings.ArtemisSubmission;
@@ -85,11 +85,11 @@ public class ArtemisClient extends AbstractArtemisClient implements IMappingLoad
 	}
 
 	protected void downloadSubmission(ISubmission submission, File directory) throws GitException {
-		new EgitGitHandler(submission.getRepositoryUrl()).cloneRepo(directory, Constants.MASTER_BRANCH_NAME);
+		GitHandler.cloneRepo(directory, submission.getRepositoryUrl(), Constants.MASTER_BRANCH_NAME);
 	}
 
 	private void downloadTestRepo(IExercise exercise, File directory) throws GitException {
-		new EgitGitHandler(exercise.getTestRepositoryUrl()).cloneRepo(directory, Constants.MASTER_BRANCH_NAME);
+		GitHandler.cloneRepo(directory, exercise.getTestRepositoryUrl(), Constants.MASTER_BRANCH_NAME);
 	}
 
 	@Override

@@ -1,9 +1,10 @@
-package edu.kit.kastel.sdq.eclipse.grading.api;
+package edu.kit.kastel.sdq.eclipse.grading.api.controller;
 
 import java.io.File;
 import java.util.List;
 import java.util.Set;
 
+import edu.kit.kastel.sdq.eclipse.grading.api.ArtemisClientException;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.SubmissionFilter;
 import edu.kit.kastel.sdq.eclipse.grading.api.backendstate.State;

@@ -95,10 +95,4 @@ public class ArtemisExercise implements IExercise, Serializable {
 		this.client = client;
 	}
 
-	@Override
-	public String toString() {
-		return "ArtemisExercise [exerciseId=" + this.exerciseId + ", title=" + this.title + ", shortName=" + this.shortName + ", submissions="
-				+ this.submissions + "]";
-	}
-
 }

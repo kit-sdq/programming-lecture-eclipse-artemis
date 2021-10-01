@@ -24,8 +24,8 @@ public class Annotation implements IAnnotation {
 	private final int markerCharStart;
 	private final int markerCharEnd;
 
-	public Annotation(int id, IMistakeType mistakeType, int startLine, int endLine, String fullyClassifiedClassName,
-			String customMessage, Double customPenalty, int markerCharStart, int markerCharEnd) {
+	public Annotation(int id, IMistakeType mistakeType, int startLine, int endLine, String fullyClassifiedClassName, String customMessage, Double customPenalty,
+			int markerCharStart, int markerCharEnd) {
 		this.id = id;
 		this.mistakeType = mistakeType;
 		this.startLine = startLine;
@@ -43,16 +43,10 @@ public class Annotation implements IAnnotation {
 	 * This Constructor is ONLY FOR DESERIALIZATION!
 	 */
 	@JsonCreator
-	public Annotation(
-			@JsonProperty("id") int id,
-			@JsonProperty("startLine") int startLine,
-			@JsonProperty("endLine") int endLine,
-			@JsonProperty("classFilePath") String classFilePath,
-			@JsonProperty("customMessageForJSON") String customMessage,
-			@JsonProperty("customPenaltyForJSON") Double customPenalty,
-			@JsonProperty("mistakeTypeString") String mistakeTypeString,
-			@JsonProperty("markerCharStart") int markerCharStart,
-			@JsonProperty("markerCharEnd") int markerCharEnd) {
+	public Annotation(@JsonProperty("id") int id, @JsonProperty("startLine") int startLine, @JsonProperty("endLine") int endLine,
+			@JsonProperty("classFilePath") String classFilePath, @JsonProperty("customMessageForJSON") String customMessage,
+			@JsonProperty("customPenaltyForJSON") Double customPenalty, @JsonProperty("mistakeTypeString") String mistakeTypeString,
+			@JsonProperty("markerCharStart") int markerCharStart, @JsonProperty("markerCharEnd") int markerCharEnd) {
 		this.id = id;
 		this.startLine = startLine;
 		this.endLine = endLine;
@@ -74,7 +68,7 @@ public class Annotation implements IAnnotation {
 	@Override
 	@JsonIgnore
 	public Optional<String> getCustomMessage() {
-		return (this.customMessage == null) ? Optional.empty() : Optional.of(this.customMessage);
+		return this.customMessage == null ? Optional.empty() : Optional.of(this.customMessage);
 	}
 
 	public String getCustomMessageForJSON() {
@@ -84,7 +78,7 @@ public class Annotation implements IAnnotation {
 	@Override
 	@JsonIgnore
 	public Optional<Double> getCustomPenalty() {
-		return (this.customPenalty == null) ? Optional.empty() : Optional.of(this.customPenalty);
+		return this.customPenalty == null ? Optional.empty() : Optional.of(this.customPenalty);
 	}
 
 	public Double getCustomPenaltyForJSON() {
@@ -122,7 +116,7 @@ public class Annotation implements IAnnotation {
 	 * @return mistakeType::getButtonName (for serialization to artemis)
 	 */
 	public String getMistakeTypeString() {
-		//mistakeTypeString is needed for deserialization
+		// mistakeTypeString is needed for deserialization
 		return this.mistakeType != null ? this.mistakeType.getName() : this.mistakeTypeString;
 	}
 
@@ -140,18 +134,20 @@ public class Annotation implements IAnnotation {
 	}
 
 	/**
-	 * This Method is ONLY FOR DESERIALIZATION!
-	 * If mistakeType is already set, this has no effect.
+	 * This Method is ONLY FOR DESERIALIZATION! If mistakeType is already set, this
+	 * has no effect.
 	 */
 	public void setMistakeType(IMistakeType mistakeType) {
-		if (this.mistakeType != null) return;
+		if (this.mistakeType != null) {
+			return;
+		}
 		this.mistakeType = mistakeType;
 	}
 
 	@Override
 	public String toString() {
-		return "Annotation [id=" + this.id + ", mistakeType=" + this.mistakeType + ", startLine=" + this.startLine + ", endLine="
-				+ this.endLine + ", fullyClassifiedClassName=" + this.fullyClassifiedClassName + ", customMessage="
-				+ this.customMessage + ", customPenalty=" + this.customPenalty + "]";
+		return "Annotation [id=" + this.id + ", mistakeType=" + this.mistakeType + ", startLine=" + this.startLine + ", endLine=" + this.endLine
+				+ ", fullyClassifiedClassName=" + this.fullyClassifiedClassName + ", customMessage=" + this.customMessage + ", customPenalty="
+				+ this.customPenalty + "]";
 	}
 }

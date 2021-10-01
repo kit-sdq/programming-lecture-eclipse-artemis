@@ -1,4 +1,4 @@
-package edu.kit.kastel.sdq.eclipse.grading.api;
+package edu.kit.kastel.sdq.eclipse.grading.api.controller;
 
 public interface IController {
 	void addAlertObserver(IAlertObserver observer);

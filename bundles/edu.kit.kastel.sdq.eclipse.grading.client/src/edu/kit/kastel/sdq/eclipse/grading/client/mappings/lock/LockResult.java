@@ -30,8 +30,6 @@ public class LockResult implements ILockResult {
 		if (latestResult != null) {
 			this.preexistentFeedbacks.addAll(latestResult.getFeedbacks());
 		}
-		// previousAssessmentresults.stream().forEach(prevAssessment ->
-		// this.preexistentFeedbacks.addAll(prevAssessment.getFeedbacks()));
 	}
 
 	@Override

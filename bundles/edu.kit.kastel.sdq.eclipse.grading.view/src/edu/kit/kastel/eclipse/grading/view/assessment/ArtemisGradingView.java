@@ -150,22 +150,22 @@ public class ArtemisGradingView extends ViewPart {
 		GridData gdFilterCombo = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
 		filterCombo.setLayoutData(gdFilterCombo);
 
-		filterCombo.add("SUBMITTED");
-		filterCombo.add("NOT_SUBMITTED");
+		for (SubmissionFilter filter : SubmissionFilter.values()) {
+			filterCombo.add(filter.name());
+		}
 
 		Label lblSubmitted = new Label(backlogComposite, SWT.NONE);
 		lblSubmitted.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblSubmitted.setText("Submissions");
 
-		Combo backlogCombo = new Combo(backlogComposite, SWT.READ_ONLY);
-		this.backlogCombo = backlogCombo;
+		this.backlogCombo = new Combo(backlogComposite, SWT.READ_ONLY);
 		GridData gdBacklogCombo = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
-		backlogCombo.setLayoutData(gdBacklogCombo);
+		this.backlogCombo.setLayoutData(gdBacklogCombo);
 
-		this.initializeBacklogCombo(backlogCombo);
-		this.addControlToPossibleActions(backlogCombo, Transition.SET_ASSESSED_SUBMISSION_BY_PROJECT_NAME);
+		this.initializeBacklogCombo(this.backlogCombo);
+		this.addControlToPossibleActions(this.backlogCombo, Transition.SET_ASSESSED_SUBMISSION_BY_PROJECT_NAME);
 
-		this.addSelectionListenerForFilterCombo(backlogCombo, filterCombo);
+		this.addSelectionListenerForFilterCombo(this.backlogCombo, filterCombo);
 
 		Composite buttons = new Composite(backlogComposite, SWT.NONE);
 		buttons.setLayout(new GridLayout(2, true));
@@ -174,7 +174,7 @@ public class ArtemisGradingView extends ViewPart {
 		Button refreshButton = new Button(buttons, SWT.NONE);
 		refreshButton.setText("Refresh Submissions");
 
-		this.addSelectionListenerForRefreshButton(refreshButton, backlogCombo, filterCombo);
+		this.addSelectionListenerForRefreshButton(refreshButton, this.backlogCombo, filterCombo);
 
 		Button btnLoadAgain = new Button(buttons, SWT.NONE);
 		btnLoadAgain.setText("Load again");
@@ -248,36 +248,33 @@ public class ArtemisGradingView extends ViewPart {
 		lblCourse.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblCourse.setText("Course");
 
-		Combo courseCombo = new Combo(assessmentComposite, SWT.READ_ONLY);
-		this.courseCombo = courseCombo;
-		courseCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		this.courseCombo = new Combo(assessmentComposite, SWT.READ_ONLY);
+		this.courseCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
-		this.addControlToPossibleActions(courseCombo, Transition.SET_COURSE_ID_AND_GET_EXERCISE_SHORT_NAMES);
+		this.addControlToPossibleActions(this.courseCombo, Transition.SET_COURSE_ID_AND_GET_EXERCISE_SHORT_NAMES);
 
 		Label lblExam = new Label(assessmentComposite, SWT.NONE);
 		lblExam.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblExam.setText("Exam");
 
-		Combo examCombo = new Combo(assessmentComposite, SWT.READ_ONLY);
-		this.examCombo = examCombo;
-		examCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		this.examCombo = new Combo(assessmentComposite, SWT.READ_ONLY);
+		this.examCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
 		/*
 		 * The exam combo does not really have an influence on the backend state, but
 		 * should be disabled after a new assessment is started
 		 */
-		this.addControlToPossibleActions(examCombo, Transition.SET_COURSE_ID_AND_GET_EXERCISE_SHORT_NAMES);
+		this.addControlToPossibleActions(this.examCombo, Transition.SET_COURSE_ID_AND_GET_EXERCISE_SHORT_NAMES);
 
 		Label lblExercise = new Label(assessmentComposite, SWT.NONE);
 		lblExercise.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblExercise.setText("Exercise");
 
-		Combo exerciseCombo = new Combo(assessmentComposite, SWT.READ_ONLY);
-		this.exerciseCombo = exerciseCombo;
-		exerciseCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		this.exerciseCombo = new Combo(assessmentComposite, SWT.READ_ONLY);
+		this.exerciseCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
-		this.loadExamComboEntries(courseCombo, examCombo, exerciseCombo);
-		this.addControlToPossibleActions(exerciseCombo, Transition.SET_EXERCISE_ID);
+		this.loadExamComboEntries(this.courseCombo, this.examCombo, this.exerciseCombo);
+		this.addControlToPossibleActions(this.exerciseCombo, Transition.SET_EXERCISE_ID);
 
 		Composite buttons = new Composite(assessmentComposite, SWT.NONE);
 		buttons.setLayout(new GridLayout(2, false));
@@ -406,11 +403,9 @@ public class ArtemisGradingView extends ViewPart {
 		backlogCombo.removeAll();
 		SubmissionFilter filter = SubmissionFilter.ALL;
 		int idx = filterCombo.getSelectionIndex();
-		if (idx >= 0 && filterCombo.getItem(idx).equals("SUBMITTED")) {
-			filter = SubmissionFilter.SAVED_AND_SUBMITTED;
-		}
-		if (idx >= 0 && filterCombo.getItem(idx).equals("NOT_SUBMITTED")) {
-			filter = SubmissionFilter.NOT_SUBMITTED;
+		if (idx >= 0) {
+			String value = filterCombo.getItem(idx);
+			filter = Arrays.stream(SubmissionFilter.values()).filter(f -> f.name().equals(value)).findFirst().get();
 		}
 		this.viewController.getSubmissionsForBacklog(filter).forEach(project -> backlogCombo.add(project));
 	}
@@ -439,7 +434,7 @@ public class ArtemisGradingView extends ViewPart {
 
 	@Override
 	public void setFocus() {
-
+		// NOP
 	}
 
 	private void updateMistakeButtonToolTips(IMistakeType mistakeType) {

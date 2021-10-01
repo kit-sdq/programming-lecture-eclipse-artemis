@@ -8,20 +8,20 @@ import java.util.stream.Collectors;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 
-import edu.kit.kastel.sdq.eclipse.grading.api.AbstractController;
-import edu.kit.kastel.sdq.eclipse.grading.api.IAssessmentController;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IProjectFileNamingStrategy;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ICourse;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IFeedback;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
+import edu.kit.kastel.sdq.eclipse.grading.api.controller.AbstractController;
+import edu.kit.kastel.sdq.eclipse.grading.api.controller.IAssessmentController;
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IAnnotation;
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IMistakeType;
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IRatingGroup;
 import edu.kit.kastel.sdq.eclipse.grading.core.artemis.AnnotationDeserializer;
-import edu.kit.kastel.sdq.eclipse.grading.core.artemis.DefaultPenaltyCalculationStrategy;
 import edu.kit.kastel.sdq.eclipse.grading.core.artemis.WorkspaceUtil;
-import edu.kit.kastel.sdq.eclipse.grading.core.config.ConfigDao;
+import edu.kit.kastel.sdq.eclipse.grading.core.artemis.calculation.DefaultPenaltyCalculationStrategy;
+import edu.kit.kastel.sdq.eclipse.grading.core.config.ConfigDAO;
 import edu.kit.kastel.sdq.eclipse.grading.core.model.annotation.AnnotationException;
 import edu.kit.kastel.sdq.eclipse.grading.core.model.annotation.DefaultAnnotationDao;
 import edu.kit.kastel.sdq.eclipse.grading.core.model.annotation.IAnnotationDao;
@@ -105,7 +105,7 @@ public class AssessmentController extends AbstractController implements IAssessm
 				.collect(Collectors.toUnmodifiableList());
 	}
 
-	private ConfigDao getConfigDao() {
+	private ConfigDAO getConfigDao() {
 		return this.systemWideController.getConfigDao();
 	}
 

@@ -3,7 +3,7 @@ package edu.kit.kastel.eclipse.grading.view.observers;
 import org.eclipse.jface.dialogs.MessageDialog;
 
 import edu.kit.kastel.eclipse.grading.view.utilities.AssessmentUtilities;
-import edu.kit.kastel.sdq.eclipse.grading.api.IAlertObserver;
+import edu.kit.kastel.sdq.eclipse.grading.api.controller.IAlertObserver;
 
 /**
  * this class displays all messages from the backend in the view. It always

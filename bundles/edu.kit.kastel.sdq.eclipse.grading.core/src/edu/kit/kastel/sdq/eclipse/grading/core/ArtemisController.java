@@ -13,11 +13,7 @@ import java.util.stream.Collectors;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 
-import edu.kit.kastel.sdq.eclipse.grading.api.AbstractArtemisClient;
-import edu.kit.kastel.sdq.eclipse.grading.api.AbstractController;
 import edu.kit.kastel.sdq.eclipse.grading.api.ArtemisClientException;
-import edu.kit.kastel.sdq.eclipse.grading.api.IArtemisController;
-import edu.kit.kastel.sdq.eclipse.grading.api.IAssessmentController;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.ILockResult;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IProjectFileNamingStrategy;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.FeedbackType;
@@ -28,15 +24,19 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExerciseGroup;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IFeedback;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IParticipation;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
+import edu.kit.kastel.sdq.eclipse.grading.api.client.AbstractArtemisClient;
+import edu.kit.kastel.sdq.eclipse.grading.api.controller.AbstractController;
+import edu.kit.kastel.sdq.eclipse.grading.api.controller.IArtemisController;
+import edu.kit.kastel.sdq.eclipse.grading.api.controller.IAssessmentController;
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IAnnotation;
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IMistakeType;
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IRatingGroup;
 import edu.kit.kastel.sdq.eclipse.grading.client.rest.ArtemisClient;
 import edu.kit.kastel.sdq.eclipse.grading.core.artemis.AnnotationMapper;
-import edu.kit.kastel.sdq.eclipse.grading.core.artemis.DefaultPenaltyCalculationStrategy;
-import edu.kit.kastel.sdq.eclipse.grading.core.artemis.IPenaltyCalculationStrategy;
 import edu.kit.kastel.sdq.eclipse.grading.core.artemis.WorkspaceUtil;
-import edu.kit.kastel.sdq.eclipse.grading.core.artemis.ZeroedPenaltyCalculationStrategy;
+import edu.kit.kastel.sdq.eclipse.grading.core.artemis.calculation.DefaultPenaltyCalculationStrategy;
+import edu.kit.kastel.sdq.eclipse.grading.core.artemis.calculation.IPenaltyCalculationStrategy;
+import edu.kit.kastel.sdq.eclipse.grading.core.artemis.calculation.ZeroedPenaltyCalculationStrategy;
 
 public class ArtemisController extends AbstractController implements IArtemisController {
 
@@ -104,7 +104,6 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 	}
 
 	private ICourse getCourseByShortName(final String courseShortName) {
-
 		List<ICourse> filteredCourses = this.getCourses().stream().filter(course -> course.getShortName().equals(courseShortName)).collect(Collectors.toList());
 		if (filteredCourses.isEmpty()) {
 			this.error("No course found for courseShortName=" + courseShortName, null);

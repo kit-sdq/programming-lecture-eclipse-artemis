@@ -16,6 +16,7 @@ public interface IMappingLoader {
 
 	default List<ISubmission> getSubmissionsForExercise(IExercise artemisExercise) throws ArtemisClientException {
 		List<ISubmission> submissions = new ArrayList<>();
+		// Correction Round 0 and 1
 		submissions.addAll(this.getSubmissionsForExercise(artemisExercise, 0));
 		submissions.addAll(this.getSubmissionsForExercise(artemisExercise, 1));
 		return submissions;

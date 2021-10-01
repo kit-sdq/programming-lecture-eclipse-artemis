@@ -7,7 +7,7 @@ import java.io.IOException;
  *
  * A Config is
  */
-public interface ConfigDao {
+public interface ConfigDAO {
 
 	ExerciseConfig getExerciseConfig() throws IOException;
 }

@@ -1,8 +1,10 @@
-package edu.kit.kastel.sdq.eclipse.grading.api;
+package edu.kit.kastel.sdq.eclipse.grading.api.client;
 
 import java.io.Serializable;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import edu.kit.kastel.sdq.eclipse.grading.api.Constants;
 
 /**
  * Encapsulates methods to get data from and send data to Artemis

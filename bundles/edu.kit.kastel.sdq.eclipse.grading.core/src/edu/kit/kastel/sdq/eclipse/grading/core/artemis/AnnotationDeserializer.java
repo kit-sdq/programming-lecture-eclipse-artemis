@@ -2,7 +2,6 @@ package edu.kit.kastel.sdq.eclipse.grading.core.artemis;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.List;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,9 +17,9 @@ import edu.kit.kastel.sdq.eclipse.grading.core.model.annotation.Annotation;
 
 /**
  * Deserialize Annotation from a Feedback of
- * <li> type: MANUAL_UNREFERENCED
- * <li> text: CLIENT_DATA
- * <li> detailText: $THE_JSON_BLOB
+ * <li>type: MANUAL_UNREFERENCED
+ * <li>text: CLIENT_DATA
+ * <li>detailText: $THE_JSON_BLOB
  *
  */
 public class AnnotationDeserializer {
@@ -34,38 +33,35 @@ public class AnnotationDeserializer {
 	}
 
 	/**
-	 * Deserialize a given Collection of IFeedbacks (that contain json blobs in the detailText field) into our model Annotations.
+	 * Deserialize a given Collection of IFeedbacks (that contain json blobs in the
+	 * detailText field) into our model Annotations.
+	 *
 	 * @param feedbacks
 	 * @return
 	 * @throws IOException
 	 */
 	public List<IAnnotation> deserialize(List<IFeedback> feedbacks) throws IOException {
-		final List<IFeedback> matchingFeedbacks = feedbacks.stream()
-				.filter(feedback -> {
-					String text = feedback.getText();
-					return (text != null && text.equals(FEEDBACK_TEXT));
-				})
-				.collect(Collectors.toList());
+		final List<IFeedback> matchingFeedbacks = feedbacks.stream().filter(feedback -> {
+			String text = feedback.getText();
+			return text != null && text.equals(FEEDBACK_TEXT);
+		}).collect(Collectors.toList());
 
 		if (matchingFeedbacks.isEmpty()) {
 			return List.of();
 		}
 
-		JsonProcessingException[] foundException = {null};
-		List<Annotation> deserializedAnnotations = matchingFeedbacks.stream()
-			.map(IFeedback::getDetailText)	// get the json blob
-			.map(feedbackDetailText -> { 					//transform the json blob to multiple annotations
-				try {
+		JsonProcessingException[] foundException = { null };
+		List<Annotation> deserializedAnnotations = matchingFeedbacks.stream().map(IFeedback::getDetailText) // get the json blob
+				.map(feedbackDetailText -> { // transform the json blob to multiple annotations
+					try {
 
-					return new ObjectMapper().readValue(feedbackDetailText, Annotation[].class);
-				} catch (JsonProcessingException e) {
-					foundException[0] = e;
-					return new Annotation[0];
-				}
-			})
-			.map(Arrays::asList)
-			.flatMap(List::stream)							// Stream of List of annotations ==> Stream of annotations.
-			.collect(Collectors.toList());
+						return new ObjectMapper().readValue(feedbackDetailText, Annotation[].class);
+					} catch (JsonProcessingException e) {
+						foundException[0] = e;
+						return new Annotation[0];
+					}
+				}).map(Arrays::asList).flatMap(List::stream) // Stream of List of annotations ==> Stream of annotations.
+				.collect(Collectors.toList());
 
 		if (foundException[0] != null) {
 			throw foundException[0];
@@ -80,8 +76,6 @@ public class AnnotationDeserializer {
 			annotation.setMistakeType(this.mistakeTypesMap.get(mistakeTypeName));
 		}
 
-		return deserializedAnnotations.stream()
-				.map(IAnnotation.class::cast)
-				.collect(Collectors.toList());
+		return deserializedAnnotations.stream().map(IAnnotation.class::cast).collect(Collectors.toList());
 	}
 }

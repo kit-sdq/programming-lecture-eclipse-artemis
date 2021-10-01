@@ -5,12 +5,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * Used for deserializing those information into ArtemisSubmission:
  *
- * <li> participantIdentifier
- * <li> participantName
- * <li> repositoryUrl
+ * <li>participantIdentifier
+ * <li>participantName
+ * <li>repositoryUrl
  *
  */
-public class ParticipationDummy {
+public class ParticipationDTO {
 
 	@JsonProperty
 	private String participantIdentifier;
@@ -19,7 +19,9 @@ public class ParticipationDummy {
 	@JsonProperty
 	private String repositoryUrl;
 
-	public ParticipationDummy() { }
+	public ParticipationDTO() {
+		// NOP
+	}
 
 	public String getParticipantIdentifier() {
 		return this.participantIdentifier;
@@ -32,7 +34,5 @@ public class ParticipationDummy {
 	public String getRepositoryUrl() {
 		return this.repositoryUrl;
 	}
-
-
 
 }

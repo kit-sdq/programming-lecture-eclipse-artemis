@@ -12,11 +12,7 @@ import java.util.stream.Collectors;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.preference.IPreferenceStore;
 
-import edu.kit.kastel.sdq.eclipse.grading.api.AbstractController;
 import edu.kit.kastel.sdq.eclipse.grading.api.ArtemisClientException;
-import edu.kit.kastel.sdq.eclipse.grading.api.IArtemisController;
-import edu.kit.kastel.sdq.eclipse.grading.api.IAssessmentController;
-import edu.kit.kastel.sdq.eclipse.grading.api.ISystemwideController;
 import edu.kit.kastel.sdq.eclipse.grading.api.PreferenceConstants;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IProjectFileNamingStrategy;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ICourse;
@@ -25,9 +21,13 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.SubmissionFilter;
 import edu.kit.kastel.sdq.eclipse.grading.api.backendstate.Transition;
-import edu.kit.kastel.sdq.eclipse.grading.core.artemis.ProjectFileNamingStrategies;
+import edu.kit.kastel.sdq.eclipse.grading.api.controller.AbstractController;
+import edu.kit.kastel.sdq.eclipse.grading.api.controller.IArtemisController;
+import edu.kit.kastel.sdq.eclipse.grading.api.controller.IAssessmentController;
+import edu.kit.kastel.sdq.eclipse.grading.api.controller.ISystemwideController;
 import edu.kit.kastel.sdq.eclipse.grading.core.artemis.WorkspaceUtil;
-import edu.kit.kastel.sdq.eclipse.grading.core.config.ConfigDao;
+import edu.kit.kastel.sdq.eclipse.grading.core.artemis.naming.ProjectFileNamingStrategies;
+import edu.kit.kastel.sdq.eclipse.grading.core.config.ConfigDAO;
 import edu.kit.kastel.sdq.eclipse.grading.core.config.JsonFileConfigDao;
 
 public class SystemwideController extends AbstractController implements ISystemwideController {
@@ -35,7 +35,7 @@ public class SystemwideController extends AbstractController implements ISystemw
 	private final Map<Integer, IAssessmentController> assessmentControllers;
 	private IArtemisController artemisGUIController;
 
-	private ConfigDao configDao;
+	private ConfigDAO configDao;
 
 	private ICourse course;
 	private IExercise exercise;
@@ -138,7 +138,7 @@ public class SystemwideController extends AbstractController implements ISystemw
 	 *
 	 * @return this system's configDao.
 	 */
-	protected ConfigDao getConfigDao() {
+	protected ConfigDAO getConfigDao() {
 		return this.configDao;
 	}
 
