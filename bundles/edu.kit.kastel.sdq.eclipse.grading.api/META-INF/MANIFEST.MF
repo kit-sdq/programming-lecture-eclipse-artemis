@@ -10,3 +10,6 @@ Export-Package: edu.kit.kastel.sdq.eclipse.grading.api,
  edu.kit.kastel.sdq.eclipse.grading.api.backendstate,
  edu.kit.kastel.sdq.eclipse.grading.api.model
 Automatic-Module-Name: edu.kit.kastel.sdq.eclipse.grading.api
+Require-Bundle: com.fasterxml.jackson.core.jackson-databind,
+ com.fasterxml.jackson.core.jackson-core,
+ com.fasterxml.jackson.core.jackson-annotations

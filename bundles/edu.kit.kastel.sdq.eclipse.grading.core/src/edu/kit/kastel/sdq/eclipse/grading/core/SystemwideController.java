@@ -1,7 +1,6 @@
 package edu.kit.kastel.sdq.eclipse.grading.core;
 
 import java.io.File;
-import java.util.List;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,7 +23,7 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExam;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExerciseGroup;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission.Filter;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.SubmissionFilter;
 import edu.kit.kastel.sdq.eclipse.grading.api.backendstate.Transition;
 import edu.kit.kastel.sdq.eclipse.grading.core.artemis.ProjectFileNamingStrategies;
 import edu.kit.kastel.sdq.eclipse.grading.core.artemis.WorkspaceUtil;
@@ -103,7 +102,7 @@ public class SystemwideController extends AbstractController implements ISystemw
 		return this.assessmentControllers.get(submissionID);
 	}
 
-	private List<ISubmission> getBegunSubmissions(ISubmission.Filter submissionFilter) {
+	private List<ISubmission> getBegunSubmissions(SubmissionFilter submissionFilter) {
 		if (this.nullCheckMembersAndNotify(true, true, false)) {
 			return List.of();
 		}
@@ -113,7 +112,7 @@ public class SystemwideController extends AbstractController implements ISystemw
 	}
 
 	@Override
-	public List<String> getBegunSubmissionsProjectNames(ISubmission.Filter submissionFilter) {
+	public List<String> getBegunSubmissionsProjectNames(SubmissionFilter submissionFilter) {
 		// sondercase: refresh
 		if (this.courseID == null || this.exerciseID == null) {
 			this.info("You need to choose a" + (this.courseID == null ? "course" : "") + (this.courseID == null && this.exerciseID == null ? " and an " : "")
@@ -264,7 +263,7 @@ public class SystemwideController extends AbstractController implements ISystemw
 		}
 
 		boolean[] found = { false };
-		this.getBegunSubmissions(Filter.ALL).forEach(submission -> {
+		this.getBegunSubmissions(SubmissionFilter.ALL).forEach(submission -> {
 			String currentProjectName = this.projectFileNamingStrategy
 					.getProjectFileInWorkspace(WorkspaceUtil.getWorkspaceFile(), this.getCurrentExercise(), submission).getName();
 

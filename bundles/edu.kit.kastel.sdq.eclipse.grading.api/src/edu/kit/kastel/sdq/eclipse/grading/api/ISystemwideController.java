@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.SubmissionFilter;
 import edu.kit.kastel.sdq.eclipse.grading.api.backendstate.State;
 import edu.kit.kastel.sdq.eclipse.grading.api.backendstate.Transition;
 
@@ -27,7 +28,7 @@ public interface ISystemwideController extends IController {
 	 *               in the result)
 	 * @return the respective project Names (unique).
 	 */
-	List<String> getBegunSubmissionsProjectNames(ISubmission.Filter filter);
+	List<String> getBegunSubmissionsProjectNames(SubmissionFilter filter);
 
 	/**
 	 *

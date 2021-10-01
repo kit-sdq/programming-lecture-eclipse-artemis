@@ -1,21 +1,22 @@
 package edu.kit.kastel.sdq.eclipse.grading.api;
 
-import java.io.File;
-import java.util.List;
-import java.util.Optional;
+import java.io.Serializable;
 
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.ILockResult;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IProjectFileNamingStrategy;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IAssessor;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ICourse;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IParticipation;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Encapsulates methods to get data from and send data to Artemis
  */
-public abstract class AbstractArtemisClient {
+public abstract class AbstractArtemisClient implements IArtemisClient {
+
+	// paths
+	protected static final String PROGRAMMING_SUBMISSION_PATHPART = "programming-submissions";
+	protected static final String EXERCISES_PATHPART = "exercises";
+	protected static final String COURSES_PATHPART = "courses";
+	protected static final String EXAMS_PATHPART = "exams";
+	protected static final String USERS_PATHPART = "users";
+
+	protected static final String AUTHORIZATION_NAME = "Authorization";
 
 	private String artemisUsername;
 	private String artemisPassword;
@@ -33,88 +34,37 @@ public abstract class AbstractArtemisClient {
 		this.artemisHostname = artemisHostname;
 	}
 
-	/**
-	 * Clones exercise and a submission into one project.
-	 */
-	public abstract void downloadExerciseAndSubmission(IExercise exercise, ISubmission submission, File directory,
-			IProjectFileNamingStrategy projectFileNamingStrategy) throws ArtemisClientException;
+	protected final String getApiRoot() {
+		String endpoint = this.artemisHostname;
+		if (!endpoint.startsWith(Constants.HTTPS_PREFIX)) {
+			endpoint = Constants.HTTPS_PREFIX + endpoint;
+		}
 
-	protected String getArtemisHostname() {
-		return this.artemisHostname;
+		if (endpoint.endsWith("/")) {
+			endpoint = endpoint.substring(0, endpoint.length() - 1);
+		}
+
+		return endpoint + "/api";
 	}
 
-	protected String getArtemisPassword() {
-		return this.artemisPassword;
-	}
-
-	protected String getArtemisUsername() {
+	public String getArtemisUsername() {
 		return this.artemisUsername;
 	}
 
-	/**
-	 *
-	 * @return the artemis "assessor" object (needed for submitting the assessment).
-	 * @throws ArtemisClientException if some errors occur while parsing the result.
-	 */
-	public abstract IAssessor getAssessor() throws ArtemisClientException;
+	protected final AuthenticationEntity getAuthenticationEntity() {
+		AuthenticationEntity entity = new AuthenticationEntity();
+		entity.username = this.artemisUsername;
+		entity.password = this.artemisPassword;
+		return entity;
+	}
 
-	/**
-	 *
-	 * @return all available courses, containing exercises and available submissions
-	 * @throws ArtemisClientException if some errors occur while parsing the result.
-	 */
-	public abstract List<ICourse> getCourses() throws ArtemisClientException;
-
-	/**
-	 *
-	 * @param exerciseID
-	 * @param assessedByTutor only return those submissions on which the caller has
-	 *                        (started, saved or submitted) the assessment.
-	 * @return submissions for the given exerciseID, filterable.
-	 * @throws ArtemisClientException if some errors occur while parsing the result.
-	 */
-	public abstract List<ISubmission> getSubmissions(int exerciseID, boolean assessedByTutor) throws ArtemisClientException;
-
-	/**
-	 * Submit the assessment to Artemis. Must have been started by
-	 * {@link #startAssessment(int)} or {@link #startNextAssessment(int, int)}
-	 * before!
-	 *
-	 * @param participation THOU SHALT NOT PROVIDE THE SUBMISSIONID, HERE! The
-	 *                      participationID can be gotten from the
-	 *                      {@link ILockResult}, via {@link #startAssessment(int)}
-	 *                      or {@link #startNextAssessment(int, int)}! * @param
-	 *                      submit determine whether the assessment should be
-	 *                      submitted or just saved.
-	 * @param payload       the payload formatted correctly. TODO ISubmission statt
-	 *                      ID TODO Payload verstecken, irgendein
-	 *                      Vorberechnungsergebnis
-	 * @throws ArtemisClientException
-	 */
-	public abstract void saveAssessment(IParticipation participation, boolean submit, String payload) throws ArtemisClientException;
-
-	/**
-	 * Starts an assessment for the given submission. Acquires a lock in the
-	 * process.
-	 *
-	 * @param submissionID
-	 * @return the data gotten back, which is needed for submitting the assessment
-	 *         result correctly ({@link #saveAssessment(int, boolean, String)}
-	 * @throws ArtemisClientException if some errors occur while parsing the result.
-	 */
-
-	public abstract ILockResult startAssessment(int submissionID) throws ArtemisClientException;
-
-	/**
-	 * Starts an assessment for any available submission (determined by artemis).
-	 * Acquires a lock in the process.
-	 *
-	 * @param correctionRound relevant for exams! may be 0 or 1
-	 * @return
-	 *         <li>the data gotten back. Needed for submitting correctly.
-	 *         <li><b>null</b> if there is no submission left to correct
-	 * @throws ArtemisClientException if some errors occur while parsing the result
-	 *                                or if authentication fails.
-	 */
-	public abstract Optional<ILockResult> startNextAssessment(int exerciseID, int correctionRound) throws ArtemisClientException;
+	protected static final class AuthenticationEntity implements Serializable {
+		private static final long serialVersionUID = -6291795795865534155L;
+		@JsonProperty
+		private String username;
+		@JsonProperty
+		private String password;
+		@JsonProperty
+		private boolean rememberMe = true;
+	}
 }

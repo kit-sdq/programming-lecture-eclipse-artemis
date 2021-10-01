@@ -30,7 +30,7 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IParticipation;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IAnnotation;
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IMistakeType;
-import edu.kit.kastel.sdq.eclipse.grading.client.rest.ArtemisRESTClient;
+import edu.kit.kastel.sdq.eclipse.grading.client.rest.ArtemisClient;
 import edu.kit.kastel.sdq.eclipse.grading.core.artemis.AnnotationMapper;
 import edu.kit.kastel.sdq.eclipse.grading.core.artemis.DefaultPenaltyCalculationStrategy;
 import edu.kit.kastel.sdq.eclipse.grading.core.artemis.WorkspaceUtil;
@@ -44,7 +44,7 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 	private final Map<Integer, ILockResult> lockResults;
 
 	protected ArtemisController(final SystemwideController systemwideController, final String host, final String username, final String password) {
-		this.artemisClient = new ArtemisRESTClient(username, password, host);
+		this.artemisClient = new ArtemisClient(username, password, host);
 		this.systemwideController = systemwideController;
 		this.lockResults = new HashMap<>();
 	}

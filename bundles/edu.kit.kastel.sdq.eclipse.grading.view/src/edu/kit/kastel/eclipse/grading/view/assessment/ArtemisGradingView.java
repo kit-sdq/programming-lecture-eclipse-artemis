@@ -24,8 +24,7 @@ import org.eclipse.ui.part.ViewPart;
 
 import edu.kit.kastel.eclipse.grading.view.controllers.AssessmentViewController;
 import edu.kit.kastel.eclipse.grading.view.utilities.AssessmentUtilities;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission.Filter;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.SubmissionFilter;
 import edu.kit.kastel.sdq.eclipse.grading.api.backendstate.Transition;
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IMistakeType;
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IRatingGroup;
@@ -67,8 +66,8 @@ public class ArtemisGradingView extends ViewPart {
 	}
 
 	private void addListenerForMarkerDeletion() {
-		AssessmentUtilities.getWorkspace().addResourceChangeListener(event -> Arrays
-				.asList(event.findMarkerDeltas(AssessmentUtilities.MARKER_NAME, true)).forEach(marker -> {
+		AssessmentUtilities.getWorkspace()
+				.addResourceChangeListener(event -> Arrays.asList(event.findMarkerDeltas(AssessmentUtilities.MARKER_NAME, true)).forEach(marker -> {
 					// check if marker is deleted
 					if (marker.getKind() == 2) {
 						this.viewController.deleteAnnotation((int) marker.getAttribute("annotationID"));
@@ -135,8 +134,7 @@ public class ArtemisGradingView extends ViewPart {
 		TabItem backlogTabItem = new TabItem(tabFolder, SWT.NONE);
 		backlogTabItem.setText("Backlog");
 
-		ScrolledComposite scrolledCompositeBacklog = new ScrolledComposite(tabFolder,
-				SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+		ScrolledComposite scrolledCompositeBacklog = new ScrolledComposite(tabFolder, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 		backlogTabItem.setControl(scrolledCompositeBacklog);
 		scrolledCompositeBacklog.setExpandHorizontal(true);
 		scrolledCompositeBacklog.setExpandVertical(true);
@@ -201,8 +199,8 @@ public class ArtemisGradingView extends ViewPart {
 		customButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		customButton.setText(mistake.getName());
 		customButton.addListener(SWT.Selection, event -> {
-			final CustomButtonDialog customDialog = new CustomButtonDialog(AssessmentUtilities.getWindowsShell(),
-					this.viewController, ratingGroup.getDisplayName(), mistake);
+			final CustomButtonDialog customDialog = new CustomButtonDialog(AssessmentUtilities.getWindowsShell(), this.viewController,
+					ratingGroup.getDisplayName(), mistake);
 			customDialog.setBlockOnOpen(true);
 			customDialog.open();
 			// avoid SWT Exception
@@ -216,8 +214,7 @@ public class ArtemisGradingView extends ViewPart {
 		this.viewController.getExerciseShortNames(courseCombo.getItem(courseCombo.getSelectionIndex()))
 				.forEach(exerciseShortName -> examExerciseCombo.add(exerciseShortName));
 		examCombo.add("None");
-		this.viewController.getExamShortNames(courseCombo.getItem(courseCombo.getSelectionIndex()))
-				.forEach(examShortName -> examCombo.add(examShortName));
+		this.viewController.getExamShortNames(courseCombo.getItem(courseCombo.getSelectionIndex())).forEach(examShortName -> examCombo.add(examShortName));
 		examCombo.addListener(SWT.Selection, e -> {
 			examExerciseCombo.removeAll();
 			if ("None".equals(examCombo.getItem(examCombo.getSelectionIndex()))) {
@@ -239,8 +236,7 @@ public class ArtemisGradingView extends ViewPart {
 		TabItem tbtmAssessment = new TabItem(tabFolder, SWT.NONE);
 		tbtmAssessment.setText("Assessment");
 
-		ScrolledComposite scrolledCompositeAssessment = new ScrolledComposite(tabFolder,
-				SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+		ScrolledComposite scrolledCompositeAssessment = new ScrolledComposite(tabFolder, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 		tbtmAssessment.setControl(scrolledCompositeAssessment);
 		scrolledCompositeAssessment.setExpandHorizontal(true);
 		scrolledCompositeAssessment.setExpandVertical(true);
@@ -379,8 +375,7 @@ public class ArtemisGradingView extends ViewPart {
 					this.mistakeButtons.put(mistake.getName(), mistakeButton);
 					mistakeButton.setToolTipText(this.viewController.getToolTipForMistakeType(mistake));
 					mistakeButton.addListener(SWT.Selection, event -> {
-						this.viewController.addAssessmentAnnotaion(mistake, null, null,
-								mistake.getRatingGroup().getDisplayName());
+						this.viewController.addAssessmentAnnotaion(mistake, null, null, mistake.getRatingGroup().getDisplayName());
 						this.updatePenalty(mistake.getRatingGroup().getDisplayName());
 						this.updateMistakeButtonToolTips(mistake);
 					});
@@ -409,12 +404,12 @@ public class ArtemisGradingView extends ViewPart {
 
 	private void fillBacklogComboWithData(Combo backlogCombo, Combo filterCombo) {
 		backlogCombo.removeAll();
-		ISubmission.Filter filter = Filter.ALL;
+		SubmissionFilter filter = SubmissionFilter.ALL;
 		if (filterCombo.getItem(filterCombo.getSelectionIndex()).equals("SUBMITTED")) {
-			filter = Filter.SAVED_AND_SUBMITTED;
+			filter = SubmissionFilter.SAVED_AND_SUBMITTED;
 		}
 		if (filterCombo.getItem(filterCombo.getSelectionIndex()).equals("NOT_SUBMITTED")) {
-			filter = Filter.NOT_SUBMITTED;
+			filter = SubmissionFilter.NOT_SUBMITTED;
 		}
 		this.viewController.getSubmissionsForBacklog(filter).forEach(project -> backlogCombo.add(project));
 	}
@@ -476,8 +471,7 @@ public class ArtemisGradingView extends ViewPart {
 
 	private void updateState() {
 		this.possibleActions.values().forEach(set -> set.forEach(control -> control.setEnabled(false)));
-		this.viewController.getPossiblyTransitions().forEach(
-				transition -> this.possibleActions.get(transition).forEach(control -> control.setEnabled(true)));
+		this.viewController.getPossiblyTransitions().forEach(transition -> this.possibleActions.get(transition).forEach(control -> control.setEnabled(true)));
 	}
 
 	private void addControlToPossibleActions(Control control, Transition transition) {

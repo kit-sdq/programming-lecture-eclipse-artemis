@@ -1,7 +1,6 @@
 package edu.kit.kastel.eclipse.grading.view.controllers;
 
 import java.util.List;
-import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.resources.IMarker;
@@ -17,7 +16,7 @@ import edu.kit.kastel.sdq.eclipse.grading.api.IArtemisController;
 import edu.kit.kastel.sdq.eclipse.grading.api.IAssessmentController;
 import edu.kit.kastel.sdq.eclipse.grading.api.ISystemwideController;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ICourse;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.SubmissionFilter;
 import edu.kit.kastel.sdq.eclipse.grading.api.backendstate.Transition;
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IAnnotation;
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IMistakeType;
@@ -241,7 +240,7 @@ public class AssessmentViewController {
 	/**
 	 * @return all submissions for the given filter
 	 */
-	public List<String> getSubmissionsForBacklog(ISubmission.Filter filter) {
+	public List<String> getSubmissionsForBacklog(SubmissionFilter filter) {
 		return this.systemwideController.getBegunSubmissionsProjectNames(filter);
 	}
 
