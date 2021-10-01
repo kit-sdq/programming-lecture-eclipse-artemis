@@ -1,6 +1,7 @@
 package edu.kit.kastel.sdq.eclipse.grading.core;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +22,6 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IProjectFileNamingStrategy
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ICourse;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExam;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExerciseGroup;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.SubmissionFilter;
 import edu.kit.kastel.sdq.eclipse.grading.api.backendstate.Transition;
@@ -37,9 +37,9 @@ public class SystemwideController extends AbstractController implements ISystemw
 
 	private ConfigDao configDao;
 
-	private Integer courseID;
-	private Integer exerciseID;
-	private Integer submissionID;
+	private ICourse course;
+	private IExercise exercise;
+	private ISubmission submission;
 
 	private IProjectFileNamingStrategy projectFileNamingStrategy;
 
@@ -53,24 +53,33 @@ public class SystemwideController extends AbstractController implements ISystemw
 	}
 
 	public SystemwideController(final IPreferenceStore preferenceStore) {
-		this(preferenceStore.getString(PreferenceConstants.ARTEMIS_URL), preferenceStore.getString(PreferenceConstants.ARTEMIS_USER),
-				preferenceStore.getString(PreferenceConstants.ARTEMIS_PASSWORD));
+		this( //
+				preferenceStore.getString(PreferenceConstants.ARTEMIS_URL), //
+				preferenceStore.getString(PreferenceConstants.ARTEMIS_USER), //
+				preferenceStore.getString(PreferenceConstants.ARTEMIS_PASSWORD) //
+		);
+
 		this.preferenceStore = preferenceStore;
 
 		// initialize config
 		this.updateConfigFile();
 
-		final SystemwideController thisSysController = this;
-
 		// change preferences
 		this.preferenceStore.addPropertyChangeListener(event -> {
+			boolean trigger = false;
+			trigger |= PreferenceConstants.ARTEMIS_URL.equals(event.getProperty());
+			trigger |= PreferenceConstants.ARTEMIS_USER.equals(event.getProperty());
+			trigger |= PreferenceConstants.ARTEMIS_PASSWORD.equals(event.getProperty());
 
-			if (PreferenceConstants.ARTEMIS_URL.equals(event.getProperty()) || PreferenceConstants.ARTEMIS_USER.equals(event.getProperty())
-					|| PreferenceConstants.ARTEMIS_PASSWORD.equals(event.getProperty())) {
-				thisSysController.setArtemisController(new ArtemisController(thisSysController, preferenceStore.getString(PreferenceConstants.ARTEMIS_URL),
-						preferenceStore.getString(PreferenceConstants.ARTEMIS_USER), preferenceStore.getString(PreferenceConstants.ARTEMIS_PASSWORD)));
+			if (!trigger) {
+				return;
 			}
 
+			String url = preferenceStore.getString(PreferenceConstants.ARTEMIS_URL);
+			String user = preferenceStore.getString(PreferenceConstants.ARTEMIS_USER);
+			String pass = preferenceStore.getString(PreferenceConstants.ARTEMIS_PASSWORD);
+
+			this.setArtemisController(new ArtemisController(this, url, user, pass));
 		});
 	}
 
@@ -96,10 +105,11 @@ public class SystemwideController extends AbstractController implements ISystemw
 		return this.artemisGUIController;
 	}
 
-	private IAssessmentController getAssessmentController(int submissionID, int courseID, int exerciseID) {
+	private IAssessmentController getAssessmentController(ISubmission submission, ICourse course, IExercise exercise) {
 		// not equivalent to putIfAbsent!
-		this.assessmentControllers.computeIfAbsent(submissionID, submissionIDParam -> new AssessmentController(this, courseID, exerciseID, submissionID));
-		return this.assessmentControllers.get(submissionID);
+		this.assessmentControllers.computeIfAbsent(submission.getSubmissionId(),
+				submissionIDParam -> new AssessmentController(this, course, exercise, submission));
+		return this.assessmentControllers.get(submission.getSubmissionId());
 	}
 
 	private List<ISubmission> getBegunSubmissions(SubmissionFilter submissionFilter) {
@@ -107,22 +117,20 @@ public class SystemwideController extends AbstractController implements ISystemw
 			return List.of();
 		}
 
-		return this.getArtemisGUIController().getBegunSubmissions(this.exerciseID).stream().filter(submissionFilter.getFilterPredicate())
-				.collect(Collectors.toList());
+		return this.getArtemisGUIController().getBegunSubmissions(this.exercise).stream().filter(submissionFilter).collect(Collectors.toList());
 	}
 
 	@Override
 	public List<String> getBegunSubmissionsProjectNames(SubmissionFilter submissionFilter) {
 		// sondercase: refresh
-		if (this.courseID == null || this.exerciseID == null) {
-			this.info("You need to choose a" + (this.courseID == null ? "course" : "") + (this.courseID == null && this.exerciseID == null ? " and an " : "")
-					+ (this.exerciseID == null ? "exercise" : "."));
+		if (this.course == null || this.exercise == null) {
+			this.info("You need to choose a" + (this.course == null ? "course" : "") + (this.course == null && this.exercise == null ? " and an " : "")
+					+ (this.exercise == null ? "exercise" : "."));
 			return List.of();
 		}
 
-		return this.getBegunSubmissions(submissionFilter).stream()
-				.map(submission -> this.projectFileNamingStrategy
-						.getProjectFileInWorkspace(WorkspaceUtil.getWorkspaceFile(), this.getCurrentExercise(), submission).getName())
+		return this.getBegunSubmissions(submissionFilter).stream().map(
+				sub -> this.projectFileNamingStrategy.getProjectFileInWorkspace(WorkspaceUtil.getWorkspaceFile(), this.getCurrentExercise(), sub).getName())
 				.collect(Collectors.toList());
 	}
 
@@ -139,25 +147,22 @@ public class SystemwideController extends AbstractController implements ISystemw
 		if (this.nullCheckMembersAndNotify(true, true, true)) {
 			return null;
 		}
-		return this.getAssessmentController(this.submissionID, this.courseID, this.exerciseID);
+		return this.getAssessmentController(this.submission, this.course, this.exercise);
 	}
 
 	private IExercise getCurrentExercise() {
 		if (this.nullCheckMembersAndNotify(true, true, false)) {
 			return null;
 		}
-		return this.getArtemisGUIController().getExerciseFromCourses(this.getArtemisGUIController().getCourses(), this.courseID, this.exerciseID);
+		return this.exercise;
 	}
 
 	@Override
 	public Set<Transition> getCurrentlyPossibleTransitions() {
-		boolean[] secondCorrectionRoundEnabled = { false };
-		if (this.exerciseID != null) {
-			this.artemisGUIController.getExercises(this.courseID, true).stream().filter(exercise -> exercise.getExerciseId() == this.exerciseID).findAny()
-					.ifPresent(exercise -> secondCorrectionRoundEnabled[0] = exercise.getSecondCorrectionEnabled());
-		}
+		boolean secondCorrectionRoundEnabled = this.exercise != null && this.exercise.getSecondCorrectionEnabled();
+
 		return this.backendStateMachine.getCurrentlyPossibleTransitions().stream()
-				.filter(transition -> !Transition.START_CORRECTION_ROUND_2.equals(transition) || secondCorrectionRoundEnabled[0]).collect(Collectors.toSet());
+				.filter(transition -> !Transition.START_CORRECTION_ROUND_2.equals(transition) || secondCorrectionRoundEnabled).collect(Collectors.toSet());
 	}
 
 	@Override
@@ -174,7 +179,7 @@ public class SystemwideController extends AbstractController implements ISystemw
 		if (this.nullCheckMembersAndNotify(true, true, true)) {
 			return null;
 		}
-		return this.getArtemisGUIController().getSubmissionFromExercise(this.getCurrentExercise(), this.submissionID);
+		return this.submission;
 	}
 
 	@Override
@@ -186,8 +191,8 @@ public class SystemwideController extends AbstractController implements ISystemw
 			return;
 		}
 
-		this.getArtemisGUIController().startAssessment(this.submissionID);
-		this.getArtemisGUIController().downloadExerciseAndSubmission(this.courseID, this.exerciseID, this.submissionID, this.projectFileNamingStrategy);
+		this.getArtemisGUIController().startAssessment(this.submission);
+		this.getArtemisGUIController().downloadExerciseAndSubmission(this.course, this.exercise, this.submission, this.projectFileNamingStrategy);
 	}
 
 	/**
@@ -197,15 +202,15 @@ public class SystemwideController extends AbstractController implements ISystemw
 	private boolean nullCheckMembersAndNotify(boolean checkCourseID, boolean checkExerciseID, boolean checkSubmissionID) {
 		final StringBuilder alertMessageBuilder = new StringBuilder("[");
 		boolean somethingNull = false;
-		if (checkCourseID && this.courseID == null) {
+		if (checkCourseID && this.course == null) {
 			alertMessageBuilder.append("Course is not set ");
 			somethingNull = true;
 		}
-		if (checkExerciseID && this.exerciseID == null) {
+		if (checkExerciseID && this.exercise == null) {
 			alertMessageBuilder.append("Exercise is not set ");
 			somethingNull = true;
 		}
-		if (checkSubmissionID && this.submissionID == null) {
+		if (checkSubmissionID && this.submission == null) {
 			alertMessageBuilder.append("Submission is not set ");
 			somethingNull = true;
 		}
@@ -221,9 +226,9 @@ public class SystemwideController extends AbstractController implements ISystemw
 			return;
 		}
 
-		if (this.artemisGUIController.saveAssessment(this.submissionID, true, true)) {
+		if (this.artemisGUIController.saveAssessment(this.exercise, this.submission, true, true)) {
 			this.getCurrentAssessmentController().deleteEclipseProject(this.projectFileNamingStrategy);
-			this.submissionID = null;
+			this.submission = null;
 		}
 	}
 
@@ -249,7 +254,7 @@ public class SystemwideController extends AbstractController implements ISystemw
 			return;
 		}
 
-		this.artemisGUIController.saveAssessment(this.submissionID, false, false);
+		this.artemisGUIController.saveAssessment(this.exercise, this.submission, false, false);
 	}
 
 	public void setArtemisController(IArtemisController artemisController) {
@@ -263,12 +268,12 @@ public class SystemwideController extends AbstractController implements ISystemw
 		}
 
 		boolean[] found = { false };
-		this.getBegunSubmissions(SubmissionFilter.ALL).forEach(submission -> {
+		this.getBegunSubmissions(SubmissionFilter.ALL).forEach(sub -> {
 			String currentProjectName = this.projectFileNamingStrategy
-					.getProjectFileInWorkspace(WorkspaceUtil.getWorkspaceFile(), this.getCurrentExercise(), submission).getName();
+					.getProjectFileInWorkspace(WorkspaceUtil.getWorkspaceFile(), this.getCurrentExercise(), sub).getName();
 
 			if (currentProjectName.equals(projectName)) {
-				this.submissionID = submission.getSubmissionId();
+				this.submission = sub;
 				found[0] = true;
 			}
 		});
@@ -289,10 +294,10 @@ public class SystemwideController extends AbstractController implements ISystemw
 			return List.of();
 		}
 
-		for (ICourse course : this.getArtemisGUIController().getCourses()) {
-			if (course.getShortName().equals(courseShortName)) {
-				this.courseID = course.getCourseId();
-				return course.getExercises().stream().map(IExercise::getShortName).collect(Collectors.toList());
+		for (ICourse c : this.getArtemisGUIController().getCourses()) {
+			if (c.getShortName().equals(courseShortName)) {
+				this.course = c;
+				return c.getExercises().stream().map(IExercise::getShortName).collect(Collectors.toList());
 			}
 		}
 		this.error("No Course with the given shortName \"" + courseShortName + "\" found.", null);
@@ -305,24 +310,17 @@ public class SystemwideController extends AbstractController implements ISystemw
 			return;
 		}
 
-		for (ICourse course : this.getArtemisGUIController().getCourses()) {
-			// normal exercises
-			for (IExercise exercise : course.getExercises()) {
-				if (exercise.getShortName().equals(exerciseShortName)) {
-					this.exerciseID = exercise.getExerciseId();
-					return;
-				}
-			}
-			// exam exercises
-			for (IExam exam : course.getExams()) {
-				for (IExerciseGroup exerciseGroup : exam.getExerciseGroups()) {
-					for (IExercise exercise : exerciseGroup.getExercises()) {
-						if (exercise.getShortName().equals(exerciseShortName)) {
-							this.exerciseID = exercise.getExerciseId();
-							return;
-						}
-					}
-				}
+		// Normal exercises
+		List<IExercise> exercises = new ArrayList<>(this.course.getExercises());
+		// exam exercises
+		for (IExam ex : this.course.getExams()) {
+			ex.getExerciseGroups().forEach(g -> exercises.addAll(g.getExercises()));
+		}
+
+		for (IExercise ex : exercises) {
+			if (ex.getShortName().equals(exerciseShortName)) {
+				this.exercise = ex;
+				return;
 			}
 		}
 
@@ -344,17 +342,17 @@ public class SystemwideController extends AbstractController implements ISystemw
 		}
 		this.updateConfigFile();
 
-		Optional<Integer> optionalSubmissionID = this.getArtemisGUIController().startNextAssessment(this.exerciseID, correctionRound);
+		Optional<ISubmission> optionalSubmissionID = this.getArtemisGUIController().startNextAssessment(this.exercise, correctionRound);
 		if (optionalSubmissionID.isEmpty()) {
 			// revert!
 			this.backendStateMachine.revertLatestTransition();
 			this.info("No more submissions available for Correction Round " + (correctionRound + 1) + "!");
 			return false;
 		}
-		this.submissionID = optionalSubmissionID.get();
+		this.submission = optionalSubmissionID.get();
 
 		// perform download. Revert state if that fails.
-		if (!this.getArtemisGUIController().downloadExerciseAndSubmission(this.courseID, this.exerciseID, this.submissionID, this.projectFileNamingStrategy)) {
+		if (!this.getArtemisGUIController().downloadExerciseAndSubmission(this.course, this.exercise, this.submission, this.projectFileNamingStrategy)) {
 			this.backendStateMachine.revertLatestTransition();
 			return false;
 		}
@@ -388,16 +386,16 @@ public class SystemwideController extends AbstractController implements ISystemw
 			return;
 		}
 
-		if (this.artemisGUIController.saveAssessment(this.submissionID, true, false)) {
+		if (this.artemisGUIController.saveAssessment(this.exercise, this.submission, true, false)) {
 			this.getCurrentAssessmentController().deleteEclipseProject(this.projectFileNamingStrategy);
-			this.assessmentControllers.remove(this.submissionID);
-			this.submissionID = null;
+			this.assessmentControllers.remove(this.submission.getSubmissionId());
+			this.submission = null;
 		}
 	}
 
 	private void updateConfigFile() {
 		if (this.preferenceStore.getBoolean(PreferenceConstants.IS_RELATIVE_CONFIG_PATH)) {
-			if (this.courseID != null && this.exerciseID != null && this.submissionID != null) {
+			if (this.course != null && this.exercise != null && this.submission != null) {
 				// not the case at startup with rel config path chosen!
 				this.setConfigFile(new File(ResourcesPlugin.getWorkspace().getRoot().getProject(this.getCurrentProjectName()).getLocation().toFile(),
 						this.preferenceStore.getString(PreferenceConstants.RELATIVE_CONFIG_PATH)));

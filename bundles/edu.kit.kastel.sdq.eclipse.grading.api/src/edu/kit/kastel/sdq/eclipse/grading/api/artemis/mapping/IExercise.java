@@ -8,6 +8,8 @@ public interface IExercise {
 
 	int getExerciseId();
 
+	double getMaxPoints();
+
 	Boolean getSecondCorrectionEnabled();
 
 	String getShortName();

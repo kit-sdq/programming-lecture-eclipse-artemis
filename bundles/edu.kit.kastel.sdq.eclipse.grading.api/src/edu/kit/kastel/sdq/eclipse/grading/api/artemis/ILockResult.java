@@ -12,9 +12,6 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IParticipation;
  */
 public interface ILockResult {
 
-	// TODO check if IExercise has that field, too!
-	double getMaxPoints();
-
 	/**
 	 *
 	 * @return the participationID this submissionID belongs to (one participation
@@ -34,5 +31,5 @@ public interface ILockResult {
 	 * @return the submissionID this result belongs to (one participation has one or
 	 *         many submissions).
 	 */
-	int getSubmissionID();
+	int getSubmissionId();
 }

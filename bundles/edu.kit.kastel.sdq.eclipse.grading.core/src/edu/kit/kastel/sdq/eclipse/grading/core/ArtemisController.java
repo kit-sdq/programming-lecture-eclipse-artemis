@@ -30,9 +30,11 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IParticipation;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IAnnotation;
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IMistakeType;
+import edu.kit.kastel.sdq.eclipse.grading.api.model.IRatingGroup;
 import edu.kit.kastel.sdq.eclipse.grading.client.rest.ArtemisClient;
 import edu.kit.kastel.sdq.eclipse.grading.core.artemis.AnnotationMapper;
 import edu.kit.kastel.sdq.eclipse.grading.core.artemis.DefaultPenaltyCalculationStrategy;
+import edu.kit.kastel.sdq.eclipse.grading.core.artemis.IPenaltyCalculationStrategy;
 import edu.kit.kastel.sdq.eclipse.grading.core.artemis.WorkspaceUtil;
 import edu.kit.kastel.sdq.eclipse.grading.core.artemis.ZeroedPenaltyCalculationStrategy;
 
@@ -50,12 +52,8 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 	}
 
 	@Override
-	public boolean downloadExerciseAndSubmission(int courseID, int exerciseID, int submissionID, IProjectFileNamingStrategy projectNaming) {
+	public boolean downloadExerciseAndSubmission(ICourse course, IExercise exercise, ISubmission submission, IProjectFileNamingStrategy projectNaming) {
 		final File eclipseWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile();
-
-		final List<ICourse> courses = this.getCourses();
-		final IExercise exercise = this.getExerciseFromCourses(courses, courseID, exerciseID);
-		final ISubmission submission = this.getSubmissionFromExercise(exercise, submissionID);
 
 		// abort if directory already exists.
 		if (this.existsAndNotify(projectNaming.getProjectFileInWorkspace(eclipseWorkspaceRoot, exercise, submission))) {
@@ -86,19 +84,19 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 	}
 
 	@Override
-	public List<IFeedback> getAllFeedbacksGottenFromLocking(int submissionID) {
-		ILockResult lockResult = this.lockResults.get(submissionID);
+	public List<IFeedback> getAllFeedbacksGottenFromLocking(ISubmission submission) {
+		ILockResult lockResult = this.lockResults.get(submission.getSubmissionId());
 		if (lockResult == null) {
-			this.error("No Lock found for submissionID=" + submissionID, null);
+			this.error("No Lock found for submissionID=" + submission.getSubmissionId(), null);
 			return List.of();
 		}
 		return lockResult.getPreexistentFeedbacks();
 	}
 
 	@Override
-	public List<ISubmission> getBegunSubmissions(int exerciseID) {
+	public List<ISubmission> getBegunSubmissions(IExercise exercise) {
 		try {
-			return this.artemisClient.getSubmissions(exerciseID, true);
+			return this.artemisClient.getSubmissions(exercise, true);
 		} catch (Exception e) {
 			this.error(e.getMessage(), e);
 			return List.of();
@@ -183,7 +181,8 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 		return filteredExercises.iterator().next();
 	}
 
-	private List<IExercise> getExercises(final ICourse course, boolean withExamExercises) {
+	@Override
+	public List<IExercise> getExercises(final ICourse course, boolean withExamExercises) {
 		if (course == null) {
 			return List.of();
 		}
@@ -203,12 +202,6 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 			this.error(e.getMessage(), e);
 			return List.of();
 		}
-	}
-
-	@Override
-	public List<IExercise> getExercises(final int courseID, boolean withExamExercises) {
-		return this.getExercises(this.getCourseFromCourses(this.getCourses(), courseID), withExamExercises);
-
 	}
 
 	@Override
@@ -267,49 +260,31 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 	}
 
 	@Override
-	public List<IFeedback> getPrecalculatedAutoFeedbacks(int submissionID) {
-		return this.lockResults.get(submissionID).getPreexistentFeedbacks().stream()
+	public List<IFeedback> getPrecalculatedAutoFeedbacks(ISubmission submission) {
+		return this.lockResults.get(submission.getSubmissionId()).getPreexistentFeedbacks().stream()
 				.filter(feedback -> FeedbackType.AUTOMATIC.equals(feedback.getFeedbackType())).collect(Collectors.toList());
 	}
 
 	@Override
-	public ISubmission getSubmissionFromExercise(IExercise exercise, int submissionID) {
-		List<ISubmission> filteredSubmissions;
-		try {
-			filteredSubmissions = exercise.getSubmissions().stream().filter(submission -> (submission.getSubmissionId() == submissionID))
-					.collect(Collectors.toList());
-		} catch (ArtemisClientException e) {
-			this.error(e.getMessage(), e);
-			return null;
-		}
-		if (filteredSubmissions.isEmpty()) {
-			this.error("No submission found for exercise=" + exercise + " and submissionID=" + submissionID, null);
-			return null;
-		}
-		if (filteredSubmissions.size() > 1) {
-			this.error("Multiple submissions found for exercise=" + exercise + " and submissionID=" + submissionID, null);
-			return null;
-		}
-		return filteredSubmissions.iterator().next();
-	}
-
-	@Override
-	public boolean saveAssessment(int submissionID, boolean submit, boolean invalidSubmission) {
+	public boolean saveAssessment(IExercise exercise, ISubmission submission, boolean submit, boolean invalidSubmission) {
 		final IAssessmentController assessmentController = this.systemwideController.getCurrentAssessmentController();
-		if (!this.lockResults.containsKey(submissionID)) {
+		if (!this.lockResults.containsKey(submission.getSubmissionId())) {
 			throw new IllegalStateException("Assessment not started, yet!");
 		}
-		final ILockResult lockResult = this.lockResults.get(submissionID);
-		final IParticipation participation = lockResult.getParticipation();
+		final ILockResult lock = this.lockResults.get(submission.getSubmissionId());
+		final IParticipation participation = lock.getParticipation();
 
 		final List<IAnnotation> annotations = assessmentController.getAnnotations();
 		final List<IMistakeType> mistakeTypes = assessmentController.getMistakes();
+		final List<IRatingGroup> ratingGroups = assessmentController.getRatingGroups();
 
+		IPenaltyCalculationStrategy calculator = invalidSubmission //
+				? new ZeroedPenaltyCalculationStrategy()
+				: new DefaultPenaltyCalculationStrategy(annotations, mistakeTypes);
 		try {
-			this.artemisClient.saveAssessment(participation, submit,
-					new AnnotationMapper(annotations, mistakeTypes, assessmentController.getRatingGroups(), this.artemisClient.getAssessor(), lockResult,
-							invalidSubmission ? new ZeroedPenaltyCalculationStrategy() : new DefaultPenaltyCalculationStrategy(annotations, mistakeTypes))
-									.mapToJsonFormattedString());
+			AnnotationMapper mapper = //
+					new AnnotationMapper(exercise, submission, annotations, mistakeTypes, ratingGroups, this.artemisClient.getAssessor(), calculator, lock);
+			this.artemisClient.saveAssessment(participation, submit, mapper.createAssessmentResult());
 		} catch (IOException e) {
 			this.error("Local backend failed to format the annotations: " + e.getMessage(), e);
 			return false;
@@ -319,24 +294,24 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 		}
 
 		if (submit) {
-			this.lockResults.remove(submissionID);
+			this.lockResults.remove(submission.getSubmissionId());
 		}
 		return true;
 	}
 
 	@Override
-	public void startAssessment(int submissionID) {
+	public void startAssessment(ISubmission submissionID) {
 		try {
-			this.lockResults.put(submissionID, this.artemisClient.startAssessment(submissionID));
+			this.lockResults.put(submissionID.getSubmissionId(), this.artemisClient.startAssessment(submissionID));
 		} catch (Exception e) {
 			this.error(Messages.ASSESSMENT_COULD_NOT_BE_STARTED_MESSAGE + e.getMessage(), e);
 		}
 	}
 
 	@Override
-	public Optional<Integer> startNextAssessment(int exerciseID) {
+	public Optional<ISubmission> startNextAssessment(IExercise exercise) {
 		try {
-			return this.startNextAssessment(exerciseID, 0);
+			return this.startNextAssessment(exercise, 0);
 		} catch (Exception e) {
 			this.error(Messages.ASSESSMENT_COULD_NOT_BE_STARTED_MESSAGE + e.getMessage(), e);
 			return Optional.empty();
@@ -344,10 +319,10 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 	}
 
 	@Override
-	public Optional<Integer> startNextAssessment(int exerciseID, int correctionRound) {
+	public Optional<ISubmission> startNextAssessment(IExercise exercise, int correctionRound) {
 		Optional<ILockResult> lockResultOptional;
 		try {
-			lockResultOptional = this.artemisClient.startNextAssessment(exerciseID, correctionRound);
+			lockResultOptional = this.artemisClient.startNextAssessment(exercise, correctionRound);
 		} catch (Exception e) {
 			this.error(Messages.ASSESSMENT_COULD_NOT_BE_STARTED_MESSAGE + e.getMessage(), e);
 			return Optional.empty();
@@ -357,9 +332,14 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 		}
 		final ILockResult lockResult = lockResultOptional.get();
 
-		final int submissionID = lockResult.getSubmissionID();
+		final int submissionID = lockResult.getSubmissionId();
 		this.lockResults.put(submissionID, lockResult);
-		return Optional.of(submissionID);
+		try {
+			return exercise.getSubmissions().stream().filter(s -> s.getSubmissionId() == submissionID).findFirst();
+		} catch (ArtemisClientException e) {
+			this.error(Messages.ASSESSMENT_COULD_NOT_BE_STARTED_MESSAGE + e.getMessage(), e);
+			return Optional.empty();
+		}
 	}
 
 }

@@ -6,7 +6,7 @@ import java.util.function.Predicate;
  *
  * Used to be able to discriminate submissions that were started by the caller.
  */
-public enum SubmissionFilter {
+public enum SubmissionFilter implements Predicate<ISubmission> {
 	SAVED_BUT_NOT_SUBMITTED(submission -> submission.hasSavedAssessment() && !submission.hasSubmittedAssessment()), //
 	SAVED_AND_SUBMITTED(submission -> submission.hasSavedAssessment() && submission.hasSubmittedAssessment()), //
 	NOT_SUBMITTED(submission -> !submission.hasSubmittedAssessment()), //
@@ -18,7 +18,8 @@ public enum SubmissionFilter {
 		this.filterPredicate = filterPredicate;
 	}
 
-	public Predicate<ISubmission> getFilterPredicate() {
-		return this.filterPredicate;
+	@Override
+	public boolean test(ISubmission t) {
+		return this.filterPredicate.test(t);
 	}
 }

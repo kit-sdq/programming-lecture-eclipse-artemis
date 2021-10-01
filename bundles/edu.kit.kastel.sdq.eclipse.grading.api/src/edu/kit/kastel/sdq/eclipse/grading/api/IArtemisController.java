@@ -22,14 +22,14 @@ public interface IArtemisController extends IController {
 	 * @param submissionIds
 	 * @return whether download was successful or not
 	 */
-	boolean downloadExerciseAndSubmission(int courseID, int exerciseID, int submissionID, IProjectFileNamingStrategy projectNaming);
+	boolean downloadExerciseAndSubmission(ICourse courseID, IExercise exerciseID, ISubmission submissionID, IProjectFileNamingStrategy projectNaming);
 
 	/**
 	 *
 	 * @return all IFeedbacks that were gotten in the process of locking the given
 	 *         submission.
 	 */
-	List<IFeedback> getAllFeedbacksGottenFromLocking(int submissionID);
+	List<IFeedback> getAllFeedbacksGottenFromLocking(ISubmission submission);
 
 	/**
 	 *
@@ -37,7 +37,7 @@ public interface IArtemisController extends IController {
 	 * @return all submissions of the given @link {@link IExercise}, that have been
 	 *         started, saved or submitted by the caller.
 	 */
-	List<ISubmission> getBegunSubmissions(int exerciseID);
+	List<ISubmission> getBegunSubmissions(IExercise exercise);
 
 	/**
 	 *
@@ -68,7 +68,7 @@ public interface IArtemisController extends IController {
 	 */
 	IExercise getExerciseFromCourses(List<ICourse> courses, int courseID, int exerciseID);
 
-	List<IExercise> getExercises(int courseID, boolean withExamExercises);
+	List<IExercise> getExercises(ICourse course, boolean withExamExercises);
 
 	List<IExercise> getExercisesFromExam(String examTitle);
 
@@ -91,24 +91,14 @@ public interface IArtemisController extends IController {
 	 * @return all auto feedbacks gotten by starting the assessment (junit test
 	 *         results).
 	 */
-	List<IFeedback> getPrecalculatedAutoFeedbacks(int submissionID);
-
-	/**
-	 * Convenience method. Search the given ids in the given courses.
-	 *
-	 * @param courses    the data in which to search for the submission
-	 * @param courseID
-	 * @param exerciseID
-	 * @return the submission, if found. null else.
-	 */
-	ISubmission getSubmissionFromExercise(IExercise exercise, int submissionID);
+	List<IFeedback> getPrecalculatedAutoFeedbacks(ISubmission submission);
 
 	/**
 	 * Submit the assessment to Artemis. Must have been started by
 	 * {@link #startAssessment(int)}, {@link #startNextAssessment(int)} or
 	 * {@link #startNextAssessment(int, int)}, before!
 	 *
-	 * @param submissionID
+	 * @param submission
 	 * @param submit            should the assessment be submitted or merely saved
 	 *                          to artemis?
 	 * @param invalidSubmission is the submission invalid? Will return 0 points.
@@ -117,7 +107,7 @@ public interface IArtemisController extends IController {
 	 *
 	 * @return whether the operation was successful.
 	 */
-	boolean saveAssessment(int submissionID, boolean submit, boolean invalidSubmission);
+	boolean saveAssessment(IExercise exercise, ISubmission submission, boolean submit, boolean invalidSubmission);
 
 	/**
 	 * Starts an assessment for the given submission. Acquires a lock in the
@@ -125,7 +115,7 @@ public interface IArtemisController extends IController {
 	 *
 	 * @param submissionID
 	 */
-	void startAssessment(int submissionID);
+	void startAssessment(ISubmission submissionID);
 
 	/**
 	 * Starts the next assessment. Which one is smh determined by artemis.
@@ -137,7 +127,7 @@ public interface IArtemisController extends IController {
 	 *         <li>the submissionID which defines what is assessed.
 	 *         <li>Optional.empty(), if no assessment is left!
 	 */
-	Optional<Integer> startNextAssessment(int exerciseID);
+	Optional<ISubmission> startNextAssessment(IExercise exercise);
 
 	/**
 	 * Starts the next assessment of the given correction round. Which one is smh
@@ -150,5 +140,5 @@ public interface IArtemisController extends IController {
 	 *         <li>the submissionID which defines what is assessed.
 	 *         <li>Optional.empty(), if no assessment is left!
 	 */
-	Optional<Integer> startNextAssessment(int exerciseID, int correctionRound);
+	Optional<ISubmission> startNextAssessment(IExercise exercise, int correctionRound);
 }

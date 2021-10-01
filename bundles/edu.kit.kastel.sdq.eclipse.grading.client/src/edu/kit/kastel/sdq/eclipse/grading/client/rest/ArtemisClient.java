@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.kit.kastel.sdq.eclipse.grading.api.AbstractArtemisClient;
 import edu.kit.kastel.sdq.eclipse.grading.api.ArtemisClientException;
 import edu.kit.kastel.sdq.eclipse.grading.api.Constants;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.AssessmentResult;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.ILockResult;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IProjectFileNamingStrategy;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IAssessor;
@@ -183,10 +184,10 @@ public class ArtemisClient extends AbstractArtemisClient implements IMappingLoad
 	}
 
 	@Override
-	public List<ISubmission> getSubmissions(int exerciseID, boolean assessedByTutor) throws ArtemisClientException {
+	public List<ISubmission> getSubmissions(IExercise exercise, boolean assessedByTutor) throws ArtemisClientException {
 		// TODO Set assessed by tutor to false ? iff instructor of the course ?!
 		this.checkAuthentication();
-		final Response rsp = this.endpoint.path(EXERCISES_PATHPART).path(String.valueOf(exerciseID)).path(PROGRAMMING_SUBMISSION_PATHPART)
+		final Response rsp = this.endpoint.path(EXERCISES_PATHPART).path(String.valueOf(exercise.getExerciseId())).path(PROGRAMMING_SUBMISSION_PATHPART)
 				.queryParam("assessedByTutor", assessedByTutor).request().header(AUTHORIZATION_NAME, this.token).buildGet().invoke();
 
 		this.throwIfStatusUnsuccessful(rsp);
@@ -263,22 +264,22 @@ public class ArtemisClient extends AbstractArtemisClient implements IMappingLoad
 	}
 
 	@Override
-	public void saveAssessment(IParticipation participation, boolean submit, String payload) throws ArtemisClientException {
+	public void saveAssessment(IParticipation participation, boolean submit, AssessmentResult assessment) throws ArtemisClientException {
 		this.checkAuthentication();
 
 		final Response rsp = this.endpoint.path("participations").path(Integer.toString(participation.getParticipationID())) //
 				.path("manual-results") //
 				.queryParam("submit", submit) //
-				.request().header(AUTHORIZATION_NAME, this.token).buildPut(Entity.json(payload)).invoke();
+				.request().header(AUTHORIZATION_NAME, this.token).buildPut(Entity.json(this.write(assessment))).invoke();
 		this.throwIfStatusUnsuccessful(rsp);
 	}
 
 	@Override
-	public ILockResult startAssessment(int submissionID) throws ArtemisClientException {
+	public ILockResult startAssessment(ISubmission submission) throws ArtemisClientException {
 		this.checkAuthentication();
 
-		final Response rsp = this.endpoint.path(PROGRAMMING_SUBMISSION_PATHPART).path(String.valueOf(submissionID)).path("lock") // this should be best.
-				.request().header(AUTHORIZATION_NAME, this.token).buildGet().invoke(); // synchronous variant
+		final Response rsp = this.endpoint.path(PROGRAMMING_SUBMISSION_PATHPART).path(String.valueOf(submission.getSubmissionId())).path("lock").request()
+				.header(AUTHORIZATION_NAME, this.token).buildGet().invoke(); // synchronous variant
 		this.throwIfStatusUnsuccessful(rsp);
 
 		try {
@@ -290,12 +291,13 @@ public class ArtemisClient extends AbstractArtemisClient implements IMappingLoad
 	}
 
 	@Override
-	public Optional<ILockResult> startNextAssessment(int exerciseID, int correctionRound) throws ArtemisClientException {
+	public Optional<ILockResult> startNextAssessment(IExercise exercise, int correctionRound) throws ArtemisClientException {
 		this.checkAuthentication();
 
-		final Response rsp = this.endpoint.path(EXERCISES_PATHPART).path(String.valueOf(exerciseID)).path("programming-submission-without-assessment")
-				.queryParam("correction-round", correctionRound).queryParam("lock", true).request().header(AUTHORIZATION_NAME, this.token).buildGet().invoke(); // synchronous
-																																								// variant
+		final Response rsp = this.endpoint.path(EXERCISES_PATHPART).path(String.valueOf(exercise.getExerciseId()))
+				.path("programming-submission-without-assessment").queryParam("correction-round", correctionRound).queryParam("lock", true).request()
+				.header(AUTHORIZATION_NAME, this.token).buildGet().invoke();
+
 		if (!this.isStatusSuccessful(rsp)) {
 			// no assessment left!
 			return Optional.empty();

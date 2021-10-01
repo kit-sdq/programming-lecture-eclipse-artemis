@@ -15,22 +15,15 @@ public class LockResult implements ILockResult {
 	private int submissionID;
 	private List<IFeedback> preexistentFeedbacks;
 	private IParticipation participation;
-	private double maxPoints;
 
 	@JsonCreator
 	public LockResult(@JsonProperty("id") int submissionID, @JsonProperty("results") List<LockCallAssessmentResult> previousAssessmentresults,
 			@JsonProperty("participation") ParticipationDTO participation) {
 		this.submissionID = submissionID;
 		this.participation = participation;
-		this.maxPoints = participation.getExerciseMaxPoints();
 
 		this.preexistentFeedbacks = new LinkedList<>();
 		previousAssessmentresults.stream().forEach(prevAssessment -> this.preexistentFeedbacks.addAll(prevAssessment.getFeedbacks()));
-	}
-
-	@Override
-	public double getMaxPoints() {
-		return this.maxPoints;
 	}
 
 	@Override
@@ -44,7 +37,7 @@ public class LockResult implements ILockResult {
 	}
 
 	@Override
-	public int getSubmissionID() {
+	public int getSubmissionId() {
 		return this.submissionID;
 	}
 

@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.List;
 import java.util.Optional;
 
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.AssessmentResult;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.ILockResult;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IProjectFileNamingStrategy;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IAssessor;
@@ -41,7 +42,7 @@ public interface IArtemisClient {
 	 * @return submissions for the given exerciseID, filterable.
 	 * @throws ArtemisClientException if some errors occur while parsing the result.
 	 */
-	List<ISubmission> getSubmissions(int exerciseID, boolean assessedByTutor) throws ArtemisClientException;
+	List<ISubmission> getSubmissions(IExercise exercise, boolean assessedByTutor) throws ArtemisClientException;
 
 	/**
 	 * Submit the assessment to Artemis. Must have been started by
@@ -54,24 +55,23 @@ public interface IArtemisClient {
 	 *                      or {@link #startNextAssessment(int, int)}! * @param
 	 *                      submit determine whether the assessment should be
 	 *                      submitted or just saved.
-	 * @param payload       the payload formatted correctly. TODO ISubmission statt
-	 *                      ID TODO Payload verstecken, irgendein
-	 *                      Vorberechnungsergebnis
+	 * @param assessment    the assessment
+	 *
 	 * @throws ArtemisClientException
 	 */
-	void saveAssessment(IParticipation participation, boolean submit, String payload) throws ArtemisClientException;
+	void saveAssessment(IParticipation participation, boolean submit, AssessmentResult assessment) throws ArtemisClientException;
 
 	/**
 	 * Starts an assessment for the given submission. Acquires a lock in the
 	 * process.
 	 *
-	 * @param submissionID
+	 * @param submission
 	 * @return the data gotten back, which is needed for submitting the assessment
 	 *         result correctly ({@link #saveAssessment(int, boolean, String)}
 	 * @throws ArtemisClientException if some errors occur while parsing the result.
 	 */
 
-	ILockResult startAssessment(int submissionID) throws ArtemisClientException;
+	ILockResult startAssessment(ISubmission submission) throws ArtemisClientException;
 
 	/**
 	 * Starts an assessment for any available submission (determined by artemis).
@@ -84,5 +84,5 @@ public interface IArtemisClient {
 	 * @throws ArtemisClientException if some errors occur while parsing the result
 	 *                                or if authentication fails.
 	 */
-	Optional<ILockResult> startNextAssessment(int exerciseID, int correctionRound) throws ArtemisClientException;
+	Optional<ILockResult> startNextAssessment(IExercise exerciseID, int correctionRound) throws ArtemisClientException;
 }

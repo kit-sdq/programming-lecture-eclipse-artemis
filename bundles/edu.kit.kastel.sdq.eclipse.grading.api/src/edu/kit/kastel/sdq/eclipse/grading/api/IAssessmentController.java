@@ -3,6 +3,9 @@ package edu.kit.kastel.sdq.eclipse.grading.api;
 import java.util.List;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IProjectFileNamingStrategy;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ICourse;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IAnnotation;
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IMistakeType;
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IRatingGroup;
@@ -75,9 +78,11 @@ public interface IAssessmentController extends IController {
 	 */
 	List<IAnnotation> getAnnotations(String className);
 
-	int getCourseID();
+	ICourse getCourse();
 
-	int getExerciseID();
+	IExercise getExercise();
+
+	ISubmission getSubmission();
 
 	/**
 	 *
@@ -95,8 +100,7 @@ public interface IAssessmentController extends IController {
 	 */
 	List<IRatingGroup> getRatingGroups();
 
-	int getSubmissionID();
-
+	// TODO Get Tooltip has to be updated on events of mistake types ..
 	String getTooltipForMistakeType(IMistakeType mistakeType);
 
 	/**

@@ -2,7 +2,6 @@ package edu.kit.kastel.sdq.eclipse.grading.core;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -10,7 +9,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.AbstractController;
-import edu.kit.kastel.sdq.eclipse.grading.api.IArtemisController;
 import edu.kit.kastel.sdq.eclipse.grading.api.IAssessmentController;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IProjectFileNamingStrategy;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ICourse;
@@ -31,11 +29,12 @@ import edu.kit.kastel.sdq.eclipse.grading.core.model.annotation.IAnnotationDao;
 public class AssessmentController extends AbstractController implements IAssessmentController {
 
 	private SystemwideController systemWideController;
-	private int submissionID;
+
 	private IAnnotationDao annotationDao;
 
-	private final int courseID;
-	private final int exerciseID;
+	private final ICourse course;
+	private final IExercise exercise;
+	private ISubmission submission;
 
 	/**
 	 * Protected, because the way to get a specific assessment controller should be
@@ -45,13 +44,14 @@ public class AssessmentController extends AbstractController implements IAssessm
 	 * @param exerciseName the shortName of the exercise (must be same in the config
 	 *                     file).
 	 */
-	protected AssessmentController(SystemwideController systemWideController, int courseID, int exerciseID, int submissionID) {
+	protected AssessmentController(SystemwideController systemWideController, ICourse course, IExercise exercise, ISubmission submission) {
 		this.systemWideController = systemWideController;
-		this.submissionID = submissionID;
-		this.annotationDao = new DefaultAnnotationDao();
 
-		this.exerciseID = exerciseID;
-		this.courseID = courseID;
+		this.course = course;
+		this.exercise = exercise;
+		this.submission = submission;
+
+		this.annotationDao = new DefaultAnnotationDao();
 
 		try {
 			this.initializeWithDeserializedAnnotations();
@@ -84,13 +84,8 @@ public class AssessmentController extends AbstractController implements IAssessm
 
 	@Override
 	public void deleteEclipseProject(IProjectFileNamingStrategy projectNaming) {
-		IArtemisController guiController = this.systemWideController.getArtemisGUIController();
-		final List<ICourse> courses = guiController.getCourses();
-		final IExercise exercise = guiController.getExerciseFromCourses(courses, this.courseID, this.exerciseID);
-		final ISubmission submission = guiController.getSubmissionFromExercise(exercise, this.submissionID);
-
 		final String projectName = projectNaming
-				.getProjectFileInWorkspace(ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile(), exercise, submission).getName();
+				.getProjectFileInWorkspace(ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile(), this.exercise, this.submission).getName();
 		try {
 			WorkspaceUtil.deleteEclipseProject(projectName);
 		} catch (CoreException | IOException e) {
@@ -115,13 +110,18 @@ public class AssessmentController extends AbstractController implements IAssessm
 	}
 
 	@Override
-	public int getCourseID() {
-		return this.courseID;
+	public ICourse getCourse() {
+		return this.course;
 	}
 
 	@Override
-	public int getExerciseID() {
-		return this.exerciseID;
+	public IExercise getExercise() {
+		return this.exercise;
+	}
+
+	@Override
+	public ISubmission getSubmission() {
+		return this.submission;
 	}
 
 	@Override
@@ -167,11 +167,6 @@ public class AssessmentController extends AbstractController implements IAssessm
 	}
 
 	@Override
-	public int getSubmissionID() {
-		return this.submissionID;
-	}
-
-	@Override
 	public String getTooltipForMistakeType(IMistakeType mistakeType) {
 		return mistakeType
 				.getTooltip(this.getAnnotations().stream().filter(annotation -> annotation.getMistakeType().equals(mistakeType)).collect(Collectors.toList()));
@@ -180,7 +175,7 @@ public class AssessmentController extends AbstractController implements IAssessm
 	private void initializeWithDeserializedAnnotations() throws IOException {
 		final AnnotationDeserializer annotationDeserializer = new AnnotationDeserializer(this.getMistakes());
 		final List<IFeedback> allFeedbacksGottenFromLocking = this.systemWideController.getArtemisGUIController()
-				.getAllFeedbacksGottenFromLocking(this.submissionID);
+				.getAllFeedbacksGottenFromLocking(this.submission);
 		if (allFeedbacksGottenFromLocking == null) {
 			throw new IOException("No feedbacks gotten from locking could be acquired.");
 		}
@@ -205,8 +200,8 @@ public class AssessmentController extends AbstractController implements IAssessm
 	@Override
 	public void resetAndRestartAssessment(IProjectFileNamingStrategy projectNaming) {
 		this.deleteEclipseProject(projectNaming);
-		this.systemWideController.getArtemisGUIController().startAssessment(this.submissionID);
-		this.systemWideController.getArtemisGUIController().downloadExerciseAndSubmission(this.courseID, this.exerciseID, this.submissionID, projectNaming);
+		this.systemWideController.getArtemisGUIController().startAssessment(this.submission);
+		this.systemWideController.getArtemisGUIController().downloadExerciseAndSubmission(this.course, this.exercise, this.submission, projectNaming);
 
 		this.annotationDao = new DefaultAnnotationDao();
 
