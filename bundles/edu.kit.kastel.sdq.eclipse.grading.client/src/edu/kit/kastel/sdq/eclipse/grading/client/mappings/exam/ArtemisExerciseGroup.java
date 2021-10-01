@@ -2,7 +2,7 @@ package edu.kit.kastel.sdq.eclipse.grading.client.mappings.exam;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,7 +23,7 @@ public class ArtemisExerciseGroup implements IExerciseGroup, Serializable {
     @JsonProperty
     private boolean isMandatory;
     @JsonProperty
-    private Collection<ArtemisExercise> exercises;
+    private List<ArtemisExercise> exercises;
 
     /**
      * For Auto-Deserialization Need to call this::init thereafter!
@@ -37,7 +37,7 @@ public class ArtemisExerciseGroup implements IExerciseGroup, Serializable {
     }
 
     @Override
-    public Collection<IExercise> getExercises() {
+    public List<IExercise> getExercises() {
         return new ArrayList<>(exercises);
     }
 

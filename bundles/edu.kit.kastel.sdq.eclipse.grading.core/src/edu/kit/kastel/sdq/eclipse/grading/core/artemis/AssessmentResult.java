@@ -1,6 +1,6 @@
 package edu.kit.kastel.sdq.eclipse.grading.core.artemis;
 
-import java.util.Collection;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -23,10 +23,10 @@ public class AssessmentResult {
 	private boolean hasFeedback;
 	private String completionDate;
 	private IAssessor assessor;
-	private Collection<IFeedback> feedbacks;
+	private List<IFeedback> feedbacks;
 
 	public AssessmentResult(int id, String resultString, String assessmentType, double score, boolean rated,
-			boolean hasFeedback, String completionDate, IAssessor assessor, Collection<IFeedback> feedbacks) {
+			boolean hasFeedback, String completionDate, IAssessor assessor, List<IFeedback> feedbacks) {
 		this.id = id;
 		this.resultString = resultString;
 		this.assessmentType = assessmentType;
@@ -50,7 +50,7 @@ public class AssessmentResult {
 		return this.completionDate;
 	}
 
-	public Collection<IFeedback> getFeedbacks() {
+	public List<IFeedback> getFeedbacks() {
 		return this.feedbacks;
 	}
 

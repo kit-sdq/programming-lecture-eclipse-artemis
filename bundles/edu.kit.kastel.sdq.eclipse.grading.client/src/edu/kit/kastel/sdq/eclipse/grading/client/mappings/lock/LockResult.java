@@ -1,6 +1,5 @@
 package edu.kit.kastel.sdq.eclipse.grading.client.mappings.lock;
 
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -9,22 +8,21 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.ILockResult;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IFeedback;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IParticipation;
 
 public class LockResult implements ILockResult {
 
 	private int submissionID;
-	private Collection<IFeedback> preexistentFeedbacks;
-	private int participationID;
+	private List<IFeedback> preexistentFeedbacks;
+	private IParticipation participation;
 	private double maxPoints;
 
 	@JsonCreator
-	public LockResult(
-			@JsonProperty("id") int submissionID,
-			@JsonProperty("results") List<LockCallAssessmentResult> previousAssessmentresults,
-			@JsonProperty("participation") ParticipationDTO participationDummy) {
+	public LockResult(@JsonProperty("id") int submissionID, @JsonProperty("results") List<LockCallAssessmentResult> previousAssessmentresults,
+			@JsonProperty("participation") ParticipationDTO participation) {
 		this.submissionID = submissionID;
-		this.participationID = participationDummy.getParticipationID();
-		this.maxPoints = participationDummy.getExerciseMaxPoints();
+		this.participation = participation;
+		this.maxPoints = participation.getExerciseMaxPoints();
 
 		this.preexistentFeedbacks = new LinkedList<>();
 		previousAssessmentresults.stream().forEach(prevAssessment -> this.preexistentFeedbacks.addAll(prevAssessment.getFeedbacks()));
@@ -36,12 +34,12 @@ public class LockResult implements ILockResult {
 	}
 
 	@Override
-	public int getParticipationID() {
-		return this.participationID;
+	public IParticipation getParticipation() {
+		return this.participation;
 	}
 
 	@Override
-	public Collection<IFeedback> getPreexistentFeedbacks() {
+	public List<IFeedback> getPreexistentFeedbacks() {
 		return this.preexistentFeedbacks;
 	}
 
@@ -52,11 +50,8 @@ public class LockResult implements ILockResult {
 
 	@Override
 	public String toString() {
-		return "LockResult ["
-				+ "submissionID=" + this.submissionID
-				+ ", participationID=" + this.participationID
-				+ ", preexistentFeedbacks=" + this.preexistentFeedbacks
-				+ "]";
+		return "LockResult [" + "submissionID=" + this.submissionID + ", participationID=" + this.participation + ", preexistentFeedbacks="
+				+ this.preexistentFeedbacks + "]";
 	}
 
 }

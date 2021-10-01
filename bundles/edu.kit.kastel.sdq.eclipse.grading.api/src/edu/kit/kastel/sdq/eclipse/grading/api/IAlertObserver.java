@@ -1,4 +1,4 @@
-package edu.kit.kastel.sdq.eclipse.grading.api.alerts;
+package edu.kit.kastel.sdq.eclipse.grading.api;
 
 /**
  * Instances can subscribe to an instance of {@link edu.kit.kastel.sdq.eclipse.grading.api.alerts.IAlertObservable} to be alerted whenever

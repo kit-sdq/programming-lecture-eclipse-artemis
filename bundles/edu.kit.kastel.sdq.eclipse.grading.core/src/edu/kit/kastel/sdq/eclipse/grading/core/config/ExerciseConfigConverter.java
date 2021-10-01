@@ -1,6 +1,6 @@
 package edu.kit.kastel.sdq.eclipse.grading.core.config;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 import com.fasterxml.jackson.databind.util.StdConverter;
@@ -15,7 +15,7 @@ public class ExerciseConfigConverter extends StdConverter<ExerciseConfig, Exerci
 
 	@Override
 	public ExerciseConfig convert(final ExerciseConfig exerciseConfig) {
-		Collection<RatingGroup> ratingGroups = exerciseConfig.getRatingGroups();
+		List<RatingGroup> ratingGroups = exerciseConfig.getRatingGroups();
 		for (MistakeType mistakeType : exerciseConfig.getMistakeTypes()) {
 			//find rating group
 			Optional<RatingGroup> ratingGroupOptional = ratingGroups.stream().filter(ratingGroup -> ratingGroup.getShortName().equals(mistakeType.getAppliesTo())).findFirst();

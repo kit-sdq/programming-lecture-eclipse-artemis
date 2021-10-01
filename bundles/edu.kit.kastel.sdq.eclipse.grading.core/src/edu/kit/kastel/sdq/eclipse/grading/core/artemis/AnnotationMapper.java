@@ -1,7 +1,7 @@
 package edu.kit.kastel.sdq.eclipse.grading.core.artemis;
 
 import java.io.IOException;
-import java.util.Collection;
+import java.util.List;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -10,9 +10,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.ILockResult;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.FeedbackType;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IAssessor;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IFeedback;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IFeedback.FeedbackType;
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IAnnotation;
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IMistakeType;
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IRatingGroup;
@@ -23,16 +23,16 @@ import edu.kit.kastel.sdq.eclipse.grading.api.model.IRatingGroup;
 public class AnnotationMapper {
 	// keep this up to date with  https://github.com/ls1intum/Artemis/blob/develop/src/main/java/de/tum/in/www1/artemis/config/Constants.java#L121
 	private static final int FEEDBACK_DETAIL_TEXT_MAX_CHARACTERS = 5000;
-	private final Collection<IAnnotation> annotations;
-	private final Collection<IMistakeType> mistakeTypes;
+	private final List<IAnnotation> annotations;
+	private final List<IMistakeType> mistakeTypes;
 
-	private final Collection<IRatingGroup> ratingGroups;
+	private final List<IRatingGroup> ratingGroups;
 	private final IAssessor assessor;
 	private final ILockResult lockResult;
 
 	private final IPenaltyCalculationStrategy penaltyCalculationStrategy;
 
-	public AnnotationMapper(Collection<IAnnotation> annotations, Collection<IMistakeType> mistakeTypes, Collection<IRatingGroup> ratingGroups,
+	public AnnotationMapper(List<IAnnotation> annotations, List<IMistakeType> mistakeTypes, List<IRatingGroup> ratingGroups,
 			IAssessor assessor, ILockResult lockResult, IPenaltyCalculationStrategy penaltyCalculationStrategy) {
 		this.annotations = annotations;
 		this.mistakeTypes = mistakeTypes;
@@ -43,13 +43,13 @@ public class AnnotationMapper {
 		this.penaltyCalculationStrategy = penaltyCalculationStrategy;
 	}
 
-	private double calculateAbsoluteScore(Collection<IFeedback> allFeedbacks) {
+	private double calculateAbsoluteScore(List<IFeedback> allFeedbacks) {
 		return allFeedbacks.stream()
 				.mapToDouble(IFeedback::getCredits)
 				.sum();
 	}
 
-	private Collection<IFeedback> calculateAllFeedbacks() throws IOException {
+	private List<IFeedback> calculateAllFeedbacks() throws IOException {
 		final boolean submissionIsInvalid = this.penaltyCalculationStrategy.submissionIsInvalid();
 
 		final List<IFeedback> result = new LinkedList<>();
@@ -61,7 +61,7 @@ public class AnnotationMapper {
 		return result;
 	}
 
-	private Collection<Feedback> calculateAnnotationSerialisationAsFeedbacks(List<IAnnotation> givenAnnotations, int detailTextMaxCharacters) throws IOException {
+	private List<Feedback> calculateAnnotationSerialisationAsFeedbacks(List<IAnnotation> givenAnnotations, int detailTextMaxCharacters) throws IOException {
 		final String givenAnnotationsJSONString = this.convertAnnotationsToJSONString(givenAnnotations);
 		//put as many feedbacks in one pack.
 		if (givenAnnotationsJSONString.length() < detailTextMaxCharacters) {
@@ -75,7 +75,7 @@ public class AnnotationMapper {
 
 		//recursion
 		final int givenAnnotationsSize = givenAnnotations.size();
-		final Collection<Feedback> resultFeedbacks = new LinkedList<>();
+		final List<Feedback> resultFeedbacks = new LinkedList<>();
 		resultFeedbacks.addAll(
 				this.calculateAnnotationSerialisationAsFeedbacks(givenAnnotations.subList(0, givenAnnotationsSize/2), detailTextMaxCharacters)
 		);
@@ -86,23 +86,23 @@ public class AnnotationMapper {
 		return resultFeedbacks;
 	}
 
-	private Collection<Feedback> calculateAnnotationSerialitationAsFeedbacks() throws IOException {
+	private List<Feedback> calculateAnnotationSerialitationAsFeedbacks() throws IOException {
 		// because Artemis has a Limit on "detailText" of 5000, we gotta do this little trick
 		return this.calculateAnnotationSerialisationAsFeedbacks(this.annotations.stream().collect(Collectors.toList()), FEEDBACK_DETAIL_TEXT_MAX_CHARACTERS);
 	}
 
-	private Collection<Feedback> calculateInvalidManualFeedback() {
-		final Collection<Feedback> manualFeedbacks = new LinkedList<>();
+	private List<Feedback> calculateInvalidManualFeedback() {
+		final List<Feedback> manualFeedbacks = new LinkedList<>();
 		manualFeedbacks.add(
-				new Feedback(IFeedback.FeedbackType.MANUAL_UNREFERENCED.name(),
+				new Feedback(FeedbackType.MANUAL_UNREFERENCED.name(),
 						0.D,
 						null, null, null, null, null, "Invalid Submission.")
 		);
 		return manualFeedbacks;
 	}
 
-	private Collection<Feedback> calculateManualFeedbacks() {
-		Collection<Feedback> manualFeedbacks = new LinkedList<>();
+	private List<Feedback> calculateManualFeedbacks() {
+		List<Feedback> manualFeedbacks = new LinkedList<>();
 		//add the code annotations
 		manualFeedbacks.addAll(
 			this.annotations.stream()
@@ -140,8 +140,8 @@ public class AnnotationMapper {
 	}
 
 
-	private String calculateResultString(final Collection<IFeedback> allFeedbacks, final double absoluteScore) {
-		final Collection<IFeedback> autoFeedbacks = allFeedbacks.stream()
+	private String calculateResultString(final List<IFeedback> allFeedbacks, final double absoluteScore) {
+		final List<IFeedback> autoFeedbacks = allFeedbacks.stream()
 				.filter(feedback -> feedback.getFeedbackType().equals(FeedbackType.AUTOMATIC)).collect(Collectors.toList());
 		long positiveTests = autoFeedbacks.stream()
 			.filter(IFeedback::getPositive).count();
@@ -158,7 +158,7 @@ public class AnnotationMapper {
 				.toString();
 	}
 
-	private String convertAnnotationsToJSONString(final Collection<IAnnotation> givenAnnotations) throws JsonProcessingException {
+	private String convertAnnotationsToJSONString(final List<IAnnotation> givenAnnotations) throws JsonProcessingException {
 		return new ObjectMapper().writeValueAsString(givenAnnotations);
 	}
 
@@ -166,7 +166,7 @@ public class AnnotationMapper {
 		final boolean submissionIsInvalid = this.penaltyCalculationStrategy.submissionIsInvalid();
 		// only add preexistent automatic feedback (unit tests etc) and manual feedback.										arTem155
 		//this should work indepently of invalid or not. if invalid, there should just be no feedbacks.
-		final Collection<IFeedback> allFeedbacks = this.calculateAllFeedbacks();
+		final List<IFeedback> allFeedbacks = this.calculateAllFeedbacks();
 		final double absoluteScore = submissionIsInvalid ? 0.D : Math.max(0.D, this.calculateAbsoluteScore(allFeedbacks));
 		final double relativeScore = submissionIsInvalid ? 0.D : this.calculateRelativeScore(absoluteScore);
 
@@ -225,7 +225,7 @@ public class AnnotationMapper {
 			.filter(mistakeType -> mistakeType.getRatingGroup().equals(ratingGroup))
 			.forEach(mistakeType -> {
 				final double currentPenalty = this.calculatePenaltyForMistakeType(mistakeType);
-				final Collection<IAnnotation> currentAnnotations = this.annotations.stream()
+				final List<IAnnotation> currentAnnotations = this.annotations.stream()
 						.filter(annotation -> annotation.getMistakeType().equals(mistakeType))
 						.collect(Collectors.toList());
 
@@ -257,7 +257,7 @@ public class AnnotationMapper {
 				detailTextStringBuilder.toString());
 	}
 
-	private Collection<IFeedback> getFilteredPreexistentFeedbacks(FeedbackType feedbackType) {
+	private List<IFeedback> getFilteredPreexistentFeedbacks(FeedbackType feedbackType) {
 		return this.lockResult.getPreexistentFeedbacks().stream()
 				.filter(feedback -> feedback.getFeedbackType() != null) // client data feedbacks
 				.filter(feedback -> feedback.getFeedbackType().equals(feedbackType)).collect(Collectors.toList());

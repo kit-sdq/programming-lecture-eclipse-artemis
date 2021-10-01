@@ -1,7 +1,7 @@
 package edu.kit.kastel.sdq.eclipse.grading.client.mappings;
 
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -25,7 +25,7 @@ public class ArtemisExercise implements IExercise, Serializable {
     @JsonProperty
     private String type;
 
-    private transient Collection<ISubmission> submissions;
+    private transient List<ISubmission> submissions;
     private transient IMappingLoader client;
 
     /**
@@ -36,7 +36,7 @@ public class ArtemisExercise implements IExercise, Serializable {
     }
 
     public ArtemisExercise(int exerciseId, String title, String shortName, String testRepositoryUrl,
-            Collection<ISubmission> submissions) {
+            List<ISubmission> submissions) {
         this.exerciseId = exerciseId;
         this.title = title;
         this.shortName = shortName;
@@ -63,7 +63,7 @@ public class ArtemisExercise implements IExercise, Serializable {
     }
 
     @Override
-    public Collection<ISubmission> getSubmissions() throws ArtemisClientException {
+    public List<ISubmission> getSubmissions() throws ArtemisClientException {
         if (this.submissions == null) {
             this.submissions = this.client.getSubmissionsForExercise(this);
         }

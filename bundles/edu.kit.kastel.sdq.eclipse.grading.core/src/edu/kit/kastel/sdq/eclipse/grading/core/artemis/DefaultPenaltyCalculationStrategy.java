@@ -1,6 +1,6 @@
 package edu.kit.kastel.sdq.eclipse.grading.core.artemis;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IAnnotation;
@@ -9,10 +9,10 @@ import edu.kit.kastel.sdq.eclipse.grading.api.model.IRatingGroup;
 
 public class DefaultPenaltyCalculationStrategy implements IPenaltyCalculationStrategy {
 
-	private Collection<IAnnotation> annotations;
-	private Collection<IMistakeType> mistakeTypes;
+	private List<IAnnotation> annotations;
+	private List<IMistakeType> mistakeTypes;
 
-	public DefaultPenaltyCalculationStrategy(Collection<IAnnotation> annotations, Collection<IMistakeType> mistakeTypes) {
+	public DefaultPenaltyCalculationStrategy(List<IAnnotation> annotations, List<IMistakeType> mistakeTypes) {
 		this.annotations = annotations;
 		this.mistakeTypes = mistakeTypes;
 	}

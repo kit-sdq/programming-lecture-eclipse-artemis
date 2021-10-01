@@ -14,15 +14,6 @@ package edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping;
  */
 public interface IFeedback {
 
-	//TODO Raus hier (evtl)
-	public enum FeedbackType {
-		MANUAL, MANUAL_UNREFERENCED, AUTOMATIC;
-
-		public static FeedbackType valueOfIgnoreCase(String str) {
-			return str != null ? FeedbackType.valueOf(str.toUpperCase()) : null;
-		}
-	}
-
 	/**
 	 *
 	 * @return this Feedbacks contribution to the total credit sum. Can be positive or negative.

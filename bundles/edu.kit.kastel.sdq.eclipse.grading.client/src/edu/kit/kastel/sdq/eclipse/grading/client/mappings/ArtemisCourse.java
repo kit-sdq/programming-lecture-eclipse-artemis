@@ -1,7 +1,7 @@
 package edu.kit.kastel.sdq.eclipse.grading.client.mappings;
 
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -19,8 +19,8 @@ public class ArtemisCourse implements ICourse, Serializable {
     private String title;
     @JsonProperty
     private String shortName;
-    private transient Collection<IExercise> exercises;
-    private transient Collection<IExam> exams;
+    private transient List<IExercise> exercises;
+    private transient List<IExam> exams;
     private transient IMappingLoader client;
 
     /**
@@ -29,8 +29,8 @@ public class ArtemisCourse implements ICourse, Serializable {
     public ArtemisCourse() {
     }
 
-    public ArtemisCourse(int courseId, String title, String shortName, Collection<IExercise> exercises,
-            Collection<IExam> exams) {
+    public ArtemisCourse(int courseId, String title, String shortName, List<IExercise> exercises,
+            List<IExam> exams) {
         this.courseId = courseId;
         this.title = title;
         this.shortName = shortName;
@@ -44,7 +44,7 @@ public class ArtemisCourse implements ICourse, Serializable {
     }
 
     @Override
-    public Collection<IExam> getExams() throws ArtemisClientException {
+    public List<IExam> getExams() throws ArtemisClientException {
         if (exams == null) {
             this.exams = client.getExamsForCourse(this);
         }
@@ -52,7 +52,7 @@ public class ArtemisCourse implements ICourse, Serializable {
     }
 
     @Override
-    public Collection<IExercise> getExercises() throws ArtemisClientException {
+    public List<IExercise> getExercises() throws ArtemisClientException {
         if (exercises == null) {
             this.exercises = client.getExercisesForCourse(this);
         }

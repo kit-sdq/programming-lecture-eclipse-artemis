@@ -1,6 +1,6 @@
 package edu.kit.kastel.sdq.eclipse.grading.core.config;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -20,33 +20,33 @@ import edu.kit.kastel.sdq.eclipse.grading.core.model.RatingGroup;
 public class ExerciseConfig {
 
 	private String shortName;
-	private Collection<RatingGroup> ratingGroups;
-	private Collection<MistakeType> mistakeTypes;
+	private List<RatingGroup> ratingGroups;
+	private List<MistakeType> mistakeTypes;
 
 	@JsonCreator
 	public ExerciseConfig(
 			@JsonProperty("shortName") String shortName,
-			@JsonProperty("ratingGroups") Collection<RatingGroup> ratingGroups,
-			@JsonProperty("mistakeTypes") Collection<MistakeType> mistakeTypes) {
+			@JsonProperty("ratingGroups") List<RatingGroup> ratingGroups,
+			@JsonProperty("mistakeTypes") List<MistakeType> mistakeTypes) {
 		this.shortName = shortName;
 		this.ratingGroups = ratingGroups;
 		this.mistakeTypes = mistakeTypes;
 	}
 
-	public Collection<IMistakeType> getIMistakeTypes() {
+	public List<IMistakeType> getIMistakeTypes() {
 		return this.mistakeTypes.stream().map(IMistakeType.class::cast).collect(Collectors.toList());
 	}
 
-	public Collection<IRatingGroup> getIRatingGroups() {
+	public List<IRatingGroup> getIRatingGroups() {
 		return this.ratingGroups.stream().map(IRatingGroup.class::cast).collect(Collectors.toList());
 	}
 
-	public Collection<MistakeType> getMistakeTypes() {
+	public List<MistakeType> getMistakeTypes() {
 		return this.mistakeTypes;
 	}
 
 
-	public Collection<RatingGroup> getRatingGroups() {
+	public List<RatingGroup> getRatingGroups() {
 		return this.ratingGroups;
 	}
 	public String getShortName() {

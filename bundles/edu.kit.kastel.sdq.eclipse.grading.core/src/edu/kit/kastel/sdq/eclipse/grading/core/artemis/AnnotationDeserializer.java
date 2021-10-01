@@ -2,7 +2,7 @@ package edu.kit.kastel.sdq.eclipse.grading.core.artemis;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Collection;
+import java.util.List;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +28,7 @@ public class AnnotationDeserializer {
 	private static final String FEEDBACK_TEXT = "CLIENT_DATA";
 	private Map<String, IMistakeType> mistakeTypesMap;
 
-	public AnnotationDeserializer(Collection<IMistakeType> mistakeTypes) {
+	public AnnotationDeserializer(List<IMistakeType> mistakeTypes) {
 		this.mistakeTypesMap = new HashMap<>();
 		mistakeTypes.forEach(mistakeType -> this.mistakeTypesMap.put(mistakeType.getName(), mistakeType));
 	}
@@ -39,7 +39,7 @@ public class AnnotationDeserializer {
 	 * @return
 	 * @throws IOException
 	 */
-	public Collection<IAnnotation> deserialize(Collection<IFeedback> feedbacks) throws IOException {
+	public List<IAnnotation> deserialize(List<IFeedback> feedbacks) throws IOException {
 		final List<IFeedback> matchingFeedbacks = feedbacks.stream()
 				.filter(feedback -> {
 					String text = feedback.getText();
@@ -52,7 +52,7 @@ public class AnnotationDeserializer {
 		}
 
 		JsonProcessingException[] foundException = {null};
-		Collection<Annotation> deserializedAnnotations = matchingFeedbacks.stream()
+		List<Annotation> deserializedAnnotations = matchingFeedbacks.stream()
 			.map(IFeedback::getDetailText)	// get the json blob
 			.map(feedbackDetailText -> { 					//transform the json blob to multiple annotations
 				try {

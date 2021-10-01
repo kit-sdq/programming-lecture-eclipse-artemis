@@ -1,6 +1,6 @@
 package edu.kit.kastel.sdq.eclipse.grading.core.model;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.LinkedList;
 import java.util.stream.Collectors;
 
@@ -16,7 +16,7 @@ public class RatingGroup implements IRatingGroup {
 	private String displayName;
 	private Double penaltyLimit;
 
-	private Collection<MistakeType> mistakeTypes;
+	private List<MistakeType> mistakeTypes;
 
 	@JsonCreator
 	public RatingGroup(
@@ -39,7 +39,7 @@ public class RatingGroup implements IRatingGroup {
 	}
 
 	@Override
-	public Collection<IMistakeType> getMistakeTypes() {
+	public List<IMistakeType> getMistakeTypes() {
 		return this.mistakeTypes.stream().map(IMistakeType.class::cast).collect(Collectors.toList());
 	}
 
