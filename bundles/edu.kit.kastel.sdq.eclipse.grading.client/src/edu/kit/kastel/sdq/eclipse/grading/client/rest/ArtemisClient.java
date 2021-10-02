@@ -159,21 +159,13 @@ public class ArtemisClient extends AbstractArtemisClient implements IMappingLoad
 	public List<IExercise> getExercisesForCourse(ICourse course) throws ArtemisClientException {
 		this.checkAuthentication();
 
-		boolean isInstructor = course.isInstructor(this.getAssessor());
+		final Response exercisesRsp = this.endpoint.path(COURSES_PATHPART).path(String.valueOf(course.getCourseId())).path("with-exercises").request()
+				.header(AUTHORIZATION_NAME, this.token).buildGet().invoke();
 
-		final Response exercisesAndParticipationsRsp;
-		if (isInstructor) {
-			exercisesAndParticipationsRsp = this.endpoint.path(COURSES_PATHPART).path(String.valueOf(course.getCourseId()))
-					.path("with-exercises-and-relevant-participations").request().header(AUTHORIZATION_NAME, this.token).buildGet().invoke();
-		} else {
-			exercisesAndParticipationsRsp = this.endpoint.path(COURSES_PATHPART).path(String.valueOf(course.getCourseId())).path("with-exercises").request()
-					.header(AUTHORIZATION_NAME, this.token).buildGet().invoke();
-		}
-
-		this.throwIfStatusUnsuccessful(exercisesAndParticipationsRsp);
+		this.throwIfStatusUnsuccessful(exercisesRsp);
 
 		// get the part of the json that we want to deserialize
-		final JsonNode exercisesAndParticipationsJsonNode = this.readTree(exercisesAndParticipationsRsp.readEntity(String.class));
+		final JsonNode exercisesAndParticipationsJsonNode = this.readTree(exercisesRsp.readEntity(String.class));
 		JsonNode exercisesJsonArray = exercisesAndParticipationsJsonNode.get(EXERCISES_PATHPART);
 		if (exercisesJsonArray == null) {
 			// course has no exercises!
@@ -193,7 +185,7 @@ public class ArtemisClient extends AbstractArtemisClient implements IMappingLoad
 	}
 
 	@Override
-	public List<ISubmission> getSubmissions(IExercise exercise, boolean assessedByTutor, int correctionRound) throws ArtemisClientException {
+	public List<ISubmission> getSubmissions(IExercise exercise, int correctionRound) throws ArtemisClientException {
 		this.checkAuthentication();
 		boolean isInstructor = exercise.getCourse().isInstructor(this.getAssessor());
 
@@ -215,26 +207,13 @@ public class ArtemisClient extends AbstractArtemisClient implements IMappingLoad
 	}
 
 	@Override
-	public List<ISubmission> getSubmissionsForExercise(IExercise exercise, int correctionRound) throws ArtemisClientException {
-		this.checkAuthentication();
-
-		final Response rsp = this.endpoint.path(EXERCISES_PATHPART).path(String.valueOf(exercise.getExerciseId())).path(PROGRAMMING_SUBMISSION_PATHPART)
-				// Load all to exercise
-				.queryParam("assessedByTutor", false) //
-				.queryParam("correction-round", correctionRound) //
-				.request().header(AUTHORIZATION_NAME, this.token).buildGet().invoke(); // synchronous variant
-		if (!this.isStatusSuccessful(rsp)) {
-			// may happen sometimes
-			return List.of();
+	public ISubmission getSubmissionById(IExercise artemisExercise, int submissionId) throws ArtemisClientException {
+		List<ISubmission> submissions = this.getSubmissions(artemisExercise);
+		ISubmission target = submissions.stream().filter(s -> s.getSubmissionId() == submissionId).findFirst().orElse(null);
+		if (target == null) {
+			throw new ArtemisClientException("Submission " + submissionId + " not found!");
 		}
-
-		final String rspEntity = rsp.readEntity(String.class);
-		ArtemisSubmission[] submissionsArray = this.read(rspEntity, ArtemisSubmission[].class);
-		for (ArtemisSubmission submission : submissionsArray) {
-			submission.init(correctionRound);
-		}
-
-		return Arrays.asList(submissionsArray);
+		return target;
 	}
 
 	private boolean isStatusSuccessful(final Response response) {
@@ -332,4 +311,5 @@ public class ArtemisClient extends AbstractArtemisClient implements IMappingLoad
 					+ response.getStatusInfo().getReasonPhrase() + "\".");
 		}
 	}
+
 }

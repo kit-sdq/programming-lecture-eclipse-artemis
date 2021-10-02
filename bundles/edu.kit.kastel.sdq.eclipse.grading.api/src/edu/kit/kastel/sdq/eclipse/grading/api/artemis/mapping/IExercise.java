@@ -1,7 +1,5 @@
 package edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping;
 
-import java.util.List;
-
 import edu.kit.kastel.sdq.eclipse.grading.api.ArtemisClientException;
 
 public interface IExercise {
@@ -20,7 +18,7 @@ public interface IExercise {
 
 	String getType();
 
-	List<ISubmission> getSubmissions() throws ArtemisClientException;
-
 	ICourse getCourse();
+
+	ISubmission getSubmission(int id) throws ArtemisClientException;
 }

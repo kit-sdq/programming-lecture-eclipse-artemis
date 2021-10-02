@@ -28,7 +28,6 @@ public class ArtemisExercise implements IExercise, Serializable {
 	@JsonProperty
 	private double maxPoints;
 
-	private transient List<ISubmission> submissions;
 	private transient IMappingLoader client;
 
 	private transient ICourse course;
@@ -45,7 +44,6 @@ public class ArtemisExercise implements IExercise, Serializable {
 		this.title = title;
 		this.shortName = shortName;
 		this.testRepositoryUrl = testRepositoryUrl;
-		this.submissions = submissions;
 	}
 
 	@Override
@@ -64,14 +62,6 @@ public class ArtemisExercise implements IExercise, Serializable {
 			return this.title;
 		}
 		return this.shortName;
-	}
-
-	@Override
-	public List<ISubmission> getSubmissions() throws ArtemisClientException {
-		if (this.submissions == null) {
-			this.submissions = this.client.getSubmissionsForExercise(this);
-		}
-		return this.submissions;
 	}
 
 	@Override
@@ -102,6 +92,11 @@ public class ArtemisExercise implements IExercise, Serializable {
 	public void init(IMappingLoader client, ICourse course) {
 		this.client = client;
 		this.course = course;
+	}
+
+	@Override
+	public ISubmission getSubmission(int id) throws ArtemisClientException {
+		return this.client.getSubmissionById(this, id);
 	}
 
 }
