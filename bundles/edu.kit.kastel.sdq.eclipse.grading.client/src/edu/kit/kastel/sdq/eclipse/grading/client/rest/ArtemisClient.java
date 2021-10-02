@@ -158,9 +158,18 @@ public class ArtemisClient extends AbstractArtemisClient implements IMappingLoad
 	@Override
 	public List<IExercise> getExercisesForCourse(ICourse course) throws ArtemisClientException {
 		this.checkAuthentication();
-		final Response exercisesAndParticipationsRsp = this.endpoint.path(COURSES_PATHPART).path(String.valueOf(course.getCourseId()))
-				.path("with-exercises-and-relevant-participations").request().header(AUTHORIZATION_NAME, this.token).buildGet().invoke(); // synchronous
-																																			// call
+
+		boolean isInstructor = course.isInstructor(this.getAssessor());
+
+		final Response exercisesAndParticipationsRsp;
+		if (isInstructor) {
+			exercisesAndParticipationsRsp = this.endpoint.path(COURSES_PATHPART).path(String.valueOf(course.getCourseId()))
+					.path("with-exercises-and-relevant-participations").request().header(AUTHORIZATION_NAME, this.token).buildGet().invoke();
+		} else {
+			exercisesAndParticipationsRsp = this.endpoint.path(COURSES_PATHPART).path(String.valueOf(course.getCourseId())).path("with-exercises").request()
+					.header(AUTHORIZATION_NAME, this.token).buildGet().invoke();
+		}
+
 		this.throwIfStatusUnsuccessful(exercisesAndParticipationsRsp);
 
 		// get the part of the json that we want to deserialize
