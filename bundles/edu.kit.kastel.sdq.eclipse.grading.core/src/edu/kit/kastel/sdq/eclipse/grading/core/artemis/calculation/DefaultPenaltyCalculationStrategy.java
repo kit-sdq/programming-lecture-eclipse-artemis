@@ -1,6 +1,6 @@
-package edu.kit.kastel.sdq.eclipse.grading.core.artemis;
+package edu.kit.kastel.sdq.eclipse.grading.core.artemis.calculation;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IAnnotation;
@@ -9,28 +9,25 @@ import edu.kit.kastel.sdq.eclipse.grading.api.model.IRatingGroup;
 
 public class DefaultPenaltyCalculationStrategy implements IPenaltyCalculationStrategy {
 
-	private Collection<IAnnotation> annotations;
-	private Collection<IMistakeType> mistakeTypes;
+	private List<IAnnotation> annotations;
+	private List<IMistakeType> mistakeTypes;
 
-	public DefaultPenaltyCalculationStrategy(Collection<IAnnotation> annotations, Collection<IMistakeType> mistakeTypes) {
+	public DefaultPenaltyCalculationStrategy(List<IAnnotation> annotations, List<IMistakeType> mistakeTypes) {
 		this.annotations = annotations;
 		this.mistakeTypes = mistakeTypes;
 	}
 
 	@Override
 	public double calculatePenaltyForMistakeType(IMistakeType mistakeType) {
-		return mistakeType.calculatePenalty(
-			this.annotations.stream()
-				.filter(annotation -> annotation.getMistakeType().equals(mistakeType))
-				.collect(Collectors.toList())
-		);
+		return mistakeType.calculatePenalty(this.annotations.stream() //
+				.filter(annotation -> annotation.getMistakeType().equals(mistakeType)) //
+				.collect(Collectors.toList()));
 	}
 
 	private double calculatePenaltyForRatingGroupWithoutLimit(IRatingGroup ratingGroup) {
-		return this.mistakeTypes.stream()
-			.filter(mistakeType -> mistakeType.getRatingGroup().equals(ratingGroup))
-			.map(this::calculatePenaltyForMistakeType)
-			.collect(Collectors.summingDouble(Double::doubleValue));
+		return this.mistakeTypes.stream() //
+				.filter(mistakeType -> mistakeType.getRatingGroup().equals(ratingGroup)) //
+				.mapToDouble(this::calculatePenaltyForMistakeType).sum();
 	}
 
 	@Override
@@ -38,7 +35,7 @@ public class DefaultPenaltyCalculationStrategy implements IPenaltyCalculationStr
 		double calculatedPenalty = this.calculatePenaltyForRatingGroupWithoutLimit(ratingGroup);
 
 		return ratingGroup.hasPenaltyLimit()
-				//both are positive
+				// both are positive
 				? Math.min(calculatedPenalty, ratingGroup.getPenaltyLimit())
 				: calculatedPenalty;
 
@@ -46,7 +43,7 @@ public class DefaultPenaltyCalculationStrategy implements IPenaltyCalculationStr
 
 	@Override
 	public boolean penaltyLimitIsHitForRatingGroup(IRatingGroup ratingGroup) {
-		return (this.calculatePenaltyForRatingGroupWithoutLimit(ratingGroup) > ratingGroup.getPenaltyLimit());
+		return this.calculatePenaltyForRatingGroupWithoutLimit(ratingGroup) > ratingGroup.getPenaltyLimit();
 	}
 
 	@Override

@@ -1,7 +1,7 @@
 package edu.kit.kastel.sdq.eclipse.grading.core.model;
 
-import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -16,12 +16,10 @@ public class RatingGroup implements IRatingGroup {
 	private String displayName;
 	private Double penaltyLimit;
 
-	private Collection<MistakeType> mistakeTypes;
+	private List<MistakeType> mistakeTypes;
 
 	@JsonCreator
-	public RatingGroup(
-			@JsonProperty("shortName") final String shortName,
-			@JsonProperty("displayName") final String displayName,
+	public RatingGroup(@JsonProperty("shortName") final String shortName, @JsonProperty("displayName") final String displayName,
 			@JsonProperty("penaltyLimit") final Double penaltyLimit) {
 		this.shortName = shortName;
 		this.displayName = displayName;
@@ -39,13 +37,13 @@ public class RatingGroup implements IRatingGroup {
 	}
 
 	@Override
-	public Collection<IMistakeType> getMistakeTypes() {
+	public List<IMistakeType> getMistakeTypes() {
 		return this.mistakeTypes.stream().map(IMistakeType.class::cast).collect(Collectors.toList());
 	}
 
 	@Override
 	public double getPenaltyLimit() {
-		//in case the caller does not call this::hasPenaltyLimit.
+		// in case the caller does not call this::hasPenaltyLimit.
 		return this.penaltyLimit != null ? this.penaltyLimit : Double.MAX_VALUE;
 	}
 
@@ -61,12 +59,8 @@ public class RatingGroup implements IRatingGroup {
 
 	@Override
 	public String toString() {
-		return "RatingGroup ["
-				+ "shortName=" + this.shortName
-				+ ", displayName=" + this.displayName
-				+ ", penaltyLimit= " + (this.hasPenaltyLimit() ? this.penaltyLimit : "NO_LIMIT")
-				+ "]";
+		return "RatingGroup [" + "shortName=" + this.shortName + ", displayName=" + this.displayName + ", penaltyLimit= "
+				+ (this.hasPenaltyLimit() ? this.penaltyLimit : "NO_LIMIT") + "]";
 	}
-
 
 }

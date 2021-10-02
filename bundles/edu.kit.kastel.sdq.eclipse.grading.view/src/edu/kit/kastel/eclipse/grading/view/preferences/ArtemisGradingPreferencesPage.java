@@ -42,23 +42,18 @@ public class ArtemisGradingPreferencesPage extends FieldEditorPreferencePage imp
 	@Override
 	public void createFieldEditors() {
 
-		this.absoluteConfigPath = new FileFieldEditor(PreferenceConstants.ABSOLUTE_CONFIG_PATH,
-				"Absolute config path: ", this.getFieldEditorParent());
+		this.absoluteConfigPath = new FileFieldEditor(PreferenceConstants.ABSOLUTE_CONFIG_PATH, "Absolute config path: ", this.getFieldEditorParent());
 
-		this.isRelativeConfigPath = new BooleanFieldEditor(PreferenceConstants.IS_RELATIVE_CONFIG_PATH,
-				"Use relative config path", this.getFieldEditorParent());
-
-		this.relativeConfigPath = new StringFieldEditor(PreferenceConstants.RELATIVE_CONFIG_PATH,
-				"Relative config path: ", this.getFieldEditorParent());
-
-		StringFieldEditor artemisUrl = new StringFieldEditor(PreferenceConstants.ARTEMIS_URL, "Artemis URL: ",
+		this.isRelativeConfigPath = new BooleanFieldEditor(PreferenceConstants.IS_RELATIVE_CONFIG_PATH, "Use relative config path",
 				this.getFieldEditorParent());
 
-		StringFieldEditor artemisUser = new StringFieldEditor(PreferenceConstants.ARTEMIS_USER, "Artemis username: ",
-				this.getFieldEditorParent());
+		this.relativeConfigPath = new StringFieldEditor(PreferenceConstants.RELATIVE_CONFIG_PATH, "Relative config path: ", this.getFieldEditorParent());
 
-		StringFieldEditor artemisPassword = new StringFieldEditor(PreferenceConstants.ARTEMIS_PASSWORD,
-				"Artemis password: ", this.getFieldEditorParent());
+		StringFieldEditor artemisUrl = new StringFieldEditor(PreferenceConstants.ARTEMIS_URL, "Artemis URL: ", this.getFieldEditorParent());
+
+		StringFieldEditor artemisUser = new StringFieldEditor(PreferenceConstants.ARTEMIS_USER, "Artemis username: ", this.getFieldEditorParent());
+
+		StringFieldEditor artemisPassword = new StringFieldEditor(PreferenceConstants.ARTEMIS_PASSWORD, "Artemis password: ", this.getFieldEditorParent());
 
 		artemisPassword.getTextControl(this.getFieldEditorParent()).setEchoChar('*');
 
@@ -71,21 +66,16 @@ public class ArtemisGradingPreferencesPage extends FieldEditorPreferencePage imp
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
-	 */
 	@Override
 	public void init(IWorkbench workbench) {
-
+		// NOP
 	}
 
 	@Override
 	protected void initialize() {
 		super.initialize();
 		this.isRelativeConfigPath.setPropertyChangeListener(event -> {
-			final boolean isRelative = ((Boolean) event.getNewValue()).booleanValue();
+			final boolean isRelative = (Boolean) event.getNewValue();
 			if (isRelative) {
 				this.relativeConfigPath.setEnabled(true, this.getFieldEditorParent());
 				this.absoluteConfigPath.setEnabled(false, this.getFieldEditorParent());

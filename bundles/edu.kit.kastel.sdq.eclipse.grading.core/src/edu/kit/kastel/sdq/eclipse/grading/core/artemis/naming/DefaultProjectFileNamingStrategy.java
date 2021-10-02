@@ -1,4 +1,4 @@
-package edu.kit.kastel.sdq.eclipse.grading.core.artemis;
+package edu.kit.kastel.sdq.eclipse.grading.core.artemis.naming;
 
 import java.io.File;
 
@@ -36,6 +36,9 @@ public class DefaultProjectFileNamingStrategy implements IProjectFileNamingStrat
             .append(submission.getSubmissionId())
             .append("-")
             .append(submission.getParticipantIdentifier())
+            .append("-")
+            .append("round")
+            .append(submission.getCorrectionRound() + 1)
             .toString());
     }
 

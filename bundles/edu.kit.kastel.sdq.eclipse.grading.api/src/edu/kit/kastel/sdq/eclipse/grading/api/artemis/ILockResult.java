@@ -1,34 +1,35 @@
 package edu.kit.kastel.sdq.eclipse.grading.api.artemis;
 
-import java.util.Collection;
+import java.util.List;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IFeedback;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IParticipation;
 
 /**
- * This is gotten from acquiring a lock (no matter if the lock is already held by the caller or not).
- * It is used to calculate the assessment result.
+ * This is gotten from acquiring a lock (no matter if the lock is already held
+ * by the caller or not). It is used to calculate the assessment result.
  *
  */
 public interface ILockResult {
 
-	//TODO check if IExercise has that field, too!
-	double getMaxPoints();
+	/**
+	 *
+	 * @return the participationID this submissionID belongs to (one participation
+	 *         has one or many submissions).
+	 */
+	IParticipation getParticipation();
 
 	/**
 	 *
-	 * @return the participationID this submissionID belongs to (one participation has one or many submissions).
+	 * @return all {@link IFeedback}s that are saved in Artemis. This is used to
+	 *         calculate the assessment result which is sent back to Artemis.
 	 */
-	int getParticipationID();
+	List<IFeedback> getPreexistentFeedbacks();
 
 	/**
 	 *
-	 * @return all {@link IFeedback}s that are saved in Artemis. This is used to calculate the assessment result which is sent back to Artemis.
+	 * @return the submissionID this result belongs to (one participation has one or
+	 *         many submissions).
 	 */
-	Collection<IFeedback> getPreexistentFeedbacks();
-
-	/**
-	 *
-	 * @return the submissionID this result belongs to (one participation has one or many submissions).
-	 */
-	int getSubmissionID();
+	int getSubmissionId();
 }

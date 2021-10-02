@@ -1,6 +1,7 @@
 package edu.kit.kastel.sdq.eclipse.grading.client.mappings;
 
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.List;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.ArtemisClientException;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ICourse;
@@ -11,13 +12,20 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
 
 public interface IMappingLoader {
 
-    Collection<IExerciseGroup> getExerciseGroupsForExam(IExam artemisExam, ICourse course)
-            throws ArtemisClientException;
+	List<IExerciseGroup> getExerciseGroupsForExam(IExam artemisExam, ICourse course) throws ArtemisClientException;
 
-    Collection<ISubmission> getSubmissionsForExercise(IExercise artemisExercise) throws ArtemisClientException;
+	default List<ISubmission> getSubmissionsForExercise(IExercise artemisExercise) throws ArtemisClientException {
+		List<ISubmission> submissions = new ArrayList<>();
+		// Correction Round 0 and 1
+		submissions.addAll(this.getSubmissionsForExercise(artemisExercise, 0));
+		submissions.addAll(this.getSubmissionsForExercise(artemisExercise, 1));
+		return submissions;
+	}
 
-    Collection<IExam> getExamsForCourse(ICourse artemisCourse) throws ArtemisClientException;
+	List<ISubmission> getSubmissionsForExercise(IExercise artemisExercise, int correctionRound) throws ArtemisClientException;
 
-    Collection<IExercise> getExercisesForCourse(ICourse artemisCourse) throws ArtemisClientException;
+	List<IExam> getExamsForCourse(ICourse artemisCourse) throws ArtemisClientException;
+
+	List<IExercise> getExercisesForCourse(ICourse artemisCourse) throws ArtemisClientException;
 
 }

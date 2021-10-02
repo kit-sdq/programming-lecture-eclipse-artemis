@@ -21,12 +21,12 @@ import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
- * 
+ *
  * This class includes only static methods (or constants) for the assessment
  * process. It also contains methods (or constant) for the view controller to
  * keep the class clean.
  */
-public class AssessmentUtilities {
+public final class AssessmentUtilities {
 
 	public static final String MARKER_NAME = "edu.kit.kastel.eclipse.grading.view.assessment.marker";
 	public static final String MARKER_ATTRIBUTE_ERROR = "errorType";
@@ -44,7 +44,7 @@ public class AssessmentUtilities {
 
 	/**
 	 * Creates a tooltip for a marker with the given parameters
-	 * 
+	 *
 	 * @param startLine
 	 * @param endline
 	 * @param errorTypeName
@@ -53,23 +53,21 @@ public class AssessmentUtilities {
 	 * @param classPath
 	 * @return the tooltip for the marker as string
 	 */
-	public static String createMarkerTooltip(int startLine, int endline, String errorTypeName, String ratingGroupName,
-			String message, String classPath) {
-		return String.format("[%s,%s], %s, %s, %s, %s", startLine, endline,
-				classPath == null ? getClassNameForAnnotation() : classPath, ratingGroupName, errorTypeName, message);
+	public static String createMarkerTooltip(int startLine, int endline, String errorTypeName, String ratingGroupName, String message, String classPath) {
+		return String.format("[%s,%s], %s, %s, %s, %s", startLine, endline, classPath == null ? getClassNameForAnnotation() : classPath, ratingGroupName,
+				errorTypeName, message);
 	}
 
 	/**
 	 * Creates a tooltip for the custom button
-	 * 
+	 *
 	 * @param startLine
 	 * @param endline
 	 * @param customMessage
 	 * @param customPenalty
 	 * @return tooltip of custom button as String
 	 */
-	public static String createMarkerTooltipForCustomButton(int startLine, int endline, String customMessage,
-			Double customPenalty) {
+	public static String createMarkerTooltipForCustomButton(int startLine, int endline, String customMessage, Double customPenalty) {
 		return String.format("[%s,%s], %s, %s", startLine, endline, customMessage, customPenalty);
 	}
 
@@ -86,25 +84,23 @@ public class AssessmentUtilities {
 	 * @return the class name of the currently active file in the editor
 	 */
 	public static String getClassNameForAnnotation() {
-		final IWorkbenchPart workbenchPart = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-				.getActivePart();
+		final IWorkbenchPart workbenchPart = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart();
 		return workbenchPart.getSite().getPage().getActiveEditor().getEditorInput().getName();
 	}
 
 	/**
 	 * Gets the current open file
-	 * 
+	 *
 	 * @return IFile instance of the current open file in the editor
 	 */
 	public static IFile getCurrentlyOpenFile() {
-		final IWorkbenchPart workbenchPart = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-				.getActivePart();
+		final IWorkbenchPart workbenchPart = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart();
 		return workbenchPart.getSite().getPage().getActiveEditor().getEditorInput().getAdapter(IFile.class);
 	}
 
 	/**
 	 * This method gets the offset for the marker creation.
-	 * 
+	 *
 	 * @param startLine (of the annotation)
 	 * @return the number of chars until the start line
 	 */
@@ -185,6 +181,10 @@ public class AssessmentUtilities {
 
 	public static IWorkspace getWorkspace() {
 		return ResourcesPlugin.getWorkspace();
+	}
+
+	private AssessmentUtilities() {
+		throw new IllegalAccessError();
 	}
 
 }

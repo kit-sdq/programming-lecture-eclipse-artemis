@@ -17,6 +17,7 @@ public abstract class PenaltyRule {
 
 	/**
 	 * A util function.
+	 *
 	 * @return a map filled with "(annotation, 0.0)".
 	 */
 	protected static Map<IAnnotation, Double> createZeroedMap(List<IAnnotation> annotations) {
@@ -40,7 +41,8 @@ public abstract class PenaltyRule {
 
 	/**
 	 * @param annotations
-	 * @return a tooltip String (e.g. for thresholdPenalty the score and how many annotations were made.)
+	 * @return a tooltip String (e.g. for thresholdPenalty the score and how many
+	 *         annotations were made.)
 	 */
 	public abstract String getTooltip(List<IAnnotation> annotations);
 }

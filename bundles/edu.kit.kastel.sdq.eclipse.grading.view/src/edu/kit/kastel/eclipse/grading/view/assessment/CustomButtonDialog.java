@@ -29,8 +29,7 @@ public class CustomButtonDialog extends Dialog {
 	private final AssessmentViewController viewController;
 	private final String ratingGroupName;
 
-	public CustomButtonDialog(Shell parentShell, AssessmentViewController viewController, String ratingGroupName,
-			IMistakeType mistake) {
+	public CustomButtonDialog(Shell parentShell, AssessmentViewController viewController, String ratingGroupName, IMistakeType mistake) {
 		super(parentShell);
 		this.viewController = viewController;
 		this.ratingGroupName = ratingGroupName;
@@ -85,8 +84,7 @@ public class CustomButtonDialog extends Dialog {
 	protected void okPressed() {
 		this.customMessage = this.customMessageInputField.getText();
 		this.customPenalty = Double.parseDouble(this.customPenaltyInputField.getText().replace(',', '.'));
-		this.viewController.addAssessmentAnnotaion(this.customMistake, this.customMessage, this.customPenalty,
-				this.ratingGroupName);
+		this.viewController.addAssessmentAnnotaion(this.customMistake, this.customMessage, this.customPenalty, this.ratingGroupName);
 		super.okPressed();
 	}
 }

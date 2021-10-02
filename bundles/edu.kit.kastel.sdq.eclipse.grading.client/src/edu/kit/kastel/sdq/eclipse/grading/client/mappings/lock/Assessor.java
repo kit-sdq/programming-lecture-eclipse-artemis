@@ -1,5 +1,7 @@
 package edu.kit.kastel.sdq.eclipse.grading.client.mappings.lock;
 
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -18,18 +20,13 @@ public class Assessor implements IAssessor {
 	private String name;
 	private String participantIdentifier;
 
+	private List<String> groups;
+
 	@JsonCreator
-	public Assessor(
-			@JsonProperty("id") int id,
-			@JsonProperty("login") String login,
-			@JsonProperty("firstName") String firstName,
-			@JsonProperty("lastName") String lastName,
-			@JsonProperty("email") String email,
-			@JsonProperty("activated") boolean activated,
-			@JsonProperty("langKey") String langKey,
-			@JsonProperty("lastNotificationRead") String lastNotificationRead,
-			@JsonProperty("name") String name,
-			@JsonProperty("participantIdentifier") String participantIdentifier) {
+	public Assessor(@JsonProperty("id") int id, @JsonProperty("login") String login, @JsonProperty("firstName") String firstName,
+			@JsonProperty("lastName") String lastName, @JsonProperty("email") String email, @JsonProperty("activated") boolean activated,
+			@JsonProperty("langKey") String langKey, @JsonProperty("lastNotificationRead") String lastNotificationRead, @JsonProperty("name") String name,
+			@JsonProperty("participantIdentifier") String participantIdentifier, @JsonProperty("groups") List<String> groups) {
 		this.id = id;
 		this.login = login;
 		this.firstName = firstName;
@@ -39,7 +36,8 @@ public class Assessor implements IAssessor {
 		this.langKey = langKey;
 		this.lastNotificationRead = lastNotificationRead;
 		this.name = name;
-		this.participantIdentifier = (participantIdentifier == null) ? this.login : null;
+		this.participantIdentifier = participantIdentifier == null ? this.login : null;
+		this.groups = groups;
 	}
 
 	@Override
@@ -93,11 +91,8 @@ public class Assessor implements IAssessor {
 	}
 
 	@Override
-	public String toString() {
-		return "Assessor [id=" + this.id + ", login=" + this.login + ", firstName=" + this.firstName + ", lastName=" + this.lastName
-				+ ", email=" + this.email + ", activated=" + this.activated + ", langKey=" + this.langKey + ", lastNotificationRead="
-				+ this.lastNotificationRead + ", name=" + this.name + ", participantIdentifier=" + this.participantIdentifier + "]";
+	public List<String> getGroups() {
+		return this.groups;
 	}
-
 
 }

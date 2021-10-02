@@ -1,4 +1,4 @@
-package edu.kit.kastel.sdq.eclipse.grading.core.artemis;
+package edu.kit.kastel.sdq.eclipse.grading.core.artemis.calculation;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IMistakeType;
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IRatingGroup;

@@ -1,6 +1,6 @@
 package edu.kit.kastel.sdq.eclipse.grading.core.model.annotation;
 
-import java.util.Collection;
+import java.util.Set;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IAnnotation;
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IMistakeType;
@@ -15,12 +15,13 @@ public interface IAnnotationDao {
 	 *
 	 * @param annotation the annotation to be added
 	 */
-	void addAnnotation(int annotationID, IMistakeType mistakeType, int startLine, int endLine, String fullyClassifiedClassName,
-			String customMessage, Double customPenalty, int markerCharStart, int markerCharEnd) throws AnnotationException;
+	void addAnnotation(int annotationID, IMistakeType mistakeType, int startLine, int endLine, String fullyClassifiedClassName, String customMessage,
+			Double customPenalty, int markerCharStart, int markerCharEnd) throws AnnotationException;
 
 	/**
 	 * Get an existent annotation by id
-	 * @param annotationId	unique annotation identifier
+	 *
+	 * @param annotationId unique annotation identifier
 	 *
 	 * @return the annotation
 	 */
@@ -30,10 +31,11 @@ public interface IAnnotationDao {
 	 *
 	 * @return all annotations already made for the current assessment.
 	 */
-	Collection<IAnnotation> getAnnotations();
+	Set<IAnnotation> getAnnotations();
 
 	/**
 	 * Modify an annotation in the database.
+	 *
 	 * @param annatationId
 	 * @param customMessage
 	 * @param customPenalty
@@ -42,7 +44,8 @@ public interface IAnnotationDao {
 
 	/**
 	 * Remove an existent annotation
-	 * @param annotationId	unique annotation identifier
+	 *
+	 * @param annotationId unique annotation identifier
 	 */
 	void removeAnnotation(int annotationId);
 }

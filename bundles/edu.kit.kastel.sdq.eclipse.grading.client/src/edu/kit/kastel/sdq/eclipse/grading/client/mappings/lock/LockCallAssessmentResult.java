@@ -1,7 +1,6 @@
 package edu.kit.kastel.sdq.eclipse.grading.client.mappings.lock;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -14,7 +13,7 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IFeedback;
  */
 public class LockCallAssessmentResult {
 
-	private Collection<Feedback> feedbacks;
+	private List<Feedback> feedbacks;
 
 	public LockCallAssessmentResult(@JsonProperty("feedbacks") Feedback[] feedbacks) {
 		if (feedbacks != null) {
@@ -22,11 +21,9 @@ public class LockCallAssessmentResult {
 		}
 	}
 
-	public Collection<IFeedback> getFeedbacks() {
+	public List<IFeedback> getFeedbacks() {
 		if (this.feedbacks != null) {
-			return this.feedbacks.stream()
-					.map(IFeedback.class::cast)
-					.collect(Collectors.toList());
+			return this.feedbacks.stream().map(IFeedback.class::cast).collect(Collectors.toList());
 		}
 		return List.of();
 	}

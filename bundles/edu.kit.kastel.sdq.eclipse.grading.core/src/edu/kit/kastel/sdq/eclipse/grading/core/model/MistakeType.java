@@ -14,25 +14,21 @@ public class MistakeType implements IMistakeType {
 	private String name;
 	private String message;
 
-	//used for deserialization
+	// used for deserialization
 	private String appliesTo;
 
 	private RatingGroup ratingGroup;
 	private PenaltyRule penaltyRule;
 
 	/**
-	 * This Constructor is used by Deserialization!
-	 * Using this Constructor means having to add
-	 * <li> the rating group
-	 * <li> this object to the rating Group
+	 * This Constructor is used by Deserialization! Using this Constructor means
+	 * having to add
+	 * <li>the rating group
+	 * <li>this object to the rating Group
 	 */
 	@JsonCreator
-	public MistakeType(@JsonProperty("shortName") String shortName,
-			@JsonProperty("button") String buttonName,
-			@JsonProperty("message") String message,
-			@JsonProperty("penaltyRule") PenaltyRule penaltyRule,
-			@JsonProperty("appliesTo") String appliesTo) {
-		super();
+	public MistakeType(@JsonProperty("shortName") String shortName, @JsonProperty("button") String buttonName, @JsonProperty("message") String message,
+			@JsonProperty("penaltyRule") PenaltyRule penaltyRule, @JsonProperty("appliesTo") String appliesTo) {
 		this.shortName = shortName;
 		this.name = buttonName;
 		this.message = message;
@@ -41,19 +37,14 @@ public class MistakeType implements IMistakeType {
 		this.appliesTo = appliesTo;
 	}
 
-	public MistakeType(String shortName,
-			String buttonName,
-			String message,
-			RatingGroup ratingGroup,
-			PenaltyRule penaltyType) {
-		super();
+	public MistakeType(String shortName, String buttonName, String message, RatingGroup ratingGroup, PenaltyRule penaltyType) {
 		this.shortName = shortName;
 		this.name = buttonName;
 		this.message = message;
 		this.ratingGroup = ratingGroup;
 		this.penaltyRule = penaltyType;
 
-		//add the inverse reference
+		// add the inverse reference
 		this.ratingGroup.addMistakeType(this);
 	}
 
@@ -69,7 +60,6 @@ public class MistakeType implements IMistakeType {
 	public String getAppliesTo() {
 		return this.appliesTo;
 	}
-
 
 	@Override
 	public String getMessage() {
@@ -105,7 +95,9 @@ public class MistakeType implements IMistakeType {
 	}
 
 	/**
-	 * Sets a new rating group if there ain't already one. (Used for deserialization).
+	 * Sets a new rating group if there ain't already one. (Used for
+	 * deserialization).
+	 *
 	 * @param ratingGroup the new rating group
 	 */
 	public void setRatingGroup(RatingGroup ratingGroup) {
@@ -116,8 +108,7 @@ public class MistakeType implements IMistakeType {
 
 	@Override
 	public String toString() {
-		return "MistakeType [shortName=" + this.shortName + ", name=" + this.name + ", message=" + this.message
-				+ ", ratingGroup=" + this.ratingGroup + ", penaltyRule=" + this.penaltyRule
-				+ "]";
+		return "MistakeType [shortName=" + this.shortName + ", name=" + this.name + ", message=" + this.message + ", ratingGroup=" + this.ratingGroup
+				+ ", penaltyRule=" + this.penaltyRule + "]";
 	}
 }

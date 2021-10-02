@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.FeedbackType;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IFeedback;
 
 @JsonInclude(Include.NON_NULL)
@@ -11,19 +12,17 @@ public class Feedback implements IFeedback {
 
 	private String type;
 	private double credits;
-	private Integer id;								// null for all manual feedback
-	private Boolean positive;						// null for all manual feedback
-	private String visibility;						// null for all manual feedback
-	private String text;							// null for UNREFERENCED manual feedback
-	private String reference;						// null for UNREFERENCED manual feedback and auto feedback
-	private String detailText;						// null for auto feedback
+	private Integer id; // null for all manual feedback
+	private Boolean positive; // null for all manual feedback
+	private String visibility; // null for all manual feedback
+	private String text; // null for UNREFERENCED manual feedback
+	private String reference; // null for UNREFERENCED manual feedback and auto feedback
+	private String detailText; // null for auto feedback
 
 	/*
 	 * subclasses would be overkill in handling, so just null unused values...
 	 */
-	public Feedback(String type, double credits, Integer id, Boolean positive, String visibility, String text,
-			String reference, String detailText) {
-		super();
+	public Feedback(String type, double credits, Integer id, Boolean positive, String visibility, String text, String reference, String detailText) {
 		this.type = type;
 		this.credits = credits;
 		this.id = id;
@@ -79,6 +78,5 @@ public class Feedback implements IFeedback {
 	public String getVisibility() {
 		return this.visibility;
 	}
-
 
 }

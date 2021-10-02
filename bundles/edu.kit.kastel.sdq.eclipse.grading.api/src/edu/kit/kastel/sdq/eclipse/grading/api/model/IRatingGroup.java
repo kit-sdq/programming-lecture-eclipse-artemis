@@ -1,6 +1,6 @@
 package edu.kit.kastel.sdq.eclipse.grading.api.model;
 
-import java.util.Collection;
+import java.util.List;
 
 /**
  * {@link IMistakeType}s belong to a {@link IRatingGroup}. Rating Groups may introduce penalty limits for calculation, capping the maximum penalty that
@@ -20,7 +20,7 @@ public interface IRatingGroup {
 	 *
 	 * @return the MistakeTypes that define this RatingGroup as its rating group.
 	 */
-	Collection<IMistakeType> getMistakeTypes();
+	List<IMistakeType> getMistakeTypes();
 
 	/**
 	 *

@@ -5,17 +5,18 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * Used for deserializing those information into ArtemisSubmission:
  *
- * <li> hasSubmittedAssessment
- * <li> hasSavedAssessment;
+ * <li>hasSubmittedAssessment
+ * <li>hasSavedAssessment;
  *
  */
 public class ResultsDTO {
-
 
 	@JsonProperty
 	public String completionDate;
 	@JsonProperty
 	public Boolean hasFeedback;
 
-	public ResultsDTO() { }
+	public ResultsDTO() {
+		// NOP
+	}
 }
