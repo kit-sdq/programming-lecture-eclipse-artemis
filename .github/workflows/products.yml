@@ -33,8 +33,20 @@ jobs:
     - name: Build with Maven
       run: mvn -U -B package --file pom.xml
 
-    - name: Save Eclipse Distribution
+    - name: Save Eclipse Distribution (Windows)
       uses: actions/upload-artifact@v2
       with:
-        name: "Eclipse Distributions"
-        path: "releng/edu.kit.kastel.sdq.eclipse.grading.product/target/products/*.zip"
+        name: "Eclipse Distribution Windows"
+        path: "releng/edu.kit.kastel.sdq.eclipse.grading.product/target/products/*-win32*.zip"
+    
+    - name: Save Eclipse Distribution (Linux)
+      uses: actions/upload-artifact@v2
+      with:
+        name: "Eclipse Distribution Linux"
+        path: "releng/edu.kit.kastel.sdq.eclipse.grading.product/target/products/*-linux*.zip"
+
+    - name: Save Eclipse Distribution (MacOS)
+      uses: actions/upload-artifact@v2
+      with:
+        name: "Eclipse Distribution MacOS"
+        path: "releng/edu.kit.kastel.sdq.eclipse.grading.product/target/products/*-macosx*.zip"
