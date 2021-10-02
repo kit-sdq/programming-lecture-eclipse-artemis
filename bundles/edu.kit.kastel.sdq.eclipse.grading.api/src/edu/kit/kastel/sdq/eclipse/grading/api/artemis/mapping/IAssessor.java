@@ -1,5 +1,7 @@
 package edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping;
 
+import java.util.List;
+
 /**
  * Artemis Object Mapping: Maps some values of the Artemis Assessor object
  * retrieved via
@@ -26,4 +28,6 @@ public interface IAssessor {
 	String getLastNotificationRead();
 
 	String getParticipantIdentifier();
+
+	List<String> getGroups();
 }

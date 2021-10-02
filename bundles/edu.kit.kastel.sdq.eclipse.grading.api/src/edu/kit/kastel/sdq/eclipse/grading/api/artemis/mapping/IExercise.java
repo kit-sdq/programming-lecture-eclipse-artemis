@@ -22,4 +22,5 @@ public interface IExercise {
 
 	List<ISubmission> getSubmissions() throws ArtemisClientException;
 
+	ICourse getCourse();
 }

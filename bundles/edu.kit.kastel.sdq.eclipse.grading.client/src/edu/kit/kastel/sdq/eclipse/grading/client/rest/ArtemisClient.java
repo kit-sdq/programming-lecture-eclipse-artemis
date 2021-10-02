@@ -119,7 +119,7 @@ public class ArtemisClient extends AbstractArtemisClient implements IMappingLoad
 	@Override
 	public List<IExam> getExamsForCourse(ICourse course) throws ArtemisClientException {
 		final Response examsRsp = this.endpoint.path(COURSES_PATHPART).path(String.valueOf(course.getCourseId())).path(EXAMS_PATHPART).request()
-				.header(AUTHORIZATION_NAME, this.token).buildGet().invoke(); // synchronous call
+				.header(AUTHORIZATION_NAME, this.token).buildGet().invoke();
 		this.throwIfStatusUnsuccessful(examsRsp);
 
 		ArtemisExam[] examsArray = this.read(examsRsp.readEntity(String.class), ArtemisExam[].class);
@@ -150,7 +150,7 @@ public class ArtemisClient extends AbstractArtemisClient implements IMappingLoad
 
 		ArtemisExerciseGroup[] exerciseGroupsArray = this.read(exerciseGroupsJsonArray.toString(), ArtemisExerciseGroup[].class);
 		for (ArtemisExerciseGroup exerciseGroup : exerciseGroupsArray) {
-			exerciseGroup.init(this);
+			exerciseGroup.init(this, course);
 		}
 		return Arrays.asList(exerciseGroupsArray);
 	}
@@ -176,7 +176,7 @@ public class ArtemisClient extends AbstractArtemisClient implements IMappingLoad
 
 		ArtemisExercise[] exercisesArray = this.read(exercisesJsonArray.toString(), ArtemisExercise[].class);
 		for (ArtemisExercise exercise : exercisesArray) {
-			exercise.init(this);
+			exercise.init(this, course);
 		}
 
 		// Here we filter all programming exercises
@@ -185,10 +185,11 @@ public class ArtemisClient extends AbstractArtemisClient implements IMappingLoad
 
 	@Override
 	public List<ISubmission> getSubmissions(IExercise exercise, boolean assessedByTutor, int correctionRound) throws ArtemisClientException {
-		// TODO Set assessed by tutor to false !!
 		this.checkAuthentication();
+		boolean isInstructor = exercise.getCourse().isInstructor(this.getAssessor());
+
 		final Response rsp = this.endpoint.path(EXERCISES_PATHPART).path(String.valueOf(exercise.getExerciseId())).path(PROGRAMMING_SUBMISSION_PATHPART) //
-				.queryParam("assessedByTutor", assessedByTutor) //
+				.queryParam("assessedByTutor", !isInstructor) //
 				.queryParam("correction-round", correctionRound) //
 				.request().header(AUTHORIZATION_NAME, this.token).buildGet().invoke();
 
@@ -209,6 +210,8 @@ public class ArtemisClient extends AbstractArtemisClient implements IMappingLoad
 		this.checkAuthentication();
 
 		final Response rsp = this.endpoint.path(EXERCISES_PATHPART).path(String.valueOf(exercise.getExerciseId())).path(PROGRAMMING_SUBMISSION_PATHPART)
+				// Load all to exercise
+				.queryParam("assessedByTutor", false) //
 				.queryParam("correction-round", correctionRound) //
 				.request().header(AUTHORIZATION_NAME, this.token).buildGet().invoke(); // synchronous variant
 		if (!this.isStatusSuccessful(rsp)) {

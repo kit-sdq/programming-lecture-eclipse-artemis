@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ICourse;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExerciseGroup;
 import edu.kit.kastel.sdq.eclipse.grading.client.mappings.ArtemisExercise;
@@ -46,14 +47,14 @@ public class ArtemisExerciseGroup implements IExerciseGroup, Serializable {
 		return this.title;
 	}
 
-	public void init(IMappingLoader client) {
+	public void init(IMappingLoader client, ICourse course) {
 		if (this.exercises == null) {
 			this.exercises = List.of();
 			return;
 		}
 		this.exercises = this.exercises.stream().filter(exercise -> exercise.getShortName() != null).collect(Collectors.toList());
 		for (ArtemisExercise artemisExercise : this.exercises) {
-			artemisExercise.init(client);
+			artemisExercise.init(client, course);
 		}
 	}
 

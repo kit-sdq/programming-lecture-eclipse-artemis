@@ -6,6 +6,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.ArtemisClientException;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ICourse;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
 
@@ -29,6 +30,8 @@ public class ArtemisExercise implements IExercise, Serializable {
 
 	private transient List<ISubmission> submissions;
 	private transient IMappingLoader client;
+
+	private transient ICourse course;
 
 	/**
 	 * For Auto-Deserialization Need to call this::init thereafter!
@@ -91,8 +94,14 @@ public class ArtemisExercise implements IExercise, Serializable {
 		return this.maxPoints;
 	}
 
-	public void init(IMappingLoader client) {
+	@Override
+	public ICourse getCourse() {
+		return this.course;
+	}
+
+	public void init(IMappingLoader client, ICourse course) {
 		this.client = client;
+		this.course = course;
 	}
 
 }

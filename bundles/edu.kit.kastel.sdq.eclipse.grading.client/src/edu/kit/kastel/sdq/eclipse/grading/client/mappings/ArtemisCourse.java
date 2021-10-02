@@ -6,6 +6,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.ArtemisClientException;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IAssessor;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ICourse;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExam;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
@@ -19,6 +20,10 @@ public class ArtemisCourse implements ICourse, Serializable {
 	private String title;
 	@JsonProperty
 	private String shortName;
+
+	@JsonProperty("instructorGroupName")
+	private String instructorGroup;
+
 	private transient List<IExercise> exercises;
 	private transient List<IExam> exams;
 	private transient IMappingLoader client;
@@ -27,14 +32,7 @@ public class ArtemisCourse implements ICourse, Serializable {
 	 * For Auto-Deserialization Need to call this::init thereafter!
 	 */
 	public ArtemisCourse() {
-	}
-
-	public ArtemisCourse(int courseId, String title, String shortName, List<IExercise> exercises, List<IExam> exams) {
-		this.courseId = courseId;
-		this.title = title;
-		this.shortName = shortName;
-		this.exercises = exercises;
-		this.exams = exams;
+		// NOP
 	}
 
 	@Override
@@ -68,9 +66,13 @@ public class ArtemisCourse implements ICourse, Serializable {
 		return this.title;
 	}
 
+	@Override
+	public boolean isInstructor(IAssessor assessor) {
+		return assessor.getGroups().contains(this.instructorGroup);
+	}
+
 	public void init(IMappingLoader client) {
 		this.client = client;
-
 	}
 
 }

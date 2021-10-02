@@ -131,7 +131,7 @@ public class SystemwideController extends AbstractController implements ISystemw
 
 		return this.getBegunSubmissions(submissionFilter).stream().map(
 				sub -> this.projectFileNamingStrategy.getProjectFileInWorkspace(WorkspaceUtil.getWorkspaceFile(), this.getCurrentExercise(), sub).getName())
-				.collect(Collectors.toList());
+				.sorted().collect(Collectors.toList());
 	}
 
 	/**

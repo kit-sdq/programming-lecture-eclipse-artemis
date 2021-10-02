@@ -17,4 +17,6 @@ public interface ICourse {
 	String getShortName();
 
 	String getTitle();
+
+	boolean isInstructor(IAssessor assessor);
 }
