@@ -96,7 +96,7 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 	@Override
 	public List<ISubmission> getBegunSubmissions(IExercise exercise) {
 		try {
-			return this.artemisClient.getSubmissions(exercise, true);
+			return this.artemisClient.getSubmissions(exercise);
 		} catch (Exception e) {
 			this.error(e.getMessage(), e);
 			return List.of();
@@ -334,7 +334,7 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 		final int submissionID = lockResult.getSubmissionId();
 		this.lockResults.put(submissionID, lockResult);
 		try {
-			return exercise.getSubmissions().stream().filter(s -> s.getSubmissionId() == submissionID).findFirst();
+			return Optional.of(exercise.getSubmission(submissionID));
 		} catch (ArtemisClientException e) {
 			this.error(Messages.ASSESSMENT_COULD_NOT_BE_STARTED_MESSAGE + e.getMessage(), e);
 			return Optional.empty();
