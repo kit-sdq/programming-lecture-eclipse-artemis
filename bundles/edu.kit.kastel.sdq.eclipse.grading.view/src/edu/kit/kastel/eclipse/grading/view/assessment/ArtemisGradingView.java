@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -440,12 +441,22 @@ public class ArtemisGradingView extends ViewPart {
 	private void updateMistakeButtonToolTips(IMistakeType mistakeType) {
 		Button button = this.mistakeButtons.get(mistakeType.getName());
 		if (button != null) {
-			button.setToolTipText(this.viewController.getToolTipForMistakeType(mistakeType));
+			Display.getDefault().asyncExec( //
+					() -> button.setToolTipText(this.viewController.getToolTipForMistakeType(mistakeType)) //
+			);
 		}
 	}
 
 	private void updatePenalties() {
 		this.viewController.getRatingGroups().forEach(ratingGroup -> this.updatePenalty(ratingGroup.getDisplayName()));
+		this.updateAllToolTips();
+	}
+
+	private void updateAllToolTips() {
+		List<IMistakeType> mistakes = this.viewController.getMistakeTypes();
+		for (IMistakeType mistake : mistakes) {
+			this.updateMistakeButtonToolTips(mistake);
+		}
 	}
 
 	private void updatePenalty(String ratingGroupName) {

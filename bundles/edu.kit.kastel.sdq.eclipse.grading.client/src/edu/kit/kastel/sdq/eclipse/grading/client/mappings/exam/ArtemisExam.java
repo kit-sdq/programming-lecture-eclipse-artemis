@@ -28,12 +28,7 @@ public class ArtemisExam implements IExam, Serializable {
 	 * For Auto-Deserialization Need to call this::init thereafter!
 	 */
 	public ArtemisExam() {
-	}
-
-	public ArtemisExam(List<IExerciseGroup> exerciseGroups, int examId, String title) {
-		this.exerciseGroups = exerciseGroups;
-		this.examId = examId;
-		this.title = title;
+		// NOP
 	}
 
 	@Override

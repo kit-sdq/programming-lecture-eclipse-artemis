@@ -32,13 +32,12 @@ public class DefaultProjectFileNamingStrategy implements IProjectFileNamingStrat
             .append(exercise.getExerciseId())
             .append("-")
             .append(exercise.getShortName())
-            .append("_submission-")
-            .append(submission.getSubmissionId())
             .append("-")
             .append(submission.getParticipantIdentifier())
-            .append("-")
-            .append("round")
+            .append("-round-")
             .append(submission.getCorrectionRound() + 1)
+            .append("-submission-")
+            .append(submission.getSubmissionId())
             .toString());
     }
 

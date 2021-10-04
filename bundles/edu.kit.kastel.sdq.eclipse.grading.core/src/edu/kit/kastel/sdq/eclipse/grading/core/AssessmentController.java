@@ -168,8 +168,9 @@ public class AssessmentController extends AbstractController implements IAssessm
 
 	@Override
 	public String getTooltipForMistakeType(IMistakeType mistakeType) {
-		return mistakeType
-				.getTooltip(this.getAnnotations().stream().filter(annotation -> annotation.getMistakeType().equals(mistakeType)).collect(Collectors.toList()));
+		List<IAnnotation> annotations = //
+				this.getAnnotations().stream().filter(annotation -> annotation.getMistakeType().equals(mistakeType)).collect(Collectors.toList());
+		return mistakeType.getTooltip(annotations);
 	}
 
 	private void initializeWithDeserializedAnnotations() throws IOException {

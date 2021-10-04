@@ -91,7 +91,8 @@ public class MistakeType implements IMistakeType {
 
 	@Override
 	public String getTooltip(List<IAnnotation> annotations) {
-		return this.penaltyRule.getTooltip(annotations);
+		String penaltyText = this.penaltyRule.getTooltip(annotations);
+		return this.message + "\n" + penaltyText;
 	}
 
 	/**
