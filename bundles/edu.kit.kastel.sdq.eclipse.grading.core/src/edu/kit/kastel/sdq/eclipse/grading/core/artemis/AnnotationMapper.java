@@ -133,10 +133,15 @@ public class AnnotationMapper {
 	}
 
 	private String calculateResultString(final List<IFeedback> allFeedbacks, final double absoluteScore) {
-		final List<IFeedback> autoFeedbacks = allFeedbacks.stream().filter(feedback -> feedback.getFeedbackType().equals(FeedbackType.AUTOMATIC))
-				.collect(Collectors.toList());
-		long positiveTests = autoFeedbacks.stream().filter(IFeedback::getPositive).count();
-		long numberOfTests = autoFeedbacks.stream().count();
+		final List<IFeedback> autoFeedbacks = //
+				allFeedbacks.stream().filter(feedback -> feedback.getFeedbackType() == FeedbackType.AUTOMATIC).collect(Collectors.toList());
+
+		final List<IFeedback> tests = autoFeedbacks.stream().filter(f -> f.getReference() == null).collect(Collectors.toList());
+		long positiveTests = tests.stream().filter(IFeedback::getPositive).count();
+		long numberOfTests = tests.size();
+
+		// TODO We may add "Issues" as text here iff activated ?
+
 		return new StringBuilder().append(positiveTests).append(" of ").append(numberOfTests).append(" passed, ").append(Util.formatDouble(absoluteScore))
 				.append(" of ").append(Util.formatDouble(this.exercise.getMaxPoints())).append(" points").toString();
 	}

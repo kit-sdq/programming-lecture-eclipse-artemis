@@ -6,6 +6,7 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Export-Package: edu.kit.kastel.sdq.eclipse.grading.core,
  edu.kit.kastel.sdq.eclipse.grading.core.artemis,
+ edu.kit.kastel.sdq.eclipse.grading.core.artemis.calculation,
  edu.kit.kastel.sdq.eclipse.grading.core.config,
  edu.kit.kastel.sdq.eclipse.grading.core.model,
  edu.kit.kastel.sdq.eclipse.grading.core.model.annotation

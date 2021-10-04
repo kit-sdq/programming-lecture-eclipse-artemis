@@ -29,7 +29,7 @@ public final class GitHandler {
 			try {
 				FileUtils.delete(destination, FileUtils.RECURSIVE);
 			} catch (IOException ioe) {
-				throw new GitException("Git clone failed with exception" + ioe.getMessage(), ioe);
+				// NOP
 			}
 			throw new GitException("Git clone failed with exception" + e.getMessage(), e);
 		} finally {
