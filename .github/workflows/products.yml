@@ -8,6 +8,7 @@ on:
     branches: [ main ]
     paths-ignore:
       - '**.md'
+    tags: "v**"
   workflow_dispatch:
 
 jobs:
@@ -50,3 +51,21 @@ jobs:
       with:
         name: "Eclipse Distribution MacOS"
         path: "releng/edu.kit.kastel.sdq.eclipse.grading.product/target/products/*-macosx*.zip"
+  
+    - name: Move Distributions
+      if: startsWith(github.ref, 'refs/tags/')
+      run: |
+        mkdir dist 
+        mv releng/edu.kit.kastel.sdq.eclipse.grading.product/target/products/*-win32*.zip dist/Artemis_Windows.zip
+        mv releng/edu.kit.kastel.sdq.eclipse.grading.product/target/products/*-linux*.zip dist/Artemis_Linux.zip
+        mv releng/edu.kit.kastel.sdq.eclipse.grading.product/target/products/*-macosx*.zip dist/Artemis_MacOS.zip
+          
+    - name: Release
+      uses: softprops/action-gh-release@v1
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+        files: |
+          dist/Artemis_Windows.zip
+          dist/Artemis_Linux.zip
+          dist/Artemis_MacOS.zip
+      
