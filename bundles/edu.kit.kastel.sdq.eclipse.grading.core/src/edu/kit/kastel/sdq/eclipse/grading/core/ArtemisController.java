@@ -132,6 +132,9 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 
 	@Override
 	public List<ICourse> getCourses() {
+        if (!this.artemisClient.isReady()) {
+            return List.of();
+        }
 		try {
 			return this.artemisClient.getCourses();
 		} catch (final Exception e) {
