@@ -11,122 +11,111 @@ import edu.kit.kastel.sdq.eclipse.grading.api.model.IMistakeType;
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IRatingGroup;
 
 /**
- * The assessmentController handles everything that has to do with the
- * assessment of a single submission.
+ * The assessmentController handles everything that has to do with the assessment of a single submission.
  */
 public interface IAssessmentController extends IController {
 
-	/**
-	 * Add an annotation to the current assessment.
-	 *
-	 * @param annotationID             a unique annotation ID.
-	 * @param mistakeType
-	 * @param startLine                annotation start
-	 * @param endLine                  annotation end
-	 * @param fullyClassifiedClassName fully classified class name of the respective
-	 *                                 Class to be annotated
-	 * @param customMessage            custom message set by tutor
-	 * @param customPenalty            This may or may not have an effect, depending
-	 *                                 on the MistakeType's PenaltyRule!
-	 * @param marker_char_start        additional encoding of the start (counts from
-	 *                                 file start, eclipse GUI requires this)
-	 * @param marker_char_end          additional encoding of the start (counts from
-	 *                                 file start, eclipse GUI requires this) E.g. a
-	 *                                 ThresholdPenaltyRule will not consider custom
-	 *                                 penalties while a (thinkable)
-	 *                                 "AggregatedPenaltyThresholdPenaltyRule" would
-	 *                                 do so.
-	 */
-	void addAnnotation(int annotationID, IMistakeType mistakeType, int startLine, int endLine, String fullyClassifiedClassName, String customMessage,
-			Double customPenalty, int markerCharStart, int markerCharEnd);
+    /**
+     * Add an annotation to the current assessment.
+     *
+     * @param annotationUUID           a unique annotation ID.
+     * @param mistakeType
+     * @param startLine                annotation start
+     * @param endLine                  annotation end
+     * @param fullyClassifiedClassName fully classified class name of the respective Class to be annotated
+     * @param customMessage            custom message set by tutor
+     * @param customPenalty            This may or may not have an effect, depending on the MistakeType's PenaltyRule!
+     * @param marker_char_start        additional encoding of the start (counts from file start, eclipse GUI requires
+     *                                 this)
+     * @param marker_char_end          additional encoding of the start (counts from file start, eclipse GUI requires
+     *                                 this) E.g. a ThresholdPenaltyRule will not consider custom penalties while a
+     *                                 (thinkable) "AggregatedPenaltyThresholdPenaltyRule" would do so.
+     */
+    void addAnnotation(String annotationUUID, IMistakeType mistakeType, int startLine, int endLine, String fullyClassifiedClassName, String customMessage,
+            Double customPenalty, int markerCharStart, int markerCharEnd);
 
-	/**
-	 * Calculate a single penalty for a given mistakeType (uses one or many
-	 * annotations)
-	 *
-	 * @param ratingGroup
-	 * @return
-	 */
-	double calculateCurrentPenaltyForMistakeType(IMistakeType mistakeType);
+    /**
+     * Modify an existent annotation
+     *
+     * @param annatationUUID unique annotation identifier
+     * @param customMessage  new custom message
+     * @param customPenalty  new custom penalty. This may or may not have an effekt, depending on the MistakeType's
+     *                       PenaltyRule! E.g. a ThresholdPenaltyRule will not consider custom penalties while a
+     *                       (thinkable) "AggregatedPenaltyThresholdPenaltyRule" would do so.
+     */
+    void modifyAnnotation(String annatationUUID, String customMessage, Double customPenalty);
 
-	/**
-	 * Sum up all penalties of annotations whose mistakeTypes belong to the given
-	 * rating group. Takes into account the penaltyLimit of the given ratingGroup,
-	 * if defined.
-	 *
-	 * @param ratingGroup
-	 * @return
-	 */
-	double calculateCurrentPenaltyForRatingGroup(IRatingGroup ratingGroup);
+    /**
+     * Remove an existent annotation
+     *
+     * @param annatationUUID unique annotation identifier
+     */
+    void removeAnnotation(String annatationUUID);
 
-	/**
-	 * Deletes the eclipse project this assessment belongs to. Also deletes it on
-	 * file system.
-	 */
-	void deleteEclipseProject(IProjectFileNamingStrategy projectNaming);
+    /**
+     *
+     * @return all annotations already made with this AssessmentController.
+     */
+    List<IAnnotation> getAnnotations();
 
-	/**
-	 *
-	 * @return all annotations already made with this AssessmentController.
-	 */
-	List<IAnnotation> getAnnotations();
+    /**
+     *
+     * @param className
+     * @return all annotations already made for the given class.
+     */
+    List<IAnnotation> getAnnotations(String className);
 
-	/**
-	 *
-	 * @param className
-	 * @return all annotations already made for the given class.
-	 */
-	List<IAnnotation> getAnnotations(String className);
+    /**
+     * Calculate a single penalty for a given mistakeType (uses one or many annotations)
+     *
+     * @param ratingGroup
+     * @return
+     */
+    double calculateCurrentPenaltyForMistakeType(IMistakeType mistakeType);
 
-	ICourse getCourse();
+    /**
+     * Sum up all penalties of annotations whose mistakeTypes belong to the given rating group. Takes into account the
+     * penaltyLimit of the given ratingGroup, if defined.
+     *
+     * @param ratingGroup
+     * @return
+     */
+    double calculateCurrentPenaltyForRatingGroup(IRatingGroup ratingGroup);
 
-	IExercise getExercise();
+    /**
+     * Deletes the eclipse project this assessment belongs to. Also deletes it on file system.
+     */
+    void deleteEclipseProject(IProjectFileNamingStrategy projectNaming);
 
-	ISubmission getSubmission();
+    ICourse getCourse();
 
-	/**
-	 *
-	 * @return all mistake types.
-	 */
-	List<IMistakeType> getMistakes();
+    IExercise getExercise();
 
-	IRatingGroup getRatingGroupByDisplayName(String displayName);
+    ISubmission getSubmission();
 
-	IRatingGroup getRatingGroupByShortName(String shortName);
+    /**
+     *
+     * @return all mistake types.
+     */
+    List<IMistakeType> getMistakes();
 
-	/**
-	 *
-	 * @return all rating groups.
-	 */
-	List<IRatingGroup> getRatingGroups();
+    IRatingGroup getRatingGroupByDisplayName(String displayName);
 
-	// TODO Get Tooltip has to be updated on events of mistake types ..
-	String getTooltipForMistakeType(IMistakeType mistakeType);
+    IRatingGroup getRatingGroupByShortName(String shortName);
 
-	/**
-	 * Modify an existent annotation
-	 *
-	 * @param annatationId  unique annotation identifier
-	 * @param customMessage new custom message
-	 * @param customPenalty new custom penalty. This may or may not have an effekt,
-	 *                      depending on the MistakeType's PenaltyRule! E.g. a
-	 *                      ThresholdPenaltyRule will not consider custom penalties
-	 *                      while a (thinkable)
-	 *                      "AggregatedPenaltyThresholdPenaltyRule" would do so.
-	 */
-	void modifyAnnotation(int annatationId, String customMessage, Double customPenalty);
+    /**
+     *
+     * @return all rating groups.
+     */
+    List<IRatingGroup> getRatingGroups();
 
-	/**
-	 * Remove an existent annotation
-	 *
-	 * @param annotationId unique annotation identifier
-	 */
-	void removeAnnotation(int annotationId);
+    // TODO Get Tooltip has to be updated on events of mistake types ..
+    String getTooltipForMistakeType(IMistakeType mistakeType);
 
-	/**
-	 * Reset annotations by re-locking and reloading from Artemis state. Do so with
-	 * {@link IArtemisController#startAssessment(int)}, with this
-	 * {@link IAssessmentController#getSubmissionID()} as param.
-	 */
-	void resetAndRestartAssessment(IProjectFileNamingStrategy projectNaming);
+    /**
+     * Reset annotations by re-locking and reloading from Artemis state. Do so with
+     * {@link IArtemisController#startAssessment(int)}, with this {@link IAssessmentController#getSubmissionID()} as
+     * param.
+     */
+    void resetAndRestartAssessment(IProjectFileNamingStrategy projectNaming);
 }

@@ -84,7 +84,7 @@ public class CustomButtonDialog extends Dialog {
 	protected void okPressed() {
 		this.customMessage = this.customMessageInputField.getText();
 		this.customPenalty = Double.parseDouble(this.customPenaltyInputField.getText().replace(',', '.'));
-		this.viewController.addAssessmentAnnotaion(this.customMistake, this.customMessage, this.customPenalty, this.ratingGroupName);
+		this.viewController.addAssessmentAnnotation(this.customMistake, this.customMessage, this.customPenalty, this.ratingGroupName);
 		super.okPressed();
 	}
 }
