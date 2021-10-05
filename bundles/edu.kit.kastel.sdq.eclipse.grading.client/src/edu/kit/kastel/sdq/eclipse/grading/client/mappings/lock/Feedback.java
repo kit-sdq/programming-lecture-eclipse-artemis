@@ -13,23 +13,17 @@ public class Feedback implements IFeedback {
 
 	private String type;
 	private double credits;
-	private Integer id;								// null for all manual feedback
-	private Boolean positive;						// null for all manual feedback
-	private String visibility;						// null for all manual feedback
-	private String text;							// null for UNREFERENCED manual feedback
-	private String reference;						// null for UNREFERENCED manual feedback and auto feedback
-	private String detailText;						// null for auto feedback
+	private Integer id; // null for all manual feedback
+	private Boolean positive; // null for all manual feedback
+	private String visibility; // null for all manual feedback
+	private String text; // null for UNREFERENCED manual feedback
+	private String reference; // null for UNREFERENCED manual feedback and auto feedback
+	private String detailText; // null for auto feedback
 
 	@JsonCreator
-	public Feedback(
-			@JsonProperty("type") String type,
-			@JsonProperty("credits") Double credits,
-			@JsonProperty("id") Integer id,
-			@JsonProperty("positive") Boolean positive,
-			@JsonProperty("visibility") String visibility,
-			@JsonProperty("text") String text,
-			@JsonProperty("reference") String reference,
-			@JsonProperty("detailText") String detailText) {
+	public Feedback(@JsonProperty("type") String type, @JsonProperty("credits") Double credits, @JsonProperty("id") Integer id,
+			@JsonProperty("positive") Boolean positive, @JsonProperty("visibility") String visibility, @JsonProperty("text") String text,
+			@JsonProperty("reference") String reference, @JsonProperty("detailText") String detailText) {
 		super();
 		this.type = type;
 		this.credits = credits;
@@ -88,9 +82,8 @@ public class Feedback implements IFeedback {
 
 	@Override
 	public String toString() {
-		return "Feedback [type=" + this.type + ", credits=" + this.credits + ", id=" + this.id + ", positive=" + this.positive
-				+ ", visibility=" + this.visibility + ", text=" + this.text + ", reference=" + this.reference + ", detailText="
-				+ this.detailText + "]";
+		return "Feedback [type=" + this.type + ", credits=" + this.credits + ", id=" + this.id + ", positive=" + this.positive + ", visibility="
+				+ this.visibility + ", text=" + this.text + ", reference=" + this.reference + ", detailText=" + this.detailText + "]";
 	}
 
 }

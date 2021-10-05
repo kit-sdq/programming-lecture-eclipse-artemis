@@ -3,12 +3,14 @@ package edu.kit.kastel.sdq.eclipse.grading.api.model;
 import java.util.List;
 
 /**
- * {@link IMistakeType}s belong to a {@link IRatingGroup}. Rating Groups may introduce penalty limits for calculation, capping the maximum penalty that
- * all {@link IMistakeType}s belonging to one {@link IRatingGroup} can reach in sum.
+ * {@link IMistakeType}s belong to a {@link IRatingGroup}. Rating Groups may
+ * introduce penalty limits for calculation, capping the maximum penalty that
+ * all {@link IMistakeType}s belonging to one {@link IRatingGroup} can reach in
+ * sum.
  *
  */
 public interface IRatingGroup {
-	//TODO hier getMistakeTypes ! transient oder sowas (?), nicht serialisiert!
+	// TODO hier getMistakeTypes ! transient oder sowas (?), nicht serialisiert!
 
 	/**
 	 *
@@ -24,7 +26,8 @@ public interface IRatingGroup {
 
 	/**
 	 *
-	 * @return the maximum penalty that all {@link IMistakeType}s belonging to one {@link IRatingGroup} can reach in sum
+	 * @return the maximum penalty that all {@link IMistakeType}s belonging to one
+	 *         {@link IRatingGroup} can reach in sum
 	 */
 	double getPenaltyLimit();
 
@@ -35,7 +38,8 @@ public interface IRatingGroup {
 	String getShortName();
 
 	/**
-	 * The rating group might have a penalty limit or not. See {@link #getPenaltyLimit()}
+	 * The rating group might have a penalty limit or not. See
+	 * {@link #getPenaltyLimit()}
 	 */
 	boolean hasPenaltyLimit();
 }

@@ -4,7 +4,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * This is only used in the json deserialization process. Much like {@link ParticipationDTO}
+ * This is only used in the json deserialization process. Much like
+ * {@link ParticipationDTO}
  */
 public class ExerciseDTO {
 

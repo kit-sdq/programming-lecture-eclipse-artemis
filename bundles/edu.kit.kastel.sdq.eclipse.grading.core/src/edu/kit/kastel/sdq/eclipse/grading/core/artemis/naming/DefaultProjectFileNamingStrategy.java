@@ -15,30 +15,23 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
  *
  */
 public class DefaultProjectFileNamingStrategy implements IProjectFileNamingStrategy {
-    /**
-     * Create the Strategy.
-     */
-    DefaultProjectFileNamingStrategy() {
-    }
+	/**
+	 * Create the Strategy.
+	 */
+	DefaultProjectFileNamingStrategy() {
+	}
 
-    @Override
-    public File getAssignmentFileInProjectDirectory(File projectDirectory) {
-        return new File(projectDirectory, "assignment");
-    }
+	@Override
+	public File getAssignmentFileInProjectDirectory(File projectDirectory) {
+		return new File(projectDirectory, "assignment");
+	}
 
-    @Override
-    public File getProjectFileInWorkspace(File workspaceDirectory, IExercise exercise, ISubmission submission) {
-        return new File(workspaceDirectory, new StringBuilder().append("exercise-")
-            .append(exercise.getExerciseId())
-            .append("-")
-            .append(exercise.getShortName())
-            .append("-")
-            .append(submission.getParticipantIdentifier())
-            .append("-round-")
-            .append(submission.getCorrectionRound() + 1)
-            .append("-submission-")
-            .append(submission.getSubmissionId())
-            .toString());
-    }
+	@Override
+	public File getProjectFileInWorkspace(File workspaceDirectory, IExercise exercise, ISubmission submission) {
+		return new File(workspaceDirectory,
+				new StringBuilder().append("exercise-").append(exercise.getExerciseId()).append("-").append(exercise.getShortName()).append("-")
+						.append(submission.getParticipantIdentifier()).append("-round-").append(submission.getCorrectionRound() + 1).append("-submission-")
+						.append(submission.getSubmissionId()).toString());
+	}
 
 }

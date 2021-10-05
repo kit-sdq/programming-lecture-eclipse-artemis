@@ -5,17 +5,17 @@ import java.util.function.Supplier;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IProjectFileNamingStrategy;
 
 public enum ProjectFileNamingStrategies implements Supplier<IProjectFileNamingStrategy> {
-    DEFAULT(new DefaultProjectFileNamingStrategy());
+	DEFAULT(new DefaultProjectFileNamingStrategy());
 
-    private final DefaultProjectFileNamingStrategy pfns;
+	private final DefaultProjectFileNamingStrategy pfns;
 
-    ProjectFileNamingStrategies(DefaultProjectFileNamingStrategy pfns) {
-        this.pfns = pfns;
-    }
+	ProjectFileNamingStrategies(DefaultProjectFileNamingStrategy pfns) {
+		this.pfns = pfns;
+	}
 
-    @Override
-    public IProjectFileNamingStrategy get() {
-        return pfns;
-    }
+	@Override
+	public IProjectFileNamingStrategy get() {
+		return pfns;
+	}
 
 }

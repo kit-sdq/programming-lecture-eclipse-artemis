@@ -10,6 +10,7 @@ public interface IMistakeType {
 
 	/**
 	 * Calculate penalty using only the given annotations.
+	 * 
 	 * @param annotations
 	 * @return a <i>positive</> value denoting the penalty.
 	 */
@@ -35,14 +36,16 @@ public interface IMistakeType {
 
 	/**
 	 *
-	 * @return the {@link IRatingGroup} this {@link IMistakeType} belongs to, which may introduce a {@link IRatingGroup#getPenaltyLimit()}!
+	 * @return the {@link IRatingGroup} this {@link IMistakeType} belongs to, which
+	 *         may introduce a {@link IRatingGroup#getPenaltyLimit()}!
 	 */
 	IRatingGroup getRatingGroup();
 
 	/**
 	 *
 	 * @param annotations
-	 * @return tooltip for hovering over the button. Shows rating status information based on the given annotation.
+	 * @return tooltip for hovering over the button. Shows rating status information
+	 *         based on the given annotation.
 	 */
 	String getTooltip(List<IAnnotation> annotations);
 }
