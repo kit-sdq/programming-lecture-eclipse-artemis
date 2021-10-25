@@ -1,13 +1,13 @@
-package edu.kit.kastel.sdq.eclipse.grading.client.mappings.lock;
+package edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping;
 
+import java.io.Serializable;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IAssessor;
-
-public class Assessor implements IAssessor {
+public final class Assessor implements Serializable {
+	private static final long serialVersionUID = -5600566607034486129L;
 
 	private int id;
 	private String login;
@@ -40,57 +40,46 @@ public class Assessor implements IAssessor {
 		this.groups = groups;
 	}
 
-	@Override
 	public boolean getActivated() {
 		return this.activated;
 	}
 
-	@Override
 	public String getEmail() {
 		return this.email;
 	}
 
-	@Override
 	public String getFirstName() {
 		return this.firstName;
 	}
 
-	@Override
 	public int getId() {
 		return this.id;
 	}
 
-	@Override
 	public String getLangKey() {
 		return this.langKey;
 	}
 
-	@Override
 	public String getLastName() {
 		return this.lastName;
 	}
 
-	@Override
 	public String getLastNotificationRead() {
 		return this.lastNotificationRead;
 	}
 
-	@Override
 	public String getLogin() {
 		return this.login;
 	}
 
-	@Override
 	public String getName() {
 		return this.name;
 	}
 
-	@Override
 	public String getParticipantIdentifier() {
 		return this.participantIdentifier;
 	}
 
-	@Override
 	public List<String> getGroups() {
 		return this.groups;
 	}

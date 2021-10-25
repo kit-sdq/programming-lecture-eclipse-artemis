@@ -1,30 +1,32 @@
 package edu.kit.kastel.sdq.eclipse.grading.api.artemis;
 
+import java.io.Serializable;
 import java.util.List;
 
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IFeedback;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IParticipation;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.Feedback;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ParticipationDTO;
 
 /**
  * This is gotten from acquiring a lock (no matter if the lock is already held
  * by the caller or not). It is used to calculate the assessment result.
  *
  */
-public interface ILockResult {
+public interface ILockResult extends Serializable {
 
 	/**
 	 *
 	 * @return the participationID this submissionID belongs to (one participation
 	 *         has one or many submissions).
 	 */
-	IParticipation getParticipation();
+	ParticipationDTO getParticipation();
 
 	/**
 	 *
-	 * @return all {@link IFeedback}s that are saved in Artemis. This is used to
-	 *         calculate the assessment result which is sent back to Artemis.
+	 * @return all {@link Feedback Feedbacks} that are saved in Artemis. This is
+	 *         used to calculate the assessment result which is sent back to
+	 *         Artemis.
 	 */
-	List<IFeedback> getPreexistentFeedbacks();
+	List<Feedback> getLatestFeedback();
 
 	/**
 	 *

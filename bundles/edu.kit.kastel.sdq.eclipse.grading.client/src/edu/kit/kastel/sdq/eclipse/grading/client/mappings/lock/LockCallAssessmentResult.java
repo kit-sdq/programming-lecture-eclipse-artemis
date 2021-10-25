@@ -1,12 +1,12 @@
 package edu.kit.kastel.sdq.eclipse.grading.client.mappings.lock;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IFeedback;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.Feedback;
 
 /**
  * Used for deserializing assessmentResults in lock calls into feedbacks.
@@ -21,9 +21,9 @@ public class LockCallAssessmentResult {
 		}
 	}
 
-	public List<IFeedback> getFeedbacks() {
+	public List<Feedback> getFeedbacks() {
 		if (this.feedbacks != null) {
-			return this.feedbacks.stream().map(IFeedback.class::cast).collect(Collectors.toList());
+			return new ArrayList<>(this.feedbacks);
 		}
 		return List.of();
 	}

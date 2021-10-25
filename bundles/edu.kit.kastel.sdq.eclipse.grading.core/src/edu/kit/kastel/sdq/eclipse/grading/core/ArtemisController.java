@@ -16,14 +16,14 @@ import org.eclipse.core.runtime.CoreException;
 import edu.kit.kastel.sdq.eclipse.grading.api.ArtemisClientException;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.ILockResult;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IProjectFileNamingStrategy;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.Feedback;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.FeedbackType;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ICourse;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExam;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExerciseGroup;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IFeedback;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IParticipation;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ParticipationDTO;
 import edu.kit.kastel.sdq.eclipse.grading.api.client.AbstractArtemisClient;
 import edu.kit.kastel.sdq.eclipse.grading.api.controller.AbstractController;
 import edu.kit.kastel.sdq.eclipse.grading.api.controller.IArtemisController;
@@ -84,13 +84,13 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 	}
 
 	@Override
-	public List<IFeedback> getAllFeedbacksGottenFromLocking(ISubmission submission) {
+	public List<Feedback> getAllFeedbacksGottenFromLocking(ISubmission submission) {
 		ILockResult lockResult = this.lockResults.get(submission.getSubmissionId());
 		if (lockResult == null) {
 			this.error("No Lock found for submissionID=" + submission.getSubmissionId(), null);
 			return List.of();
 		}
-		return lockResult.getPreexistentFeedbacks();
+		return lockResult.getLatestFeedback();
 	}
 
 	@Override
@@ -262,8 +262,8 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 	}
 
 	@Override
-	public List<IFeedback> getPrecalculatedAutoFeedbacks(ISubmission submission) {
-		return this.lockResults.get(submission.getSubmissionId()).getPreexistentFeedbacks().stream()
+	public List<Feedback> getPrecalculatedAutoFeedbacks(ISubmission submission) {
+		return this.lockResults.get(submission.getSubmissionId()).getLatestFeedback().stream()
 				.filter(feedback -> FeedbackType.AUTOMATIC.equals(feedback.getFeedbackType())).collect(Collectors.toList());
 	}
 
@@ -274,7 +274,7 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 			throw new IllegalStateException("Assessment not started, yet!");
 		}
 		final ILockResult lock = this.lockResults.get(submission.getSubmissionId());
-		final IParticipation participation = lock.getParticipation();
+		final ParticipationDTO participation = lock.getParticipation();
 
 		final List<IAnnotation> annotations = assessmentController.getAnnotations();
 		final List<IMistakeType> mistakeTypes = assessmentController.getMistakes();

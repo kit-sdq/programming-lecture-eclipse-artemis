@@ -3,11 +3,13 @@ package edu.kit.kastel.sdq.eclipse.grading.client.mappings.exam;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ICourse;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExam;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExerciseGroup;
 import edu.kit.kastel.sdq.eclipse.grading.client.mappings.ArtemisExercise;
@@ -47,14 +49,17 @@ public class ArtemisExerciseGroup implements IExerciseGroup, Serializable {
 		return this.title;
 	}
 
-	public void init(IMappingLoader client, ICourse course) {
+	public void init(IMappingLoader client, ICourse course, IExam exam) {
 		if (this.exercises == null) {
 			this.exercises = List.of();
 			return;
 		}
 		this.exercises = this.exercises.stream().filter(exercise -> exercise.getShortName() != null).collect(Collectors.toList());
+		// TODO Check Filter ..
+		this.exercises = this.exercises.stream().filter(exercise -> "programming".equals(exercise.getType())).collect(Collectors.toList());
+
 		for (ArtemisExercise artemisExercise : this.exercises) {
-			artemisExercise.init(client, course);
+			artemisExercise.init(client, course, Optional.of(exam));
 		}
 	}
 

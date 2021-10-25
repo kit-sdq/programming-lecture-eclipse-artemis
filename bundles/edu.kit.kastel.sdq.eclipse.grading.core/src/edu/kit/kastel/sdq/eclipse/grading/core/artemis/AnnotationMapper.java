@@ -11,10 +11,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.AssessmentResult;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.ILockResult;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.Assessor;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.Feedback;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.FeedbackType;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IAssessor;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IFeedback;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IAnnotation;
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IMistakeType;
@@ -36,14 +36,14 @@ public class AnnotationMapper {
 	private final List<IMistakeType> mistakeTypes;
 
 	private final List<IRatingGroup> ratingGroups;
-	private final IAssessor assessor;
+	private final Assessor assessor;
 
 	private final IPenaltyCalculationStrategy penaltyCalculationStrategy;
 
 	private final ILockResult lock;
 
 	public AnnotationMapper(IExercise exercise, ISubmission submission, List<IAnnotation> annotations, List<IMistakeType> mistakeTypes,
-			List<IRatingGroup> ratingGroups, IAssessor assessor, IPenaltyCalculationStrategy penaltyCalculationStrategy, ILockResult lock) {
+			List<IRatingGroup> ratingGroups, Assessor assessor, IPenaltyCalculationStrategy penaltyCalculationStrategy, ILockResult lock) {
 		this.exercise = exercise;
 		this.submission = submission;
 
@@ -57,14 +57,14 @@ public class AnnotationMapper {
 		this.lock = lock;
 	}
 
-	private double calculateAbsoluteScore(List<IFeedback> allFeedbacks) {
-		return allFeedbacks.stream().mapToDouble(IFeedback::getCredits).sum();
+	private double calculateAbsoluteScore(List<Feedback> allFeedbacks) {
+		return allFeedbacks.stream().mapToDouble(Feedback::getCredits).sum();
 	}
 
-	private List<IFeedback> calculateAllFeedbacks() throws IOException {
+	private List<Feedback> calculateAllFeedbacks() throws IOException {
 		final boolean submissionIsInvalid = this.penaltyCalculationStrategy.submissionIsInvalid();
 
-		final List<IFeedback> result = new LinkedList<>(this.getFilteredPreexistentFeedbacks(FeedbackType.AUTOMATIC));
+		final List<Feedback> result = new LinkedList<>(this.getFilteredPreexistentFeedbacks(FeedbackType.AUTOMATIC));
 		result.addAll(submissionIsInvalid ? this.calculateInvalidManualFeedback() : this.calculateManualFeedbacks());
 
 		result.addAll(this.calculateAnnotationSerialitationAsFeedbacks());
@@ -132,12 +132,12 @@ public class AnnotationMapper {
 		return absoluteScore / this.exercise.getMaxPoints() * 100D;
 	}
 
-	private String calculateResultString(final List<IFeedback> allFeedbacks, final double absoluteScore) {
-		final List<IFeedback> autoFeedbacks = //
+	private String calculateResultString(final List<Feedback> allFeedbacks, final double absoluteScore) {
+		final List<Feedback> autoFeedbacks = //
 				allFeedbacks.stream().filter(feedback -> feedback.getFeedbackType() == FeedbackType.AUTOMATIC).collect(Collectors.toList());
 
-		final List<IFeedback> tests = autoFeedbacks.stream().filter(f -> f.getReference() == null).collect(Collectors.toList());
-		long positiveTests = tests.stream().filter(IFeedback::getPositive).count();
+		final List<Feedback> tests = autoFeedbacks.stream().filter(f -> f.getReference() == null).collect(Collectors.toList());
+		long positiveTests = tests.stream().filter(Feedback::getPositive).count();
 		long numberOfTests = tests.size();
 
 		// TODO We may add "Issues" as text here iff activated ?
@@ -177,7 +177,7 @@ public class AnnotationMapper {
 		// arTem155
 		// this should work indepently of invalid or not. if invalid, there should just
 		// be no feedbacks.
-		final List<IFeedback> allFeedbacks = this.calculateAllFeedbacks();
+		final List<Feedback> allFeedbacks = this.calculateAllFeedbacks();
 		final double absoluteScore = submissionIsInvalid ? 0.D : Math.max(0.D, this.calculateAbsoluteScore(allFeedbacks));
 		final double relativeScore = submissionIsInvalid ? 0.D : this.calculateRelativeScore(absoluteScore);
 
@@ -232,9 +232,9 @@ public class AnnotationMapper {
 		return new Feedback(FeedbackType.MANUAL_UNREFERENCED.toString(), calculatedPenalty, null, null, null, null, null, detailTextStringBuilder.toString());
 	}
 
-	private List<IFeedback> getFilteredPreexistentFeedbacks(FeedbackType feedbackType) {
-		List<IFeedback> feedbacks = new ArrayList<>();
-		for (IFeedback feedback : this.lock.getPreexistentFeedbacks()) {
+	private List<Feedback> getFilteredPreexistentFeedbacks(FeedbackType feedbackType) {
+		List<Feedback> feedbacks = new ArrayList<>();
+		for (Feedback feedback : this.lock.getLatestFeedback()) {
 			if (feedback.getFeedbackType() == null || feedback.getFeedbackType() != feedbackType) {
 				continue;
 			}

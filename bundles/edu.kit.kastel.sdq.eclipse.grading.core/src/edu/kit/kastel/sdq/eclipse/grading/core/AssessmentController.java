@@ -9,9 +9,9 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IProjectFileNamingStrategy;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.Feedback;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ICourse;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IFeedback;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
 import edu.kit.kastel.sdq.eclipse.grading.api.controller.AbstractController;
 import edu.kit.kastel.sdq.eclipse.grading.api.controller.IAssessmentController;
@@ -175,7 +175,7 @@ public class AssessmentController extends AbstractController implements IAssessm
 
 	private void initializeWithDeserializedAnnotations() throws IOException {
 		final AnnotationDeserializer annotationDeserializer = new AnnotationDeserializer(this.getMistakes());
-		final List<IFeedback> allFeedbacksGottenFromLocking = this.systemWideController.getArtemisGUIController()
+		final List<Feedback> allFeedbacksGottenFromLocking = this.systemWideController.getArtemisGUIController()
 				.getAllFeedbacksGottenFromLocking(this.submission);
 		if (allFeedbacksGottenFromLocking == null) {
 			throw new IOException("No feedbacks gotten from locking could be acquired.");

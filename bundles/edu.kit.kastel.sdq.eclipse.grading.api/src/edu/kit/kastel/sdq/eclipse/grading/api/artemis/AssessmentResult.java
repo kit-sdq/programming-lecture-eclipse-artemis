@@ -1,15 +1,17 @@
 package edu.kit.kastel.sdq.eclipse.grading.api.artemis;
 
+import java.io.Serializable;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IAssessor;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IFeedback;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.Assessor;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.Feedback;
 
 @JsonInclude(Include.NON_NULL)
-public class AssessmentResult {
+public class AssessmentResult implements Serializable {
+	private static final long serialVersionUID = -1703764424474018461L;
 
 	private int id;
 	private String resultString;
@@ -18,11 +20,11 @@ public class AssessmentResult {
 	private boolean rated;
 	private boolean hasFeedback;
 	private String completionDate;
-	private IAssessor assessor;
-	private List<IFeedback> feedbacks;
+	private Assessor assessor;
+	private List<Feedback> feedbacks;
 
 	public AssessmentResult(int id, String resultString, String assessmentType, double score, boolean rated, boolean hasFeedback, String completionDate,
-			IAssessor assessor, List<IFeedback> feedbacks) {
+			Assessor assessor, List<Feedback> feedbacks) {
 		this.id = id;
 		this.resultString = resultString;
 		this.assessmentType = assessmentType;
@@ -38,7 +40,7 @@ public class AssessmentResult {
 		return this.assessmentType;
 	}
 
-	public IAssessor getAssessor() {
+	public Assessor getAssessor() {
 		return this.assessor;
 	}
 
@@ -46,7 +48,7 @@ public class AssessmentResult {
 		return this.completionDate;
 	}
 
-	public List<IFeedback> getFeedbacks() {
+	public List<Feedback> getFeedbacks() {
 		return this.feedbacks;
 	}
 

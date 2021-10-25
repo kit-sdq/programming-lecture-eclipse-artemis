@@ -1,14 +1,18 @@
 package edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping;
 
+import java.io.Serializable;
+
 import edu.kit.kastel.sdq.eclipse.grading.api.ArtemisClientException;
 
-public interface IExercise {
+public interface IExercise extends Serializable {
 
 	int getExerciseId();
 
+	boolean hasSecondCorrectionRound();
+
 	double getMaxPoints();
 
-	Boolean getSecondCorrectionEnabled();
+	boolean isSecondCorrectionEnabled();
 
 	String getShortName();
 
@@ -21,4 +25,5 @@ public interface IExercise {
 	ICourse getCourse();
 
 	ISubmission getSubmission(int id) throws ArtemisClientException;
+
 }

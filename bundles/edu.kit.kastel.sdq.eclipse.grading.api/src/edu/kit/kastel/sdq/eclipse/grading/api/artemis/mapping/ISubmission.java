@@ -1,6 +1,8 @@
 package edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping;
 
-public interface ISubmission {
+import java.io.Serializable;
+
+public interface ISubmission extends Serializable {
 
 	String getParticipantIdentifier();
 

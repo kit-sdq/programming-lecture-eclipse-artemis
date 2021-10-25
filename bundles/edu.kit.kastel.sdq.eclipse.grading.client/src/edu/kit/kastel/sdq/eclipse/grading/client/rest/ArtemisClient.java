@@ -22,13 +22,13 @@ import edu.kit.kastel.sdq.eclipse.grading.api.Constants;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.AssessmentResult;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.ILockResult;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IProjectFileNamingStrategy;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IAssessor;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.Assessor;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ICourse;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExam;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExerciseGroup;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IParticipation;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ParticipationDTO;
 import edu.kit.kastel.sdq.eclipse.grading.api.client.AbstractArtemisClient;
 import edu.kit.kastel.sdq.eclipse.grading.client.git.GitException;
 import edu.kit.kastel.sdq.eclipse.grading.client.git.GitHandler;
@@ -38,24 +38,21 @@ import edu.kit.kastel.sdq.eclipse.grading.client.mappings.ArtemisSubmission;
 import edu.kit.kastel.sdq.eclipse.grading.client.mappings.IMappingLoader;
 import edu.kit.kastel.sdq.eclipse.grading.client.mappings.exam.ArtemisExam;
 import edu.kit.kastel.sdq.eclipse.grading.client.mappings.exam.ArtemisExerciseGroup;
-import edu.kit.kastel.sdq.eclipse.grading.client.mappings.lock.Assessor;
 import edu.kit.kastel.sdq.eclipse.grading.client.mappings.lock.LockResult;
 
 public class ArtemisClient extends AbstractArtemisClient implements IMappingLoader {
 
 	private static final String JSON_PARSE_ERROR_MESSAGE_CORRUPT_JSON_STRUCTURE = "Error parsing json: Corrupt Json Structure";
+	private ObjectMapper orm = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
 	private WebTarget endpoint;
 	private String token;
-
-	private ObjectMapper orm;
 
 	public ArtemisClient(final String username, final String password, final String hostName) {
 		super(username, password, hostName);
 
 		this.endpoint = ClientBuilder.newBuilder().build().target(this.getApiRoot());
 		this.token = null;
-		this.orm = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 	}
 
 	private void checkAuthentication() throws ArtemisClientException {
@@ -65,35 +62,28 @@ public class ArtemisClient extends AbstractArtemisClient implements IMappingLoad
 	}
 
 	@Override
-	public void downloadExerciseAndSubmission(IExercise exercise, ISubmission submission, File directory, IProjectFileNamingStrategy projectFileNamingStrategy)
+	public void downloadExerciseAndSubmission(IExercise exercise, ISubmission submission, File target, IProjectFileNamingStrategy namer)
 			throws ArtemisClientException {
 
-		final File projectDirectory = projectFileNamingStrategy.getProjectFileInWorkspace(directory, exercise, submission);
+		final File projectDirectory = namer.getProjectFileInWorkspace(target, exercise, submission);
 		try {
 			if (projectDirectory.exists()) {
 				throw new ArtemisClientException("Could not clone project " + projectDirectory.getName() + ", " + "directory already exists!");
 			}
 
-			this.downloadTestRepo(exercise, projectDirectory);
-
+			// Download test repository
+			GitHandler.cloneRepo(projectDirectory, exercise.getTestRepositoryUrl(), Constants.MASTER_BRANCH_NAME);
 			// download submission inside the exercise project directory
-			this.downloadSubmission(submission, projectFileNamingStrategy.getAssignmentFileInProjectDirectory(projectDirectory));
+			GitHandler.cloneRepo(namer.getAssignmentFileInProjectDirectory(projectDirectory), //
+					submission.getRepositoryUrl(), Constants.MASTER_BRANCH_NAME);
 		} catch (GitException e) {
 			throw new ArtemisClientException("Unable to download exercise and submission: " + e.getMessage(), e);
 		}
 
 	}
 
-	protected void downloadSubmission(ISubmission submission, File directory) throws GitException {
-		GitHandler.cloneRepo(directory, submission.getRepositoryUrl(), Constants.MASTER_BRANCH_NAME);
-	}
-
-	private void downloadTestRepo(IExercise exercise, File directory) throws GitException {
-		GitHandler.cloneRepo(directory, exercise.getTestRepositoryUrl(), Constants.MASTER_BRANCH_NAME);
-	}
-
 	@Override
-	public IAssessor getAssessor() throws ArtemisClientException {
+	public Assessor getAssessor() throws ArtemisClientException {
 		this.checkAuthentication();
 
 		final Response rsp = this.endpoint.path(USERS_PATHPART).path(this.getArtemisUsername()).request().header(AUTHORIZATION_NAME, this.token).buildGet()
@@ -150,13 +140,13 @@ public class ArtemisClient extends AbstractArtemisClient implements IMappingLoad
 
 		ArtemisExerciseGroup[] exerciseGroupsArray = this.read(exerciseGroupsJsonArray.toString(), ArtemisExerciseGroup[].class);
 		for (ArtemisExerciseGroup exerciseGroup : exerciseGroupsArray) {
-			exerciseGroup.init(this, course);
+			exerciseGroup.init(this, course, exam);
 		}
 		return Arrays.asList(exerciseGroupsArray);
 	}
 
 	@Override
-	public List<IExercise> getExercisesForCourse(ICourse course) throws ArtemisClientException {
+	public List<IExercise> getNormalExercisesForCourse(ICourse course) throws ArtemisClientException {
 		this.checkAuthentication();
 
 		final Response exercisesRsp = this.endpoint.path(COURSES_PATHPART).path(String.valueOf(course.getCourseId())).path("with-exercises").request()
@@ -177,7 +167,7 @@ public class ArtemisClient extends AbstractArtemisClient implements IMappingLoad
 
 		ArtemisExercise[] exercisesArray = this.read(exercisesJsonArray.toString(), ArtemisExercise[].class);
 		for (ArtemisExercise exercise : exercisesArray) {
-			exercise.init(this, course);
+			exercise.init(this, course, Optional.empty());
 		}
 
 		// Here we filter all programming exercises
@@ -221,7 +211,7 @@ public class ArtemisClient extends AbstractArtemisClient implements IMappingLoad
 	}
 
 	private void login() throws ArtemisClientException {
-		String payload = this.write(this.getAuthenticationEntity());
+		String payload = this.payload(this.getAuthenticationEntity());
 		final Response authenticationResponse = this.endpoint.path("authenticate").request().buildPost(Entity.json(payload)).invoke();
 
 		this.throwIfStatusUnsuccessful(authenticationResponse);
@@ -230,42 +220,14 @@ public class ArtemisClient extends AbstractArtemisClient implements IMappingLoad
 		this.token = "Bearer " + rawToken;
 	}
 
-	private ILockResult parseLockResult(final String jsonString) throws JsonProcessingException {
-		return this.orm.readValue(jsonString, LockResult.class);
-	}
-
-	private <E> E read(String rspEntity, Class<E> clazz) throws ArtemisClientException {
-		try {
-			return this.orm.readValue(rspEntity, clazz);
-		} catch (Exception e) {
-			throw new ArtemisClientException(e.getMessage(), e);
-		}
-	}
-
-	private <E> String write(E rspEntity) throws ArtemisClientException {
-		try {
-			return this.orm.writeValueAsString(rspEntity);
-		} catch (Exception e) {
-			throw new ArtemisClientException(e.getMessage(), e);
-		}
-	}
-
-	private JsonNode readTree(String readEntity) throws ArtemisClientException {
-		try {
-			return this.orm.readTree(readEntity);
-		} catch (JsonProcessingException e) {
-			throw new ArtemisClientException(e.getMessage(), e);
-		}
-	}
-
 	@Override
-	public void saveAssessment(IParticipation participation, boolean submit, AssessmentResult assessment) throws ArtemisClientException {
+	public void saveAssessment(ParticipationDTO participation, boolean submit, AssessmentResult assessment) throws ArtemisClientException {
 		this.checkAuthentication();
 
 		final Response rsp = this.endpoint.path("participations").path(Integer.toString(participation.getParticipationID())) //
 				.path("manual-results") //
 				.queryParam("submit", submit) //
-				.request().header(AUTHORIZATION_NAME, this.token).buildPut(Entity.json(this.write(assessment))).invoke();
+				.request().header(AUTHORIZATION_NAME, this.token).buildPut(Entity.json(this.payload(assessment))).invoke();
 		this.throwIfStatusUnsuccessful(rsp);
 	}
 
@@ -276,13 +238,7 @@ public class ArtemisClient extends AbstractArtemisClient implements IMappingLoad
 		final Response rsp = this.endpoint.path(PROGRAMMING_SUBMISSION_PATHPART).path(String.valueOf(submission.getSubmissionId())).path("lock").request()
 				.header(AUTHORIZATION_NAME, this.token).buildGet().invoke(); // synchronous variant
 		this.throwIfStatusUnsuccessful(rsp);
-
-		try {
-			return this.parseLockResult(rsp.readEntity(String.class));
-		} catch (JsonProcessingException e) {
-			throw new ArtemisClientException("Error parsing lock result json: " + e.getMessage(), e);
-		}
-
+		return this.read(rsp.readEntity(String.class), LockResult.class);
 	}
 
 	@Override
@@ -298,17 +254,37 @@ public class ArtemisClient extends AbstractArtemisClient implements IMappingLoad
 			return Optional.empty();
 		}
 
-		try {
-			return Optional.of(this.parseLockResult(rsp.readEntity(String.class)));
-		} catch (JsonProcessingException e) {
-			throw new ArtemisClientException("Error parsing lock result json: " + e.getMessage(), e);
-		}
+		return Optional.of(this.read(rsp.readEntity(String.class), LockResult.class));
 	}
 
 	private void throwIfStatusUnsuccessful(final Response response) throws ArtemisClientException {
 		if (!this.isStatusSuccessful(response)) {
 			throw new ArtemisClientException("Communication with \"" + this.getApiRoot() + "\" failed with status \"" + response.getStatus() + ": "
 					+ response.getStatusInfo().getReasonPhrase() + "\".");
+		}
+	}
+
+	private <E> E read(String rspEntity, Class<E> clazz) throws ArtemisClientException {
+		try {
+			return this.orm.readValue(rspEntity, clazz);
+		} catch (Exception e) {
+			throw new ArtemisClientException(e.getMessage(), e);
+		}
+	}
+
+	private <E> String payload(E rspEntity) throws ArtemisClientException {
+		try {
+			return this.orm.writeValueAsString(rspEntity);
+		} catch (Exception e) {
+			throw new ArtemisClientException(e.getMessage(), e);
+		}
+	}
+
+	private JsonNode readTree(String readEntity) throws ArtemisClientException {
+		try {
+			return this.orm.readTree(readEntity);
+		} catch (JsonProcessingException e) {
+			throw new ArtemisClientException(e.getMessage(), e);
 		}
 	}
 

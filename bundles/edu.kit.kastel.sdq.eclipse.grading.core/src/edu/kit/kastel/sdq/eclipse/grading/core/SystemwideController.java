@@ -159,7 +159,7 @@ public class SystemwideController extends AbstractController implements ISystemw
 
 	@Override
 	public Set<Transition> getCurrentlyPossibleTransitions() {
-		boolean secondCorrectionRoundEnabled = this.exercise != null && this.exercise.getSecondCorrectionEnabled();
+		boolean secondCorrectionRoundEnabled = this.exercise != null && this.exercise.isSecondCorrectionEnabled();
 
 		return this.backendStateMachine.getCurrentlyPossibleTransitions().stream()
 				.filter(transition -> !Transition.START_CORRECTION_ROUND_2.equals(transition) || secondCorrectionRoundEnabled).collect(Collectors.toSet());

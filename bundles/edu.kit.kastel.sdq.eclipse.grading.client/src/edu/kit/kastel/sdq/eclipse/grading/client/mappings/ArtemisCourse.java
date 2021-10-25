@@ -6,7 +6,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.ArtemisClientException;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IAssessor;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.Assessor;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ICourse;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExam;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
@@ -51,7 +51,7 @@ public class ArtemisCourse implements ICourse, Serializable {
 	@Override
 	public List<IExercise> getExercises() throws ArtemisClientException {
 		if (this.exercises == null) {
-			this.exercises = this.client.getExercisesForCourse(this);
+			this.exercises = this.client.getNormalExercisesForCourse(this);
 		}
 		return this.exercises;
 	}
@@ -67,7 +67,7 @@ public class ArtemisCourse implements ICourse, Serializable {
 	}
 
 	@Override
-	public boolean isInstructor(IAssessor assessor) {
+	public boolean isInstructor(Assessor assessor) {
 		return assessor.getGroups().contains(this.instructorGroup);
 	}
 

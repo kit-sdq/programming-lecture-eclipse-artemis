@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IFeedback;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.Feedback;
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IAnnotation;
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IMistakeType;
 import edu.kit.kastel.sdq.eclipse.grading.core.model.annotation.Annotation;
@@ -40,8 +40,8 @@ public class AnnotationDeserializer {
 	 * @return
 	 * @throws IOException
 	 */
-	public List<IAnnotation> deserialize(List<IFeedback> feedbacks) throws IOException {
-		final List<IFeedback> matchingFeedbacks = feedbacks.stream().filter(feedback -> {
+	public List<IAnnotation> deserialize(List<Feedback> feedbacks) throws IOException {
+		final List<Feedback> matchingFeedbacks = feedbacks.stream().filter(feedback -> {
 			String text = feedback.getText();
 			return text != null && text.equals(FEEDBACK_TEXT);
 		}).collect(Collectors.toList());
@@ -51,7 +51,7 @@ public class AnnotationDeserializer {
 		}
 
 		JsonProcessingException[] foundException = { null };
-		List<Annotation> deserializedAnnotations = matchingFeedbacks.stream().map(IFeedback::getDetailText) // get the json blob
+		List<Annotation> deserializedAnnotations = matchingFeedbacks.stream().map(Feedback::getDetailText) // get the json blob
 				.map(feedbackDetailText -> { // transform the json blob to multiple annotations
 					try {
 

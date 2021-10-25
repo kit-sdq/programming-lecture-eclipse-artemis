@@ -19,6 +19,8 @@ public class ArtemisExam implements IExam, Serializable {
 	private int examId;
 	@JsonProperty
 	private String title;
+	@JsonProperty
+	private int numberOfCorrectionRounds;
 
 	private transient ICourse course;
 	private transient List<IExerciseGroup> exerciseGroups;
@@ -52,6 +54,11 @@ public class ArtemisExam implements IExam, Serializable {
 	public void init(IMappingLoader client, ICourse course) {
 		this.course = course;
 		this.client = client;
+	}
+
+	@Override
+	public boolean hasSecondCorrectionRound() {
+		return this.numberOfCorrectionRounds >= 2;
 	}
 
 }

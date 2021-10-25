@@ -4,10 +4,10 @@ import java.util.List;
 import java.util.Optional;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IProjectFileNamingStrategy;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.Feedback;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ICourse;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExam;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IFeedback;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
 
 /**
@@ -29,7 +29,7 @@ public interface IArtemisController extends IController {
 	 * @return all IFeedbacks that were gotten in the process of locking the given
 	 *         submission.
 	 */
-	List<IFeedback> getAllFeedbacksGottenFromLocking(ISubmission submission);
+	List<Feedback> getAllFeedbacksGottenFromLocking(ISubmission submission);
 
 	/**
 	 *
@@ -91,7 +91,7 @@ public interface IArtemisController extends IController {
 	 * @return all auto feedbacks gotten by starting the assessment (junit test
 	 *         results).
 	 */
-	List<IFeedback> getPrecalculatedAutoFeedbacks(ISubmission submission);
+	List<Feedback> getPrecalculatedAutoFeedbacks(ISubmission submission);
 
 	/**
 	 * Submit the assessment to Artemis. Must have been started by

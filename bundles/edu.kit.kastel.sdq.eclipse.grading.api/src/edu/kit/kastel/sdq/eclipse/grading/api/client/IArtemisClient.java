@@ -9,11 +9,11 @@ import edu.kit.kastel.sdq.eclipse.grading.api.ArtemisClientException;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.AssessmentResult;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.ILockResult;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IProjectFileNamingStrategy;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IAssessor;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.Assessor;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ICourse;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IParticipation;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ParticipationDTO;
 
 public interface IArtemisClient {
 	/**
@@ -27,7 +27,7 @@ public interface IArtemisClient {
 	 * @return the artemis "assessor" object (needed for submitting the assessment).
 	 * @throws ArtemisClientException if some errors occur while parsing the result.
 	 */
-	IAssessor getAssessor() throws ArtemisClientException;
+	Assessor getAssessor() throws ArtemisClientException;
 
 	/**
 	 *
@@ -38,9 +38,8 @@ public interface IArtemisClient {
 
 	default List<ISubmission> getSubmissions(IExercise exercise) throws ArtemisClientException {
 		List<ISubmission> submissions = new ArrayList<>(this.getSubmissions(exercise, 0));
-		// TODO This is just a fix that you can see second correction rounds iff
-		// available
-		if (exercise.getSecondCorrectionEnabled()) {
+		// TODO Check whether we can get a second correction round
+		if (exercise.hasSecondCorrectionRound()) {
 			submissions.addAll(this.getSubmissions(exercise, 1));
 		}
 		return submissions;
@@ -71,7 +70,7 @@ public interface IArtemisClient {
 	 *
 	 * @throws ArtemisClientException
 	 */
-	void saveAssessment(IParticipation participation, boolean submit, AssessmentResult assessment) throws ArtemisClientException;
+	void saveAssessment(ParticipationDTO participation, boolean submit, AssessmentResult assessment) throws ArtemisClientException;
 
 	/**
 	 * Starts an assessment for the given submission. Acquires a lock in the
