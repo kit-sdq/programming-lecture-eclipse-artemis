@@ -67,9 +67,9 @@ public class AssessmentViewController {
 		final int startLine = textSelection.getStartLine() + 1;
 		final int endLine = textSelection.getEndLine() + 1;
 		final int charOffset = textSelection.getOffset();
-		final int lenght = textSelection.getLength();
+		final int length = textSelection.getLength();
 		final int charStart = charOffset;
-		final int charEnd = charOffset + lenght;
+		final int charEnd = charOffset + length;
 
 		try {
 			String uuid = IAnnotation.createUUID();

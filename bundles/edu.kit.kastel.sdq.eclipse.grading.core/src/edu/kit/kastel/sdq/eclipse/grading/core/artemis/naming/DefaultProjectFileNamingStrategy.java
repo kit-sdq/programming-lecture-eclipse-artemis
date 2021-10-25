@@ -10,7 +10,7 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
  * A naming strategy that creates projects like this:
  *
  * <pre>
- * exercise-${EXERCISE_ID}-${EXERCISE_SHORTNAME}_submission-${SUBMISSION_ID}-$PARTICIPANT_ID}
+ * exercise-${EXERCISE_ID}-${EXERCISE_SHORTNAME}-${STUDENT_ID}-round-${round}-submission-${SUBMISSION_ID}}
  * </pre>
  *
  */
