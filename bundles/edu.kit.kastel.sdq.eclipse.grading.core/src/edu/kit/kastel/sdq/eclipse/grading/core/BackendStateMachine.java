@@ -25,7 +25,7 @@ public class BackendStateMachine {
 
 	public void applyTransition(Transition transition) throws NoTransitionException {
 		if (!this.transitions.get(this.currentState).contains(transition)) {
-			final String message = "State transition " + transition.toString() + " (from " + this.currentState + " to " + transition.getTo() + ") not defined.";
+			final String message = "State transition " + transition + " (from " + this.currentState + " to " + transition.getTo() + ") not defined.";
 			this.changeState(State.ERROR_STATE);
 			throw new NoTransitionException(message);
 		}

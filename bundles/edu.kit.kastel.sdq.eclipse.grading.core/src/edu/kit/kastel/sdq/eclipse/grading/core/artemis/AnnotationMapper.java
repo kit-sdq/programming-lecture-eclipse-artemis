@@ -1,9 +1,13 @@
 package edu.kit.kastel.sdq.eclipse.grading.core.artemis;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -28,6 +32,8 @@ public class AnnotationMapper {
 	// keep this up to date with
 	// https://github.com/ls1intum/Artemis/blob/develop/src/main/java/de/tum/in/www1/artemis/config/Constants.java#L121
 	private static final int FEEDBACK_DETAIL_TEXT_MAX_CHARACTERS = 5000;
+
+	private static final NumberFormat nf = new DecimalFormat("##.###", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
 
 	private final IExercise exercise;
 	private final ISubmission submission;
@@ -66,9 +72,7 @@ public class AnnotationMapper {
 
 		final List<Feedback> result = new LinkedList<>(this.getFilteredPreexistentFeedbacks(FeedbackType.AUTOMATIC));
 		result.addAll(submissionIsInvalid ? this.calculateInvalidManualFeedback() : this.calculateManualFeedbacks());
-
 		result.addAll(this.calculateAnnotationSerialitationAsFeedbacks());
-
 		return result;
 	}
 
@@ -108,8 +112,12 @@ public class AnnotationMapper {
 	private List<Feedback> calculateManualFeedbacks() {
 		List<Feedback> manualFeedbacks = new LinkedList<>(this.annotations.stream().map(this::createNewManualFeedback).collect(Collectors.toList()));
 		// add the (rated!) rating group annotations
-		manualFeedbacks.addAll(this.ratingGroups.stream().map(this::createNewManualUnreferencedFeedback).filter(feedback -> !Util.isZero(feedback.getCredits()))
-				.collect(Collectors.toList()));
+		manualFeedbacks.addAll( //
+				this.ratingGroups.stream() //
+						.map(this::createNewManualUnreferencedFeedback) //
+						.filter(feedback -> Math.abs(feedback.getCredits()) >= 1E-8) //
+						.collect(Collectors.toList())//
+		);
 
 		return manualFeedbacks;
 	}
@@ -140,10 +148,11 @@ public class AnnotationMapper {
 		long positiveTests = tests.stream().filter(Feedback::getPositive).count();
 		long numberOfTests = tests.size();
 
-		// TODO We may add "Issues" as text here iff activated ?
-
-		return new StringBuilder().append(positiveTests).append(" of ").append(numberOfTests).append(" passed, ").append(Util.formatDouble(absoluteScore))
-				.append(" of ").append(Util.formatDouble(this.exercise.getMaxPoints())).append(" points").toString();
+		// ENHANCE We may add "Issues" as text here iff activated ?
+		String result = "";
+		result += String.format("%d of %d passed, ", positiveTests, numberOfTests);
+		result += String.format("%s of %s points", nf.format(absoluteScore), nf.format(this.exercise.getMaxPoints()));
+		return result;
 	}
 
 	private String convertAnnotationsToJSONString(final List<IAnnotation> givenAnnotations) throws JsonProcessingException {
@@ -187,49 +196,65 @@ public class AnnotationMapper {
 
 	private Feedback createNewManualFeedback(IAnnotation annotation) {
 		// manual feedbacks do not have no credits!
-		final String text = new StringBuilder().append("File ").append(annotation.getClassFilePath()).append(" at line ").append(annotation.getStartLine())
-				.toString();
-		final String reference = new StringBuilder().append("file:").append(annotation.getClassFilePath()).append(".java_line:")
-				.append(annotation.getStartLine()).toString();
+		final String text = "File " + annotation.getClassFilePath() + " at line " + annotation.getStartLine();
+		final String reference = "file:" + annotation.getClassFilePath() + ".java_line:" + annotation.getStartLine();
 
-		final String detailText = new StringBuilder().append("[").append(annotation.getMistakeType().getRatingGroup().getDisplayName()).append(":")
-				.append(annotation.getMistakeType().getName()).append("] ").append(annotation.getMistakeType().getMessage())
-				.append(annotation.getCustomMessage().orElse("")) // assuming mistake type has no message in custom case!
-				.toString();
+		var mistakeType = annotation.getMistakeType();
+		String detailText = "[" + mistakeType.getRatingGroup().getDisplayName() + ":" + mistakeType.getName() + "] ";
+		if (mistakeType.isCustomPenalty()) {
+			detailText += annotation.getCustomMessage().get() + " (" + nf.format(-annotation.getCustomPenalty().get()) + "P)";
+		} else {
+			detailText += mistakeType.getMessage();
+		}
 
-		return new Feedback(FeedbackType.MANUAL.toString(), 0D, null, null, null, text, reference, detailText);
+		return new Feedback(FeedbackType.MANUAL.name(), 0D, null, null, null, text, reference, detailText);
 	}
 
 	private Feedback createNewManualUnreferencedFeedback(IRatingGroup ratingGroup) {
 		final double calculatedPenalty = this.calculatePenaltyForRatingGroup(ratingGroup);
 
-		final StringBuilder detailTextStringBuilder = new StringBuilder().append(ratingGroup.getDisplayName()).append(" [")
-				.append(Util.formatDouble(calculatedPenalty));
+		String detailText = "";
+		detailText += ratingGroup.getDisplayName() + " [" + nf.format(calculatedPenalty);
+
 		if (ratingGroup.hasPenaltyLimit()) {
-			detailTextStringBuilder.append(" of at most ").append(Util.formatDouble(-1D * ratingGroup.getPenaltyLimit()));
+			detailText += " of at most " + nf.format(-ratingGroup.getPenaltyLimit());
 		}
-		detailTextStringBuilder.append(" points]");
+
+		detailText += " points]";
 
 		// add mistake-specific penalties
-		this.mistakeTypes.stream().filter(mistakeType -> mistakeType.getRatingGroup().equals(ratingGroup)).forEach(mistakeType -> {
-			final double currentPenalty = this.calculatePenaltyForMistakeType(mistakeType);
-			final List<IAnnotation> currentAnnotations = this.annotations.stream().filter(annotation -> annotation.getMistakeType().equals(mistakeType))
-					.collect(Collectors.toList());
 
-			if (!Util.isZero(currentPenalty)) {
-				detailTextStringBuilder.append("\n    * \"").append(mistakeType.getName()).append("\" [").append(Util.formatDouble(currentPenalty))
-						.append("]:");
-
-				currentAnnotations.forEach(annotation -> detailTextStringBuilder.append("\n        * ").append(annotation.getClassFilePath())
-						.append(" at line ").append(annotation.getStartLine()));
+		for (var mistakeType : this.mistakeTypes) {
+			if (!mistakeType.getRatingGroup().equals(ratingGroup)) {
+				continue;
 			}
-		});
 
-		if (this.penaltyCalculationStrategy.penaltyLimitIsHitForRatingGroup(ratingGroup)) {
-			detailTextStringBuilder.append("\n    * ").append("Note: The sum of penalties hit the penalty limit for this rating group.");
+			final double currentPenalty = this.calculatePenaltyForMistakeType(mistakeType);
+			if (Math.abs(currentPenalty) < 1E-8) {
+				continue;
+			}
+
+			final List<IAnnotation> currentAnnotations = this.annotations.stream() //
+					.filter(annotation -> annotation.getMistakeType().equals(mistakeType)) //
+					.collect(Collectors.toList());
+			detailText += "\n    * \"" + mistakeType.getName() + "\" [" + nf.format(currentPenalty) + "]:";
+			if (mistakeType.isCustomPenalty()) {
+				for (var annotation : currentAnnotations) {
+					String penalty = nf.format(-annotation.getCustomPenalty().get());
+					detailText += "\n        * " + annotation.getClassFilePath() + " at line " + annotation.getStartLine() + " (" + penalty + "P)";
+				}
+			} else {
+				for (var annotation : currentAnnotations) {
+					detailText += "\n        * " + annotation.getClassFilePath() + " at line " + annotation.getStartLine();
+				}
+			}
 		}
 
-		return new Feedback(FeedbackType.MANUAL_UNREFERENCED.toString(), calculatedPenalty, null, null, null, null, null, detailTextStringBuilder.toString());
+		if (this.penaltyCalculationStrategy.penaltyLimitIsHitForRatingGroup(ratingGroup)) {
+			detailText += "\n    * Note: The sum of penalties hit the penalty limit for this rating group.";
+		}
+
+		return new Feedback(FeedbackType.MANUAL_UNREFERENCED.name(), calculatedPenalty, null, null, null, null, null, detailText);
 	}
 
 	private List<Feedback> getFilteredPreexistentFeedbacks(FeedbackType feedbackType) {

@@ -28,10 +28,12 @@ public class DefaultProjectFileNamingStrategy implements IProjectFileNamingStrat
 
 	@Override
 	public File getProjectFileInWorkspace(File workspaceDirectory, IExercise exercise, ISubmission submission) {
-		return new File(workspaceDirectory,
-				new StringBuilder().append("exercise-").append(exercise.getExerciseId()).append("-").append(exercise.getShortName()).append("-")
-						.append(submission.getParticipantIdentifier()).append("-round-").append(submission.getCorrectionRound() + 1).append("-submission-")
-						.append(submission.getSubmissionId()).toString());
+		String projectName = "";
+		projectName += "exercise-" + exercise.getExerciseId() + "-" + exercise.getShortName();
+		projectName += "-" + submission.getParticipantIdentifier();
+		projectName += "-round-" + (submission.getCorrectionRound() + 1);
+		projectName += "-submission-" + submission.getSubmissionId();
+		return new File(workspaceDirectory, projectName);
 	}
 
 }

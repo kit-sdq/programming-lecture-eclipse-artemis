@@ -195,22 +195,23 @@ public class SystemwideController extends AbstractController implements ISystemw
 	 * @return true if at least one of those three is null
 	 */
 	private boolean nullCheckMembersAndNotify(boolean checkCourseID, boolean checkExerciseID, boolean checkSubmissionID) {
-		final StringBuilder alertMessageBuilder = new StringBuilder("[");
+		String alert = "[";
 		boolean somethingNull = false;
 		if (checkCourseID && this.course == null) {
-			alertMessageBuilder.append("Course is not set ");
+			alert += "Course is not set ";
 			somethingNull = true;
 		}
 		if (checkExerciseID && this.exercise == null) {
-			alertMessageBuilder.append("Exercise is not set ");
+			alert += "Exercise is not set ";
 			somethingNull = true;
 		}
 		if (checkSubmissionID && this.submission == null) {
-			alertMessageBuilder.append("Submission is not set ");
+			alert += "Submission is not set ";
 			somethingNull = true;
 		}
 		if (somethingNull) {
-			this.warn(alertMessageBuilder.append("]").toString());
+			alert += "]";
+			this.warn(alert);
 		}
 		return somethingNull;
 	}

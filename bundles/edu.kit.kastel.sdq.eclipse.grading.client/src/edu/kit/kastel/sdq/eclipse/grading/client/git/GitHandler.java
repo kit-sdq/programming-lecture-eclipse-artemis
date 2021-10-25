@@ -20,7 +20,7 @@ public final class GitHandler {
 			cloneRepository.setBranch(branch);
 			cloneRepository.setDirectory(destination);
 			cloneRepository.setRemote(REMOTE_NAME);
-			cloneRepository.setURI(new URIish(repoURL).toString());
+			cloneRepository.setURI(String.valueOf(new URIish(repoURL)));
 			cloneRepository.setCloneAllBranches(true);
 			cloneRepository.setCloneSubmodules(false);
 			Git git = cloneRepository.call();

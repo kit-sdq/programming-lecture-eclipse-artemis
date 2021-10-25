@@ -64,7 +64,7 @@ public interface IAnnotation {
 
 	static String createUUID() {
 		// TODO Better UUID Generation ..
-		return UUID.randomUUID().toString();
+		return String.valueOf(UUID.randomUUID());
 	}
 
 }

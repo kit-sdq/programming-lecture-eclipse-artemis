@@ -224,7 +224,7 @@ public class ArtemisClient extends AbstractArtemisClient implements IMappingLoad
 	public void saveAssessment(ParticipationDTO participation, boolean submit, AssessmentResult assessment) throws ArtemisClientException {
 		this.checkAuthentication();
 
-		final Response rsp = this.endpoint.path("participations").path(Integer.toString(participation.getParticipationID())) //
+		final Response rsp = this.endpoint.path("participations").path(String.valueOf(participation.getParticipationID())) //
 				.path("manual-results") //
 				.queryParam("submit", submit) //
 				.request().header(AUTHORIZATION_NAME, this.token).buildPut(Entity.json(this.payload(assessment))).invoke();
