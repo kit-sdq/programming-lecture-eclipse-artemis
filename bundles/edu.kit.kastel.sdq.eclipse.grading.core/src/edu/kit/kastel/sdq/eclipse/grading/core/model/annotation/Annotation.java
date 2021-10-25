@@ -125,14 +125,6 @@ public class Annotation implements IAnnotation {
 		return this.startLine;
 	}
 
-	protected void setCustomMessage(String customMessage) {
-		this.customMessage = customMessage;
-	}
-
-	protected void setCustomPenalty(double customPenalty) {
-		this.customPenalty = customPenalty;
-	}
-
 	/**
 	 * This Method is ONLY FOR DESERIALIZATION! If mistakeType is already set, this
 	 * has no effect.

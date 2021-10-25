@@ -47,11 +47,6 @@ public class SystemwideController extends AbstractController implements ISystemw
 
 	private IPreferenceStore preferenceStore;
 
-	public SystemwideController(final File configFile, final String artemisHost, final String username, final String password) {
-		this(artemisHost, username, password);
-		this.setConfigFile(configFile);
-	}
-
 	public SystemwideController(final IPreferenceStore preferenceStore) {
 		this( //
 				preferenceStore.getString(PreferenceConstants.ARTEMIS_URL), //

@@ -37,16 +37,6 @@ public class MistakeType implements IMistakeType {
 		this.appliesTo = appliesTo;
 	}
 
-	public MistakeType(String shortName, String buttonName, String message, RatingGroup ratingGroup, PenaltyRule penaltyType) {
-		this.shortName = shortName;
-		this.name = buttonName;
-		this.message = message;
-		this.ratingGroup = ratingGroup;
-		this.penaltyRule = penaltyType;
-
-		// add the inverse reference
-		this.ratingGroup.addMistakeType(this);
-	}
 
 	@Override
 	public double calculatePenalty(List<IAnnotation> annotations) {

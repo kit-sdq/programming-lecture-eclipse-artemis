@@ -38,14 +38,7 @@ public class ArtemisExercise implements IExercise, Serializable {
 	 * For Auto-Deserialization Need to call this::init thereafter!
 	 */
 	public ArtemisExercise() {
-
-	}
-
-	public ArtemisExercise(int exerciseId, String title, String shortName, String testRepositoryUrl, List<ISubmission> submissions) {
-		this.exerciseId = exerciseId;
-		this.title = title;
-		this.shortName = shortName;
-		this.testRepositoryUrl = testRepositoryUrl;
+		// NOP
 	}
 
 	@Override

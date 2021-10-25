@@ -36,9 +36,6 @@ public class ArtemisSubmission implements ISubmission, Serializable {
 		// NOP
 	}
 
-	protected String getCommitHash() {
-		return this.commitHash;
-	}
 
 	@Override
 	public String getParticipantIdentifier() {
