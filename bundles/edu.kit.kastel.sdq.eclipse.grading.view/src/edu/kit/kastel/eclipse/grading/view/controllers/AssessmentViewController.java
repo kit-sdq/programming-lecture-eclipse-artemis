@@ -148,7 +148,7 @@ public class AssessmentViewController {
 				marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_RATING_GROUP, mistake.getRatingGroup().getDisplayName());
 				if (!"Custom Penalty".equals(mistake.getName())) {
 					marker.setAttribute(IMarker.MESSAGE, AssessmentUtilities.createMarkerTooltip(startLine + 1, endLine + 1, mistake.getName(),
-							mistake.getRatingGroup().getDisplayName(), mistake.getMessage(), null));
+							mistake.getRatingGroup().getDisplayName(), mistake.getMessage(), annotation.getClassFilePath()));
 				} else {
 					marker.setAttribute(IMarker.MESSAGE, AssessmentUtilities.createMarkerTooltipForCustomButton(startLine + 1, endLine + 1, customMessage,
 							Double.parseDouble(customPenalty)));
