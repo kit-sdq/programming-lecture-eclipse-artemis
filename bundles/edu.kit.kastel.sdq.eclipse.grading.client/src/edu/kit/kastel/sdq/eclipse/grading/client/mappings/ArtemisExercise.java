@@ -1,7 +1,6 @@
 package edu.kit.kastel.sdq.eclipse.grading.client.mappings;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Optional;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -48,7 +47,7 @@ public class ArtemisExercise implements IExercise, Serializable {
 
 	@Override
 	public boolean isSecondCorrectionEnabled() {
-		return this.secondCorrectionEnabled == null ? false : this.secondCorrectionEnabled;
+		return this.secondCorrectionEnabled != null && this.secondCorrectionEnabled;
 	}
 
 	@Override

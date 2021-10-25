@@ -1,6 +1,6 @@
 package edu.kit.kastel.sdq.eclipse.grading.core.model;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,7 +23,7 @@ public class RatingGroup implements IRatingGroup {
 			@JsonProperty("penaltyLimit") final Double penaltyLimit) {
 		this.shortName = shortName;
 		this.displayName = displayName;
-		this.mistakeTypes = new LinkedList<>();
+		this.mistakeTypes = new ArrayList<>();
 		this.penaltyLimit = penaltyLimit;
 	}
 

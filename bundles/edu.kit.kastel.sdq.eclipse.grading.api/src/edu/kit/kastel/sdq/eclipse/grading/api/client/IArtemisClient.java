@@ -38,10 +38,11 @@ public interface IArtemisClient {
 
 	default List<ISubmission> getSubmissions(IExercise exercise) throws ArtemisClientException {
 		List<ISubmission> submissions = new ArrayList<>(this.getSubmissions(exercise, 0));
-		// TODO Check whether we can get a second correction round
+
 		if (exercise.hasSecondCorrectionRound()) {
 			submissions.addAll(this.getSubmissions(exercise, 1));
 		}
+
 		return submissions;
 	}
 

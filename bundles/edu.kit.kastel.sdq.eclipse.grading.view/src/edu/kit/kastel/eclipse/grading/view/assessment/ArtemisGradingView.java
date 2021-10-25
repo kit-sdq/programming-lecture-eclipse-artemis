@@ -212,18 +212,15 @@ public class ArtemisGradingView extends ViewPart {
 	private void createExamComboList(Combo courseCombo, Combo examCombo, Combo examExerciseCombo) {
 		examCombo.removeAll();
 		examExerciseCombo.removeAll();
-		this.viewController.getExerciseShortNames(courseCombo.getItem(courseCombo.getSelectionIndex()))
-				.forEach(exerciseShortName -> examExerciseCombo.add(exerciseShortName));
+		this.viewController.getExerciseShortNames(courseCombo.getItem(courseCombo.getSelectionIndex())).forEach(examExerciseCombo::add);
 		examCombo.add("None");
-		this.viewController.getExamShortNames(courseCombo.getItem(courseCombo.getSelectionIndex())).forEach(examShortName -> examCombo.add(examShortName));
+		this.viewController.getExamShortNames(courseCombo.getItem(courseCombo.getSelectionIndex())).forEach(examCombo::add);
 		examCombo.addListener(SWT.Selection, e -> {
 			examExerciseCombo.removeAll();
 			if ("None".equals(examCombo.getItem(examCombo.getSelectionIndex()))) {
-				this.viewController.getExerciseShortNames(courseCombo.getItem(courseCombo.getSelectionIndex()))
-						.forEach(exerciseShortName -> examExerciseCombo.add(exerciseShortName));
+				this.viewController.getExerciseShortNames(courseCombo.getItem(courseCombo.getSelectionIndex())).forEach(examExerciseCombo::add);
 			} else {
-				this.viewController.getExercisesShortNamesForExam(examCombo.getItem(examCombo.getSelectionIndex()))
-						.forEach(exerciseShortName -> examExerciseCombo.add(exerciseShortName));
+				this.viewController.getExercisesShortNamesForExam(examCombo.getItem(examCombo.getSelectionIndex())).forEach(examExerciseCombo::add);
 			}
 			this.updateState();
 		});
@@ -408,7 +405,7 @@ public class ArtemisGradingView extends ViewPart {
 			String value = filterCombo.getItem(idx);
 			filter = Arrays.stream(SubmissionFilter.values()).filter(f -> f.name().equals(value)).findFirst().get();
 		}
-		this.viewController.getSubmissionsForBacklog(filter).forEach(project -> backlogCombo.add(project));
+		this.viewController.getSubmissionsForBacklog(filter).forEach(backlogCombo::add);
 	}
 
 	private void initializeBacklogCombo(Combo backlogCombo) {
@@ -419,7 +416,7 @@ public class ArtemisGradingView extends ViewPart {
 	}
 
 	private void loadExamComboEntries(Combo examCourseCombo, Combo examCombo, Combo examExerciseCombo) {
-		this.viewController.getCourseShortNames().forEach(courseShortName -> examCourseCombo.add(courseShortName));
+		this.viewController.getCourseShortNames().forEach(examCourseCombo::add);
 		examCourseCombo.addListener(SWT.Selection, e -> {
 			this.createExamComboList(this.courseCombo, examCombo, examExerciseCombo);
 			this.updateState();

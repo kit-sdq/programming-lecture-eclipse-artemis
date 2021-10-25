@@ -120,7 +120,6 @@ public interface IAssessmentController extends IController {
 	 */
 	List<IRatingGroup> getRatingGroups();
 
-	// TODO Get Tooltip has to be updated on events of mistake types ..
 	String getTooltipForMistakeType(IMistakeType mistakeType);
 
 	/**

@@ -5,7 +5,6 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -70,7 +69,7 @@ public class AnnotationMapper {
 	private List<Feedback> calculateAllFeedbacks() throws IOException {
 		final boolean submissionIsInvalid = this.penaltyCalculationStrategy.submissionIsInvalid();
 
-		final List<Feedback> result = new LinkedList<>(this.getFilteredPreexistentFeedbacks(FeedbackType.AUTOMATIC));
+		final List<Feedback> result = new ArrayList<>(this.getFilteredPreexistentFeedbacks(FeedbackType.AUTOMATIC));
 		result.addAll(submissionIsInvalid ? this.calculateInvalidManualFeedback() : this.calculateManualFeedbacks());
 		result.addAll(this.calculateAnnotationSerialitationAsFeedbacks());
 		return result;
@@ -90,7 +89,7 @@ public class AnnotationMapper {
 
 		// recursion
 		final int givenAnnotationsSize = givenAnnotations.size();
-		final List<Feedback> resultFeedbacks = new LinkedList<>(
+		final List<Feedback> resultFeedbacks = new ArrayList<>(
 				this.calculateAnnotationSerialisationAsFeedbacks(givenAnnotations.subList(0, givenAnnotationsSize / 2), detailTextMaxCharacters));
 		resultFeedbacks.addAll(this.calculateAnnotationSerialisationAsFeedbacks(givenAnnotations.subList(givenAnnotationsSize / 2, givenAnnotations.size()),
 				detailTextMaxCharacters));
@@ -100,17 +99,17 @@ public class AnnotationMapper {
 	private List<Feedback> calculateAnnotationSerialitationAsFeedbacks() throws IOException {
 		// because Artemis has a Limit on "detailText" of 5000, we gotta do this little
 		// trick
-		return this.calculateAnnotationSerialisationAsFeedbacks(this.annotations.stream().collect(Collectors.toList()), FEEDBACK_DETAIL_TEXT_MAX_CHARACTERS);
+		return this.calculateAnnotationSerialisationAsFeedbacks(new ArrayList<>(this.annotations), FEEDBACK_DETAIL_TEXT_MAX_CHARACTERS);
 	}
 
 	private List<Feedback> calculateInvalidManualFeedback() {
-		final List<Feedback> manualFeedbacks = new LinkedList<>();
+		final List<Feedback> manualFeedbacks = new ArrayList<>();
 		manualFeedbacks.add(new Feedback(FeedbackType.MANUAL_UNREFERENCED.name(), 0.D, null, null, null, null, null, "Invalid Submission."));
 		return manualFeedbacks;
 	}
 
 	private List<Feedback> calculateManualFeedbacks() {
-		List<Feedback> manualFeedbacks = new LinkedList<>(this.annotations.stream().map(this::createNewManualFeedback).collect(Collectors.toList()));
+		List<Feedback> manualFeedbacks = new ArrayList<>(this.annotations.stream().map(this::createNewManualFeedback).collect(Collectors.toList()));
 		// add the (rated!) rating group annotations
 		manualFeedbacks.addAll( //
 				this.ratingGroups.stream() //
@@ -222,8 +221,6 @@ public class AnnotationMapper {
 
 		detailText += " points]";
 
-		// add mistake-specific penalties
-
 		for (var mistakeType : this.mistakeTypes) {
 			if (!mistakeType.getRatingGroup().equals(ratingGroup)) {
 				continue;
@@ -263,10 +260,8 @@ public class AnnotationMapper {
 			if (feedback.getFeedbackType() == null || feedback.getFeedbackType() != feedbackType) {
 				continue;
 			}
-
 			feedbacks.add(feedback);
 		}
-
 		return feedbacks;
 	}
 

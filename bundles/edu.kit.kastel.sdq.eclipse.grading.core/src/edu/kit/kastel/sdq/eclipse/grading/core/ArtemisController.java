@@ -2,9 +2,9 @@ package edu.kit.kastel.sdq.eclipse.grading.core;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -189,7 +189,7 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 			return List.of();
 		}
 		try {
-			List<IExercise> allExercises = new LinkedList<>(course.getExercises());
+			List<IExercise> allExercises = new ArrayList<>(course.getExercises());
 			if (withExamExercises) {
 
 				for (IExam e : course.getExams()) {

@@ -1,6 +1,6 @@
 package edu.kit.kastel.sdq.eclipse.grading.client.mappings.lock;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -23,7 +23,7 @@ public class LockResult implements ILockResult {
 		this.submissionId = submissionID;
 		this.participation = participation;
 
-		this.latestFeedback = new LinkedList<>();
+		this.latestFeedback = new ArrayList<>();
 		LockCallAssessmentResult latestResult = previousAssessmentresults.isEmpty() //
 				? null //
 				: previousAssessmentresults.get(previousAssessmentresults.size() - 1);

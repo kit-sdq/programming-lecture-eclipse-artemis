@@ -26,18 +26,8 @@ public interface IAnnotation {
 
 	Optional<Double> getCustomPenalty();
 
-	/**
-	 *
-	 *
-	 * @return the start line starting at TODO 0 or 1.
-	 */
 	int getStartLine();
 
-	/**
-	 *
-	 *
-	 * @return the start line starting at TODO 0 or 1.
-	 */
 	int getEndLine();
 
 	/**
@@ -63,7 +53,7 @@ public interface IAnnotation {
 	String getUUID();
 
 	static String createUUID() {
-		// TODO Better UUID Generation ..
+		// ENHANCE Better UUID Generation ..
 		return String.valueOf(UUID.randomUUID());
 	}
 
