@@ -47,4 +47,9 @@ public class ThresholdPenaltyRule extends PenaltyRule {
 		return "ThresholdPenaltyRule [threshold=" + this.threshold + ", penalty=" + this.penalty + "]";
 	}
 
+	@Override
+	protected boolean isCustomPenalty() {
+		return false;
+	}
+
 }

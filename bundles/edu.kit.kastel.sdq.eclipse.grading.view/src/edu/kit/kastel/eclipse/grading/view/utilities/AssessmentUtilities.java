@@ -4,8 +4,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.widgets.Shell;
@@ -17,7 +15,6 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
-import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
@@ -96,36 +93,6 @@ public final class AssessmentUtilities {
 	public static IFile getCurrentlyOpenFile() {
 		final IWorkbenchPart workbenchPart = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart();
 		return workbenchPart.getSite().getPage().getActiveEditor().getEditorInput().getAdapter(IFile.class);
-	}
-
-	/**
-	 * This method gets the offset for the marker creation.
-	 *
-	 * @param startLine (of the annotation)
-	 * @return the number of chars until the start line
-	 */
-	public static Integer getLineOffSet(Integer startLine) {
-		final IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-		final IWorkbench workbench = PlatformUI.getWorkbench();
-		final IWorkbenchWindow wb = workbench == null ? null : workbench.getActiveWorkbenchWindow();
-		final IWorkbenchPage activePage = wb == null ? null : window.getActivePage();
-
-		final IEditorPart editor = activePage == null ? null : activePage.getActiveEditor();
-		Integer lineOffset = 0;
-		if (editor != null) {
-			final ITextEditor editor2 = editor.getAdapter(ITextEditor.class);
-			if (editor2 != null) {
-				final IDocumentProvider provider = editor2.getDocumentProvider();
-				final IDocument document = provider.getDocument(editor2.getEditorInput());
-				try {
-					lineOffset = document.getLineOffset(startLine);
-				} catch (final BadLocationException e) {
-					e.printStackTrace();
-				}
-				return lineOffset;
-			}
-		}
-		return -1;
 	}
 
 	/**

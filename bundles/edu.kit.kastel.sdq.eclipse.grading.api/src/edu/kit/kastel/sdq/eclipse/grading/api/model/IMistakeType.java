@@ -10,7 +10,7 @@ public interface IMistakeType {
 
 	/**
 	 * Calculate penalty using only the given annotations.
-	 * 
+	 *
 	 * @param annotations
 	 * @return a <i>positive</> value denoting the penalty.
 	 */
@@ -48,4 +48,11 @@ public interface IMistakeType {
 	 *         based on the given annotation.
 	 */
 	String getTooltip(List<IAnnotation> annotations);
+
+	/**
+	 * Indicates whether this is a custom penalty.
+	 *
+	 * @return indicator for custom penalties
+	 */
+	boolean isCustomPenalty();
 }

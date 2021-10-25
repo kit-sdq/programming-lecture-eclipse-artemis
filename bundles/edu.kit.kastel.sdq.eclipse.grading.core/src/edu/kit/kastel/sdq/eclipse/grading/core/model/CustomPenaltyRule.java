@@ -42,4 +42,9 @@ public class CustomPenaltyRule extends PenaltyRule {
 		return "CustomPenaltyRule";
 	}
 
+	@Override
+	protected boolean isCustomPenalty() {
+		return true;
+	}
+
 }

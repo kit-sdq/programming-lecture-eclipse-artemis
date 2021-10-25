@@ -59,47 +59,44 @@ public class AssessmentViewController {
 	 * @param ratingGroupName (the name of the rating group of the new annotation)
 	 */
 	public void addAssessmentAnnotation(IMistakeType mistake, String customMessage, Double customPenalty, String ratingGroupName) {
-
 		final ITextSelection textSelection = AssessmentUtilities.getTextSelection();
 		if (textSelection == null) {
 			this.alertObserver.error("Text selection needed to add a new annotation", null);
 			return;
 		}
-		final int startLine = textSelection.getStartLine();
-		final int endLine = textSelection.getEndLine();
+		final int startLine = textSelection.getStartLine() + 1;
+		final int endLine = textSelection.getEndLine() + 1;
+		final int charOffset = textSelection.getOffset();
 		final int lenght = textSelection.getLength();
+		final int charStart = charOffset;
+		final int charEnd = charOffset + lenght;
 
 		try {
 			String uuid = IAnnotation.createUUID();
 			IMarker marker = AssessmentUtilities.getCurrentlyOpenFile().createMarker(AssessmentUtilities.MARKER_NAME);
 			marker.setAttribute("annotationID", uuid);
-			marker.setAttribute(IMarker.CHAR_START, AssessmentUtilities.getLineOffSet(startLine));
-			marker.setAttribute(IMarker.CHAR_END, AssessmentUtilities.getLineOffSet(startLine) + lenght + 10);
-			if (mistake != null) {
-				marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_ERROR_DESCRIPTION,
-						"Custom Penalty".equals(mistake.getName()) ? "" : mistake.getMessage());
-				marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_ERROR, mistake.getName());
-			}
-			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_START, startLine + 1);
-			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_END, endLine + 1);
+			marker.setAttribute(IMarker.CHAR_START, charStart);
+			marker.setAttribute(IMarker.CHAR_END, charEnd);
+			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_ERROR_DESCRIPTION, mistake.isCustomPenalty() ? "" : mistake.getMessage());
+			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_ERROR, mistake.getName());
+			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_START, startLine);
+			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_END, endLine);
 			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_CLASS_NAME, AssessmentUtilities.getClassNameForAnnotation());
-			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_RATING_GROUP,
-					mistake == null ? ratingGroupName : mistake.getRatingGroup().getDisplayName());
+			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_RATING_GROUP, mistake.getRatingGroup().getDisplayName());
 			if (customMessage != null) {
 				marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_CUSTOM_MESSAGE, customMessage);
 			}
 			if (customPenalty != null) {
 				marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_CUSTOM_PENALTY, customPenalty.toString());
 			}
-			if (!"Custom Penalty".equals(mistake.getName())) {
-				marker.setAttribute(IMarker.MESSAGE, AssessmentUtilities.createMarkerTooltip(startLine + 1, endLine + 1, mistake.getName(),
+			if (!mistake.isCustomPenalty()) {
+				marker.setAttribute(IMarker.MESSAGE, AssessmentUtilities.createMarkerTooltip(startLine, endLine, mistake.getName(),
 						mistake.getRatingGroup().getDisplayName(), mistake.getMessage(), null));
 			} else {
-				marker.setAttribute(IMarker.MESSAGE,
-						AssessmentUtilities.createMarkerTooltipForCustomButton(startLine + 1, endLine + 1, customMessage, customPenalty));
+				marker.setAttribute(IMarker.MESSAGE, AssessmentUtilities.createMarkerTooltipForCustomButton(startLine, endLine, customMessage, customPenalty));
 			}
-			this.assessmentController.addAnnotation(uuid, mistake, startLine + 1, endLine + 1, AssessmentUtilities.getPathForAnnotation(), customMessage,
-					customPenalty, AssessmentUtilities.getLineOffSet(startLine), AssessmentUtilities.getLineOffSet(startLine) + lenght + 10);
+			this.assessmentController.addAnnotation(uuid, mistake, startLine, endLine, AssessmentUtilities.getPathForAnnotation(), customMessage, customPenalty,
+					charStart, charEnd);
 		} catch (Exception e) {
 
 			/*
@@ -133,8 +130,8 @@ public class AssessmentViewController {
 			marker.setAttribute(IMarker.CHAR_START, annotation.getMarkerCharStart());
 			marker.setAttribute(IMarker.CHAR_END, annotation.getMarkerCharEnd());
 
-			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_START, startLine + 1);
-			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_END, endLine + 1);
+			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_START, startLine);
+			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_END, endLine);
 			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_CLASS_NAME, annotation.getClassFilePath());
 			if (customMessage != null) {
 				marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_CUSTOM_MESSAGE, customMessage);
@@ -147,11 +144,11 @@ public class AssessmentViewController {
 				marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_ERROR, mistake.getName());
 				marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_RATING_GROUP, mistake.getRatingGroup().getDisplayName());
 				if (!"Custom Penalty".equals(mistake.getName())) {
-					marker.setAttribute(IMarker.MESSAGE, AssessmentUtilities.createMarkerTooltip(startLine + 1, endLine + 1, mistake.getName(),
+					marker.setAttribute(IMarker.MESSAGE, AssessmentUtilities.createMarkerTooltip(startLine, endLine, mistake.getName(),
 							mistake.getRatingGroup().getDisplayName(), mistake.getMessage(), annotation.getClassFilePath()));
 				} else {
-					marker.setAttribute(IMarker.MESSAGE, AssessmentUtilities.createMarkerTooltipForCustomButton(startLine + 1, endLine + 1, customMessage,
-							Double.parseDouble(customPenalty)));
+					marker.setAttribute(IMarker.MESSAGE,
+							AssessmentUtilities.createMarkerTooltipForCustomButton(startLine, endLine, customMessage, Double.parseDouble(customPenalty)));
 				}
 			}
 

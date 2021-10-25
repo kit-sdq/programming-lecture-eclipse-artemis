@@ -1,8 +1,6 @@
 package edu.kit.kastel.sdq.eclipse.grading.core.model;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
@@ -34,4 +32,6 @@ public abstract class PenaltyRule {
 	 *         annotations were made.)
 	 */
 	public abstract String getTooltip(List<IAnnotation> annotations);
+
+	protected abstract boolean isCustomPenalty();
 }
