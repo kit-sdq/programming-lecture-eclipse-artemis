@@ -1,4 +1,4 @@
-# programming-lecture-eclipse-artemis-grading
+# Programming Lecture: Eclipse Artemis
 Eclipse-Plugin for grading & working with the [Artemis Project](https://github.com/ls1intum/Artemis)
 
 ## Update Site
