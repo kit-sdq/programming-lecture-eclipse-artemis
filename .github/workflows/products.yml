@@ -34,26 +34,7 @@ jobs:
     - name: Build with Maven
       run: mvn -U -B package --file pom.xml
 
-    - name: Save Eclipse Distribution (Windows)
-      uses: actions/upload-artifact@v2
-      with:
-        name: "Eclipse Distribution Windows"
-        path: "releng/edu.kit.kastel.sdq.eclipse.grading.product/target/products/*-win32*.zip"
-    
-    - name: Save Eclipse Distribution (Linux)
-      uses: actions/upload-artifact@v2
-      with:
-        name: "Eclipse Distribution Linux"
-        path: "releng/edu.kit.kastel.sdq.eclipse.grading.product/target/products/*-linux*.zip"
-
-    - name: Save Eclipse Distribution (MacOS)
-      uses: actions/upload-artifact@v2
-      with:
-        name: "Eclipse Distribution MacOS"
-        path: "releng/edu.kit.kastel.sdq.eclipse.grading.product/target/products/*-macosx*.zip"
-  
     - name: Move Distributions
-      if: startsWith(github.ref, 'refs/tags/v')
       run: |
         mkdir dist 
         mv releng/edu.kit.kastel.sdq.eclipse.grading.product/target/products/*-win32*.zip dist/Artemis_Windows.zip
@@ -61,7 +42,6 @@ jobs:
         mv releng/edu.kit.kastel.sdq.eclipse.grading.product/target/products/*-macosx*.zip dist/Artemis_MacOS.zip
 
     - name: Sign MacOS Eclipse Distribution
-      if: startsWith(github.ref, 'refs/tags/v')
       env: 
         MACOS_CERTIFICATE: ${{ secrets.MACOS_CERTIFICATE }}
         MACOS_CERTIFICATE_PWD: ${{ secrets.MACOS_CERTIFICATE_PWD }}
@@ -76,6 +56,25 @@ jobs:
         /usr/bin/codesign -s "Zoe Martin" -fv Eclipse.app
         rm dist/Artemis_MacOS.zip
         ditto -c -k --sequesterRsrc --keepParent Eclipse.app dist/Artemis_MacOS.zip
+
+    - name: Save Eclipse Distribution (Windows)
+      uses: actions/upload-artifact@v2
+      with:
+        name: "Eclipse Distribution Windows"
+        path: "dist/Artemis_Windows.zip"
+    
+    - name: Save Eclipse Distribution (Linux)
+      uses: actions/upload-artifact@v2
+      with:
+        name: "Eclipse Distribution Linux"
+        path: "dist/Artemis_Linux.zip"
+
+    - name: Save Eclipse Distribution (MacOS)
+      uses: actions/upload-artifact@v2
+      with:
+        name: "Eclipse Distribution MacOS"
+        path: "dist/Artemis_MacOS.zip"
+  
           
     - name: Release
       uses: softprops/action-gh-release@v1
