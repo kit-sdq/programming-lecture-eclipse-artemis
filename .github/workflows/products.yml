@@ -53,7 +53,7 @@ jobs:
         security import certificate.p12 -k build.keychain -P $MACOS_CERTIFICATE_PWD -T /usr/bin/codesign
         security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k keychainpw build.keychain
         unzip dist/Artemis_MacOS.zip
-        /usr/bin/codesign -s "Zoe Martin" -fv Eclipse.app
+        /usr/bin/codesign -s "kit-sdq/programming-lecture-eclipse-artemis" -fv Eclipse.app
         rm dist/Artemis_MacOS.zip
         ditto -c -k --sequesterRsrc --keepParent Eclipse.app dist/Artemis_MacOS.zip
 
