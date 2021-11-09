@@ -52,6 +52,7 @@ jobs:
         security unlock-keychain -p keychainpw build.keychain
         security import certificate.p12 -k build.keychain -P $MACOS_CERTIFICATE_PWD -T /usr/bin/codesign
         security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k keychainpw build.keychain
+        security find-identity -p codesigning
         unzip dist/Artemis_MacOS.zip
         /usr/bin/codesign -s "kit-sdq/programming-lecture-eclipse-artemis" -fv Eclipse.app
         rm dist/Artemis_MacOS.zip
