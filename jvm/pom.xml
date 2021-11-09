@@ -12,15 +12,14 @@
 	</parent>
 	
 	<artifactId>edu.kit.kastel.sdq.eclipse.jvm</artifactId>
-	<version>11.0.4</version>
+	<version>11.0.13</version>
 	<packaging>pom</packaging>
 
 	<properties>
-		<download.url>https://cdn.azul.com/zulu/bin/</download.url>
-		<download.file>zulu11.33.15-ca-jdk11.0.4-</download.file>
+		<download.url>https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.13%2B8/</download.url>
+		<download.file>OpenJDK11U-jdk_x64_</download.file>
 		<download.filePostfix>os_arch.zip</download.filePostfix>
-		<download.unzippedFolder>${download.file}</download.unzippedFolder>
-		<download.unzippedFolderPostfix>os_arch</download.unzippedFolderPostfix>
+		<download.unzippedFolder>jdk-11.0.13+8</download.unzippedFolder>
 		<download.type>zip</download.type>
 		<jre.folder>jre</jre.folder>
 	</properties>
@@ -28,7 +27,6 @@
 	<modules>
 		<module>feature</module>
 		<module>linux</module>
-		<module>macosx</module>
 		<module>windows</module>
 	</modules>
 
@@ -49,7 +47,7 @@
 					<artifactId>exec-maven-plugin</artifactId>
 					<executions>
 						<execution>
-							<id>Download Zulu: ${download.file}${download.filePostfix}</id>
+							<id>Download JDK: ${download.file}${download.filePostfix}</id>
 							<phase>process-resources</phase>
 							<goals>
 								<goal>exec</goal>
@@ -94,7 +92,7 @@
 										</else>
 									</ac:if>
 									<move
-										file="${project.build.directory}/downloads/${download.unzippedFolder}${download.unzippedFolderPostfix}"
+										file="${project.build.directory}/downloads/${download.unzippedFolder}"
 										tofile="${project.build.directory}/downloads/${jre.folder}" />
 								</target>
 							</configuration>

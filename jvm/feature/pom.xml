@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>edu.kit.kastel.sdq.grading</groupId>
 		<artifactId>edu.kit.kastel.sdq.eclipse.jvm</artifactId>
-		<version>11.0.4</version>
+		<version>11.0.13</version>
 		<relativePath>..</relativePath>
 	</parent>
 
