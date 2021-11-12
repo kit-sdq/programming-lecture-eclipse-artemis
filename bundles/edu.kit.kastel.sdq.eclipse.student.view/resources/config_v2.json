@@ -1,0 +1,414 @@
+[
+    {
+        "shortName": "Final Task 1",
+        "ratingGroups": [
+            {
+                "shortName": "functionality",
+                "displayName": "Funktionalität",
+                "praktomatId": 0,
+                "scoring": "fn currentStudentScore"
+            },
+            {
+                "shortName": "modelling",
+                "displayName": "OO-Modellierung",
+                "praktomatId": 1,
+                "scoring": "fn genericRatingFunction",
+                "render": "fn genericRenderer"
+            },
+            {
+                "shortName": "understandability",
+                "displayName": "Verständlichkeit/Komplexität",
+                "praktomatId": 2,
+                "scoring": "fn genericRatingFunction",
+                "render": "fn genericRenderer"
+            },
+            {
+                "shortName": "style",
+                "displayName": "Programmierstil",
+                "praktomatId": 3,
+                "scoring": "fn genericRatingFunction",
+                "render": "fn genericRenderer"
+            }
+        ],
+        "mistakeTypes": [
+            {
+                "shortName": "mixedAlgo",
+                "button": "Algorithmus/Datenstruktur",
+                "message": "Graphstrukturen und Algorithmus sind stark vermischt",
+                "penaltyRule": {
+                    "shortName": "thresholdPenalty",
+                    "threshold": 1,
+                    "penalty": 5
+                },
+                "appliesTo": "modelling"
+            },
+            {
+                "shortName": "jdEmpty",
+                "button": "JavaDoc Leer",
+                "message": "JavaDoc ist leer oder nicht vorhanden",
+                "penaltyRule": {
+                    "shortName": "thresholdPenalty",
+                    "threshold": 1,
+                    "penalty": 5
+                },
+                "appliesTo": "style"
+            },
+            {
+                "shortName": "jdTrivial",
+                "button": "JavaDoc Trivial",
+                "message": "JavaDoc beschreibt nur triviales und die Fehlerfälle werden nicht beachtet",
+                "penaltyRule": {
+                    "shortName": "thresholdPenalty",
+                    "threshold": 123,
+                    "penalty": 52
+                },
+                "appliesTo": "style"
+            }
+        ]
+    },
+    {
+        "shortName": "Final Task 2",
+        "ratingGroups": [
+            {
+                "shortName": "functionality",
+                "displayName": "Funktionalität",
+                "praktomatId": 0,
+                "scoring": "fn currentStudentScore"
+            },
+            {
+                "shortName": "modelling",
+                "displayName": "OO-Modellierung",
+                "praktomatId": 1,
+                "scoring": "fn genericRatingFunction",
+                "render": "fn genericRenderer"
+            },
+            {
+                "shortName": "understandability",
+                "displayName": "Verständlichkeit/Komplexität",
+                "praktomatId": 2,
+                "scoring": "fn genericRatingFunction",
+                "render": "fn genericRenderer"
+            },
+            {
+                "shortName": "style",
+                "displayName": "Programmierstil",
+                "praktomatId": 3,
+                "scoring": "fn genericRatingFunction",
+                "render": "fn genericRenderer"
+            }
+        ],
+        "mistakeTypes": [
+            {
+                "shortName": "jdEmpty",
+                "button": "JavaDoc Leer",
+                "message": "JavaDoc ist leer oder nicht vorhanden",
+                "penaltyRule": {
+                    "shortName": "thresholdPenalty",
+                    "threshold": 1,
+                    "penalty": 5
+                },
+                "appliesTo": "style"
+            },
+            {
+                "shortName": "jdTrivial",
+                "button": "JavaDoc Trivial",
+                "message": "JavaDoc beschreibt nur triviales und die Fehlerfälle werden nicht beachtet",
+                "penaltyRule": {
+                    "shortName": "thresholdPenalty",
+                    "threshold": 1,
+                    "penalty": 5
+                },
+                "appliesTo": "style"
+            },
+            {
+                "shortName": "complexCode",
+                "button": "schwieriger Code",
+                "message": "Sehr komplexe Codestelle; es fehlt ein erklärender Kommentar oder der Code sollte durch geeignete Hilfsmethoden strukturiert werden",
+                "penaltyRule": {
+                    "shortName": "thresholdPenalty",
+                    "threshold": 1,
+                    "penalty": 5
+                },
+                "appliesTo": "understandability"
+            },
+            {
+                "shortName": "magicNumber",
+                "button": "Magic Number",
+                "message": "Magic Numbers / Strings",
+                "penaltyRule": {
+                    "shortName": "thresholdPenalty",
+                    "threshold": 1,
+                    "penalty": 5
+                },
+                "appliesTo": "understandability"
+            },
+            {
+                "shortName": "identifierNaming",
+                "button": "Schlechte Bezeichner",
+                "message": "Schlechte Bezeichner/Methodennamen oder unnötige Abkürzungen",
+                "penalty": "fnval thresholdPenalty(2, 0.5)",
+                "appliesTo": "style"
+            },
+            {
+                "shortName": "toDO",
+                "button": "Kommentare",
+                "message": "Code enthält TODOs, auskommentierte Methoden, unnötige Ausagen",
+                "penalty": "fnval thresholdPenalty(1, 0.5)",
+                "appliesTo": "style"
+            },
+            {
+                "shortName": "staticCode",
+                "button": "Statische Methode",
+                "message": "statische Hilfsmethode in Klasse A sollte eigentlich Instanzmethode sein",
+                "penalty": "fnval thresholdPenalty(1, 1)",
+                "appliesTo": "modelling"
+            },
+            {
+                "shortName": "publicprivate",
+                "button": "Sichtbarkeit",
+                "message": "Falsche Sichtbarkeit. Methode/Attribut sollte eigentlich eine andere Sichtbarkeit haben.",
+                "penalty": "fnval thresholdPenalty(1, 0.5)",
+                "appliesTo": "modelling"
+            },
+            {
+                "shortName": "getterSetter",
+                "button": "getterSetter für Listen",
+                "message": "(generierte) getter- und setter- für Implementierungsdetails (Kapselung verletzt), z.B. ArrayList",
+                "penalty": "fnval thresholdPenalty(1, 0.5)",
+                "appliesTo": "modelling"
+            },
+            {
+                "shortName": "runtimeExcpetion",
+                "button": "Runtime Exceptions",
+                "message": "ArrayIndexOutOfBoundsException oder NullPointerException fangen statt Größe von Array zu prüfen oder auf null zu prüfen.",
+                "penalty": "fnval thresholdPenalty(1, 0.5)",
+                "appliesTo": "modelling"
+            },
+            {
+                "shortName": "codeCopyInheritance",
+                "button": "Code Kopien Vererbung",
+                "message": "Code-Kopien, statt gemeinsame Funktionalität in Oberklasse",
+                "penalty": "fnval thresholdPenalty(1, 1)",
+                "appliesTo": "modelling"
+            },
+            {
+                "shortName": "codeCopyHelper",
+                "button": "Code Kopien Hilfsmethode",
+                "message": "Code-Kopien, statt gemeinsame Funktionalität in Hilfsmethode",
+                "penalty": "fnval thresholdPenalty(1, 0.5)",
+                "appliesTo": "style"
+            },
+            {
+                "shortName": "wrongEnum",
+                "button": "Enum/Vererbung",
+                "message": "Enum, wenn eigentlich Inheritance das richtige Mittel gewesen wäre",
+                "penalty": "fnval thresholdPenalty(1, 0.5)",
+                "appliesTo": "modelling"
+            },
+            {
+                "shortName": "uiIO",
+                "button": "IO/UI",
+                "message": "Ausgaben auf Terminal sind nicht in einer UI-Klasse verkapselt, sondern über die Domänenklassen verteilt, oder stark gemischt mit Logik",
+                "penalty": "fnval thresholdPenalty(1, 1)",
+                "appliesTo": "understandability"
+            },
+            {
+                "shortName": "objectConcrete",
+                "button": "Object",
+                "message": "Object statt konkrete Klasse verwendet",
+                "penalty": "fnval thresholdPenalty(1, 0.5)",
+                "appliesTo": "modelling"
+            },
+            {
+                "shortName": "instanceOf",
+                "button": "instanceof",
+                "message": "instanceof wird verwendet",
+                "penalty": "fnval thresholdPenalty(1, 0.5)",
+                "appliesTo": "style"
+            },
+            {
+                "shortName": "setList",
+                "button": "List statt set",
+                "message": "Statt mit einem Set mit einer List gearbeitet und immer auf contains geprüft.",
+                "penalty": "fnval thresholdPenalty(1, 0.5)",
+                "appliesTo": "understandability"
+            },
+            {
+                "shortName": "depthMethod",
+                "button": "Verschachtelungstiefe",
+                "message": "Zu tiefe Verschachtelungstiefe die trivialerweise und sinnvoll in eine private Untermethode verpackt hätte werden können",
+                "penalty": "fnval thresholdPenalty(1, 0.5)",
+                "appliesTo": "style"
+            },
+            {
+                "shortName": "operationDomain",
+                "button": "Operationen statt Domain",
+                "message": "Funktionalität ist nach Operationen aufgeteilt (d.h. bspw. Klasse für Finden, Ausgeben, Validieren von Entitäten aller verschiedenen Typen) statt Aufteilen in Domäne",
+                "penalty": "fnval thresholdPenalty(1, 1)",
+                "appliesTo": "modelling"
+            },
+            {
+                "shortName": "finalAttribute",
+                "button": "Final",
+                "message": "nicht-finale Attribute, die eigtl. final sein sollten",
+                "penalty": "fnval thresholdPenalty(1, 0.5)",
+                "appliesTo": "style"
+            },
+            {
+                "shortName": "hardcodedLogic",
+                "button": "Logik hartkodiert",
+                "message": "Keine Variabilität in der implementierten Logik, bspw. Parameter hartkodiert",
+                "penalty": "fnval thresholdPenalty(1, 1)",
+                "appliesTo": "style"
+            },
+            {
+                "shortName": "utilityClassPrivateConstructor",
+                "button": "Utility-Class: Konstruktor",
+                "message": "Utility-Klasse muss einen privaten Konstruktor haben",
+                "penalty": "fnval thresholdPenalty(1, 0.5)",
+                "appliesTo": "style"
+            },
+            {
+                "shortName": "stringReference",
+                "button": "Stringreferenzen",
+                "message": "Objekte werden über Strings referenziert, anstatt über typisierte Java-Referenzen.",
+                "penalty": "fnval thresholdPenalty(1, 1)",
+                "appliesTo": "style"
+            },
+            {
+                "shortName": "staticAttribute",
+                "button": "statisches Attribut",
+                "message": "statisches Attribut sollte Instanzattribut sein",
+                "penalty": "fnval thresholdPenalty(1, 0.5)",
+                "appliesTo": "modelling"
+            },
+            {
+                "shortName": "assertIF",
+                "button": "assert if",
+                "message": "assert werden statt if verwendet",
+                "penalty": "fnval thresholdPenalty(1, 0.5)",
+                "appliesTo": "style"
+            },
+            {
+                "shortName": "exceptionControlFlow",
+                "button": "Exceptions Kontrollfluss",
+                "message": "Exceptions werden für Kontrollfluss verwendet",
+                "penalty": "fnval thresholdPenalty(1, 1)",
+                "appliesTo": "understandability"
+            },
+            {
+                "shortName": "tryCatch",
+                "button": "try/catch Blöcke",
+                "message": "Try/catch Blöcke sind sehr groß und umfassen nicht nur die nötigen Konstrukte",
+                "penalty": "fnval thresholdPenalty(1, 1)",
+                "appliesTo": "understandability"
+            },
+            {
+                "shortName": "javaAPI",
+                "button": "JavaAPI",
+                "message": "Es wurde Funktionalität selber entwickelt, die bereits durch die Java-API zur Verfügung gestellt wird. z.B. eigene Listen statt java.util.List",
+                "penalty": "fnval thresholdPenalty(1, 1)",
+                "appliesTo": "understandability"
+            },
+            {
+                "shortName": "javaDatastructure",
+                "button": "Java-Datenstrukturen",
+                "message": "Es wurden nicht die aus der Java-API vorgegebenen Datenstrukturen (z.B. Listen, Set...) verwendet",
+                "penalty": "fnval thresholdPenalty(1, 1)",
+                "appliesTo": "understandability"
+            },
+            {
+                "shortName": "javaSorting",
+                "button": "Java-Sortierung",
+                "message": "Es wurden nicht die in der Java-API vorgegebenen Sortierwerkzeuge verwendet",
+                "penalty": "fnval thresholdPenalty(1, 1)",
+                "appliesTo": "understandability"
+            },
+            {
+                "shortName": "wildcardImports",
+                "button": "Wildcard Import",
+                "message": "Verwendung von Wildcards bei Importanweisung: z.B. import some.package.*;",
+                "penalty": "fnval thresholdPenalty(1, 0.5)",
+                "appliesTo": "style"
+            },
+            {
+                "shortName": "wrongLoopType",
+                "button": "Falscher Schleifentyp",
+                "message": "Nicht den geeignetsten Schleifentyp gewählt, z.B. While statt For oder For statt ForEach.",
+                "penalty": "fnval thresholdPenalty(3, 0.5)",
+                "appliesTo": "understandability"
+            },
+            {
+                "shortName": "enumForRange",
+                "button": "Enum/Mengen",
+                "message": "Enum für abgeschlossene Mengen",
+                "penalty": "fnval thresholdPenalty(1, 0.5)",
+                "appliesTo": "modelling"
+            },
+            {
+                "shortName": "interfaceAgainst",
+                "button": "Interface",
+                "message": "Interface statt konkrete Klasse verwenden",
+                "penalty": "fnval thresholdPenalty(1, 0.5)",
+                "appliesTo": "modelling"
+            },
+            {
+                "shortName": "wrongLanguage",
+                "button": "einheitliche Sprache",
+                "message": "Einheitliche Sprache für Kommentare/Ausgabe verwenden",
+                "penalty": "fnval thresholdPenalty(1, 0.5)",
+                "appliesTo": "style"
+            },
+            {
+                "shortName": "sideAffectDocumention",
+                "button": "Seiteneffekte",
+                "message": "Undokumentierte Seiteneffekte",
+                "penalty": "fnval thresholdPenalty(1, 0.5)",
+                "appliesTo": "understandability"
+            },
+            {
+                "shortName": "unnecessaryComplex",
+                "button": "unnötige Komplexität",
+                "message": "Codestelle ist unnötig komplex",
+                "penalty": "fnval thresholdPenalty(1, 0.5)",
+                "appliesTo": "understandability"
+            },
+            {
+                "shortName": "unnecessary",
+                "button": "Quatsch (C) JK",
+                "message": "Ungeschickte Lösung",
+                "penalty": "fnval thresholdPenalty(1, 0.0)",
+                "appliesTo": "understandability"
+            },
+            {
+                "shortName": "parseInt",
+                "button": "parseInt",
+                "message": "Keine Fehlerbehandlung beim Parsen von Strings zu Integer",
+                "penalty": "fnval thresholdPenalty(1, 0.5)",
+                "appliesTo": "style"
+            },
+            {
+                "shortName": "errrorMessage",
+                "button": "Fehlermeldung",
+                "message": "Fehlermeldung zu unspezifisch, z.B. nur Error, Fehler",
+                "penalty": "fnval thresholdPenalty(1, 0.5)",
+                "appliesTo": "understandability"
+            },
+            {
+                "shortName": "package",
+                "button": "Pakete",
+                "message": "bessere Aufteilung in Pakete",
+                "penalty": "fnval thresholdPenalty(1, 1.0)",
+                "appliesTo": "modelling"
+            },
+            {
+                "shortName": "emptyCatch",
+                "button": "Leeres Catch",
+                "message": "Leerer Catch-Block",
+                "penalty": "fnval thresholdPenalty(1, 0.5)",
+                "appliesTo": "modelling"
+            }
+        ]
+    }
+]
+  
