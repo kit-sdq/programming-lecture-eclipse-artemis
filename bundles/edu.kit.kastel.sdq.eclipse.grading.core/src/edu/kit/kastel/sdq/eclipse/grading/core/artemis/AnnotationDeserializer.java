@@ -29,7 +29,7 @@ public class AnnotationDeserializer {
 
 	public AnnotationDeserializer(List<IMistakeType> mistakeTypes) {
 		this.mistakeTypesMap = new HashMap<>();
-		mistakeTypes.forEach(mistakeType -> this.mistakeTypesMap.put(mistakeType.getName(), mistakeType));
+		mistakeTypes.forEach(mistakeType -> this.mistakeTypesMap.put(mistakeType.getId(), mistakeType));
 	}
 
 	/**
@@ -69,7 +69,7 @@ public class AnnotationDeserializer {
 
 		// add mistaketypes!
 		for (Annotation annotation : deserializedAnnotations) {
-			final String mistakeTypeName = annotation.getMistakeTypeString();
+			final String mistakeTypeName = annotation.getMistakeTypeId();
 			if (!this.mistakeTypesMap.containsKey(mistakeTypeName)) {
 				throw new IOException("Trying to deserialize MistakeType \"" + mistakeTypeName + "\". It was not found in local config!");
 			}
