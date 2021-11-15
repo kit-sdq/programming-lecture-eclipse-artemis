@@ -56,8 +56,13 @@ public class MistakeType implements IMistakeType {
 	}
 
 	@Override
-	public String getName() {
+	public String getButtonText() {
 		return this.name;
+	}
+
+	@Override
+	public String getId() {
+		return this.shortName;
 	}
 
 	@Override

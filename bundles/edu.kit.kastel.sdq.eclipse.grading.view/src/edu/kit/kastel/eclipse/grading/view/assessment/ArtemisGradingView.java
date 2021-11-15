@@ -198,7 +198,7 @@ public class ArtemisGradingView extends ViewPart {
 	private void createCustomButton(IRatingGroup ratingGroup, Group rgDisplay, IMistakeType mistake) {
 		final Button customButton = new Button(rgDisplay, SWT.PUSH);
 		customButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-		customButton.setText(mistake.getName());
+		customButton.setText(mistake.getButtonText());
 		customButton.addListener(SWT.Selection, event -> {
 			final CustomButtonDialog customDialog = new CustomButtonDialog(AssessmentUtilities.getWindowsShell(), this.viewController,
 					ratingGroup.getDisplayName(), mistake);
@@ -359,15 +359,15 @@ public class ArtemisGradingView extends ViewPart {
 			rgDisplay.setLayoutData(gridData);
 			this.viewController.getMistakeTypes().forEach(mistake -> {
 				if (mistake.getRatingGroup().getDisplayName().equals(ratingGroup.getDisplayName())) {
-					if ("Custom Penalty".equals(mistake.getName())) {
+					if (mistake.isCustomPenalty()) {
 						this.createCustomButton(ratingGroup, rgDisplay, mistake);
 						return;
 					}
 					final Button mistakeButton = new Button(rgDisplay, SWT.PUSH);
-					mistakeButton.setText(mistake.getName());
+					mistakeButton.setText(mistake.getButtonText());
 					mistakeButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 
-					this.mistakeButtons.put(mistake.getName(), mistakeButton);
+					this.mistakeButtons.put(mistake.getId(), mistakeButton);
 					mistakeButton.setToolTipText(this.viewController.getToolTipForMistakeType(mistake));
 					mistakeButton.addListener(SWT.Selection, event -> {
 						this.viewController.addAssessmentAnnotation(mistake, null, null, mistake.getRatingGroup().getDisplayName());
@@ -436,7 +436,7 @@ public class ArtemisGradingView extends ViewPart {
 	}
 
 	private void updateMistakeButtonToolTips(IMistakeType mistakeType) {
-		Button button = this.mistakeButtons.get(mistakeType.getName());
+		Button button = this.mistakeButtons.get(mistakeType.getId());
 		if (button != null) {
 			Display.getDefault().asyncExec( //
 					() -> button.setToolTipText(this.viewController.getToolTipForMistakeType(mistakeType)) //
