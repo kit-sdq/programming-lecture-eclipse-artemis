@@ -7,7 +7,7 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.text.ITextSelection;
 
 import edu.kit.kastel.eclipse.student.view.activator.Activator;
-import edu.kit.kastel.eclipse.student.view.assessment.ArtemisGradingView;
+import edu.kit.kastel.eclipse.student.view.assessment.ArtemisStudentView;
 import edu.kit.kastel.eclipse.student.view.observers.ViewAlertObserver;
 import edu.kit.kastel.eclipse.student.view.utilities.AssessmentUtilities;
 import edu.kit.kastel.sdq.eclipse.grading.api.ArtemisClientException;
@@ -26,7 +26,7 @@ import edu.kit.kastel.sdq.eclipse.grading.api.model.IRatingGroup;
  * This class is the controller for the grading view. It creates the marker for
  * the annotations and holds all controller for the backend calls.
  *
- * @see {@link ArtemisGradingView}
+ * @see {@link ArtemisStudentView}
  *
  */
 public class AssessmentViewController {
@@ -348,4 +348,10 @@ public class AssessmentViewController {
 		return this.systemwideController.getCurrentlyPossibleTransitions();
 	}
 
+	protected IArtemisController getArtemisController() {
+		return this.artemisGUIController;
+	}
+	protected ISystemwideController getSystemwideController() {
+		return this.systemwideController;
+	}
 }

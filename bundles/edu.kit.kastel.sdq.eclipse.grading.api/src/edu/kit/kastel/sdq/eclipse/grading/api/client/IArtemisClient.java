@@ -22,12 +22,15 @@ public interface IArtemisClient {
 	void downloadExerciseAndSubmission(IExercise exercise, ISubmission submission, File dir, IProjectFileNamingStrategy namingStrategy)
 			throws ArtemisClientException;
 
+	void downloadExercise(IExercise exercise, File dir, IProjectFileNamingStrategy namingStrategy, String repoUrl) throws ArtemisClientException;
+	
+	String startParticipationForExercise(ICourse couse, IExercise exercise) throws ArtemisClientException;
 	/**
 	 *
 	 * @return the artemis "assessor" object (needed for submitting the assessment).
 	 * @throws ArtemisClientException if some errors occur while parsing the result.
 	 */
-	Assessor getAssessor() throws ArtemisClientException;
+	Assessor getAssessor() throws ArtemisClientException ;
 
 	/**
 	 *

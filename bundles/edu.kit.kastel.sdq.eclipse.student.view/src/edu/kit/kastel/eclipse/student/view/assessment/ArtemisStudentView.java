@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.part.ViewPart;
 
 import edu.kit.kastel.eclipse.student.view.controllers.AssessmentViewController;
+import edu.kit.kastel.eclipse.student.view.controllers.StudentViewController;
 import edu.kit.kastel.eclipse.student.view.utilities.AssessmentUtilities;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.SubmissionFilter;
 import edu.kit.kastel.sdq.eclipse.grading.api.backendstate.Transition;
@@ -37,9 +38,9 @@ import edu.kit.kastel.sdq.eclipse.grading.api.model.IRatingGroup;
  * @see {@link ViewPart}
  *
  */
-public class ArtemisGradingView extends ViewPart {
+public class ArtemisStudentView extends ViewPart {
 
-	private AssessmentViewController viewController;
+	private StudentViewController viewController;
 	private Map<String, Group> ratingGroupViewElements;
 	private Map<String, Button> mistakeButtons;
 	private ScrolledComposite scrolledCompositeGrading;
@@ -50,8 +51,8 @@ public class ArtemisGradingView extends ViewPart {
 	private Combo exerciseCombo;
 	private Combo courseCombo;
 
-	public ArtemisGradingView() {
-		this.viewController = new AssessmentViewController();
+	public ArtemisStudentView() {
+		this.viewController = new StudentViewController();
 		this.ratingGroupViewElements = new HashMap<>();
 		this.mistakeButtons = new HashMap<>();
 		this.possibleActions = new EnumMap<>(Transition.class);
@@ -232,7 +233,7 @@ public class ArtemisGradingView extends ViewPart {
 
 	private void createAssessmentTab(TabFolder tabFolder) {
 		TabItem tbtmAssessment = new TabItem(tabFolder, SWT.NONE);
-		tbtmAssessment.setText("Assessment");
+		tbtmAssessment.setText("Exercise");
 
 		ScrolledComposite scrolledCompositeAssessment = new ScrolledComposite(tabFolder, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 		tbtmAssessment.setControl(scrolledCompositeAssessment);
@@ -292,20 +293,6 @@ public class ArtemisGradingView extends ViewPart {
 		this.addSelectionListenerForSaveButton(btnSaveAssessment);
 		this.addControlToPossibleActions(btnSaveAssessment, Transition.SAVE_ASSESSMENT);
 
-		Button btnStartFirstRound = new Button(buttons, SWT.NONE);
-		btnStartFirstRound.setText("Start Correction Round 1");
-		btnStartFirstRound.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-
-		this.addSelectionListenerForStartFirstRound(btnStartFirstRound);
-		this.addControlToPossibleActions(btnStartFirstRound, Transition.START_CORRECTION_ROUND_1);
-
-		Button btnStartSecondRound = new Button(buttons, SWT.NONE);
-		btnStartSecondRound.setText("Start Correction Round 2");
-		btnStartSecondRound.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-
-		this.addSelectionListenerForStartSecondRound(btnStartSecondRound);
-		this.addControlToPossibleActions(btnStartSecondRound, Transition.START_CORRECTION_ROUND_2);
-
 		Button btnSubmitAssessment = new Button(buttons, SWT.NONE);
 		btnSubmitAssessment.setText("Submit");
 		btnSubmitAssessment.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
@@ -316,9 +303,16 @@ public class ArtemisGradingView extends ViewPart {
 		Button btnRefreshArtemisState = new Button(buttons, SWT.NONE);
 		btnRefreshArtemisState.setText("Refresh Artemis State");
 		btnRefreshArtemisState.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-
+		
 		this.addSelectionListenerForRefreshArtemisStateButton(btnRefreshArtemisState);
 		this.addControlToPossibleActions(btnRefreshArtemisState, Transition.ON_RESET);
+		
+		Button btnLoadExercise = new Button(buttons, SWT.NONE);
+		btnLoadExercise.setText("Load Exercise");
+		btnLoadExercise.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1,1));
+
+		this.addLoadExerciseListenerForButton(btnLoadExercise);
+		this.addControlToPossibleActions(btnLoadExercise, Transition.ON_RESET);
 
 		scrolledCompositeAssessment.setContent(assessmentComposite);
 		scrolledCompositeAssessment.setMinSize(assessmentComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
@@ -327,10 +321,14 @@ public class ArtemisGradingView extends ViewPart {
 	private void addSelectionListenerForRefreshArtemisStateButton(Button btnRefreshArtemisState) {
 		btnRefreshArtemisState.addListener(SWT.Selection, e -> this.refreshArtemisState());
 	}
+	
+	private void addLoadExerciseListenerForButton(Button btn) {
+		btn.addListener(SWT.Selection, e -> this.viewController.loadExerciseForUserInWorkspace());
+	}
 
 	private void createGradingTab(TabFolder tabFolder) {
 		TabItem gradingTabItem = new TabItem(tabFolder, SWT.NONE);
-		gradingTabItem.setText("Grading");
+		gradingTabItem.setText("Student");
 
 		this.scrolledCompositeGrading = new ScrolledComposite(tabFolder, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 		gradingTabItem.setControl(this.scrolledCompositeGrading);
@@ -485,7 +483,7 @@ public class ArtemisGradingView extends ViewPart {
 	}
 
 	private void refreshArtemisState() {
-		this.viewController = new AssessmentViewController();
+		this.viewController = new StudentViewController();
 		this.resetCombos();
 		this.updateState();
 	}

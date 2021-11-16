@@ -23,6 +23,8 @@ public interface IExercise extends Serializable {
 	String getType();
 
 	ICourse getCourse();
+	
+	String getParticipantUrl();
 
 	ISubmission getSubmission(int id) throws ArtemisClientException;
 

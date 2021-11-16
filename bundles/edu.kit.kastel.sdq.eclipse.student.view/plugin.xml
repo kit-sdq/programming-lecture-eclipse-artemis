@@ -77,7 +77,7 @@
             restorable="true">
       </view>
       <view
-            class="edu.kit.kastel.eclipse.student.view.assessment.ArtemisGradingView"
+            class="edu.kit.kastel.eclipse.student.view.assessment.ArtemisStudentView"
             id="edu.kit.kastel.eclipse.student.view.assessment.ArtemisGradingView"
             name="Artemis Student"
             restorable="true">
@@ -127,7 +127,7 @@
       </markerField>
       <markerField
             class="edu.kit.kastel.eclipse.student.view.marker.AssessmentErrorTypeField"
-            id="edu.kit.kastel.eclipse.grading.view.markerErrorTypeField"
+            id="edu.kit.kastel.eclipse.student.view.markerErrorTypeField"
             name="Error Type">
       </markerField>
       <markerField
@@ -154,7 +154,7 @@
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
-            class="edu.kit.kastel.eclipse.student.view.preferences.ArtemisGradingPreferencesPage"
+            class="edu.kit.kastel.eclipse.student.view.preferences.ArtemisStudentPreferencesPage"
             id="edu.kit.kastel.eclipse.student.view.preferences.SamplePreferencePage"
             name="Artemis Student">
       </page>

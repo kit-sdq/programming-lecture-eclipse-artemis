@@ -156,6 +156,8 @@ public interface ISystemwideController extends IController {
 	 *         there was a submission available.
 	 */
 	boolean startCorrectionRound2();
+	
+	boolean loadExerciseForStudent();
 
 	/**
 	 * <B>ASSESSMENT</B><br/>
@@ -164,4 +166,5 @@ public interface ISystemwideController extends IController {
 	 * <li>See docs/Zustandshaltung-Automat
 	 */
 	void submitAssessment();
+	
 }

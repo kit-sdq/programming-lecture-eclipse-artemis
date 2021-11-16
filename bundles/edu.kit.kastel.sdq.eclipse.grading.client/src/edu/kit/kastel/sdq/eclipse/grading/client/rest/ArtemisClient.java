@@ -81,6 +81,21 @@ public class ArtemisClient extends AbstractArtemisClient implements IMappingLoad
 		}
 
 	}
+	
+	@Override
+	public void downloadExercise(IExercise exercise, File target, IProjectFileNamingStrategy namer, String repoUrl) throws ArtemisClientException {
+		final File projectDirectory = namer.getProjectFileInWorkspace(target, exercise, null);
+		try {
+			if (projectDirectory.exists()) {
+				throw new ArtemisClientException("Could not clone project " + projectDirectory.getName() + ", " + "directory already exists!");
+			}
+
+			// Download test repository
+			GitHandler.cloneRepo(projectDirectory, repoUrl, Constants.MASTER_BRANCH_NAME);
+		} catch (GitException e) {
+			throw new ArtemisClientException("Unable to download exercise: " + e.getMessage(), e);
+		}
+	}
 
 	@Override
 	public Assessor getAssessor() throws ArtemisClientException {
@@ -143,6 +158,28 @@ public class ArtemisClient extends AbstractArtemisClient implements IMappingLoad
 			exerciseGroup.init(this, course, exam);
 		}
 		return Arrays.asList(exerciseGroupsArray);
+	}
+	
+	@Override
+	public String startParticipationForExercise(ICourse course, IExercise exercise) throws ArtemisClientException {
+		this.checkAuthentication();
+
+		final Response exercisesRsp = this.endpoint.path(COURSES_PATHPART).path(String.valueOf(course.getCourseId())).path(EXERCISES_PATHPART).path(String.valueOf(exercise.getExerciseId())).path("participations").request()
+				.header(AUTHORIZATION_NAME, this.token).buildPost(null).invoke();
+
+		this.throwIfStatusUnsuccessful(exercisesRsp);
+		
+		// get the part of the json that we want to deserialize
+		final JsonNode exercisesAndParticipationsJsonNode = this.readTree(exercisesRsp.readEntity(String.class));
+		JsonNode exercisesJsonArray = exercisesAndParticipationsJsonNode.get("repositoryUrl");
+		if (exercisesJsonArray == null) {
+			// course has no exercises!
+			return "";
+		}
+		
+		String exerciseGroupsArray = this.read(exercisesJsonArray.toString(), String.class);
+		return exerciseGroupsArray;
+
 	}
 
 	@Override

@@ -401,4 +401,20 @@ public class SystemwideController extends AbstractController implements ISystemw
 
 		}
 	}
+	
+	@Override
+	public boolean loadExerciseForStudent() {
+		if (this.nullCheckMembersAndNotify(true, true, false)) {
+			return false;
+		}
+		this.updateConfigFile();
+
+		// perform download. Revert state if that fails.
+		if (!this.getArtemisGUIController().loadExerciseInWorkspaceForStudent(this.course, this.exercise, this.projectFileNamingStrategy)) {
+			this.backendStateMachine.revertLatestTransition();
+			return false;
+		}
+		return true;
+	}
+
 }

@@ -14,13 +14,13 @@ public class Perspective implements IPerspectiveFactory {
 		left.addView(IPageLayout.ID_PROJECT_EXPLORER);
 
 		IFolderLayout rightUp = layout.createFolder("rightUp", IPageLayout.RIGHT, 0.7F, editorArea);
-		rightUp.addView("edu.kit.kastel.eclipse.grading.view.assessment.ArtemisGradingView");
+		rightUp.addView("edu.kit.kastel.eclipse.student.view.assessment.ArtemisStudentView");
 
 		IFolderLayout rightDown = layout.createFolder("rightDown", IPageLayout.BOTTOM, 0.7F, "rightUp");
 		rightDown.addView(IPageLayout.ID_OUTLINE);
 
 		IFolderLayout bottom = layout.createFolder("bottom", IPageLayout.BOTTOM, 0.6F, editorArea);
-		bottom.addView("edu.kit.kastel.eclipse.grading.view.marker.AssessmentMarkerView");
+		bottom.addView("edu.kit.kastel.eclipse.student.view.marker.AssessmentMarkerView");
 		bottom.addView(IPageLayout.ID_PROBLEM_VIEW);
 	}
 }

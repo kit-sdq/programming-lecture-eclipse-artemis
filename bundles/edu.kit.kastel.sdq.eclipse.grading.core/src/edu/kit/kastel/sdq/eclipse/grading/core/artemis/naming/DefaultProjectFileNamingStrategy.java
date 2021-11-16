@@ -30,9 +30,11 @@ public class DefaultProjectFileNamingStrategy implements IProjectFileNamingStrat
 	public File getProjectFileInWorkspace(File workspaceDirectory, IExercise exercise, ISubmission submission) {
 		String projectName = "";
 		projectName += "exercise-" + exercise.getExerciseId() + "-" + exercise.getShortName();
-		projectName += "-" + submission.getParticipantIdentifier();
-		projectName += "-round-" + (submission.getCorrectionRound() + 1);
-		projectName += "-submission-" + submission.getSubmissionId();
+		if (submission != null) {
+			projectName += "-" + submission.getParticipantIdentifier();
+			projectName += "-round-" + (submission.getCorrectionRound() + 1);
+			projectName += "-submission-" + submission.getSubmissionId();
+		}
 		return new File(workspaceDirectory, projectName);
 	}
 

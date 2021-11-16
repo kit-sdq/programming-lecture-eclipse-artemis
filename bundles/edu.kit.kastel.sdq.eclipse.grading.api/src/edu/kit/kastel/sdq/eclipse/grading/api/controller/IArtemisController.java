@@ -141,4 +141,6 @@ public interface IArtemisController extends IController {
 	 *         <li>Optional.empty(), if no assessment is left!
 	 */
 	Optional<ISubmission> startNextAssessment(IExercise exercise, int correctionRound);
+	
+	boolean loadExerciseInWorkspaceForStudent(ICourse course, IExercise exercise, IProjectFileNamingStrategy projectNaming);
 }

@@ -73,7 +73,31 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 		}
 		return true;
 	}
+	
+	@Override
+	public boolean loadExerciseInWorkspaceForStudent(ICourse course, IExercise exercise, IProjectFileNamingStrategy projectNaming) {
+		final File eclipseWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile();
 
+		// abort if directory already exists.
+		if (this.existsAndNotify(projectNaming.getProjectFileInWorkspace(eclipseWorkspaceRoot, exercise, null))) {
+			return false;
+		}
+
+		try {
+			String repoUrl = this.artemisClient.startParticipationForExercise(course, exercise);
+			this.artemisClient.downloadExercise(exercise, eclipseWorkspaceRoot, projectNaming, repoUrl);
+		} catch (ArtemisClientException e) {
+			this.error(e.getMessage(), e);
+			return false;
+		}
+		try {
+			WorkspaceUtil.createEclipseProject(projectNaming.getProjectFileInWorkspace(eclipseWorkspaceRoot, exercise, null));
+		} catch (CoreException e) {
+			this.error("Project could not be created: " + e.getMessage(), null);
+		}
+		return true;
+	}
+		
 	private boolean existsAndNotify(File file) {
 		if (file.exists()) {
 			this.warn("Project " + file.getName() + " could not be cloned since the workspace "

@@ -11,7 +11,11 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExam;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
 
-public class ArtemisExercise implements IExercise, Serializable {
+/**
+ * @author behrl
+ *
+ */
+public class ArtemisExercise implements IExercise {
 	private static final long serialVersionUID = 5892461865571113106L;
 
 	@JsonProperty(value = "id")
@@ -28,6 +32,8 @@ public class ArtemisExercise implements IExercise, Serializable {
 	private String type;
 	@JsonProperty
 	private double maxPoints;
+	
+	private String participantUrl;
 
 	private transient IMappingLoader client;
 	private transient ICourse course;
@@ -98,5 +104,12 @@ public class ArtemisExercise implements IExercise, Serializable {
 	public boolean hasSecondCorrectionRound() {
 		return this.exam.map(IExam::hasSecondCorrectionRound).orElse(false);
 	}
+
+	@Override
+	public String getParticipantUrl() {
+		return participantUrl;
+	}
+	
+	
 
 }

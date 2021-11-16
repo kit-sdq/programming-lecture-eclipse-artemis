@@ -22,13 +22,13 @@ import edu.kit.kastel.sdq.eclipse.grading.api.PreferenceConstants;
  * <p>
  */
 
-public class ArtemisGradingPreferencesPage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
+public class ArtemisStudentPreferencesPage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 
 	private BooleanFieldEditor isRelativeConfigPath;
 	private StringFieldEditor relativeConfigPath;
 	private FileFieldEditor absoluteConfigPath;
 
-	public ArtemisGradingPreferencesPage() {
+	public ArtemisStudentPreferencesPage() {
 		super(FieldEditorPreferencePage.GRID);
 		this.setPreferenceStore(Activator.getDefault().getPreferenceStore());
 		this.setDescription("Set preferences for the Artemis Grading");
