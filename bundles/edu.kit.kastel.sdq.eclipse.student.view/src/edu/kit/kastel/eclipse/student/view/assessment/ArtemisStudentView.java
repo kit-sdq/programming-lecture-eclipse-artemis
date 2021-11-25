@@ -90,44 +90,9 @@ public class ArtemisStudentView extends ViewPart {
 		refreshButton.addListener(SWT.Selection, e -> this.fillBacklogComboWithData(backlogCombo, filterCombo));
 	}
 
-	private void addSelectionListenerForReloadButton(Button btnReloadA) {
-		btnReloadA.addListener(SWT.Selection, e -> {
-			this.viewController.onReloadAssessment();
-			this.prepareNewAssessment();
-			this.updateState();
-		});
-	}
-
-	private void addSelectionListenerForSaveButton(Button btnSave) {
-		btnSave.addListener(SWT.Selection, e -> {
-			this.viewController.onSaveAssessment();
-			this.updateState();
-		});
-	}
-
-	private void addSelectionListenerForStartFirstRound(Button btnStartRound1) {
-		btnStartRound1.addListener(SWT.Selection, e -> {
-			boolean started = this.viewController.onStartCorrectionRound1();
-			if (started) {
-				this.prepareNewAssessment();
-			}
-			this.updateState();
-		});
-	}
-
-	private void addSelectionListenerForStartSecondRound(Button btnStartRound2) {
-		btnStartRound2.addListener(SWT.Selection, e -> {
-			boolean started = this.viewController.onStartCorrectionRound2();
-			if (started) {
-				this.prepareNewAssessment();
-			}
-			this.updateState();
-		});
-	}
-
 	private void addSelectionListenerForSubmitButton(Button btnSubmit) {
 		btnSubmit.addListener(SWT.Selection, e -> {
-			this.viewController.onSubmitAssessment();
+			this.viewController.onSubmitSolution();
 			this.updateState();
 		});
 	}
@@ -279,26 +244,11 @@ public class ArtemisStudentView extends ViewPart {
 		buttons.setLayout(new GridLayout(2, false));
 		buttons.setLayoutData(new GridData(SWT.CENTER, SWT.FILL, true, true, 2, 1));
 
-		Button btnReloadAssessment = new Button(buttons, SWT.NONE);
-		btnReloadAssessment.setText("Reload");
-		btnReloadAssessment.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-
-		this.addSelectionListenerForReloadButton(btnReloadAssessment);
-		this.addControlToPossibleActions(btnReloadAssessment, Transition.RELOAD_ASSESSMENT);
-
-		Button btnSaveAssessment = new Button(buttons, SWT.NONE);
-		btnSaveAssessment.setText("Save");
-		btnSaveAssessment.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-
-		this.addSelectionListenerForSaveButton(btnSaveAssessment);
-		this.addControlToPossibleActions(btnSaveAssessment, Transition.SAVE_ASSESSMENT);
-
 		Button btnSubmitAssessment = new Button(buttons, SWT.NONE);
-		btnSubmitAssessment.setText("Submit");
+		btnSubmitAssessment.setText("Submit Solution");
 		btnSubmitAssessment.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 
 		this.addSelectionListenerForSubmitButton(btnSubmitAssessment);
-		this.addControlToPossibleActions(btnSubmitAssessment, Transition.SUBMIT_ASSESSMENT);
 
 		Button btnRefreshArtemisState = new Button(buttons, SWT.NONE);
 		btnRefreshArtemisState.setText("Refresh Artemis State");
@@ -308,7 +258,7 @@ public class ArtemisStudentView extends ViewPart {
 		this.addControlToPossibleActions(btnRefreshArtemisState, Transition.ON_RESET);
 		
 		Button btnLoadExercise = new Button(buttons, SWT.NONE);
-		btnLoadExercise.setText("Load Exercise");
+		btnLoadExercise.setText("Start Exercise");
 		btnLoadExercise.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1,1));
 
 		this.addLoadExerciseListenerForButton(btnLoadExercise);
@@ -323,7 +273,7 @@ public class ArtemisStudentView extends ViewPart {
 	}
 	
 	private void addLoadExerciseListenerForButton(Button btn) {
-		btn.addListener(SWT.Selection, e -> this.viewController.loadExerciseForUserInWorkspace());
+		btn.addListener(SWT.Selection, e -> this.viewController.startExercise());
 	}
 
 	private void createGradingTab(TabFolder tabFolder) {

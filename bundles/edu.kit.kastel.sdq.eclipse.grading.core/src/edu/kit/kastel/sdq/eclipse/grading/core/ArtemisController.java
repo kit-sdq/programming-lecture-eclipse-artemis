@@ -31,6 +31,8 @@ import edu.kit.kastel.sdq.eclipse.grading.api.controller.IAssessmentController;
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IAnnotation;
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IMistakeType;
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IRatingGroup;
+import edu.kit.kastel.sdq.eclipse.grading.client.git.GitException;
+import edu.kit.kastel.sdq.eclipse.grading.client.git.GitHandler;
 import edu.kit.kastel.sdq.eclipse.grading.client.rest.ArtemisClient;
 import edu.kit.kastel.sdq.eclipse.grading.core.artemis.AnnotationMapper;
 import edu.kit.kastel.sdq.eclipse.grading.core.artemis.WorkspaceUtil;
@@ -43,16 +45,22 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 	private final SystemwideController systemwideController;
 	private final AbstractArtemisClient artemisClient;
 
+	private String username;
+	private String password;
 	private final Map<Integer, ILockResult> lockResults;
 
-	protected ArtemisController(final SystemwideController systemwideController, final String host, final String username, final String password) {
+	protected ArtemisController(final SystemwideController systemwideController, final String host,
+			final String username, final String password) {
+		this.username = username;
+		this.password = password;
 		this.artemisClient = new ArtemisClient(username, password, host);
 		this.systemwideController = systemwideController;
 		this.lockResults = new HashMap<>();
 	}
 
 	@Override
-	public boolean downloadExerciseAndSubmission(ICourse course, IExercise exercise, ISubmission submission, IProjectFileNamingStrategy projectNaming) {
+	public boolean downloadExerciseAndSubmission(ICourse course, IExercise exercise, ISubmission submission,
+			IProjectFileNamingStrategy projectNaming) {
 		final File eclipseWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile();
 
 		// abort if directory already exists.
@@ -67,37 +75,61 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 			return false;
 		}
 		try {
-			WorkspaceUtil.createEclipseProject(projectNaming.getProjectFileInWorkspace(eclipseWorkspaceRoot, exercise, submission));
+			WorkspaceUtil.createEclipseProject(
+					projectNaming.getProjectFileInWorkspace(eclipseWorkspaceRoot, exercise, submission));
 		} catch (CoreException e) {
 			this.error("Project could not be created: " + e.getMessage(), null);
 		}
 		return true;
 	}
-	
+
 	@Override
-	public boolean loadExerciseInWorkspaceForStudent(ICourse course, IExercise exercise, IProjectFileNamingStrategy projectNaming) {
+	public boolean loadExerciseInWorkspaceForStudent(ICourse course, IExercise exercise,
+			IProjectFileNamingStrategy projectNaming) {
 		final File eclipseWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile();
 
 		// abort if directory already exists.
 		if (this.existsAndNotify(projectNaming.getProjectFileInWorkspace(eclipseWorkspaceRoot, exercise, null))) {
 			return false;
 		}
+		Optional<ParticipationDTO> optParticipation = getparticipationForExercise(course, exercise);
 
+		ParticipationDTO participation;
+
+		if (optParticipation.isEmpty()) {
+			try {
+				participation = artemisClient.startParticipationForExercise(course, exercise);
+			} catch (ArtemisClientException e) {
+				this.error("The selected Exercise can not be startet.", e);
+				return false;
+			}
+		} else {
+			participation = optParticipation.get();
+		}
 		try {
-			String repoUrl = this.artemisClient.startParticipationForExercise(course, exercise);
-			this.artemisClient.downloadExercise(exercise, eclipseWorkspaceRoot, projectNaming, repoUrl);
+			this.artemisClient.downloadExercise(exercise, eclipseWorkspaceRoot, projectNaming,
+					participation.getRepositoryUrl());
 		} catch (ArtemisClientException e) {
 			this.error(e.getMessage(), e);
 			return false;
 		}
 		try {
-			WorkspaceUtil.createEclipseProject(projectNaming.getProjectFileInWorkspace(eclipseWorkspaceRoot, exercise, null));
+			WorkspaceUtil.createEclipseProject(
+					projectNaming.getProjectFileInWorkspace(eclipseWorkspaceRoot, exercise, null));
 		} catch (CoreException e) {
 			this.error("Project could not be created: " + e.getMessage(), null);
 		}
 		return true;
 	}
-		
+
+	private Optional<ParticipationDTO> getparticipationForExercise(ICourse course, IExercise exercise) {
+		try {
+			return Optional.of(artemisClient.getParticipationForExercise(course, exercise));
+		} catch (ArtemisClientException e) {
+			return Optional.empty();
+		}
+	}
+
 	private boolean existsAndNotify(File file) {
 		if (file.exists()) {
 			this.warn("Project " + file.getName() + " could not be cloned since the workspace "
@@ -128,7 +160,8 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 	}
 
 	private ICourse getCourseByShortName(final String courseShortName) {
-		List<ICourse> filteredCourses = this.getCourses().stream().filter(course -> course.getShortName().equals(courseShortName)).collect(Collectors.toList());
+		List<ICourse> filteredCourses = this.getCourses().stream()
+				.filter(course -> course.getShortName().equals(courseShortName)).collect(Collectors.toList());
 		if (filteredCourses.isEmpty()) {
 			this.error("No course found for courseShortName=" + courseShortName, null);
 			return null;
@@ -141,7 +174,8 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 	}
 
 	private ICourse getCourseFromCourses(List<ICourse> courses, int courseID) {
-		final List<ICourse> coursesWithCorrectID = courses.stream().filter(course -> (course.getCourseId() == courseID)).collect(Collectors.toList());
+		final List<ICourse> coursesWithCorrectID = courses.stream().filter(course -> (course.getCourseId() == courseID))
+				.collect(Collectors.toList());
 		if (coursesWithCorrectID.isEmpty()) {
 			this.error("No course found for courseID=" + courseID, null);
 			return null;
@@ -194,8 +228,8 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 			this.error("No course found for courseID=" + courseID, null);
 			return null;
 		}
-		final List<IExercise> filteredExercises = this.getExercises(course, true).stream().filter(exercise -> (exercise.getExerciseId() == exerciseID))
-				.collect(Collectors.toList());
+		final List<IExercise> filteredExercises = this.getExercises(course, true).stream()
+				.filter(exercise -> (exercise.getExerciseId() == exerciseID)).collect(Collectors.toList());
 		if (filteredExercises.isEmpty()) {
 			this.error("No exercise found for courseID=" + courseID + " and exerciseID=" + exerciseID, null);
 			return null;
@@ -240,7 +274,8 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 		for (ICourse course : courses) {
 			List<IExam> filteredExams;
 			try {
-				filteredExams = course.getExams().stream().filter(exam -> exam.getTitle().equals(examTitle)).collect(Collectors.toList());
+				filteredExams = course.getExams().stream().filter(exam -> exam.getTitle().equals(examTitle))
+						.collect(Collectors.toList());
 			} catch (final Exception e) {
 				this.error(e.getMessage(), e);
 				continue;
@@ -257,7 +292,8 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 			return List.of();
 		}
 		try {
-			return foundExam.getExerciseGroups().stream().map(IExerciseGroup::getExercises).flatMap(Collection::stream).collect(Collectors.toList());
+			return foundExam.getExerciseGroups().stream().map(IExerciseGroup::getExercises).flatMap(Collection::stream)
+					.collect(Collectors.toList());
 		} catch (final Exception e) {
 			this.error(e.getMessage(), e);
 			return List.of();
@@ -288,11 +324,13 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 	@Override
 	public List<Feedback> getPrecalculatedAutoFeedbacks(ISubmission submission) {
 		return this.lockResults.get(submission.getSubmissionId()).getLatestFeedback().stream()
-				.filter(feedback -> FeedbackType.AUTOMATIC.equals(feedback.getFeedbackType())).collect(Collectors.toList());
+				.filter(feedback -> FeedbackType.AUTOMATIC.equals(feedback.getFeedbackType()))
+				.collect(Collectors.toList());
 	}
 
 	@Override
-	public boolean saveAssessment(IExercise exercise, ISubmission submission, boolean submit, boolean invalidSubmission) {
+	public boolean saveAssessment(IExercise exercise, ISubmission submission, boolean submit,
+			boolean invalidSubmission) {
 		final IAssessmentController assessmentController = this.systemwideController.getCurrentAssessmentController();
 		if (!this.lockResults.containsKey(submission.getSubmissionId())) {
 			throw new IllegalStateException("Assessment not started, yet!");
@@ -309,13 +347,15 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 				: new DefaultPenaltyCalculationStrategy(annotations, mistakeTypes);
 		try {
 			AnnotationMapper mapper = //
-					new AnnotationMapper(exercise, submission, annotations, mistakeTypes, ratingGroups, this.artemisClient.getAssessor(), calculator, lock);
+					new AnnotationMapper(exercise, submission, annotations, mistakeTypes, ratingGroups,
+							this.artemisClient.getAssessor(), calculator, lock);
 			this.artemisClient.saveAssessment(participation, submit, mapper.createAssessmentResult());
 		} catch (IOException e) {
 			this.error("Local backend failed to format the annotations: " + e.getMessage(), e);
 			return false;
 		} catch (ArtemisClientException e) {
-			this.error("Assessor could not be retrieved from Artemis or Authentication to Artemis failed:" + e.getMessage(), e);
+			this.error("Assessor could not be retrieved from Artemis or Authentication to Artemis failed:"
+					+ e.getMessage(), e);
 			return false;
 		}
 
@@ -366,6 +406,30 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 			this.error(Messages.ASSESSMENT_COULD_NOT_BE_STARTED_MESSAGE + e.getMessage(), e);
 			return Optional.empty();
 		}
+	}
+
+	
+	@Override
+	public boolean submitSolution(ICourse course, IExercise exercise, IProjectFileNamingStrategy projectNaming) {
+		final File eclipseWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile();
+ 		File exeriseRepo =  projectNaming.getProjectFileInWorkspace(eclipseWorkspaceRoot, exercise, null);
+		File gitFileInRepo = projectNaming.getGitFileInProjectDirectory(exeriseRepo);
+		try {
+			GitHandler.commitExercise(username, username + "@student,kit,edu", "Test Commit Artemis", gitFileInRepo);
+		} catch (GitException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}
+		
+		try {
+			GitHandler.pushExercise(username, password, gitFileInRepo);
+		} catch (GitException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}
+		return true;
 	}
 
 }

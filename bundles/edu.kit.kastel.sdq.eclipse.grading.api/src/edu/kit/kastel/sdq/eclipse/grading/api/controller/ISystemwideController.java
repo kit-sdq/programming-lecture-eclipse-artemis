@@ -167,4 +167,5 @@ public interface ISystemwideController extends IController {
 	 */
 	void submitAssessment();
 	
+	boolean submitSolution();
 }

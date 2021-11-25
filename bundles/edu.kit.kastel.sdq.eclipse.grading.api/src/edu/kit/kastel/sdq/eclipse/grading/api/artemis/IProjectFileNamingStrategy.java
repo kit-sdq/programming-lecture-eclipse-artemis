@@ -28,4 +28,6 @@ public interface IProjectFileNamingStrategy {
 	 * @return a exercise-and-submission-unique File inside the workspace.
 	 */
 	File getProjectFileInWorkspace(File workspace, IExercise exercise, ISubmission submission);
+	
+	File getGitFileInProjectDirectory(File projectDirectory);
 }

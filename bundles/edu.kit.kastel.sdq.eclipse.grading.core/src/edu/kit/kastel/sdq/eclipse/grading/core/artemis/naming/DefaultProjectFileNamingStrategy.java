@@ -25,6 +25,11 @@ public class DefaultProjectFileNamingStrategy implements IProjectFileNamingStrat
 	public File getAssignmentFileInProjectDirectory(File projectDirectory) {
 		return new File(projectDirectory, "assignment");
 	}
+	
+	@Override
+	public File getGitFileInProjectDirectory(File projectDirectory) {
+		return new File(projectDirectory, ".git");
+	}
 
 	@Override
 	public File getProjectFileInWorkspace(File workspaceDirectory, IExercise exercise, ISubmission submission) {

@@ -5,13 +5,17 @@ import java.io.IOException;
 
 import org.eclipse.jgit.api.CloneCommand;
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.PushCommand;
+import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.transport.URIish;
+import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.eclipse.jgit.util.FileUtils;
 
 public final class GitHandler {
 
 	private static final String REMOTE_NAME = "origin";
+	private static final String COMMIT_MSG = "Artemis";
 
 	public static void cloneRepo(final File destination, String repoURL, final String branch) throws GitException {
 		Repository repository = null;
@@ -37,6 +41,36 @@ public final class GitHandler {
 				repository.close();
 			}
 		}
+	}
+	
+	public static void commitExercise(String authorName, String email, String commitMsg, File exerciseRepo) throws GitException {
+		Git git;
+		try {
+			git = Git.open(exerciseRepo);		
+			git.add().addFilepattern(".").call();
+			git.commit().setCommitter(authorName, email).setMessage(commitMsg).call();
+		} catch (GitAPIException | IOException e) {
+			throw new GitException("ERROR, can not commit new changes " + exerciseRepo.getPath(), e);
+		}		
+	}
+	
+	public static void pushExercise(String gitUsername, String gitPassword, File exerciseRepo) throws GitException {
+		Git git;
+		try {
+			git = Git.open(exerciseRepo);	
+		} catch (IOException e) {
+			throw new GitException("ERROR, can not open git repo for exercise " + exerciseRepo.getPath(),e);
+		}
+		
+		PushCommand pushCommand = git.push();
+		pushCommand.setCredentialsProvider(new UsernamePasswordCredentialsProvider(gitUsername, gitPassword));
+		// you can add more settings here if needed
+		try {
+			pushCommand.call();
+		} catch (GitAPIException e) {
+			throw new GitException("ERROR, can not push to origin git repo for exercise " + exerciseRepo.getPath(),e);
+		}
+		
 	}
 
 	private GitHandler() {

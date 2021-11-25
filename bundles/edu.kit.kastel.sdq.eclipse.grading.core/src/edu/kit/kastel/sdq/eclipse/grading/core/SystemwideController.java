@@ -40,6 +40,7 @@ public class SystemwideController extends AbstractController implements ISystemw
 	private ICourse course;
 	private IExercise exercise;
 	private ISubmission submission;
+	private IExam exam;
 
 	private IProjectFileNamingStrategy projectFileNamingStrategy;
 
@@ -112,20 +113,24 @@ public class SystemwideController extends AbstractController implements ISystemw
 			return List.of();
 		}
 
-		return this.getArtemisGUIController().getBegunSubmissions(this.exercise).stream().filter(submissionFilter).collect(Collectors.toList());
+		return this.getArtemisGUIController().getBegunSubmissions(this.exercise).stream().filter(submissionFilter)
+				.collect(Collectors.toList());
 	}
 
 	@Override
 	public List<String> getBegunSubmissionsProjectNames(SubmissionFilter submissionFilter) {
 		// sondercase: refresh
 		if (this.course == null || this.exercise == null) {
-			this.info("You need to choose a" + (this.course == null ? "course" : "") + (this.course == null && this.exercise == null ? " and an " : "")
+			this.info("You need to choose a" + (this.course == null ? "course" : "")
+					+ (this.course == null && this.exercise == null ? " and an " : "")
 					+ (this.exercise == null ? "exercise" : "."));
 			return List.of();
 		}
 
-		return this.getBegunSubmissions(submissionFilter).stream().map(
-				sub -> this.projectFileNamingStrategy.getProjectFileInWorkspace(WorkspaceUtil.getWorkspaceFile(), this.getCurrentExercise(), sub).getName())
+		return this.getBegunSubmissions(submissionFilter).stream()
+				.map(sub -> this.projectFileNamingStrategy
+						.getProjectFileInWorkspace(WorkspaceUtil.getWorkspaceFile(), this.getCurrentExercise(), sub)
+						.getName())
 				.sorted().collect(Collectors.toList());
 	}
 
@@ -156,8 +161,9 @@ public class SystemwideController extends AbstractController implements ISystemw
 	public Set<Transition> getCurrentlyPossibleTransitions() {
 		boolean secondCorrectionRoundEnabled = this.exercise != null && this.exercise.isSecondCorrectionEnabled();
 
-		return this.backendStateMachine.getCurrentlyPossibleTransitions().stream()
-				.filter(transition -> !Transition.START_CORRECTION_ROUND_2.equals(transition) || secondCorrectionRoundEnabled).collect(Collectors.toSet());
+		return this.backendStateMachine.getCurrentlyPossibleTransitions().stream().filter(
+				transition -> !Transition.START_CORRECTION_ROUND_2.equals(transition) || secondCorrectionRoundEnabled)
+				.collect(Collectors.toSet());
 	}
 
 	@Override
@@ -166,8 +172,8 @@ public class SystemwideController extends AbstractController implements ISystemw
 			return null;
 		}
 
-		return this.projectFileNamingStrategy
-				.getProjectFileInWorkspace(WorkspaceUtil.getWorkspaceFile(), this.getCurrentExercise(), this.getCurrentSubmission()).getName();
+		return this.projectFileNamingStrategy.getProjectFileInWorkspace(WorkspaceUtil.getWorkspaceFile(),
+				this.getCurrentExercise(), this.getCurrentSubmission()).getName();
 	}
 
 	private ISubmission getCurrentSubmission() {
@@ -187,14 +193,16 @@ public class SystemwideController extends AbstractController implements ISystemw
 		}
 
 		this.getArtemisGUIController().startAssessment(this.submission);
-		this.getArtemisGUIController().downloadExerciseAndSubmission(this.course, this.exercise, this.submission, this.projectFileNamingStrategy);
+		this.getArtemisGUIController().downloadExerciseAndSubmission(this.course, this.exercise, this.submission,
+				this.projectFileNamingStrategy);
 	}
 
 	/**
 	 *
 	 * @return true if at least one of those three is null
 	 */
-	private boolean nullCheckMembersAndNotify(boolean checkCourseID, boolean checkExerciseID, boolean checkSubmissionID) {
+	private boolean nullCheckMembersAndNotify(boolean checkCourseID, boolean checkExerciseID,
+			boolean checkSubmissionID) {
 		String alert = "[";
 		boolean somethingNull = false;
 		if (checkCourseID && this.course == null) {
@@ -266,7 +274,8 @@ public class SystemwideController extends AbstractController implements ISystemw
 		boolean[] found = { false };
 		this.getBegunSubmissions(SubmissionFilter.ALL).forEach(sub -> {
 			String currentProjectName = this.projectFileNamingStrategy
-					.getProjectFileInWorkspace(WorkspaceUtil.getWorkspaceFile(), this.getCurrentExercise(), sub).getName();
+					.getProjectFileInWorkspace(WorkspaceUtil.getWorkspaceFile(), this.getCurrentExercise(), sub)
+					.getName();
 
 			if (currentProjectName.equals(projectName)) {
 				this.submission = sub;
@@ -285,7 +294,8 @@ public class SystemwideController extends AbstractController implements ISystemw
 	}
 
 	@Override
-	public List<String> setCourseIdAndGetExerciseShortNames(final String courseShortName) throws ArtemisClientException {
+	public List<String> setCourseIdAndGetExerciseShortNames(final String courseShortName)
+			throws ArtemisClientException {
 		if (this.applyTransitionAndNotifyIfNotAllowed(Transition.SET_COURSE_ID_AND_GET_EXERCISE_SHORT_NAMES)) {
 			return List.of();
 		}
@@ -338,7 +348,8 @@ public class SystemwideController extends AbstractController implements ISystemw
 		}
 		this.updateConfigFile();
 
-		Optional<ISubmission> optionalSubmissionID = this.getArtemisGUIController().startNextAssessment(this.exercise, correctionRound);
+		Optional<ISubmission> optionalSubmissionID = this.getArtemisGUIController().startNextAssessment(this.exercise,
+				correctionRound);
 		if (optionalSubmissionID.isEmpty()) {
 			// revert!
 			this.backendStateMachine.revertLatestTransition();
@@ -348,7 +359,8 @@ public class SystemwideController extends AbstractController implements ISystemw
 		this.submission = optionalSubmissionID.get();
 
 		// perform download. Revert state if that fails.
-		if (!this.getArtemisGUIController().downloadExerciseAndSubmission(this.course, this.exercise, this.submission, this.projectFileNamingStrategy)) {
+		if (!this.getArtemisGUIController().downloadExerciseAndSubmission(this.course, this.exercise, this.submission,
+				this.projectFileNamingStrategy)) {
 			this.backendStateMachine.revertLatestTransition();
 			return false;
 		}
@@ -393,15 +405,18 @@ public class SystemwideController extends AbstractController implements ISystemw
 		if (this.preferenceStore.getBoolean(PreferenceConstants.IS_RELATIVE_CONFIG_PATH)) {
 			if (this.course != null && this.exercise != null && this.submission != null) {
 				// not the case at startup with rel config path chosen!
-				this.setConfigFile(new File(ResourcesPlugin.getWorkspace().getRoot().getProject(this.getCurrentProjectName()).getLocation().toFile(),
-						this.preferenceStore.getString(PreferenceConstants.RELATIVE_CONFIG_PATH)));
+				this.setConfigFile(
+						new File(
+								ResourcesPlugin.getWorkspace().getRoot().getProject(this.getCurrentProjectName())
+										.getLocation().toFile(),
+								this.preferenceStore.getString(PreferenceConstants.RELATIVE_CONFIG_PATH)));
 			}
 		} else {
 			this.setConfigFile(new File(this.preferenceStore.getString(PreferenceConstants.ABSOLUTE_CONFIG_PATH)));
 
 		}
 	}
-	
+
 	@Override
 	public boolean loadExerciseForStudent() {
 		if (this.nullCheckMembersAndNotify(true, true, false)) {
@@ -410,10 +425,26 @@ public class SystemwideController extends AbstractController implements ISystemw
 		this.updateConfigFile();
 
 		// perform download. Revert state if that fails.
-		if (!this.getArtemisGUIController().loadExerciseInWorkspaceForStudent(this.course, this.exercise, this.projectFileNamingStrategy)) {
+		if (!this.getArtemisGUIController().loadExerciseInWorkspaceForStudent(this.course, this.exercise,
+				this.projectFileNamingStrategy)) {
 			this.backendStateMachine.revertLatestTransition();
 			return false;
 		}
+		return true;
+	}
+	
+	@Override
+	public boolean submitSolution() {
+		if (this.nullCheckMembersAndNotify(true, true, false)) {
+			return false;
+		}
+		this.info("Your solutions will be submitted for the selected exercise. Make sure all files are saved.");
+		
+		if (!this.getArtemisGUIController().submitSolution(this.course, this.exercise, this.projectFileNamingStrategy)) {
+			this.warn("Your Solution was not submitted");
+			return false;
+		}
+		this.info("Your solution was successfully submitted");
 		return true;
 	}
 

@@ -11,6 +11,7 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.ILockResult;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IProjectFileNamingStrategy;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.Assessor;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ICourse;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExam;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ParticipationDTO;
@@ -21,10 +22,6 @@ public interface IArtemisClient {
 	 */
 	void downloadExerciseAndSubmission(IExercise exercise, ISubmission submission, File dir, IProjectFileNamingStrategy namingStrategy)
 			throws ArtemisClientException;
-
-	void downloadExercise(IExercise exercise, File dir, IProjectFileNamingStrategy namingStrategy, String repoUrl) throws ArtemisClientException;
-	
-	String startParticipationForExercise(ICourse couse, IExercise exercise) throws ArtemisClientException;
 	/**
 	 *
 	 * @return the artemis "assessor" object (needed for submitting the assessment).
@@ -100,4 +97,16 @@ public interface IArtemisClient {
 	 *                                or if authentication fails.
 	 */
 	Optional<ILockResult> startNextAssessment(IExercise exerciseID, int correctionRound) throws ArtemisClientException;
+
+	void downloadExercise(IExercise exercise, File dir, IProjectFileNamingStrategy namingStrategy, String repoUrl) throws ArtemisClientException;
+	
+	ParticipationDTO startParticipationForExercise(ICourse couse, IExercise exercise) throws ArtemisClientException;
+	
+	ParticipationDTO resumeParticipationForExercise(ICourse couse, IExercise exercise) throws ArtemisClientException;
+	
+	ParticipationDTO getParticipationForExercise(ICourse couse, IExercise exercise)  throws ArtemisClientException;
+	
+	ParticipationDTO getParticipationWithLatestResultForExercise(String participationId)  throws ArtemisClientException;
+	
+	IExam startExam(ICourse course, IExam exam) throws ArtemisClientException;
 }

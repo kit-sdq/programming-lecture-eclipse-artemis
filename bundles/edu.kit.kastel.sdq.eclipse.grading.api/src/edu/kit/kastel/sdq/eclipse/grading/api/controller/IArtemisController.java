@@ -143,4 +143,6 @@ public interface IArtemisController extends IController {
 	Optional<ISubmission> startNextAssessment(IExercise exercise, int correctionRound);
 	
 	boolean loadExerciseInWorkspaceForStudent(ICourse course, IExercise exercise, IProjectFileNamingStrategy projectNaming);
+	
+	boolean submitSolution(ICourse course, IExercise exercise, IProjectFileNamingStrategy projectNaming);
 }

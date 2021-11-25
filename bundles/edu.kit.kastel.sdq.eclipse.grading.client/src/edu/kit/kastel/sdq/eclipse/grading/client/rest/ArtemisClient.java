@@ -159,28 +159,6 @@ public class ArtemisClient extends AbstractArtemisClient implements IMappingLoad
 		}
 		return Arrays.asList(exerciseGroupsArray);
 	}
-	
-	@Override
-	public String startParticipationForExercise(ICourse course, IExercise exercise) throws ArtemisClientException {
-		this.checkAuthentication();
-
-		final Response exercisesRsp = this.endpoint.path(COURSES_PATHPART).path(String.valueOf(course.getCourseId())).path(EXERCISES_PATHPART).path(String.valueOf(exercise.getExerciseId())).path("participations").request()
-				.header(AUTHORIZATION_NAME, this.token).buildPost(null).invoke();
-
-		this.throwIfStatusUnsuccessful(exercisesRsp);
-		
-		// get the part of the json that we want to deserialize
-		final JsonNode exercisesAndParticipationsJsonNode = this.readTree(exercisesRsp.readEntity(String.class));
-		JsonNode exercisesJsonArray = exercisesAndParticipationsJsonNode.get("repositoryUrl");
-		if (exercisesJsonArray == null) {
-			// course has no exercises!
-			return "";
-		}
-		
-		String exerciseGroupsArray = this.read(exercisesJsonArray.toString(), String.class);
-		return exerciseGroupsArray;
-
-	}
 
 	@Override
 	public List<IExercise> getNormalExercisesForCourse(ICourse course) throws ArtemisClientException {
@@ -292,6 +270,82 @@ public class ArtemisClient extends AbstractArtemisClient implements IMappingLoad
 		}
 
 		return Optional.of(this.read(rsp.readEntity(String.class), LockResult.class));
+	}
+	
+	@Override
+	public ParticipationDTO startParticipationForExercise(ICourse course, IExercise exercise) throws ArtemisClientException {
+		this.checkAuthentication();
+
+		final Response exercisesRsp = this.endpoint.path(COURSES_PATHPART).path(String.valueOf(course.getCourseId())).path(EXERCISES_PATHPART).path(String.valueOf(exercise.getExerciseId())).path("participations").request()
+				.header(AUTHORIZATION_NAME, this.token).buildPost(null).invoke();
+
+		this.throwIfStatusUnsuccessful(exercisesRsp);
+		
+		// get the part of the json that we want to deserialize
+		final JsonNode exercisesAndParticipationsJsonNode = this.readTree(exercisesRsp.readEntity(String.class));
+		return this.read(exercisesAndParticipationsJsonNode.toString(), ParticipationDTO.class);
+
+	}
+	
+	@Override
+	public ParticipationDTO resumeParticipationForExercise(ICourse course, IExercise exercise) throws ArtemisClientException {
+		this.checkAuthentication();
+
+		final Response exercisesRsp = this.endpoint.path(COURSES_PATHPART).path(String.valueOf(course.getCourseId())).path(EXERCISES_PATHPART).path(String.valueOf(exercise.getExerciseId())).path("resume-programming-participation").request()
+				.header(AUTHORIZATION_NAME, this.token).buildPut(null).invoke();
+
+		this.throwIfStatusUnsuccessful(exercisesRsp);
+		
+		// get the part of the json that we want to deserialize
+		final JsonNode exercisesAndParticipationsJsonNode = this.readTree(exercisesRsp.readEntity(String.class));
+		return this.read(exercisesAndParticipationsJsonNode.toString(), ParticipationDTO.class);
+
+	}
+	
+	@Override
+	public ParticipationDTO getParticipationForExercise(ICourse course, IExercise exercise)
+			throws ArtemisClientException {
+		this.checkAuthentication();
+
+		final Response exercisesRsp = this.endpoint.path(EXERCISES_PATHPART).path(String.valueOf(exercise.getExerciseId())).path("participation").request()
+				.header(AUTHORIZATION_NAME, this.token).buildGet().invoke();
+
+		this.throwIfStatusUnsuccessful(exercisesRsp);
+		
+		// get the part of the json that we want to deserialize
+		final JsonNode exercisesAndParticipationsJsonNode = this.readTree(exercisesRsp.readEntity(String.class));
+		return this.read(exercisesAndParticipationsJsonNode.toString(), ParticipationDTO.class);
+
+	}
+
+	@Override
+	public ParticipationDTO getParticipationWithLatestResultForExercise(String participationId)
+			throws ArtemisClientException {
+		this.checkAuthentication();
+
+		final Response exercisesRsp = this.endpoint.path(PARTICIPATION_PATHPART).path(participationId).path("withLatestResult").request()
+				.header(AUTHORIZATION_NAME, this.token).buildGet().invoke();
+
+		this.throwIfStatusUnsuccessful(exercisesRsp);
+		
+		// get the part of the json that we want to deserialize
+		final JsonNode exercisesAndParticipationsJsonNode = this.readTree(exercisesRsp.readEntity(String.class));
+		return this.read(exercisesAndParticipationsJsonNode.toString(), ParticipationDTO.class);
+
+	}
+	
+	@Override
+	public IExam startExam(ICourse course, IExam exam) throws ArtemisClientException {
+		this.checkAuthentication();
+
+		final Response exercisesRsp = this.endpoint.path(COURSES_PATHPART).path(String.valueOf(course.getCourseId())).path(EXAMS_PATHPART).path(String.valueOf(exam.getExamId())).path("start").request()
+				.header(AUTHORIZATION_NAME, this.token).buildGet().invoke();
+
+		this.throwIfStatusUnsuccessful(exercisesRsp);
+		
+		// get the part of the json that we want to deserialize
+		final JsonNode exercisesAndParticipationsJsonNode = this.readTree(exercisesRsp.readEntity(String.class));
+		return this.read(exercisesAndParticipationsJsonNode.toString(), IExam.class);
 	}
 
 	private void throwIfStatusUnsuccessful(final Response response) throws ArtemisClientException {

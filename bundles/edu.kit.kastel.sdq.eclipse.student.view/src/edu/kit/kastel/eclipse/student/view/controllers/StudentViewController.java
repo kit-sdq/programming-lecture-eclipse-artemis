@@ -6,8 +6,12 @@ public class StudentViewController extends AssessmentViewController {
 		super();
 	}
 	
-	public void loadExerciseForUserInWorkspace() {
+	public void startExercise() {
 		getSystemwideController().loadExerciseForStudent();
+	}
+	
+	public void onSubmitSolution() {
+		getSystemwideController().submitSolution();
 	}
 
 }
