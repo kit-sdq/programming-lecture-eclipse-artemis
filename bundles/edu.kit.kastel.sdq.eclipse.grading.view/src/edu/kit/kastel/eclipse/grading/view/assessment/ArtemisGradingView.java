@@ -10,7 +10,6 @@ import java.util.Set;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.internal.win32.TCHAR;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -499,7 +498,6 @@ public class ArtemisGradingView extends ViewPart {
 			correctionCountLbl.setText(String.format("Started submissions: %d  Submitted: %d", 
 					sc.getBegunSubmissionsProjectNames(SubmissionFilter.ALL).size(),
 					sc.getBegunSubmissionsProjectNames(SubmissionFilter.SAVED_AND_SUBMITTED).size()));		
-			sc.getBegunSubmissionsProjectNames(SubmissionFilter.ALL).stream().forEach(System.out::println);
 		} else {
 			correctionCountLbl.setText("");
 		}
