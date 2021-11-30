@@ -196,7 +196,7 @@ public class AnnotationMapper {
 	private Feedback createNewManualFeedback(IAnnotation annotation) {
 		// manual feedbacks do not have no credits!
 		final String text = "File " + annotation.getClassFilePath() + " at line " + annotation.getStartLine();
-		final String reference = "file:" + annotation.getClassFilePath() + ".java_line:" + annotation.getStartLine();
+		final String reference = "file:" + annotation.getClassFilePath() + ".java_line:" + (annotation.getStartLine() - 1);
 
 		var mistakeType = annotation.getMistakeType();
 		String detailText = "[" + mistakeType.getRatingGroup().getDisplayName() + ":" + mistakeType.getButtonText() + "] ";
