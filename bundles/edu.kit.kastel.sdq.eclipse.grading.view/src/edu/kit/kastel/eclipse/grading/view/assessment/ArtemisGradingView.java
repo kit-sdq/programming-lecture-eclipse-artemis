@@ -10,6 +10,7 @@ import java.util.Set;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.internal.win32.TCHAR;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -247,10 +248,7 @@ public class ArtemisGradingView extends ViewPart {
 
 		correctionCountLbl = new Label(assessmentComposite, SWT.NONE);
 		correctionCountLbl.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
-		
-		
-		correctionCountLbl.setText(String.format(""));
-		
+		correctionCountLbl.setText("");
 		
 		Label lblCourse = new Label(assessmentComposite, SWT.NONE);
 		lblCourse.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
@@ -503,7 +501,7 @@ public class ArtemisGradingView extends ViewPart {
 					sc.getBegunSubmissionsProjectNames(SubmissionFilter.SAVED_AND_SUBMITTED).size()));		
 			sc.getBegunSubmissionsProjectNames(SubmissionFilter.ALL).stream().forEach(System.out::println);
 		} else {
-			correctionCountLbl.setText(String.format(""));
+			correctionCountLbl.setText("");
 		}
 	}
 
