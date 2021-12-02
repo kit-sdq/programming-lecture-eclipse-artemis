@@ -11,7 +11,9 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 
+import edu.kit.kastel.eclipse.grading.view.activator.Activator;
 import edu.kit.kastel.eclipse.grading.view.controllers.AssessmentViewController;
+import edu.kit.kastel.sdq.eclipse.grading.api.PreferenceConstants;
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IMistakeType;
 
 /**
@@ -51,22 +53,38 @@ public class CustomButtonDialog extends Dialog {
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		final Composite comp = (Composite) super.createDialogArea(parent);
+		
+		boolean userWantsBigWindow = Activator.getDefault().getPreferenceStore().getBoolean(PreferenceConstants.PREFFERES_LARGE_PENALTY_TEXT_PATH);
 
 		final GridLayout layout = (GridLayout) comp.getLayout();
-		layout.numColumns = 2;
+		layout.numColumns = userWantsBigWindow ? 1 : 2;
 
 		final Label customMessageLabel = new Label(comp, SWT.RIGHT);
 		customMessageLabel.setText("Custom Message: ");
-		this.customMessageInputField = new Text(comp, SWT.SINGLE | SWT.BORDER);
 
+		final GridData data = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		
+		GridData customMessageInputFieldData;
+		if (userWantsBigWindow) {
+			this.customMessageInputField = new Text(comp, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL  |SWT.H_SCROLL);
+			customMessageInputFieldData = new GridData(GridData.FILL_BOTH);
+			// Calculating height and width based on the lineHeight (theoretically) ensures proper scaling across screen-sizes.
+			// However lacking of a 4K-screen this has not been tested entirely.
+			customMessageInputFieldData.minimumHeight = this.customMessageInputField.getLineHeight() * 5;
+			customMessageInputFieldData.minimumWidth = this.customMessageInputField.getLineHeight() * 16;
+		} else {
+			this.customMessageInputField = new Text(comp, SWT.SINGLE | SWT.BORDER);
+			customMessageInputFieldData = data;
+		}
+		
 		final Label customPenaltyLabel = new Label(comp, SWT.RIGHT);
 		customPenaltyLabel.setText("Custom Penalty: ");
 		this.customPenaltyInputField = new Spinner(comp, SWT.SINGLE | SWT.BORDER);
 		this.customPenaltyInputField.setDigits(1);
 		this.customPenaltyInputField.setIncrement(5);
 
-		final GridData data = new GridData(SWT.FILL, SWT.CENTER, true, false);
-		this.customMessageInputField.setLayoutData(data);
+				
+		this.customMessageInputField.setLayoutData(customMessageInputFieldData);
 		this.customPenaltyInputField.setLayoutData(data);
 
 		return comp;

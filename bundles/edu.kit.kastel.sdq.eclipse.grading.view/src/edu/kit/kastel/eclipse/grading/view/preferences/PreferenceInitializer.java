@@ -20,6 +20,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		store.setDefault(PreferenceConstants.ARTEMIS_URL, "");
 		store.setDefault(PreferenceConstants.ARTEMIS_USER, "");
 		store.setDefault(PreferenceConstants.ARTEMIS_PASSWORD, "");
+		store.setDefault(PreferenceConstants.PREFFERES_LARGE_PENALTY_TEXT_PATH, "false");
 	}
 
 }

@@ -39,3 +39,10 @@ buildNumber.properties
 .mvn/wrapper/maven-wrapper.jar
 .polyglot.*
 .settings
+jvm/.project
+jvm/feature/.project
+jvm/linux/.classpath
+jvm/linux/.project
+jvm/windows/.classpath
+jvm/windows/.project
+releng/.project
