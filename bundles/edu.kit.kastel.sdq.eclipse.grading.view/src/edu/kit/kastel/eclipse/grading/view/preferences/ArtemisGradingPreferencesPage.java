@@ -58,7 +58,7 @@ public class ArtemisGradingPreferencesPage extends FieldEditorPreferencePage imp
 
 		artemisPassword.getTextControl(this.getFieldEditorParent()).setEchoChar('*');
 		
-		this.userPreferresLargePenaltyText = new BooleanFieldEditor(PreferenceConstants.PREFFERES_LARGE_PENALTY_TEXT_PATH, "Use large text-box for custom penaltys (note: when enabled, you need to click \"ok\". Pressing enter won't add the penalty.)", this.getFieldEditorParent());
+		this.userPreferresLargePenaltyText = new BooleanFieldEditor(PreferenceConstants.PREFFERES_LARGE_PENALTY_TEXT_PATH, "Use larger multi-line-text-box for custom penaltys", this.getFieldEditorParent());
 
 		this.addField(this.absoluteConfigPath);
 		this.addField(this.relativeConfigPath);
