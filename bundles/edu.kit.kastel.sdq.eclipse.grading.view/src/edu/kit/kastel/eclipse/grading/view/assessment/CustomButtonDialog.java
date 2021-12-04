@@ -121,6 +121,7 @@ public class CustomButtonDialog extends Dialog {
 	 * @author Shirkanesi
 	 */
 	private class MultiLineTextEditorKeyListener implements KeyListener {
+		private static final int LINE_SEPARATOR_LENGTH = System.lineSeparator().length();
 		private static final int RETURN_KEY_CODE = 13;
 		private boolean isShiftPressed;
 		
@@ -133,9 +134,10 @@ public class CustomButtonDialog extends Dialog {
 			
 			if (!this.isShiftPressed) {
 				if (e.keyCode == SWT.TAB || e.keyCode == RETURN_KEY_CODE) {
-					int insertedLength = e.keyCode == RETURN_KEY_CODE ? 2 : 1;
+					// Required due to Windows using \r\n, UNIX-like systems just \n
+					int insertedLength = e.keyCode == RETURN_KEY_CODE ? LINE_SEPARATOR_LENGTH : 1;
 					
-					// Removed the inserted character
+					// Removed the inserted character(s)
 					int pos = customMessageInputField.getCaretPosition();
 					String text = customMessageInputField.getText();
 					String modified = text.substring(0, pos - insertedLength) + text.substring(pos);
