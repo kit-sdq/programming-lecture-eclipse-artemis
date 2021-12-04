@@ -73,8 +73,8 @@ public class CustomButtonDialog extends Dialog {
 			
 			// Calculating height and width based on the lineHeight (theoretically) ensures proper scaling across screen-sizes.
 			// However lacking of a 4K-screen this has not been tested entirely.
-			customMessageInputFieldData.minimumHeight = this.customMessageInputField.getLineHeight() * 5;
-			customMessageInputFieldData.minimumWidth = this.customMessageInputField.getLineHeight() * 16;
+			customMessageInputFieldData.minimumHeight = this.customMessageInputField.getLineHeight() * 8;
+			customMessageInputFieldData.minimumWidth = this.customMessageInputField.getLineHeight() * 24;
 			
 			this.customMessageInputField.addKeyListener(new MultiLineTextEditorKeyListener());
 		} else {
@@ -121,8 +121,6 @@ public class CustomButtonDialog extends Dialog {
 	 * @author Shirkanesi
 	 */
 	private class MultiLineTextEditorKeyListener implements KeyListener {
-		private static final int LINE_SEPARATOR_LENGTH = System.lineSeparator().length();
-		private static final int RETURN_KEY_CODE = 13;
 		private boolean isShiftPressed;
 		
 		@Override
@@ -133,9 +131,14 @@ public class CustomButtonDialog extends Dialog {
 			}
 			
 			if (!this.isShiftPressed) {
-				if (e.keyCode == SWT.TAB || e.keyCode == RETURN_KEY_CODE) {
-					// Required due to Windows using \r\n, UNIX-like systems just \n
-					int insertedLength = e.keyCode == RETURN_KEY_CODE ? LINE_SEPARATOR_LENGTH : 1;
+				if (e.keyCode == SWT.TAB || isReturnCharacter(e.keyCode)) {
+					int insertedLength;
+					if (isReturnCharacter(e.keyCode)) {
+						// Required due to Windows using \r\n, UNIX-like systems just \n
+						insertedLength = System.lineSeparator().length();
+					} else {
+						insertedLength = 1;
+					}
 					
 					// Removed the inserted character(s)
 					int pos = customMessageInputField.getCaretPosition();
@@ -144,13 +147,17 @@ public class CustomButtonDialog extends Dialog {
 					customMessageInputField.setText(modified);
 					
 					// Determine how to jump out of the text-field (either by closing the dialog or selecting the penalty-input)
-					if (e.keyCode == RETURN_KEY_CODE) {
+					if (isReturnCharacter(e.keyCode)) {
 						okPressed();
 					} else {								
 						customPenaltyInputField.setFocus();
 					}
 				}				
 			}
+		}
+		
+		private boolean isReturnCharacter(int keyCode) {
+			return keyCode == SWT.CR || keyCode == SWT.LF;
 		}
 			
 		
