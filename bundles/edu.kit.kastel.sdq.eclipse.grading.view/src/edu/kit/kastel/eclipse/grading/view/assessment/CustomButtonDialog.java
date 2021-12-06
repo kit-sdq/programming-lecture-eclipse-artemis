@@ -25,6 +25,10 @@ import edu.kit.kastel.sdq.eclipse.grading.api.model.IMistakeType;
  */
 public class CustomButtonDialog extends Dialog {
 
+	// Constants used for scaling the big custom penalty field
+	private static final int CUSTOM_PENALTY_FIELD_WIDTH_MULTIPLIER = 24;
+	private static final int CUSTOM_PENALTY_FIELD_HEIGHT_MULTIPLIER = 8;
+	
 	private Text customMessageInputField;
 	private Spinner customPenaltyInputField;
 	private String customMessage;
@@ -56,7 +60,7 @@ public class CustomButtonDialog extends Dialog {
 	protected Control createDialogArea(Composite parent) {
 		final Composite comp = (Composite) super.createDialogArea(parent);
 		
-		boolean userWantsBigWindow = Activator.getDefault().getPreferenceStore().getBoolean(PreferenceConstants.PREFFERES_LARGE_PENALTY_TEXT_PATH);
+		boolean userWantsBigWindow = Activator.getDefault().getPreferenceStore().getBoolean(PreferenceConstants.PREFERS_LARGE_PENALTY_TEXT_PATH);
 
 		final GridLayout layout = (GridLayout) comp.getLayout();
 		layout.numColumns = userWantsBigWindow ? 1 : 2;
@@ -73,10 +77,10 @@ public class CustomButtonDialog extends Dialog {
 			
 			// Calculating height and width based on the lineHeight (theoretically) ensures proper scaling across screen-sizes.
 			// However lacking of a 4K-screen this has not been tested entirely.
-			customMessageInputFieldData.minimumHeight = this.customMessageInputField.getLineHeight() * 8;
-			customMessageInputFieldData.minimumWidth = this.customMessageInputField.getLineHeight() * 24;
+			customMessageInputFieldData.minimumHeight = this.customMessageInputField.getLineHeight() * CUSTOM_PENALTY_FIELD_HEIGHT_MULTIPLIER;
+			customMessageInputFieldData.minimumWidth = this.customMessageInputField.getLineHeight() * CUSTOM_PENALTY_FIELD_WIDTH_MULTIPLIER;
 			
-			this.customMessageInputField.addKeyListener(new MultiLineTextEditorKeyListener());
+			this.customMessageInputField.addKeyListener(new MultiLineTextEditorKeyListener(this));
 		} else {
 			this.customMessageInputField = new Text(comp, SWT.SINGLE | SWT.BORDER);
 			customMessageInputFieldData = data;
@@ -120,9 +124,17 @@ public class CustomButtonDialog extends Dialog {
 	 * 
 	 * @author Shirkanesi
 	 */
-	private class MultiLineTextEditorKeyListener implements KeyListener {
-		private boolean isShiftPressed;
+	private static class MultiLineTextEditorKeyListener implements KeyListener {
+		// Required due to Windows using \r\n, UNIX-like systems just \n
+		private static final int LINE_SEPARATOR_LENGTH = System.lineSeparator().length();
 		
+		private boolean isShiftPressed;
+		private final CustomButtonDialog customButtonDialog;
+		
+		public MultiLineTextEditorKeyListener(CustomButtonDialog customButtonDialog) {
+			this.customButtonDialog = customButtonDialog;
+		}
+
 		@Override
 		public void keyReleased(KeyEvent e) {
 			
@@ -134,23 +146,22 @@ public class CustomButtonDialog extends Dialog {
 				if (e.keyCode == SWT.TAB || isReturnCharacter(e.keyCode)) {
 					int insertedLength;
 					if (isReturnCharacter(e.keyCode)) {
-						// Required due to Windows using \r\n, UNIX-like systems just \n
-						insertedLength = System.lineSeparator().length();
+						insertedLength = LINE_SEPARATOR_LENGTH;
 					} else {
 						insertedLength = 1;
 					}
 					
 					// Removed the inserted character(s)
-					int pos = customMessageInputField.getCaretPosition();
-					String text = customMessageInputField.getText();
+					int pos = this.customButtonDialog.customMessageInputField.getCaretPosition();
+					String text = this.customButtonDialog.customMessageInputField.getText();
 					String modified = text.substring(0, pos - insertedLength) + text.substring(pos);
-					customMessageInputField.setText(modified);
+					this.customButtonDialog.customMessageInputField.setText(modified);
 					
 					// Determine how to jump out of the text-field (either by closing the dialog or selecting the penalty-input)
 					if (isReturnCharacter(e.keyCode)) {
-						okPressed();
+						this.customButtonDialog.okPressed();
 					} else {								
-						customPenaltyInputField.setFocus();
+						this.customButtonDialog.customPenaltyInputField.setFocus();
 					}
 				}				
 			}
