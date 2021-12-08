@@ -5,9 +5,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -430,6 +432,19 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 			return false;
 		}
 		return true;
+	}
+	
+	@Override
+	public Optional<Set<String>> cleanWorkspace(ICourse course, IExercise exercise, IProjectFileNamingStrategy projectNaming) {
+		final File eclipseWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile();
+ 		File exeriseRepo =  projectNaming.getProjectFileInWorkspace(eclipseWorkspaceRoot, exercise, null);
+		File gitFileInRepo = projectNaming.getGitFileInProjectDirectory(exeriseRepo);
+		try {
+			return Optional.of(GitHandler.cleanRepo(gitFileInRepo));
+		} catch (GitException e) {
+			e.printStackTrace();
+			return Optional.empty();
+		}
 	}
 
 }

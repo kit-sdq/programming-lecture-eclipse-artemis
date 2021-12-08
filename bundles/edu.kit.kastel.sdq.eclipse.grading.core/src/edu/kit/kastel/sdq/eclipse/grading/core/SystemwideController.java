@@ -420,6 +420,7 @@ public class SystemwideController extends AbstractController implements ISystemw
 	@Override
 	public boolean loadExerciseForStudent() {
 		if (this.nullCheckMembersAndNotify(true, true, false)) {
+			this.warn("No excercise is selected");
 			return false;
 		}
 		this.updateConfigFile();
@@ -436,6 +437,7 @@ public class SystemwideController extends AbstractController implements ISystemw
 	@Override
 	public boolean submitSolution() {
 		if (this.nullCheckMembersAndNotify(true, true, false)) {
+			this.warn("No excercise is selected");
 			return false;
 		}
 		this.info("Your solutions will be submitted for the selected exercise. Make sure all files are saved.");
@@ -447,5 +449,23 @@ public class SystemwideController extends AbstractController implements ISystemw
 		this.info("Your solution was successfully submitted");
 		return true;
 	}
-
+	
+	@Override
+	public boolean cleanWorkspace() {
+		if (this.nullCheckMembersAndNotify(true, true, false)) {
+			this.warn("No excercise is selected");
+			return false;
+		}
+		this.info(String.format("Your solutions will be reset and therefore deleted for the selected exercise: %s. \n Are you sure?", this.exercise.getShortName()));
+		
+		Optional<Set<String>> deletedFiles = this.getArtemisGUIController().cleanWorkspace(this.course, this.exercise, this.projectFileNamingStrategy);
+		if (deletedFiles.isEmpty()) {
+			this.warn("ERROR, occured while cleaning the workspace");
+			return false;
+		}
+		this.info("Your workspace was successfully cleaned. \n"
+				+ "Following files have been reset: \n" + deletedFiles.get());
+		return true;
+		
+	}
 }

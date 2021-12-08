@@ -13,5 +13,9 @@ public class StudentViewController extends AssessmentViewController {
 	public void onSubmitSolution() {
 		getSystemwideController().submitSolution();
 	}
+	
+	public void cleanWorkspace() {
+		getSystemwideController().cleanWorkspace();
+	}
 
 }

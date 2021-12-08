@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.ArtemisClientException;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.SubmissionFilter;
 import edu.kit.kastel.sdq.eclipse.grading.api.backendstate.State;
@@ -168,4 +169,6 @@ public interface ISystemwideController extends IController {
 	void submitAssessment();
 	
 	boolean submitSolution();
+	
+	boolean cleanWorkspace();
 }

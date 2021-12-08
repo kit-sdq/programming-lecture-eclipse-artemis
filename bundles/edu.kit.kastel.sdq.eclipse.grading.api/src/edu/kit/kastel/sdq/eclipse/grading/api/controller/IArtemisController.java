@@ -2,6 +2,7 @@ package edu.kit.kastel.sdq.eclipse.grading.api.controller;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IProjectFileNamingStrategy;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.Feedback;
@@ -145,4 +146,6 @@ public interface IArtemisController extends IController {
 	boolean loadExerciseInWorkspaceForStudent(ICourse course, IExercise exercise, IProjectFileNamingStrategy projectNaming);
 	
 	boolean submitSolution(ICourse course, IExercise exercise, IProjectFileNamingStrategy projectNaming);
+
+	Optional<Set<String>> cleanWorkspace(ICourse course, IExercise exercise, IProjectFileNamingStrategy projectNaming);
 }

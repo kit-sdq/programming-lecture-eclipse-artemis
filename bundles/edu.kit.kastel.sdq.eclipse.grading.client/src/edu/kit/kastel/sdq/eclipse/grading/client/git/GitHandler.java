@@ -2,11 +2,16 @@ package edu.kit.kastel.sdq.eclipse.grading.client.git;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Set;
 
+import org.eclipse.jgit.api.CheckoutCommand;
 import org.eclipse.jgit.api.CloneCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.PushCommand;
+import org.eclipse.jgit.api.ResetCommand.ResetType;
+import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.errors.NoWorkTreeException;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.transport.URIish;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
@@ -71,6 +76,23 @@ public final class GitHandler {
 			throw new GitException("ERROR, can not push to origin git repo for exercise " + exerciseRepo.getPath(),e);
 		}
 		
+	}
+	
+	public static Set<String> cleanRepo(File exerciseRepo) throws GitException {
+		Git git;
+		try {
+			git = Git.open(exerciseRepo);	
+		} catch (IOException e) {
+			throw new GitException("ERROR, can not open git repo for exercise " + exerciseRepo.getPath(),e);
+		}
+		try {
+			Status status = git.status().call();
+			Set<String> untrackedChanges = status.getUncommittedChanges();
+			git.reset().setMode( ResetType.HARD ).call();
+			return untrackedChanges;
+		} catch (NoWorkTreeException | GitAPIException e) {
+			throw new GitException("ERROR, can not clean repository", e);
+		}
 	}
 
 	private GitHandler() {
