@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.swing.JOptionPane;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.layout.GridData;
@@ -25,6 +27,7 @@ import org.eclipse.ui.part.ViewPart;
 
 import edu.kit.kastel.eclipse.grading.view.activator.Activator;
 import edu.kit.kastel.eclipse.grading.view.controllers.AssessmentViewController;
+import edu.kit.kastel.eclipse.grading.view.listeners.KeyboardAwareMouseListener;
 import edu.kit.kastel.eclipse.grading.view.utilities.AssessmentUtilities;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.SubmissionFilter;
 import edu.kit.kastel.sdq.eclipse.grading.api.backendstate.Transition;
@@ -376,24 +379,47 @@ public class ArtemisGradingView extends ViewPart {
 
 					this.mistakeButtons.put(mistake.getId(), mistakeButton);
 					mistakeButton.setToolTipText(this.viewController.getToolTipForMistakeType(mistake));
-					mistakeButton.addListener(SWT.Selection, event -> {
-						this.viewController.addAssessmentAnnotation(mistake, null, null, mistake.getRatingGroup().getDisplayName());
-						this.updatePenalty(mistake.getRatingGroup().getDisplayName());
-						this.updateMistakeButtonToolTips(mistake);
-					});
+					
+					KeyboardAwareMouseListener listener = KeyboardAwareMouseListener.builder()
+							.onShiftClick(() -> {
+								this.createMistakePenaltyWithCustomMessageDialog(mistake);	
+							})
+							.onMiddleClick(() -> {
+								this.createMistakePenaltyWithCustomMessageDialog(mistake);	
+							})
+							.onLeftClick(() -> {
+								this.viewController.addAssessmentAnnotation(mistake, null, null, mistake.getRatingGroup().getDisplayName());
+							})
+							.onClick(() -> {
+								this.updatePenalty(mistake.getRatingGroup().getDisplayName());
+								this.updateMistakeButtonToolTips(mistake);
+							})
+							.build();
+					mistakeButton.addMouseListener(listener);
+					
 				}
 			});
 		});
 		this.scrolledCompositeGrading.setContent(this.gradingComposite);
 		this.scrolledCompositeGrading.setMinSize(this.gradingComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 	}
-
+	
 	/**
 	 * This methods creates the whole view components.
 	 */
 	@Override
 	public void createPartControl(Composite parent) {
 		this.createView(parent);
+	}
+	
+	private void createMistakePenaltyWithCustomMessageDialog(IMistakeType mistake) {
+		CustomButtonDialog buttonDialog = new CustomButtonDialog(AssessmentUtilities.getWindowsShell(), this.viewController,
+				mistake.getRatingGroup().getDisplayName(), null);
+		buttonDialog.setBlockOnOpen(true);
+		buttonDialog.open();
+		if (buttonDialog.isClosedByOk()) {
+			this.viewController.addAssessmentAnnotation(mistake, buttonDialog.getCustomMessage(), null, mistake.getRatingGroup().getDisplayName());
+		}
 	}
 
 	private void createView(Composite parent) {

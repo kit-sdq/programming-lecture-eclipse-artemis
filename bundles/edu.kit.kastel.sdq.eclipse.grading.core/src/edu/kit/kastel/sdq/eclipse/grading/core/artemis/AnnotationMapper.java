@@ -7,6 +7,7 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -23,6 +24,7 @@ import edu.kit.kastel.sdq.eclipse.grading.api.model.IAnnotation;
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IMistakeType;
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IRatingGroup;
 import edu.kit.kastel.sdq.eclipse.grading.core.artemis.calculation.IPenaltyCalculationStrategy;
+import edu.kit.kastel.sdq.eclipse.grading.core.model.annotation.Annotation;
 
 /**
  * Maps Annotations to Artemis-accepted json-formatted strings.
@@ -204,11 +206,14 @@ public class AnnotationMapper {
 			detailText += annotation.getCustomMessage().get() + " (" + nf.format(-annotation.getCustomPenalty().get()) + "P)";
 		} else {
 			detailText += mistakeType.getMessage();
+			if (annotation.getCustomMessage().isPresent()) {
+				detailText += "<br />Explaination: " + annotation.getCustomMessage().get();
+			}
 		}
 
 		return new Feedback(FeedbackType.MANUAL.name(), 0D, null, null, null, text, reference, detailText);
 	}
-
+	
 	private Feedback createNewManualUnreferencedFeedback(IRatingGroup ratingGroup) {
 		final double calculatedPenalty = this.calculatePenaltyForRatingGroup(ratingGroup);
 

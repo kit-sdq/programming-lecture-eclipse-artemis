@@ -21,6 +21,7 @@ import edu.kit.kastel.sdq.eclipse.grading.api.controller.ISystemwideController;
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IAnnotation;
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IMistakeType;
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IRatingGroup;
+import edu.kit.kastel.sdq.eclipse.grading.core.AssessmentController;
 
 /**
  * This class is the controller for the grading view. It creates the marker for
@@ -91,7 +92,7 @@ public class AssessmentViewController {
 			}
 			if (!mistake.isCustomPenalty()) {
 				marker.setAttribute(IMarker.MESSAGE, AssessmentUtilities.createMarkerTooltip(startLine, endLine, mistake.getButtonText(),
-						mistake.getRatingGroup().getDisplayName(), mistake.getMessage(), null));
+						mistake.getRatingGroup().getDisplayName(), formatCustomPenaltyMessage(mistake, customMessage), null));
 			} else {
 				marker.setAttribute(IMarker.MESSAGE, AssessmentUtilities.createMarkerTooltipForCustomButton(startLine, endLine, customMessage, customPenalty));
 			}
@@ -107,6 +108,21 @@ public class AssessmentViewController {
 			this.alertObserver.error("Unable to create marker for annotation", e);
 		}
 
+	}
+	
+	/**
+	 * Formats a custom penalty message. It will always use the message of the mistake, however iff the provided customMessage
+	 * is not null, it will append a \n and this custom message.
+	 * @param mistake the mistake to load the message from
+	 * @param customMessage the custom message to append (can be null)
+	 * @return the formatted message
+	 */
+	private String formatCustomPenaltyMessage(IMistakeType mistake, String customMessage) {
+		if (customMessage != null) {
+			return mistake.getMessage() + "\n" + customMessage;
+		} else {
+			return mistake.getMessage();
+		}
 	}
 
 	/**
@@ -145,7 +161,7 @@ public class AssessmentViewController {
 				marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_RATING_GROUP, mistake.getRatingGroup().getDisplayName());
 				if (!mistake.isCustomPenalty()) {
 					marker.setAttribute(IMarker.MESSAGE, AssessmentUtilities.createMarkerTooltip(startLine, endLine, mistake.getButtonText(),
-							mistake.getRatingGroup().getDisplayName(), mistake.getMessage(), annotation.getClassFilePath()));
+							mistake.getRatingGroup().getDisplayName(), formatCustomPenaltyMessage(mistake, customMessage), annotation.getClassFilePath()));
 				} else {
 					marker.setAttribute(IMarker.MESSAGE,
 							AssessmentUtilities.createMarkerTooltipForCustomButton(startLine, endLine, customMessage, Double.parseDouble(customPenalty)));
