@@ -18,6 +18,12 @@ public interface IMistakeType {
 
 	/**
 	 *
+	 * @return what should be used as unique id.
+	 */
+	String getId();
+
+	/**
+	 *
 	 * @return a more elaborate explanation of what the mistake is.
 	 */
 	String getMessage();
@@ -26,7 +32,7 @@ public interface IMistakeType {
 	 *
 	 * @return what should be shown on the button.
 	 */
-	String getName();
+	String getButtonText();
 
 	/**
 	 *

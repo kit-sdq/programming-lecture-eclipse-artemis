@@ -24,7 +24,7 @@ jobs:
         java-version: 11
 
     - name: Cache Maven packages
-      uses: actions/cache@v2.1.6
+      uses: actions/cache@v2.1.7
       with:
         path: ~/.m2/repository
         key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
@@ -34,7 +34,7 @@ jobs:
       run: mvn -U -B package --file pom.xml
 
     - name: Deploy GH Pages
-      uses: JamesIves/github-pages-deploy-action@4.1.5
+      uses: JamesIves/github-pages-deploy-action@4.1.7
       with:
         BRANCH: gh-pages 
         FOLDER: releng/edu.kit.kastel.sdq.eclipse.grading.updatesite/target/repository

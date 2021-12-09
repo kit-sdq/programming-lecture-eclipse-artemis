@@ -13,7 +13,7 @@ public class Annotation implements IAnnotation {
 
 	private final String uuid;
 	private IMistakeType mistakeType;
-	private String mistakeTypeString;
+	private String mistakeTypeId;
 	private final int startLine;
 	private final int endLine;
 	private final String fullyClassifiedClassName;
@@ -45,13 +45,13 @@ public class Annotation implements IAnnotation {
 	@JsonCreator
 	public Annotation(@JsonProperty("uuid") String uuid, @JsonProperty("startLine") int startLine, @JsonProperty("endLine") int endLine,
 			@JsonProperty("classFilePath") String classFilePath, @JsonProperty("customMessageForJSON") String customMessage,
-			@JsonProperty("customPenaltyForJSON") Double customPenalty, @JsonProperty("mistakeTypeString") String mistakeTypeString,
+			@JsonProperty("customPenaltyForJSON") Double customPenalty, @JsonProperty("mistakeTypeId") String mistakeTypeId,
 			@JsonProperty("markerCharStart") int markerCharStart, @JsonProperty("markerCharEnd") int markerCharEnd) {
 		this.uuid = uuid == null ? IAnnotation.createUUID() : uuid;
 		this.startLine = startLine;
 		this.endLine = endLine;
 		this.fullyClassifiedClassName = classFilePath;
-		this.mistakeTypeString = mistakeTypeString;
+		this.mistakeTypeId = mistakeTypeId;
 
 		this.customMessage = customMessage;
 		this.customPenalty = customPenalty;
@@ -111,13 +111,8 @@ public class Annotation implements IAnnotation {
 		return this.mistakeType;
 	}
 
-	/**
-	 *
-	 * @return mistakeType::getButtonName (for serialization to artemis)
-	 */
-	public String getMistakeTypeString() {
-		// mistakeTypeString is needed for deserialization
-		return this.mistakeType != null ? this.mistakeType.getName() : this.mistakeTypeString;
+	public String getMistakeTypeId() {
+		return this.mistakeType != null ? this.mistakeType.getId() : this.mistakeTypeId;
 	}
 
 	@Override

@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>edu.kit.kastel.sdq.grading</groupId>
 		<artifactId>edu.kit.kastel.sdq.eclipse.jvm</artifactId>
-		<version>11.0.4</version>
+		<version>11.0.13</version>
 		<relativePath>..</relativePath>
 	</parent>
 
@@ -15,8 +15,7 @@
 	<packaging>eclipse-plugin</packaging>
 
 	<properties>
-		<download.filePostfix>win_x64.zip</download.filePostfix>
-		<download.unzippedFolderPostfix>win_x64</download.unzippedFolderPostfix>
+		<download.filePostfix>windows_hotspot_11.0.13_8.zip</download.filePostfix>
 	</properties>
 
 	<build>

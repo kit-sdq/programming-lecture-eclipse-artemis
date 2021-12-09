@@ -13,7 +13,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
 
     steps:
     - uses: actions/checkout@v2.4.0
@@ -25,7 +25,7 @@ jobs:
         java-version: 11
 
     - name: Cache Maven packages
-      uses: actions/cache@v2.1.6
+      uses: actions/cache@v2.1.7
       with:
         path: ~/.m2/repository
         key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
@@ -34,31 +34,48 @@ jobs:
     - name: Build with Maven
       run: mvn -U -B package --file pom.xml
 
-    - name: Save Eclipse Distribution (Windows)
-      uses: actions/upload-artifact@v2
-      with:
-        name: "Eclipse Distribution Windows"
-        path: "releng/edu.kit.kastel.sdq.eclipse.grading.product/target/products/*-win32*.zip"
-    
-    - name: Save Eclipse Distribution (Linux)
-      uses: actions/upload-artifact@v2
-      with:
-        name: "Eclipse Distribution Linux"
-        path: "releng/edu.kit.kastel.sdq.eclipse.grading.product/target/products/*-linux*.zip"
-
-    - name: Save Eclipse Distribution (MacOS)
-      uses: actions/upload-artifact@v2
-      with:
-        name: "Eclipse Distribution MacOS"
-        path: "releng/edu.kit.kastel.sdq.eclipse.grading.product/target/products/*-macosx*.zip"
-  
     - name: Move Distributions
-      if: startsWith(github.ref, 'refs/tags/v')
       run: |
         mkdir dist 
         mv releng/edu.kit.kastel.sdq.eclipse.grading.product/target/products/*-win32*.zip dist/Artemis_Windows.zip
         mv releng/edu.kit.kastel.sdq.eclipse.grading.product/target/products/*-linux*.zip dist/Artemis_Linux.zip
         mv releng/edu.kit.kastel.sdq.eclipse.grading.product/target/products/*-macosx*.zip dist/Artemis_MacOS.zip
+
+    - name: Sign MacOS Eclipse Distribution
+      env: 
+        MACOS_CERTIFICATE: ${{ secrets.MACOS_CERTIFICATE }}
+        MACOS_CERTIFICATE_PWD: ${{ secrets.MACOS_CERTIFICATE_PWD }}
+      run: |
+        echo $MACOS_CERTIFICATE | base64 --decode > certificate.p12
+        security create-keychain -p keychainpw build.keychain
+        security default-keychain -s build.keychain
+        security unlock-keychain -p keychainpw build.keychain
+        security import certificate.p12 -k build.keychain -P $MACOS_CERTIFICATE_PWD -T /usr/bin/codesign
+        security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k keychainpw build.keychain
+        security find-identity -p codesigning
+        unzip dist/Artemis_MacOS.zip
+        /usr/bin/codesign -s "kit-sdq/programming-lecture-eclipse-artemis" -fv Eclipse.app
+        rm dist/Artemis_MacOS.zip
+        ditto -c -k --sequesterRsrc --keepParent Eclipse.app dist/Artemis_MacOS.zip
+
+    - name: Save Eclipse Distribution (Windows)
+      uses: actions/upload-artifact@v2
+      with:
+        name: "Eclipse Distribution Windows"
+        path: "dist/Artemis_Windows.zip"
+    
+    - name: Save Eclipse Distribution (Linux)
+      uses: actions/upload-artifact@v2
+      with:
+        name: "Eclipse Distribution Linux"
+        path: "dist/Artemis_Linux.zip"
+
+    - name: Save Eclipse Distribution (MacOS)
+      uses: actions/upload-artifact@v2
+      with:
+        name: "Eclipse Distribution MacOS"
+        path: "dist/Artemis_MacOS.zip"
+  
           
     - name: Release
       uses: softprops/action-gh-release@v1

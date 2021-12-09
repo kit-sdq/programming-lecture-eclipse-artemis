@@ -196,10 +196,10 @@ public class AnnotationMapper {
 	private Feedback createNewManualFeedback(IAnnotation annotation) {
 		// manual feedbacks do not have no credits!
 		final String text = "File " + annotation.getClassFilePath() + " at line " + annotation.getStartLine();
-		final String reference = "file:" + annotation.getClassFilePath() + ".java_line:" + annotation.getStartLine();
+		final String reference = "file:" + annotation.getClassFilePath() + ".java_line:" + (annotation.getStartLine() - 1);
 
 		var mistakeType = annotation.getMistakeType();
-		String detailText = "[" + mistakeType.getRatingGroup().getDisplayName() + ":" + mistakeType.getName() + "] ";
+		String detailText = "[" + mistakeType.getRatingGroup().getDisplayName() + ":" + mistakeType.getButtonText() + "] ";
 		if (mistakeType.isCustomPenalty()) {
 			detailText += annotation.getCustomMessage().get() + " (" + nf.format(-annotation.getCustomPenalty().get()) + "P)";
 		} else {
@@ -234,7 +234,7 @@ public class AnnotationMapper {
 			final List<IAnnotation> currentAnnotations = this.annotations.stream() //
 					.filter(annotation -> annotation.getMistakeType().equals(mistakeType)) //
 					.collect(Collectors.toList());
-			detailText += "\n    * \"" + mistakeType.getName() + "\" [" + nf.format(currentPenalty) + "]:";
+			detailText += "\n    * \"" + mistakeType.getButtonText() + "\" [" + nf.format(currentPenalty) + "]:";
 			if (mistakeType.isCustomPenalty()) {
 				for (var annotation : currentAnnotations) {
 					String penalty = nf.format(-annotation.getCustomPenalty().get());
