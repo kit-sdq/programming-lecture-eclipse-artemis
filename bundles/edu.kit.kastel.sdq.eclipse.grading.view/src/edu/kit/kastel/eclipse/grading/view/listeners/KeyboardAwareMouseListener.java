@@ -1,50 +1,71 @@
 package edu.kit.kastel.eclipse.grading.view.listeners;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 
+/**
+ * This class provides a {@link MouseListener} which supports different handlers
+ * if specific keys on the keyboard are pressed while clicking.
+ * However, this listener will only listen to the {@link MouseListener#mouseUp(MouseEvent)}
+ * 
+ * @author Shirkanesi
+ */
 public class KeyboardAwareMouseListener implements MouseListener {
 
-	private Runnable onShiftClick;
-	private Runnable onCtrlClick;
-	private Runnable onAltClick;
-	private Runnable onLeftClick;
-	private Runnable onMiddleClick;
-	private Runnable onRightClick;
-	private Runnable onClick;
-	
-	
+	private final Map<Integer, Runnable> listeners;
+	private Runnable onEveryClick;
+
+	public KeyboardAwareMouseListener() {
+		this.listeners = new HashMap<>();
+	}
+
 	@Override
 	public void mouseUp(MouseEvent e) {
-		if ((e.stateMask & SWT.SHIFT) == SWT.SHIFT) {
-			this.invokeClickHandler(onShiftClick);
-		}
-		if ((e.stateMask & SWT.CTRL) == SWT.CTRL) {
-			this.invokeClickHandler(onCtrlClick);
-		}
-		if ((e.stateMask & SWT.ALT) == SWT.ALT) {
-			this.invokeClickHandler(onAltClick);
-		}
-		if (e.stateMask == SWT.BUTTON1) {	// Special handling, hence SWT.BUTTON1 is always set iff mouse is pressed
-			this.invokeClickHandler(onLeftClick);
-		}
-		if ((e.stateMask & SWT.BUTTON2) == SWT.BUTTON2) {
-			this.invokeClickHandler(onMiddleClick);
-		}
-		if ((e.stateMask & SWT.BUTTON3) == SWT.BUTTON3) {
-			this.invokeClickHandler(onRightClick);
-		}
-		this.invokeClickHandler(onClick);
+		this.invokeClickHandler(this.listeners.get(e.stateMask));
+		this.invokeClickHandler(onEveryClick);
 	}
-	
+
+	/**
+	 * Sets the click-handler which will be called on every click this listeners
+	 * handles. This handler will be invoked <strong>after</strong> all other
+	 * handlers.
+	 * 
+	 * @param handler the handler to be set
+	 */
+	public void setClickHandlerForEveryClick(Runnable handler) {
+		this.onEveryClick = handler;
+	}
+
+	/**
+	 * Sets a click-handler for all the button-masks supplied as second parameter.
+	 * Those masks are specified by the constant in {@link SWT} (e.g. SWT.SHIFT). By
+	 * supplying multiple masks the handler will be bound to multiple events (those
+	 * individual masks)
+	 * 
+	 * @param handler the handler to be set
+	 * @param masks   the masks the handler should be invoked on.
+	 */
+	public void setClickHandler(Runnable handler, int... masks) {
+		for (int mask : masks) {
+			if ((mask & SWT.BUTTON2) == SWT.BUTTON2 || (mask & SWT.BUTTON3) == SWT.BUTTON3) {
+				// the two other buttons won't fire the normal click
+				this.listeners.put(mask, handler);
+			} else {
+				this.listeners.put(mask | SWT.BUTTON1, handler);
+			}
+		}
+	}
+
 	private void invokeClickHandler(Runnable handler) {
 		if (handler != null) {
 			handler.run();
 		}
 	}
-	
-	
+
 	@Override
 	public void mouseDoubleClick(MouseEvent e) {
 		// NOP
@@ -53,58 +74,6 @@ public class KeyboardAwareMouseListener implements MouseListener {
 	@Override
 	public void mouseDown(MouseEvent e) {
 		// NOP
-	}
-	
-	public static Builder builder() {
-		return new Builder();
-	}
-	
-	public static class Builder {
-		
-		private final KeyboardAwareMouseListener listener;
-		
-		public Builder() {
-			this.listener = new KeyboardAwareMouseListener();
-		}
-		
-		public Builder onShiftClick(Runnable runnable) {
-			this.listener.onShiftClick = runnable;
-			return this;
-		}
-		
-		public Builder onCtrlClick(Runnable runnable) {
-			this.listener.onCtrlClick = runnable;
-			return this;
-		}
-		
-		public Builder onAltClick(Runnable runnable) {
-			this.listener.onAltClick = runnable;
-			return this;
-		}
-		
-		public Builder onLeftClick(Runnable runnable) {
-			this.listener.onLeftClick = runnable;
-			return this;
-		}
-		
-		public Builder onMiddleClick(Runnable runnable) {
-			this.listener.onMiddleClick = runnable;
-			return this;
-		}
-		
-		public Builder onRightClick(Runnable runnable) {
-			this.listener.onRightClick = runnable;
-			return this;
-		}
-		
-		public Builder onClick(Runnable runnable) {
-			this.listener.onClick = runnable;
-			return this;
-		}
-		
-		public KeyboardAwareMouseListener build() {
-			return this.listener;
-		}
 	}
 
 }

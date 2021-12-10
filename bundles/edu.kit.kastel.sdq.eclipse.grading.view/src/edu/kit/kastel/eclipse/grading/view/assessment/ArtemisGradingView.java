@@ -379,24 +379,22 @@ public class ArtemisGradingView extends ViewPart {
 
 					this.mistakeButtons.put(mistake.getId(), mistakeButton);
 					mistakeButton.setToolTipText(this.viewController.getToolTipForMistakeType(mistake));
-					
-					KeyboardAwareMouseListener listener = KeyboardAwareMouseListener.builder()
-							.onShiftClick(() -> {
-								this.createMistakePenaltyWithCustomMessageDialog(mistake);	
-							})
-							.onMiddleClick(() -> {
-								this.createMistakePenaltyWithCustomMessageDialog(mistake);	
-							})
-							.onLeftClick(() -> {
-								this.viewController.addAssessmentAnnotation(mistake, null, null, mistake.getRatingGroup().getDisplayName());
-							})
-							.onClick(() -> {
-								this.updatePenalty(mistake.getRatingGroup().getDisplayName());
-								this.updateMistakeButtonToolTips(mistake);
-							})
-							.build();
+			
+					KeyboardAwareMouseListener listener = new KeyboardAwareMouseListener();
+					// Normal click
+					listener.setClickHandler(() -> {
+						this.viewController.addAssessmentAnnotation(mistake, null, null, mistake.getRatingGroup().getDisplayName());
+					}, SWT.BUTTON1);
+					// shift-click and middle-click
+					listener.setClickHandler(() -> {
+						this.createMistakePenaltyWithCustomMessageDialog(mistake);	
+					}, SWT.SHIFT, SWT.BUTTON2);
+					// every click
+					listener.setClickHandlerForEveryClick(() -> {
+						this.updatePenalty(mistake.getRatingGroup().getDisplayName());
+						this.updateMistakeButtonToolTips(mistake);
+					});
 					mistakeButton.addMouseListener(listener);
-					
 				}
 			});
 		});
