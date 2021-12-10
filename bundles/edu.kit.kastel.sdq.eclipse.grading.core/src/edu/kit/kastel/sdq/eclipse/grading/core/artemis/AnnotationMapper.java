@@ -207,7 +207,7 @@ public class AnnotationMapper {
 		} else {
 			detailText += mistakeType.getMessage();
 			if (annotation.getCustomMessage().isPresent()) {
-				detailText += "<br />Explaination: " + annotation.getCustomMessage().get();
+				detailText += "<br />Explanation: " + annotation.getCustomMessage().get();
 			}
 		}
 
