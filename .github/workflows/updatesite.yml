@@ -37,6 +37,6 @@ jobs:
       uses: JamesIves/github-pages-deploy-action@4.1.7
       with:
         BRANCH: gh-pages 
-        FOLDER: releng/edu.kit.kastel.sdq.eclipse.grading.updatesite/target/repository
+        FOLDER: releng/edu.kit.kastel.sdq.eclipse.updatesite/target/repository
         CLEAN: true 
    
