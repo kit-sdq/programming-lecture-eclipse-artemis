@@ -417,7 +417,7 @@ public class ArtemisController extends AbstractController implements IArtemisCon
  		File exeriseRepo =  projectNaming.getProjectFileInWorkspace(eclipseWorkspaceRoot, exercise, null);
 		File gitFileInRepo = projectNaming.getGitFileInProjectDirectory(exeriseRepo);
 		try {
-			GitHandler.commitExercise(username, username + "@student,kit,edu", "Test Commit Artemis", gitFileInRepo);
+			GitHandler.commitExercise(username, username + "@student.kit.edu", "Test Commit Artemis", gitFileInRepo);
 		} catch (GitException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
