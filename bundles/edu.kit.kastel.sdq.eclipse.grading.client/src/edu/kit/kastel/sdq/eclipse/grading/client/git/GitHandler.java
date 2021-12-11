@@ -53,7 +53,7 @@ public final class GitHandler {
 		try {
 			git = Git.open(exerciseRepo);		
 			git.add().addFilepattern(".").call();
-			git.commit().setCommitter(authorName, email).setMessage(commitMsg).call();
+			git.commit().setCommitter(authorName, email).setMessage(commitMsg).setSign(false).call();
 		} catch (GitAPIException | IOException e) {
 			throw new GitException("ERROR, can not commit new changes " + exerciseRepo.getPath(), e);
 		}		
