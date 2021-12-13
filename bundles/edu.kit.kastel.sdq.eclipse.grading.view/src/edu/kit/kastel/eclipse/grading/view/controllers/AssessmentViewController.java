@@ -129,7 +129,7 @@ public class AssessmentViewController {
 		try {
 			IMarker[] markers = AssessmentUtilities.getFile(annotation.getClassFilePath(), this.systemwideController.getCurrentProjectName()).findMarkers(null, false, 100);
 			for (IMarker marker : markers) {
-				if (annotation.getUUID().equals((String) marker.getAttribute("annotationID"))) {
+				if (annotation.getUUID().equals(marker.getAttribute("annotationID"))) {
 					return true;
 				}
 			}
