@@ -12,6 +12,7 @@ public final class PreferenceConstants {
 	public static final String ARTEMIS_USER = "artemisUser";
 	public static final String ARTEMIS_PASSWORD = "artemisPassword";
 	public static final String PREFERS_LARGE_PENALTY_TEXT_PATH = "userPreferresLargePenaltyText";
+	public static final String PREFERS_TEXT_WRAPPING_IN_PENALTY_TEXT_PATH = "userPrefersTextWrappingInPenaltyText";
 
 	private PreferenceConstants() {
 		throw new IllegalAccessError();
