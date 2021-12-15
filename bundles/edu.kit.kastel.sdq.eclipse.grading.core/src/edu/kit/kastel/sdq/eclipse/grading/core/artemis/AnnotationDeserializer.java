@@ -42,6 +42,9 @@ public class AnnotationDeserializer {
 	 */
 	public List<IAnnotation> deserialize(List<Feedback> feedbacks) throws IOException {
 		final List<Feedback> matchingFeedbacks = feedbacks.stream().filter(feedback -> {
+			if (feedback == null) {
+				return false;
+			}
 			String text = feedback.getText();
 			return text != null && text.equals(FEEDBACK_TEXT);
 		}).collect(Collectors.toList());
