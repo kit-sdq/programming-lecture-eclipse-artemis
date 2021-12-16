@@ -143,7 +143,7 @@ public class AnnotationMapper {
 
 	private String calculateResultString(final List<Feedback> allFeedbacks, final double absoluteScore) {
 		final List<Feedback> autoFeedbacks = //
-				allFeedbacks.stream().filter(feedback -> feedback.getFeedbackType() == FeedbackType.AUTOMATIC).collect(Collectors.toList());
+				allFeedbacks.stream().filter(Objects::nonNull).filter(feedback -> feedback.getFeedbackType() == FeedbackType.AUTOMATIC).collect(Collectors.toList());
 
 		final List<Feedback> tests = autoFeedbacks.stream().filter(f -> f.getReference() == null).collect(Collectors.toList());
 		long positiveTests = tests.stream().filter(Feedback::getPositive).count();
