@@ -146,7 +146,7 @@ public class AnnotationMapper {
 				allFeedbacks.stream().filter(Objects::nonNull).filter(feedback -> feedback.getFeedbackType() == FeedbackType.AUTOMATIC).collect(Collectors.toList());
 
 		final List<Feedback> tests = autoFeedbacks.stream().filter(f -> f.getReference() == null).collect(Collectors.toList());
-		long positiveTests = tests.stream().filter(Feedback::getPositive).count();
+		long positiveTests = tests.stream().filter(feedback -> feedback.getPositive() != null && feedback.getPositive()).count();
 		long numberOfTests = tests.size();
 
 		// ENHANCE We may add "Issues" as text here iff activated ?
