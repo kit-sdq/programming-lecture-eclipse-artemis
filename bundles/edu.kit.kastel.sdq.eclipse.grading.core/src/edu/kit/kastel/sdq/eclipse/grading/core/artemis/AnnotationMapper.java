@@ -5,6 +5,7 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -113,13 +114,10 @@ public class AnnotationMapper {
 	private List<Feedback> calculateManualFeedbacks() {
 		List<Feedback> manualFeedbacks = new ArrayList<>(this.annotations.stream().map(this::createNewManualFeedback).collect(Collectors.toList()));
 		// add the (rated!) rating group annotations
-		manualFeedbacks.addAll( //
-				this.ratingGroups.stream() //
-						.map(this::createNewManualUnreferencedFeedback) //
-						.filter(feedback -> Math.abs(feedback.getCredits()) >= 1E-8) //
-						.collect(Collectors.toList())//
-		);
-
+		this.ratingGroups.forEach(group -> {
+			manualFeedbacks.addAll(this.createNewManualUnreferencedFeedback(group));
+		});
+		
 		return manualFeedbacks;
 	}
 
@@ -211,18 +209,21 @@ public class AnnotationMapper {
 		return new Feedback(FeedbackType.MANUAL.name(), 0D, null, null, null, text, reference, detailText);
 	}
 
-	private Feedback createNewManualUnreferencedFeedback(IRatingGroup ratingGroup) {
+	private List<Feedback> createNewManualUnreferencedFeedback(IRatingGroup ratingGroup) {
 		final double calculatedPenalty = this.calculatePenaltyForRatingGroup(ratingGroup);
 
-		String detailText = "";
-		detailText += ratingGroup.getDisplayName() + " [" + nf.format(calculatedPenalty);
+		List<String> lines = new ArrayList<>();
+		
+		String annotationHeadline = "";
+		
+		annotationHeadline = ratingGroup.getDisplayName() + " [" + nf.format(calculatedPenalty);
 
 		if (ratingGroup.hasPenaltyLimit()) {
-			detailText += " of at most " + nf.format(-ratingGroup.getPenaltyLimit());
+			annotationHeadline += " of at most " + nf.format(-ratingGroup.getPenaltyLimit());
 		}
 
-		detailText += " points]";
-
+		annotationHeadline += " points]";
+		
 		for (var mistakeType : this.mistakeTypes) {
 			if (!mistakeType.getRatingGroup().equals(ratingGroup)) {
 				continue;
@@ -236,24 +237,50 @@ public class AnnotationMapper {
 			final List<IAnnotation> currentAnnotations = this.annotations.stream() //
 					.filter(annotation -> annotation.getMistakeType().equals(mistakeType)) //
 					.collect(Collectors.toList());
-			detailText += "\n    * \"" + mistakeType.getButtonText() + "\" [" + nf.format(currentPenalty) + "]:";
+			lines.add("\n    * \"" + mistakeType.getButtonText() + "\" [" + nf.format(currentPenalty) + "]:");
 			if (mistakeType.isCustomPenalty()) {
 				for (var annotation : currentAnnotations) {
 					String penalty = nf.format(-annotation.getCustomPenalty().get());
-					detailText += "\n        * " + annotation.getClassFilePath() + " at line " + annotation.getStartLine() + " (" + penalty + "P)";
+					lines.add("\n        * " + annotation.getClassFilePath() + " at line " + annotation.getStartLine() + " (" + penalty + "P)");
 				}
 			} else {
 				for (var annotation : currentAnnotations) {
-					detailText += "\n        * " + annotation.getClassFilePath() + " at line " + annotation.getStartLine();
+					lines.add("\n        * " + annotation.getClassFilePath() + " at line " + annotation.getStartLine());
 				}
 			}
 		}
 
 		if (this.penaltyCalculationStrategy.penaltyLimitIsHitForRatingGroup(ratingGroup)) {
-			detailText += "\n    * Note: The sum of penalties hit the penalty limit for this rating group.";
+			lines.add("\n    * Note: The sum of penalties hit the penalty limit for this rating group.");
 		}
 
-		return new Feedback(FeedbackType.MANUAL_UNREFERENCED.name(), calculatedPenalty, null, null, null, null, null, detailText);
+		
+		List<String> feedbackTexts = new LinkedList<>();
+		
+		if (lines.size() == 0) {
+			return List.of();
+		}
+		
+		String text = annotationHeadline + " (annotation " + 1 + ")";
+		
+		for (int i = 0; i < lines.size(); i++) {
+			if (text.length() + lines.get(i).length() >= FEEDBACK_DETAIL_TEXT_MAX_CHARACTERS - annotationHeadline.length() - 50) {
+				feedbackTexts.add(text);
+				text = annotationHeadline + " (annotation " + (feedbackTexts.size() + 1) + ")";
+			}
+			text += lines.get(i);
+		}
+		feedbackTexts.add(text);
+		
+		List<Feedback> feedbacks = new LinkedList<>();
+		
+		feedbacks.add(new Feedback(FeedbackType.MANUAL_UNREFERENCED.name(), calculatedPenalty, null, null, null, null, null, feedbackTexts.get(0)));
+		
+		for (int i = 1; i < feedbackTexts.size(); i++) {
+			feedbacks.add(new Feedback(FeedbackType.MANUAL_UNREFERENCED.name(), 0d, null, null, null, null, null, feedbackTexts.get(i)));
+		}
+		
+		return feedbacks;
 	}
 
 	private List<Feedback> getFilteredPreexistentFeedbacks(FeedbackType feedbackType) {
