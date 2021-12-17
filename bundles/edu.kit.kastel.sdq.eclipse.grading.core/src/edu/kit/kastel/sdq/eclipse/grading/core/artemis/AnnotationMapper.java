@@ -33,6 +33,9 @@ public class AnnotationMapper {
 	// keep this up to date with
 	// https://github.com/ls1intum/Artemis/blob/develop/src/main/java/de/tum/in/www1/artemis/config/Constants.java#L121
 	private static final int FEEDBACK_DETAIL_TEXT_MAX_CHARACTERS = 5000;
+	
+	// amount of space to leave in the feedback-text
+	private static final int FEEDBACK_DETAIL_SAFETY_MARGIN = 50;
 
 	private static final NumberFormat nf = new DecimalFormat("##.###", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
 
@@ -257,14 +260,14 @@ public class AnnotationMapper {
 		
 		List<String> feedbackTexts = new LinkedList<>();
 		
-		if (lines.size() == 0) {
+		if (lines.isEmpty()) {
 			return List.of();
 		}
 		
 		String text = annotationHeadline + " (annotation " + 1 + ")";
 		
 		for (int i = 0; i < lines.size(); i++) {
-			if (text.length() + lines.get(i).length() >= FEEDBACK_DETAIL_TEXT_MAX_CHARACTERS - annotationHeadline.length() - 50) {
+			if (text.length() + lines.get(i).length() >= FEEDBACK_DETAIL_TEXT_MAX_CHARACTERS - annotationHeadline.length() - FEEDBACK_DETAIL_SAFETY_MARGIN) {
 				feedbackTexts.add(text);
 				text = annotationHeadline + " (annotation " + (feedbackTexts.size() + 1) + ")";
 			}
