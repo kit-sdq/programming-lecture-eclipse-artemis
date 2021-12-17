@@ -73,7 +73,8 @@ public class CustomButtonDialog extends Dialog {
 		
 		GridData customMessageInputFieldData;
 		if (userWantsBigWindow) {
-			this.customMessageInputField = new Text(comp, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL  |SWT.H_SCROLL);
+			int textWrapping = Activator.getDefault().getPreferenceStore().getBoolean(PreferenceConstants.PREFERS_TEXT_WRAPPING_IN_PENALTY_TEXT_PATH) ? SWT.WRAP : 0;
+			this.customMessageInputField = new Text(comp, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | textWrapping);
 			customMessageInputFieldData = new GridData(GridData.FILL_BOTH);
 			
 			// Calculating height and width based on the lineHeight (theoretically) ensures proper scaling across screen-sizes.

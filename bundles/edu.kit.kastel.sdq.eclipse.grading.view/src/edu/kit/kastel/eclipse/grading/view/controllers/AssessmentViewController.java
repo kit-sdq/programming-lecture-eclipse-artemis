@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.ITextSelection;
 
 import edu.kit.kastel.eclipse.grading.view.activator.Activator;
@@ -127,9 +128,32 @@ public class AssessmentViewController {
 
 	/**
 	 * creates markers for current annotations in the backend
+	 * The method will prevent duplicated markers resulting from 
+	 * having them in the local project and on the server.
 	 */
 	public void createAnnotationsMarkers() {
-		this.getAnnotations().forEach(this::createMarkerForAnnotation);
+		this.getAnnotations().stream().filter(annotation -> !isAnnotationPresent(annotation)).forEach(this::createMarkerForAnnotation);
+	}
+	
+	/**
+	 * Checks whether the given annotation is present in the currently opened project 
+	 * (An annotation is identified by its UUID)
+	 * @param annotation the annotation to check
+	 * @return true if the annotation is present, false if not
+	 */
+	private boolean isAnnotationPresent(IAnnotation annotation) {
+		try {
+			IMarker[] markers = AssessmentUtilities.getFile(annotation.getClassFilePath(), this.systemwideController.getCurrentProjectName()).findMarkers(null, false, 100);
+			for (IMarker marker : markers) {
+				if (annotation.getUUID().equals(marker.getAttribute("annotationID"))) {
+					return true;
+				}
+			}
+			return false;
+		} catch (CoreException e) {
+			// If the project (or file) can not be loaded the annotation is definitely not present 
+			return false;
+		}
 	}
 
 	private void createMarkerForAnnotation(IAnnotation annotation) {
