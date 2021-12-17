@@ -12,6 +12,9 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status.Family;
 
+import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.Platform;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -23,6 +26,7 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.AssessmentResult;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.ILockResult;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IProjectFileNamingStrategy;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.Assessor;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.FeedbackType;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ICourse;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExam;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
@@ -42,6 +46,8 @@ import edu.kit.kastel.sdq.eclipse.grading.client.mappings.lock.LockResult;
 
 public class ArtemisClient extends AbstractArtemisClient implements IMappingLoader {
 
+	private static final ILog log = Platform.getLog(ArtemisClient.class);
+	
 	private static final String JSON_PARSE_ERROR_MESSAGE_CORRUPT_JSON_STRUCTURE = "Error parsing json: Corrupt Json Structure";
 	private ObjectMapper orm = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
@@ -223,11 +229,14 @@ public class ArtemisClient extends AbstractArtemisClient implements IMappingLoad
 	@Override
 	public void saveAssessment(ParticipationDTO participation, boolean submit, AssessmentResult assessment) throws ArtemisClientException {
 		this.checkAuthentication();
-
+		
+		String assessmentPayload = this.payload(assessment);
+		log.info(String.format("Saving assessment for submission %s with json: %s", assessment.getId(), assessmentPayload));
+		
 		final Response rsp = this.endpoint.path("participations").path(String.valueOf(participation.getParticipationID())) //
 				.path("manual-results") //
 				.queryParam("submit", submit) //
-				.request().header(AUTHORIZATION_NAME, this.token).buildPut(Entity.json(this.payload(assessment))).invoke();
+				.request().header(AUTHORIZATION_NAME, this.token).buildPut(Entity.json(assessmentPayload)).invoke();
 		this.throwIfStatusUnsuccessful(rsp);
 	}
 

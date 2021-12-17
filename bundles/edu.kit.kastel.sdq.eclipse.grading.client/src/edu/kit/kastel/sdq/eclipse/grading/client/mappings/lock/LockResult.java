@@ -2,6 +2,7 @@ package edu.kit.kastel.sdq.eclipse.grading.client.mappings.lock;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -29,7 +30,7 @@ public class LockResult implements ILockResult {
 				: previousAssessmentresults.get(previousAssessmentresults.size() - 1);
 
 		if (latestResult != null) {
-			this.latestFeedback.addAll(latestResult.getFeedbacks());
+			latestResult.getFeedbacks().stream().filter(Objects::nonNull).forEach(this.latestFeedback::add);
 		}
 	}
 
