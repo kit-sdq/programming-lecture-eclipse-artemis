@@ -22,7 +22,6 @@ import edu.kit.kastel.sdq.eclipse.grading.api.controller.ISystemwideController;
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IAnnotation;
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IMistakeType;
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IRatingGroup;
-import edu.kit.kastel.sdq.eclipse.grading.core.AssessmentController;
 
 /**
  * This class is the controller for the grading view. It creates the marker for
@@ -76,7 +75,7 @@ public class AssessmentViewController {
 		try {
 			String uuid = IAnnotation.createUUID();
 			IMarker marker = AssessmentUtilities.getCurrentlyOpenFile().createMarker(AssessmentUtilities.MARKER_NAME);
-			marker.setAttribute("annotationID", uuid);
+			marker.setAttribute(AssessmentUtilities.MARKER_ANNOTATION_ID, uuid);
 			marker.setAttribute(IMarker.CHAR_START, charStart);
 			marker.setAttribute(IMarker.CHAR_END, charEnd);
 			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_ERROR_DESCRIPTION, mistake.isCustomPenalty() ? "" : mistake.getMessage());
@@ -145,7 +144,7 @@ public class AssessmentViewController {
 		try {
 			IMarker[] markers = AssessmentUtilities.getFile(annotation.getClassFilePath(), this.systemwideController.getCurrentProjectName()).findMarkers(null, false, 100);
 			for (IMarker marker : markers) {
-				if (annotation.getUUID().equals(marker.getAttribute("annotationID"))) {
+				if (annotation.getUUID().equals(marker.getAttribute(AssessmentUtilities.MARKER_ANNOTATION_ID))) {
 					return true;
 				}
 			}
@@ -166,7 +165,7 @@ public class AssessmentViewController {
 		try {
 			IMarker marker = AssessmentUtilities.getFile(annotation.getClassFilePath(), this.systemwideController.getCurrentProjectName())
 					.createMarker(AssessmentUtilities.MARKER_NAME);
-			marker.setAttribute("annotationID", annotation.getUUID());
+			marker.setAttribute(AssessmentUtilities.MARKER_ANNOTATION_ID, annotation.getUUID());
 			marker.setAttribute(IMarker.CHAR_START, annotation.getMarkerCharStart());
 			marker.setAttribute(IMarker.CHAR_END, annotation.getMarkerCharEnd());
 

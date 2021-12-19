@@ -75,7 +75,7 @@ public class ArtemisGradingView extends ViewPart {
 				.addResourceChangeListener(event -> Arrays.asList(event.findMarkerDeltas(AssessmentUtilities.MARKER_NAME, true)).forEach(marker -> {
 					// check if marker is deleted
 					if (marker.getKind() == 2) {
-						this.viewController.deleteAnnotation((String) marker.getAttribute("annotationID"));
+						this.viewController.deleteAnnotation((String) marker.getAttribute(AssessmentUtilities.MARKER_ANNOTATION_ID));
 						this.updatePenalties();
 					}
 				}));
