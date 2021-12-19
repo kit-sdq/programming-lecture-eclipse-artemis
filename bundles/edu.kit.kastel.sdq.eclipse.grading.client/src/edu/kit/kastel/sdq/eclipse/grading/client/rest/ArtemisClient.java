@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import javax.ws.rs.client.ClientBuilder;
@@ -31,6 +32,7 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExerciseGroup;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ParticipationDTO;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.StudentCourseDTO;
 import edu.kit.kastel.sdq.eclipse.grading.api.client.AbstractArtemisClient;
 import edu.kit.kastel.sdq.eclipse.grading.client.git.GitException;
 import edu.kit.kastel.sdq.eclipse.grading.client.git.GitHandler;
@@ -112,7 +114,7 @@ public class ArtemisClient extends AbstractArtemisClient implements IMappingLoad
 	@Override
 	public List<ICourse> getCourses() throws ArtemisClientException {
 		this.checkAuthentication();
-		final Response rsp = this.endpoint.path(COURSES_PATHPART).request().header(AUTHORIZATION_NAME, this.token).buildGet().invoke();
+		final Response rsp = this.endpoint.path(COURSES_PATHPART).path("for-dashboard").request().header(AUTHORIZATION_NAME, this.token).buildGet().invoke();
 		this.throwIfStatusUnsuccessful(rsp);
 		String rspString = rsp.readEntity(String.class);
 
@@ -363,18 +365,6 @@ public class ArtemisClient extends AbstractArtemisClient implements IMappingLoad
 		final JsonNode exercisesAndParticipationsJsonNode = this.readTree(exercisesRsp.readEntity(String.class));
 		return this.read(exercisesAndParticipationsJsonNode.toString(), Feedback[].class);
 	}
-	
-	@Override
-	public List<ICourse> getCoursesForDashboard() throws ArtemisClientException {
-		this.checkAuthentication();
-		final Response rsp = this.endpoint.path(COURSES_PATHPART).path("for-dashboard").request().header(AUTHORIZATION_NAME, this.token).buildGet().invoke();
-		this.throwIfStatusUnsuccessful(rsp);
-		String rspString = rsp.readEntity(String.class);
-
-		ICourse[] coursesArray = this.read(rspString, ICourse[].class);
-		return Arrays.asList(coursesArray);
-	}
-
 
 	private void throwIfStatusUnsuccessful(final Response response) throws ArtemisClientException {
 		if (!this.isStatusSuccessful(response)) {

@@ -303,10 +303,10 @@ public class SystemwideController extends AbstractController implements ISystemw
 			return List.of();
 		}
 
-		for (ICourse c : this.getArtemisGUIController().getCoursesForUser()) {
+		for (ICourse c : this.getArtemisGUIController().getCourses()) {
 			if (c.getShortName().equals(courseShortName)) {
 				this.course = c;
-				return c.getExercises().stream().map(IExercise::getShortName).collect(Collectors.toList());
+				return c.getExercisesForCourse().stream().map(IExercise::getShortName).collect(Collectors.toList());
 			}
 		}
 		this.error("No Course with the given shortName \"" + courseShortName + "\" found.", null);
@@ -320,9 +320,9 @@ public class SystemwideController extends AbstractController implements ISystemw
 		}
 
 		// Normal exercises
-		List<IExercise> exercises = new ArrayList<>(this.course.getExercises());
+		List<IExercise> exercises = new ArrayList<>(this.course.getExercisesForCourse());
 		// exam exercises
-		for (IExam ex : this.course.getExams()) {
+		for (IExam ex : this.course.getExamsForCourse()) {
 			ex.getExerciseGroups().forEach(g -> exercises.addAll(g.getExercises()));
 		}
 

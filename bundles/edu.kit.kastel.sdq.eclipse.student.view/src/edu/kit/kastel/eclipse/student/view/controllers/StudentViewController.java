@@ -32,7 +32,7 @@ public class StudentViewController extends AssessmentViewController {
 	 * @return the name of all courses
 	 */
 	public List<String> getCourseShortNames() {
-		return getArtemisController().getCourseShortNamesForUser();
+		return getArtemisController().getCourseShortNames();
 	}
 
 }

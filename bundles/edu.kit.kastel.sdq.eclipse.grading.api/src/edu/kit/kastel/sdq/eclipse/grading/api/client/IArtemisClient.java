@@ -113,14 +113,4 @@ public interface IArtemisClient {
 	IExam startExam(ICourse course, IExam exam) throws ArtemisClientException;
 	
 	Feedback[] getFeedbackForResult(int particiaptionId, int resultId) throws ArtemisClientException;
-	
-	List<ICourse> getCoursesForDashboard() throws ArtemisClientException;
-	
-	List<IExerciseGroup> getExerciseGroupsForExam(IExam artemisExam, ICourse course) throws ArtemisClientException;
-
-	List<IExam> getExamsForCourse(ICourse artemisCourse) throws ArtemisClientException;
-
-	List<IExercise> getNormalExercisesForCourse(ICourse artemisCourse) throws ArtemisClientException;
-
-	ISubmission getSubmissionById(IExercise artemisExercise, int submissionId) throws ArtemisClientException;
 }

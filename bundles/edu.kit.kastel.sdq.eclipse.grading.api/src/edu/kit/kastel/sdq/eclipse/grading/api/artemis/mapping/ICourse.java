@@ -12,9 +12,9 @@ import edu.kit.kastel.sdq.eclipse.grading.api.client.AbstractArtemisClient;
 public interface ICourse extends Serializable {
 	int getCourseId();
 
-	List<IExam> getExams() throws ArtemisClientException;
+	List<IExam> getExamsForCourse() throws ArtemisClientException;
 
-	List<IExercise> getExercises() throws ArtemisClientException;
+	List<IExercise> getExercisesForCourse() throws ArtemisClientException;
 
 	String getShortName();
 
