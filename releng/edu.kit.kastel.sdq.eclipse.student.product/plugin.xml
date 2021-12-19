@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         id="ArtemisStudentEclipse"
+         point="org.eclipse.core.runtime.products">
+      <product
+            name="Eclipse Artemis Student"
+            application="org.eclipse.ui.ide.workbench">
+         <property
+               name="aboutText"
+               value="Artemis Eclipse Student&#x0A;&#x0A;Version: Eclipse Student 1.0&#x0A;&#x0A;Copyright 2021,&#x0A;Karlsruhe Institute of Technology (KIT), Software Design and Quality, Karlsruhe, Germany">
+         </property>
+         <property
+               name="appName"
+               value="Eclipse Artemis Student">
+         </property>
+      </product>
+   </extension>
+
+</plugin>
