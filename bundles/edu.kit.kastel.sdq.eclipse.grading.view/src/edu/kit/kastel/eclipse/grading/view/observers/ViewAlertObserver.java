@@ -26,5 +26,9 @@ public class ViewAlertObserver implements IAlertObserver {
 	public void warn(String warningMsg) {
 		MessageDialog.openWarning(AssessmentUtilities.getWindowsShell(), "Warning", warningMsg);
 	}
+	@Override
+	public boolean confirm(String msg) {
+		return MessageDialog.openConfirm(AssessmentUtilities.getWindowsShell(), "Confirm", msg);
+	}
 
 }

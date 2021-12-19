@@ -18,6 +18,8 @@ public abstract class AbstractArtemisClient implements IArtemisClient {
 	protected static final String EXAMS_PATHPART = "exams";
 	protected static final String USERS_PATHPART = "users";
 	protected static final String PARTICIPATION_PATHPART = "participations";
+	protected static final String RESULT_PATHPART = "results";
+	
 
 	protected static final String AUTHORIZATION_NAME = "Authorization";
 

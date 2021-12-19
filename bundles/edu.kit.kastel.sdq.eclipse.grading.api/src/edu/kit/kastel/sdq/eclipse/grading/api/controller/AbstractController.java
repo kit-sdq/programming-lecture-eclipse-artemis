@@ -41,6 +41,20 @@ public abstract class AbstractController {
 		this.observers.forEach(observer -> observer.warn(warningMsg));
 		this.printToConsoleIfNoObserversRegistered(warningMsg, null);
 	}
+	
+	/**
+	 * Alert all observers
+	 *
+	 * @param warningMsg
+	 */
+	protected boolean confirm(String warningMsg) {
+		boolean result = true;
+		for (var observer: observers) {
+			result = result && observer.confirm(warningMsg);
+		}
+		this.printToConsoleIfNoObserversRegistered(warningMsg, null);
+		return result;
+	}
 
 	private void printToConsoleIfNoObserversRegistered(String msg, Throwable cause) {
 		if (this.observers.isEmpty()) {

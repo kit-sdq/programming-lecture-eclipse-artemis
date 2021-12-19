@@ -78,7 +78,7 @@ public class AssessmentViewController {
 			marker.setAttribute(IMarker.CHAR_START, charStart);
 			marker.setAttribute(IMarker.CHAR_END, charEnd);
 			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_ERROR_DESCRIPTION, mistake.isCustomPenalty() ? "" : mistake.getMessage());
-			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_ERROR, mistake.getName());
+			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_ERROR, mistake.getPenaltyName());
 			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_START, startLine);
 			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_END, endLine);
 			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_CLASS_NAME, AssessmentUtilities.getClassNameForAnnotation());
@@ -90,7 +90,7 @@ public class AssessmentViewController {
 				marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_CUSTOM_PENALTY, customPenalty.toString());
 			}
 			if (!mistake.isCustomPenalty()) {
-				marker.setAttribute(IMarker.MESSAGE, AssessmentUtilities.createMarkerTooltip(startLine, endLine, mistake.getName(),
+				marker.setAttribute(IMarker.MESSAGE, AssessmentUtilities.createMarkerTooltip(startLine, endLine, mistake.getPenaltyName(),
 						mistake.getRatingGroup().getDisplayName(), mistake.getMessage(), null));
 			} else {
 				marker.setAttribute(IMarker.MESSAGE, AssessmentUtilities.createMarkerTooltipForCustomButton(startLine, endLine, customMessage, customPenalty));
@@ -141,10 +141,10 @@ public class AssessmentViewController {
 			}
 			if (mistake != null) {
 				marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_ERROR_DESCRIPTION, mistake.getMessage());
-				marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_ERROR, mistake.getName());
+				marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_ERROR, mistake.getPenaltyName());
 				marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_RATING_GROUP, mistake.getRatingGroup().getDisplayName());
-				if (!"Custom Penalty".equals(mistake.getName())) {
-					marker.setAttribute(IMarker.MESSAGE, AssessmentUtilities.createMarkerTooltip(startLine, endLine, mistake.getName(),
+				if (!"Custom Penalty".equals(mistake.getPenaltyName())) {
+					marker.setAttribute(IMarker.MESSAGE, AssessmentUtilities.createMarkerTooltip(startLine, endLine, mistake.getPenaltyName(),
 							mistake.getRatingGroup().getDisplayName(), mistake.getMessage(), annotation.getClassFilePath()));
 				} else {
 					marker.setAttribute(IMarker.MESSAGE,

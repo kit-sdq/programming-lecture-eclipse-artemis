@@ -1,6 +1,7 @@
 package edu.kit.kastel.sdq.eclipse.grading.client.rest;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -23,6 +24,7 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.AssessmentResult;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.ILockResult;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IProjectFileNamingStrategy;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.Assessor;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.Feedback;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ICourse;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExam;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
@@ -319,11 +321,11 @@ public class ArtemisClient extends AbstractArtemisClient implements IMappingLoad
 	}
 
 	@Override
-	public ParticipationDTO getParticipationWithLatestResultForExercise(String participationId)
+	public ParticipationDTO getParticipationWithLatestResultForExercise(int participationId)
 			throws ArtemisClientException {
 		this.checkAuthentication();
 
-		final Response exercisesRsp = this.endpoint.path(PARTICIPATION_PATHPART).path(participationId).path("withLatestResult").request()
+		final Response exercisesRsp = this.endpoint.path(PARTICIPATION_PATHPART).path(Integer.toString(participationId)).path("withLatestResult").request()
 				.header(AUTHORIZATION_NAME, this.token).buildGet().invoke();
 
 		this.throwIfStatusUnsuccessful(exercisesRsp);
@@ -347,6 +349,32 @@ public class ArtemisClient extends AbstractArtemisClient implements IMappingLoad
 		final JsonNode exercisesAndParticipationsJsonNode = this.readTree(exercisesRsp.readEntity(String.class));
 		return this.read(exercisesAndParticipationsJsonNode.toString(), IExam.class);
 	}
+	
+	@Override
+	public Feedback[] getFeedbackForResult(int participationId, int resultId) throws ArtemisClientException {
+		this.checkAuthentication();
+
+		final Response exercisesRsp = this.endpoint.path(PARTICIPATION_PATHPART).path(Integer.toString(participationId)).path(RESULT_PATHPART).path(Integer.toString(resultId)).path("details").request()
+				.header(AUTHORIZATION_NAME, this.token).buildGet().invoke();
+
+		this.throwIfStatusUnsuccessful(exercisesRsp);
+		
+		// get the part of the json that we want to deserialize
+		final JsonNode exercisesAndParticipationsJsonNode = this.readTree(exercisesRsp.readEntity(String.class));
+		return this.read(exercisesAndParticipationsJsonNode.toString(), Feedback[].class);
+	}
+	
+	@Override
+	public List<ICourse> getCoursesForDashboard() throws ArtemisClientException {
+		this.checkAuthentication();
+		final Response rsp = this.endpoint.path(COURSES_PATHPART).path("for-dashboard").request().header(AUTHORIZATION_NAME, this.token).buildGet().invoke();
+		this.throwIfStatusUnsuccessful(rsp);
+		String rspString = rsp.readEntity(String.class);
+
+		ICourse[] coursesArray = this.read(rspString, ICourse[].class);
+		return Arrays.asList(coursesArray);
+	}
+
 
 	private void throwIfStatusUnsuccessful(final Response response) throws ArtemisClientException {
 		if (!this.isStatusSuccessful(response)) {

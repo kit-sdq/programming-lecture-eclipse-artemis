@@ -1,6 +1,7 @@
 package edu.kit.kastel.sdq.eclipse.grading.client.mappings;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -16,8 +17,10 @@ public class ArtemisCourse implements ICourse, Serializable {
 
 	@JsonProperty(value = "id")
 	private int courseId;
+	
 	@JsonProperty
 	private String title;
+	
 	@JsonProperty
 	private String shortName;
 

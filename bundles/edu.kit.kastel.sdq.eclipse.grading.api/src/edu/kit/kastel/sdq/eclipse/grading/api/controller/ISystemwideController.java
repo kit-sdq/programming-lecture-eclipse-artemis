@@ -2,11 +2,14 @@ package edu.kit.kastel.sdq.eclipse.grading.api.controller;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.ArtemisClientException;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.Feedback;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ResultsDTO;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.SubmissionFilter;
 import edu.kit.kastel.sdq.eclipse.grading.api.backendstate.State;
 import edu.kit.kastel.sdq.eclipse.grading.api.backendstate.Transition;
@@ -171,4 +174,6 @@ public interface ISystemwideController extends IController {
 	boolean submitSolution();
 	
 	boolean cleanWorkspace();
+	
+	Map<ResultsDTO, List<Feedback>> getFeedbackExcerise();
 }

@@ -2,7 +2,9 @@ package edu.kit.kastel.sdq.eclipse.grading.core;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.System.Logger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -26,6 +28,7 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExerciseGroup;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ParticipationDTO;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ResultsDTO;
 import edu.kit.kastel.sdq.eclipse.grading.api.client.AbstractArtemisClient;
 import edu.kit.kastel.sdq.eclipse.grading.api.controller.AbstractController;
 import edu.kit.kastel.sdq.eclipse.grading.api.controller.IArtemisController;
@@ -45,7 +48,7 @@ import edu.kit.kastel.sdq.eclipse.grading.core.artemis.calculation.ZeroedPenalty
 public class ArtemisController extends AbstractController implements IArtemisController {
 
 	private final SystemwideController systemwideController;
-	private final AbstractArtemisClient artemisClient;
+	protected final AbstractArtemisClient artemisClient;
 
 	private String username;
 	private String password;
@@ -94,7 +97,7 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 		if (this.existsAndNotify(projectNaming.getProjectFileInWorkspace(eclipseWorkspaceRoot, exercise, null))) {
 			return false;
 		}
-		Optional<ParticipationDTO> optParticipation = getparticipationForExercise(course, exercise);
+		Optional<ParticipationDTO> optParticipation = getParticipationForExercise(course, exercise);
 
 		ParticipationDTO participation;
 
@@ -124,7 +127,7 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 		return true;
 	}
 
-	private Optional<ParticipationDTO> getparticipationForExercise(ICourse course, IExercise exercise) {
+	private Optional<ParticipationDTO> getParticipationForExercise(ICourse course, IExercise exercise) {
 		try {
 			return Optional.of(artemisClient.getParticipationForExercise(course, exercise));
 		} catch (ArtemisClientException e) {
@@ -161,7 +164,7 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 		}
 	}
 
-	private ICourse getCourseByShortName(final String courseShortName) {
+	protected ICourse getCourseByShortName(final String courseShortName) {
 		List<ICourse> filteredCourses = this.getCourses().stream()
 				.filter(course -> course.getShortName().equals(courseShortName)).collect(Collectors.toList());
 		if (filteredCourses.isEmpty()) {
@@ -202,10 +205,28 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 			return List.of();
 		}
 	}
+	
+	@Override
+	public List<ICourse> getCoursesForUser() {
+		if (!this.artemisClient.isReady()) {
+			return List.of();
+		}
+		try {
+			return this.artemisClient.getCoursesForDashboard();
+		} catch (final Exception e) {
+			this.error(e.getMessage(), e);
+			return List.of();
+		}
+	}
 
 	@Override
 	public List<String> getCourseShortNames() {
 		return this.getCourses().stream().map(ICourse::getShortName).collect(Collectors.toList());
+	}
+	
+	@Override
+	public List<String> getCourseShortNamesForUser() {
+		return this.getCoursesForUser().stream().map(ICourse::getShortName).collect(Collectors.toList());
 	}
 
 	@Override
@@ -410,11 +431,10 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 		}
 	}
 
-	
 	@Override
 	public boolean submitSolution(ICourse course, IExercise exercise, IProjectFileNamingStrategy projectNaming) {
 		final File eclipseWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile();
- 		File exeriseRepo =  projectNaming.getProjectFileInWorkspace(eclipseWorkspaceRoot, exercise, null);
+		File exeriseRepo = projectNaming.getProjectFileInWorkspace(eclipseWorkspaceRoot, exercise, null);
 		File gitFileInRepo = projectNaming.getGitFileInProjectDirectory(exeriseRepo);
 		try {
 			GitHandler.commitExercise(username, username + "@student,kit,edu", "Test Commit Artemis", gitFileInRepo);
@@ -423,7 +443,7 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 			e.printStackTrace();
 			return false;
 		}
-		
+
 		try {
 			GitHandler.pushExercise(username, password, gitFileInRepo);
 		} catch (GitException e) {
@@ -433,11 +453,12 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 		}
 		return true;
 	}
-	
+
 	@Override
-	public Optional<Set<String>> cleanWorkspace(ICourse course, IExercise exercise, IProjectFileNamingStrategy projectNaming) {
+	public Optional<Set<String>> cleanWorkspace(ICourse course, IExercise exercise,
+			IProjectFileNamingStrategy projectNaming) {
 		final File eclipseWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile();
- 		File exeriseRepo =  projectNaming.getProjectFileInWorkspace(eclipseWorkspaceRoot, exercise, null);
+		File exeriseRepo = projectNaming.getProjectFileInWorkspace(eclipseWorkspaceRoot, exercise, null);
 		File gitFileInRepo = projectNaming.getGitFileInProjectDirectory(exeriseRepo);
 		try {
 			return Optional.of(GitHandler.cleanRepo(gitFileInRepo));
@@ -447,4 +468,41 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 		}
 	}
 
+	@Override
+	public Map<ResultsDTO, List<Feedback>> getFeedbackExcerise(ICourse course, IExercise excerise) {
+		Optional<ParticipationDTO> participationOpt = getParticipationForExercise(course, excerise);
+		if (participationOpt.isEmpty()) {
+			return new HashMap<>();
+		}
+
+		ParticipationDTO participationWithResults;
+		try {
+			participationWithResults = this.artemisClient
+					.getParticipationWithLatestResultForExercise(participationOpt.get().getParticipationID());
+		} catch (ArtemisClientException e) {
+			e.printStackTrace();
+			return new HashMap<>();
+		}
+
+		if (participationWithResults.getResults() == null) {
+			return new HashMap<>();
+		}
+
+		Map<ResultsDTO, List<Feedback>> resultFeedbackMap = new HashMap<>();
+
+		for (var result : participationWithResults.getResults()) {
+			if (result.hasFeedback) {
+				Feedback[] feedbacks = {};
+				try {
+					feedbacks = this.artemisClient.getFeedbackForResult(participationOpt.get().getParticipationID(),
+							result.id);
+				} catch (ArtemisClientException e) {
+					e.printStackTrace();
+					break;
+				}
+				resultFeedbackMap.put(result, Arrays.asList(feedbacks));
+			}
+		}
+		return resultFeedbackMap;
+	}
 }

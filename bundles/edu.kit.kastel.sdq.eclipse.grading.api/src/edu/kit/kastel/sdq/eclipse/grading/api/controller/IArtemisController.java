@@ -1,6 +1,7 @@
 package edu.kit.kastel.sdq.eclipse.grading.api.controller;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -10,6 +11,7 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ICourse;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExam;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ResultsDTO;
 
 /**
  * Works as an interface from backend to ArtemisClient
@@ -148,4 +150,10 @@ public interface IArtemisController extends IController {
 	boolean submitSolution(ICourse course, IExercise exercise, IProjectFileNamingStrategy projectNaming);
 
 	Optional<Set<String>> cleanWorkspace(ICourse course, IExercise exercise, IProjectFileNamingStrategy projectNaming);
+	
+	Map<ResultsDTO, List<Feedback>> getFeedbackExcerise(ICourse course, IExercise excerise);
+	
+	List<ICourse> getCoursesForUser();
+	
+	List<String> getCourseShortNamesForUser();
 }

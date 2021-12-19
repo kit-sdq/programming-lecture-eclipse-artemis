@@ -15,10 +15,12 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import edu.kit.kastel.sdq.eclipse.grading.api.ArtemisClientException;
 import edu.kit.kastel.sdq.eclipse.grading.api.PreferenceConstants;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IProjectFileNamingStrategy;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.Feedback;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ICourse;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExam;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ResultsDTO;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.SubmissionFilter;
 import edu.kit.kastel.sdq.eclipse.grading.api.backendstate.Transition;
 import edu.kit.kastel.sdq.eclipse.grading.api.controller.AbstractController;
@@ -41,6 +43,7 @@ public class SystemwideController extends AbstractController implements ISystemw
 	private IExercise exercise;
 	private ISubmission submission;
 	private IExam exam;
+	private Map<ResultsDTO, List<Feedback>> resultFeedbackMap;
 
 	private IProjectFileNamingStrategy projectFileNamingStrategy;
 
@@ -300,7 +303,7 @@ public class SystemwideController extends AbstractController implements ISystemw
 			return List.of();
 		}
 
-		for (ICourse c : this.getArtemisGUIController().getCourses()) {
+		for (ICourse c : this.getArtemisGUIController().getCoursesForUser()) {
 			if (c.getShortName().equals(courseShortName)) {
 				this.course = c;
 				return c.getExercises().stream().map(IExercise::getShortName).collect(Collectors.toList());
@@ -440,7 +443,9 @@ public class SystemwideController extends AbstractController implements ISystemw
 			this.warn("No excercise is selected");
 			return false;
 		}
-		this.info("Your solutions will be submitted for the selected exercise. Make sure all files are saved.");
+		if(!this.confirm("Your solutions will be submitted for the selected exercise. Make sure all files are saved.")) {
+			return false;
+		}
 		
 		if (!this.getArtemisGUIController().submitSolution(this.course, this.exercise, this.projectFileNamingStrategy)) {
 			this.warn("Your Solution was not submitted");
@@ -456,7 +461,9 @@ public class SystemwideController extends AbstractController implements ISystemw
 			this.warn("No excercise is selected");
 			return false;
 		}
-		this.info(String.format("Your solutions will be reset and therefore deleted for the selected exercise: %s. \n Are you sure?", this.exercise.getShortName()));
+		if(!this.confirm("Your changes will be deleted. Are you sure?")) {
+			return false;
+		}
 		
 		Optional<Set<String>> deletedFiles = this.getArtemisGUIController().cleanWorkspace(this.course, this.exercise, this.projectFileNamingStrategy);
 		if (deletedFiles.isEmpty()) {
@@ -467,5 +474,15 @@ public class SystemwideController extends AbstractController implements ISystemw
 				+ "Following files have been reset: \n" + deletedFiles.get());
 		return true;
 		
+	}
+	
+	@Override
+	public Map<ResultsDTO, List<Feedback>> getFeedbackExcerise() {
+		if (this.nullCheckMembersAndNotify(true, true, false)) {
+			this.warn("No excercise is selected");
+			return new HashMap<>();
+		}
+		
+		return  this.getArtemisGUIController().getFeedbackExcerise(this.course, this.exercise);
 	}
 }

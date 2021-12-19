@@ -15,6 +15,8 @@ public class ParticipationDTO implements Serializable {
 	private String participantName;
 	@JsonProperty
 	private String repositoryUrl;
+	@JsonProperty
+	private ResultsDTO[] results;
 
 	public ParticipationDTO() {
 		// NOP
@@ -34,6 +36,10 @@ public class ParticipationDTO implements Serializable {
 
 	public String getRepositoryUrl() {
 		return this.repositoryUrl;
+	}
+	
+	public ResultsDTO[] getResults() {
+		return results;
 	}
 
 }

@@ -10,9 +10,11 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.AssessmentResult;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.ILockResult;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IProjectFileNamingStrategy;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.Assessor;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.Feedback;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ICourse;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExam;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExerciseGroup;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ParticipationDTO;
 
@@ -106,7 +108,19 @@ public interface IArtemisClient {
 	
 	ParticipationDTO getParticipationForExercise(ICourse couse, IExercise exercise)  throws ArtemisClientException;
 	
-	ParticipationDTO getParticipationWithLatestResultForExercise(String participationId)  throws ArtemisClientException;
+	ParticipationDTO getParticipationWithLatestResultForExercise(int participationId)  throws ArtemisClientException;
 	
 	IExam startExam(ICourse course, IExam exam) throws ArtemisClientException;
+	
+	Feedback[] getFeedbackForResult(int particiaptionId, int resultId) throws ArtemisClientException;
+	
+	List<ICourse> getCoursesForDashboard() throws ArtemisClientException;
+	
+	List<IExerciseGroup> getExerciseGroupsForExam(IExam artemisExam, ICourse course) throws ArtemisClientException;
+
+	List<IExam> getExamsForCourse(ICourse artemisCourse) throws ArtemisClientException;
+
+	List<IExercise> getNormalExercisesForCourse(ICourse artemisCourse) throws ArtemisClientException;
+
+	ISubmission getSubmissionById(IExercise artemisExercise, int submissionId) throws ArtemisClientException;
 }
