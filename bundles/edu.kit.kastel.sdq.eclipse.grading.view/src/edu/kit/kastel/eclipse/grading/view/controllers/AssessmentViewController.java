@@ -45,6 +45,7 @@ public class AssessmentViewController {
 	private void initializeControllersAndObserver() {
 		this.alertObserver = new ViewAlertObserver();
 		this.artemisGUIController = this.systemwideController.getArtemisGUIController();
+		this.artemisGUIController.fetchCourses();
 		this.systemwideController.addAlertObserver(this.alertObserver);
 		this.artemisGUIController.addAlertObserver(this.alertObserver);
 	}

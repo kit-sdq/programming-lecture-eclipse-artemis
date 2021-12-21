@@ -53,6 +53,8 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 	private String username;
 	private String password;
 	private final Map<Integer, ILockResult> lockResults;
+	
+	private List<ICourse> courses;
 
 	protected ArtemisController(final SystemwideController systemwideController, final String host,
 			final String username, final String password) {
@@ -192,9 +194,9 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 		return coursesWithCorrectID.iterator().next();
 
 	}
-
+	
 	@Override
-	public List<ICourse> getCourses() {
+	public List<ICourse> fetchCourses() {
 		if (!this.artemisClient.isReady()) {
 			return List.of();
 		}
@@ -276,6 +278,7 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 
 	private List<IExercise> getExercisesFromExam(final String examTitle, List<ICourse> courses) {
 		IExam foundExam = null;
+		ICourse foundCourse = null;
 		for (ICourse course : courses) {
 			List<IExam> filteredExams;
 			try {
@@ -289,6 +292,7 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 				IExam exam = filteredExams.iterator().next();
 				if (exam.getTitle().equals(examTitle)) {
 					foundExam = exam;
+					foundCourse = course;
 				}
 			}
 		}
@@ -297,10 +301,8 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 			return List.of();
 		}
 		try {
-			return foundExam.getExerciseGroups().stream().map(IExerciseGroup::getExercises).flatMap(Collection::stream)
-					.collect(Collectors.toList());
+			return this.artemisClient.startExam(foundCourse, foundExam).getExercises();
 		} catch (final Exception e) {
-			this.error(e.getMessage(), e);
 			return List.of();
 		}
 
@@ -486,6 +488,14 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 			}
 		}
 		return resultFeedbackMap;
+	}
+	
+	public List<ICourse> getCourses() {
+		if (courses == null) {
+			courses = this.fetchCourses();
+		}
+		
+		return courses;
 	}
 
 }

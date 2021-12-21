@@ -1,11 +1,9 @@
 package edu.kit.kastel.sdq.eclipse.grading.client.rest;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import javax.ws.rs.client.ClientBuilder;
@@ -30,16 +28,18 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ICourse;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExam;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExerciseGroup;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IStudentExam;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ParticipationDTO;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.StudentCourseDTO;
 import edu.kit.kastel.sdq.eclipse.grading.api.client.AbstractArtemisClient;
 import edu.kit.kastel.sdq.eclipse.grading.client.git.GitException;
 import edu.kit.kastel.sdq.eclipse.grading.client.git.GitHandler;
 import edu.kit.kastel.sdq.eclipse.grading.client.mappings.ArtemisCourse;
+import edu.kit.kastel.sdq.eclipse.grading.client.mappings.ArtemisDashboardCourse;
 import edu.kit.kastel.sdq.eclipse.grading.client.mappings.ArtemisExercise;
 import edu.kit.kastel.sdq.eclipse.grading.client.mappings.ArtemisSubmission;
 import edu.kit.kastel.sdq.eclipse.grading.client.mappings.IMappingLoader;
+import edu.kit.kastel.sdq.eclipse.grading.client.mappings.exam.ArtemisStudentExam;
 import edu.kit.kastel.sdq.eclipse.grading.client.mappings.exam.ArtemisExam;
 import edu.kit.kastel.sdq.eclipse.grading.client.mappings.exam.ArtemisExerciseGroup;
 import edu.kit.kastel.sdq.eclipse.grading.client.mappings.lock.LockResult;
@@ -118,10 +118,7 @@ public class ArtemisClient extends AbstractArtemisClient implements IMappingLoad
 		this.throwIfStatusUnsuccessful(rsp);
 		String rspString = rsp.readEntity(String.class);
 
-		ArtemisCourse[] coursesArray = this.read(rspString, ArtemisCourse[].class);
-		for (ArtemisCourse course : coursesArray) {
-			course.init(this);
-		}
+		ArtemisDashboardCourse[] coursesArray = this.read(rspString, ArtemisDashboardCourse[].class);
 		return Arrays.asList(coursesArray);
 	}
 
@@ -339,7 +336,7 @@ public class ArtemisClient extends AbstractArtemisClient implements IMappingLoad
 	}
 	
 	@Override
-	public IExam startExam(ICourse course, IExam exam) throws ArtemisClientException {
+	public IStudentExam startExam(ICourse course, IExam exam) throws ArtemisClientException {
 		this.checkAuthentication();
 
 		final Response exercisesRsp = this.endpoint.path(COURSES_PATHPART).path(String.valueOf(course.getCourseId())).path(EXAMS_PATHPART).path(String.valueOf(exam.getExamId())).path("start").request()
@@ -349,7 +346,7 @@ public class ArtemisClient extends AbstractArtemisClient implements IMappingLoad
 		
 		// get the part of the json that we want to deserialize
 		final JsonNode exercisesAndParticipationsJsonNode = this.readTree(exercisesRsp.readEntity(String.class));
-		return this.read(exercisesAndParticipationsJsonNode.toString(), IExam.class);
+		return this.read(exercisesAndParticipationsJsonNode.toString(), ArtemisStudentExam.class); 
 	}
 	
 	@Override

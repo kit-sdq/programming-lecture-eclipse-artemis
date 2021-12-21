@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.Feedback;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ICourse;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ResultsDTO;
 
 public class StudentViewController extends AssessmentViewController {
@@ -28,11 +29,11 @@ public class StudentViewController extends AssessmentViewController {
 		return getSystemwideController().getFeedbackExcerise();
 	}
 	
-	/**
-	 * @return the name of all courses
-	 */
 	public List<String> getCourseShortNames() {
 		return getArtemisController().getCourseShortNames();
 	}
-
+	
+	public void fetchCourses() {
+		getArtemisController().fetchCourses();
+	}
 }

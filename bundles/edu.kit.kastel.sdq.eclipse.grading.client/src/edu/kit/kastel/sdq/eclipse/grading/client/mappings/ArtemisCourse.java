@@ -2,6 +2,7 @@ package edu.kit.kastel.sdq.eclipse.grading.client.mappings;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -27,8 +28,8 @@ public class ArtemisCourse implements ICourse, Serializable {
 	@JsonProperty("instructorGroupName")
 	private String instructorGroup;
 
-	private transient List<IExercise> exercises;
-	private transient List<IExam> exams;
+	private transient IExercise[] exercises;
+	private transient IExam[] exams;
 	private transient IMappingLoader client;
 
 	/**
@@ -46,17 +47,17 @@ public class ArtemisCourse implements ICourse, Serializable {
 	@Override
 	public List<IExam> getExamsForCourse() throws ArtemisClientException {
 		if (this.exams == null) {
-			this.exams = this.client.getExamsForCourse(this);
+			this.exams = (IExam[]) this.client.getExamsForCourse(this).toArray();
 		}
-		return this.exams;
+		return Arrays.asList(this.exams);
 	}
 
 	@Override
 	public List<IExercise> getExercisesForCourse() throws ArtemisClientException {
 		if (this.exercises == null) {
-			this.exercises = this.client.getNormalExercisesForCourse(this);
+			this.exercises = (IExercise[]) this.client.getNormalExercisesForCourse(this).toArray();
 		}
-		return this.exercises;
+		return Arrays.asList(this.exercises);
 	}
 
 	@Override

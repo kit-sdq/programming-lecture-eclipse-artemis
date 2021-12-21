@@ -513,6 +513,7 @@ public class ArtemisStudentView extends ViewPart {
 		this.exerciseCombo.removeAll();
 		this.backlogCombo.removeAll();
 		this.btnSubmitExcerise.setText(NO_SELECTED);
+		this.viewController.fetchCourses();
 		this.viewController.getCourseShortNames().forEach(courseShortName -> this.courseCombo.add(courseShortName));
 	}
 }

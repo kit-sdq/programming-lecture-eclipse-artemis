@@ -19,6 +19,7 @@ public interface ICourse extends Serializable {
 	String getShortName();
 
 	String getTitle();
-
+	
 	boolean isInstructor(Assessor assessor);
+
 }

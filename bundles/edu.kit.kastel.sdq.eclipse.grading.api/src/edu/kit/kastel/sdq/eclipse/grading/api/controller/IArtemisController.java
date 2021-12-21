@@ -153,4 +153,6 @@ public interface IArtemisController extends IController {
 	
 	Map<ResultsDTO, List<Feedback>> getFeedbackExcerise(ICourse course, IExercise excerise);
 	
+	List<ICourse> fetchCourses();
+	
 }

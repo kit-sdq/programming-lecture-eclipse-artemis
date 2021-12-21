@@ -15,6 +15,7 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ICourse;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExam;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExerciseGroup;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IStudentExam;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ParticipationDTO;
 
@@ -110,7 +111,7 @@ public interface IArtemisClient {
 	
 	ParticipationDTO getParticipationWithLatestResultForExercise(int participationId)  throws ArtemisClientException;
 	
-	IExam startExam(ICourse course, IExam exam) throws ArtemisClientException;
+	IStudentExam startExam(ICourse course, IExam exam) throws ArtemisClientException;
 	
 	Feedback[] getFeedbackForResult(int particiaptionId, int resultId) throws ArtemisClientException;
 }
