@@ -207,6 +207,9 @@ public class AnnotationMapper {
 			detailText += annotation.getCustomMessage().get() + " (" + nf.format(-annotation.getCustomPenalty().get()) + "P)";
 		} else {
 			detailText += mistakeType.getMessage();
+			if (annotation.getCustomMessage().isPresent()) {
+				detailText += "<br />Explanation: " + annotation.getCustomMessage().get();
+			}
 		}
 
 		return new Feedback(FeedbackType.MANUAL.name(), 0D, null, null, null, text, reference, detailText);

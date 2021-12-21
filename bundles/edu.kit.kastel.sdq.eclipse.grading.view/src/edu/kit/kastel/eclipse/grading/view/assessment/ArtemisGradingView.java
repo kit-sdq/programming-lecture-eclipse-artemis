@@ -25,6 +25,7 @@ import org.eclipse.ui.part.ViewPart;
 
 import edu.kit.kastel.eclipse.grading.view.activator.Activator;
 import edu.kit.kastel.eclipse.grading.view.controllers.AssessmentViewController;
+import edu.kit.kastel.eclipse.grading.view.listeners.KeyboardAwareMouseListener;
 import edu.kit.kastel.eclipse.grading.view.utilities.AssessmentUtilities;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.SubmissionFilter;
 import edu.kit.kastel.sdq.eclipse.grading.api.backendstate.Transition;
@@ -74,7 +75,7 @@ public class ArtemisGradingView extends ViewPart {
 				.addResourceChangeListener(event -> Arrays.asList(event.findMarkerDeltas(AssessmentUtilities.MARKER_NAME, true)).forEach(marker -> {
 					// check if marker is deleted
 					if (marker.getKind() == 2) {
-						this.viewController.deleteAnnotation((String) marker.getAttribute("annotationID"));
+						this.viewController.deleteAnnotation((String) marker.getAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_ANNOTATION_ID));
 						this.updatePenalties();
 					}
 				}));
@@ -376,24 +377,45 @@ public class ArtemisGradingView extends ViewPart {
 
 					this.mistakeButtons.put(mistake.getId(), mistakeButton);
 					mistakeButton.setToolTipText(this.viewController.getToolTipForMistakeType(mistake));
-					mistakeButton.addListener(SWT.Selection, event -> {
+			
+					KeyboardAwareMouseListener listener = new KeyboardAwareMouseListener();
+					// Normal click
+					listener.setClickHandler(() -> {
 						this.viewController.addAssessmentAnnotation(mistake, null, null, mistake.getRatingGroup().getDisplayName());
+					}, SWT.BUTTON1);
+					// shift-click and middle-click
+					listener.setClickHandler(() -> {
+						this.createMistakePenaltyWithCustomMessageDialog(mistake);	
+					}, SWT.SHIFT, SWT.BUTTON2);
+					// every click
+					listener.setClickHandlerForEveryClick(() -> {
 						this.updatePenalty(mistake.getRatingGroup().getDisplayName());
 						this.updateMistakeButtonToolTips(mistake);
 					});
+					mistakeButton.addMouseListener(listener);
 				}
 			});
 		});
 		this.scrolledCompositeGrading.setContent(this.gradingComposite);
 		this.scrolledCompositeGrading.setMinSize(this.gradingComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 	}
-
+	
 	/**
 	 * This methods creates the whole view components.
 	 */
 	@Override
 	public void createPartControl(Composite parent) {
 		this.createView(parent);
+	}
+	
+	private void createMistakePenaltyWithCustomMessageDialog(IMistakeType mistake) {
+		CustomButtonDialog buttonDialog = new CustomButtonDialog(AssessmentUtilities.getWindowsShell(), this.viewController,
+				mistake.getRatingGroup().getDisplayName(), null);
+		buttonDialog.setBlockOnOpen(true);
+		buttonDialog.open();
+		if (buttonDialog.isClosedByOk()) {
+			this.viewController.addAssessmentAnnotation(mistake, buttonDialog.getCustomMessage(), null, mistake.getRatingGroup().getDisplayName());
+		}
 	}
 
 	private void createView(Composite parent) {

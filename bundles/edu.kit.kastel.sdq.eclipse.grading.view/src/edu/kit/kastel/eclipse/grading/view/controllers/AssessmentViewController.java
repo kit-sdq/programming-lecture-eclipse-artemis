@@ -75,7 +75,7 @@ public class AssessmentViewController {
 		try {
 			String uuid = IAnnotation.createUUID();
 			IMarker marker = AssessmentUtilities.getCurrentlyOpenFile().createMarker(AssessmentUtilities.MARKER_NAME);
-			marker.setAttribute("annotationID", uuid);
+			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_ANNOTATION_ID, uuid);
 			marker.setAttribute(IMarker.CHAR_START, charStart);
 			marker.setAttribute(IMarker.CHAR_END, charEnd);
 			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_ERROR_DESCRIPTION, mistake.isCustomPenalty() ? "" : mistake.getMessage());
@@ -92,7 +92,7 @@ public class AssessmentViewController {
 			}
 			if (!mistake.isCustomPenalty()) {
 				marker.setAttribute(IMarker.MESSAGE, AssessmentUtilities.createMarkerTooltip(startLine, endLine, mistake.getButtonText(),
-						mistake.getRatingGroup().getDisplayName(), mistake.getMessage(), null));
+						mistake.getRatingGroup().getDisplayName(), formatCustomPenaltyMessage(mistake, customMessage), null));
 			} else {
 				marker.setAttribute(IMarker.MESSAGE, AssessmentUtilities.createMarkerTooltipForCustomButton(startLine, endLine, customMessage, customPenalty));
 			}
@@ -108,6 +108,21 @@ public class AssessmentViewController {
 			this.alertObserver.error("Unable to create marker for annotation", e);
 		}
 
+	}
+	
+	/**
+	 * Formats a custom penalty message. It will always use the message of the mistake, however iff the provided customMessage
+	 * is not null, it will append a \n and this custom message.
+	 * @param mistake the mistake to load the message from
+	 * @param customMessage the custom message to append (can be null)
+	 * @return the formatted message
+	 */
+	private String formatCustomPenaltyMessage(IMistakeType mistake, String customMessage) {
+		if (customMessage != null) {
+			return mistake.getMessage() + "\n" + customMessage;
+		} else {
+			return mistake.getMessage();
+		}
 	}
 
 	/**
@@ -129,7 +144,7 @@ public class AssessmentViewController {
 		try {
 			IMarker[] markers = AssessmentUtilities.getFile(annotation.getClassFilePath(), this.systemwideController.getCurrentProjectName()).findMarkers(null, false, 100);
 			for (IMarker marker : markers) {
-				if (annotation.getUUID().equals(marker.getAttribute("annotationID"))) {
+				if (annotation.getUUID().equals(marker.getAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_ANNOTATION_ID))) {
 					return true;
 				}
 			}
@@ -150,7 +165,7 @@ public class AssessmentViewController {
 		try {
 			IMarker marker = AssessmentUtilities.getFile(annotation.getClassFilePath(), this.systemwideController.getCurrentProjectName())
 					.createMarker(AssessmentUtilities.MARKER_NAME);
-			marker.setAttribute("annotationID", annotation.getUUID());
+			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_ANNOTATION_ID, annotation.getUUID());
 			marker.setAttribute(IMarker.CHAR_START, annotation.getMarkerCharStart());
 			marker.setAttribute(IMarker.CHAR_END, annotation.getMarkerCharEnd());
 
@@ -169,7 +184,7 @@ public class AssessmentViewController {
 				marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_RATING_GROUP, mistake.getRatingGroup().getDisplayName());
 				if (!mistake.isCustomPenalty()) {
 					marker.setAttribute(IMarker.MESSAGE, AssessmentUtilities.createMarkerTooltip(startLine, endLine, mistake.getButtonText(),
-							mistake.getRatingGroup().getDisplayName(), mistake.getMessage(), annotation.getClassFilePath()));
+							mistake.getRatingGroup().getDisplayName(), formatCustomPenaltyMessage(mistake, customMessage), annotation.getClassFilePath()));
 				} else {
 					marker.setAttribute(IMarker.MESSAGE,
 							AssessmentUtilities.createMarkerTooltipForCustomButton(startLine, endLine, customMessage, Double.parseDouble(customPenalty)));
