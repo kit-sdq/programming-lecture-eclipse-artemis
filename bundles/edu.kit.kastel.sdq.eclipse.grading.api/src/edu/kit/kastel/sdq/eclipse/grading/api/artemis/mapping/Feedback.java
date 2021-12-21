@@ -26,7 +26,7 @@ public class Feedback implements Serializable {
 	private static final long serialVersionUID = 4531964872375020131L;
 
 	private String type;
-	private double credits;
+	private Double credits;
 	private Integer id; // null for all manual feedback
 	private Boolean positive; // null for all manual feedback
 	private String visibility; // null for all manual feedback
@@ -53,7 +53,7 @@ public class Feedback implements Serializable {
 	 * @return this Feedbacks contribution to the total credit sum. Can be positive
 	 *         or negative.
 	 */
-	public double getCredits() {
+	public Double getCredits() {
 		return this.credits;
 	}
 
