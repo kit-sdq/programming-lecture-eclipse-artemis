@@ -15,6 +15,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
@@ -55,13 +56,6 @@ public class ArtemisStudentView extends ViewPart {
 
 	public ArtemisStudentView() {
 		this.viewController = new StudentViewController();
-		this.initializePossibleActions();
-	}
-
-	private void initializePossibleActions() {
-		for (int i = 0; i < Transition.values().length; i++) {
-			Transition current = Transition.values()[i];
-		}
 	}
 
 	private void addSelectionListenerForSubmitButton(Button btnSubmit) {
@@ -94,6 +88,7 @@ public class ArtemisStudentView extends ViewPart {
         btnFeedback.setText(NO_SELECTED);
         btnFeedback.setSize(80, 20);
         btnFeedback.setLayoutData(new GridData(SWT.NONE, SWT.CENTER, false, false, 1, 1));
+        btnFeedback.setEnabled(false);
         btnFeedback.addListener(SWT.Selection, e -> {
             getFeedbackForExcerise();
         });
@@ -178,10 +173,7 @@ public class ArtemisStudentView extends ViewPart {
 		this.exerciseCombo = new Combo(assessmentComposite, SWT.READ_ONLY);
 		this.exerciseCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		this.exerciseCombo.addListener(SWT.Selection, e -> {
-			String exerciseName = ((Combo) e.widget).getText();
-			this.btnSubmitExcerise.setText("Submit: " + exerciseName);
-			this.btnClean.setText("Clean: " + exerciseName);
-            this.btnFeedback.setText("Feedback: " + exerciseName);
+			updateButtons(e);
 		});
 
 		this.loadExamComboEntries(this.courseCombo, this.examCombo, this.exerciseCombo);
@@ -213,6 +205,7 @@ public class ArtemisStudentView extends ViewPart {
 		btnSubmitExcerise = new Button(submitArea, SWT.NONE);
 		btnSubmitExcerise.setText(NO_SELECTED);
 		btnSubmitExcerise.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		btnSubmitExcerise.setEnabled(false);
 		
 		this.addSelectionListenerForSubmitButton(btnSubmitExcerise);
 		
@@ -230,6 +223,7 @@ public class ArtemisStudentView extends ViewPart {
 		btnClean.addListener(SWT.Selection, e -> {
 			cleanWorkspaceForSelectedExercise();
 		});
+		btnClean.setEnabled(false);
 		
 		
 		scrolledCompositeGrading.setContent(gradingComposite);
@@ -253,6 +247,24 @@ public class ArtemisStudentView extends ViewPart {
 
 		gradingComposite.setLayout(new GridLayout(1, true));
 
+	}
+	
+	private void updateButtons(Event e) {
+		setButtonText(e);
+		enableButtons();
+	}
+	
+	private void setButtonText(Event e) {
+		String exerciseName = ((Combo) e.widget).getText();
+		this.btnSubmitExcerise.setText("Submit: " + exerciseName);
+		this.btnClean.setText("Clean: " + exerciseName);
+        this.btnFeedback.setText("Feedback: " + exerciseName);
+	}
+	
+	private void enableButtons() {
+        this.btnSubmitExcerise.setEnabled(this.viewController.canSubmit());
+        btnClean.setEnabled(this.viewController.canClean());
+        btnFeedback.setEnabled(this.viewController.canFetchFeedback());
 	}
 
 	/**
@@ -384,6 +396,7 @@ public class ArtemisStudentView extends ViewPart {
 		this.examCombo.removeAll();
 		this.exerciseCombo.removeAll();
 		resetButtonText();
+		resetButtonEnable();
 		this.viewController.fetchCourses();
 		this.viewController.getCourseShortNames().forEach(courseShortName -> this.courseCombo.add(courseShortName));
 	}
@@ -392,6 +405,12 @@ public class ArtemisStudentView extends ViewPart {
 		this.btnSubmitExcerise.setText(NO_SELECTED);
 		this.btnClean.setText(NO_SELECTED);
 		this.btnFeedback.setText(NO_SELECTED);
+	}
+	
+	private void resetButtonEnable() {
+		this.btnSubmitExcerise.setEnabled(false);
+		this.btnClean.setEnabled(false);
+		this.btnFeedback.setEnabled(false);
 	}
 	
 	private void cleanWorkspaceForSelectedExercise() {

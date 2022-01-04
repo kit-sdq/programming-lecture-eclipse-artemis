@@ -1,6 +1,7 @@
 package edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.ArtemisClientException;
 
@@ -27,5 +28,7 @@ public interface IExercise extends Serializable {
 	String getParticipantUrl();
 
 	ISubmission getSubmission(int id) throws ArtemisClientException;
+	
+	Date getDueDate();
 
 }

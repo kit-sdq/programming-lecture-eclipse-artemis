@@ -36,4 +36,16 @@ public class StudentViewController extends AssessmentViewController {
 	public void fetchCourses() {
 		getArtemisController().fetchCourses();
 	}
-}
+	
+	public boolean canSubmit() {
+		return getSystemwideController().isSelectedExerciseExpired();
+	}
+	
+	public boolean canClean() {
+		return true;
+	}
+	
+	public boolean canFetchFeedback() {
+		return true;
+	}
+ }

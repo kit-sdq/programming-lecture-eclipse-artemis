@@ -2,6 +2,7 @@ package edu.kit.kastel.sdq.eclipse.grading.core;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -441,6 +442,12 @@ public class SystemwideController extends AbstractController implements ISystemw
 			this.warn("No excercise is selected");
 			return false;
 		}
+		
+		if (isSelectedExerciseExpired()) {
+			this.error("Can't submit exercise. Excerise is out-of-date, it was due to: " + this.exercise.getDueDate().toGMTString(), null);
+			return false;
+		}
+		
 		if(!this.confirm("Your solutions will be submitted for the selected exercise. Make sure all files are saved.")) {
 			return false;
 		}
@@ -482,5 +489,13 @@ public class SystemwideController extends AbstractController implements ISystemw
 		}
 		
 		return  this.getArtemisGUIController().getFeedbackExcerise(this.course, this.exercise);
+	}
+	
+	@Override
+	public boolean isSelectedExerciseExpired() {
+		if (exercise != null ) {
+			return exercise.getDueDate().before(new Date());
+		}
+		return false;
 	}
 }

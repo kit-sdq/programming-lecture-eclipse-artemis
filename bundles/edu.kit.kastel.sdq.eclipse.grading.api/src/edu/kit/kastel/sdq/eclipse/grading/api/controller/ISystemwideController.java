@@ -176,4 +176,7 @@ public interface ISystemwideController extends IController {
 	boolean cleanWorkspace();
 	
 	Map<ResultsDTO, List<Feedback>> getFeedbackExcerise();
+	
+	boolean isSelectedExerciseExpired();
+
 }

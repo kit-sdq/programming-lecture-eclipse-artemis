@@ -1,6 +1,7 @@
 package edu.kit.kastel.sdq.eclipse.grading.client.mappings;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.Optional;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -32,6 +33,8 @@ public class ArtemisExercise implements IExercise {
 	private String type;
 	@JsonProperty
 	private double maxPoints;
+	@JsonProperty
+	private Date dueDate = null;
 	
 	private String participantUrl;
 
@@ -114,6 +117,11 @@ public class ArtemisExercise implements IExercise {
 	@Override
 	public String getParticipantUrl() {
 		return participantUrl;
+	}
+	
+	@Override
+	public Date getDueDate()  {
+		return dueDate;
 	}
 	
 	

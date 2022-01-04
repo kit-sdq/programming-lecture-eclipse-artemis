@@ -423,16 +423,15 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 		try {
 			GitHandler.commitExercise(username, username + "@student.kit.edu", "Test Commit Artemis", gitFileInRepo);
 		} catch (GitException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			this.error("Can't save selected exercise " + exercise.getShortName() //
+					+ ".\n Exercise not found in workspace. \n Please load exercise bevor submitting it.", e);
 			return false;
 		}
 
 		try {
 			GitHandler.pushExercise(username, password, gitFileInRepo);
 		} catch (GitException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			this.error("Can't upload solution. Please check if submissions are still possible.", e);
 			return false;
 		}
 		return true;
@@ -447,14 +446,15 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 		try {
 			return Optional.of(GitHandler.cleanRepo(gitFileInRepo));
 		} catch (GitException e) {
-			e.printStackTrace();
+			this.error("Can't clean selected exercise " + exercise.getShortName() //
+			+ ".\n Exercise not found in workspace. \n Please load exercise first", e);
 			return Optional.empty();
 		}
 	}
 
 	@Override
-	public Map<ResultsDTO, List<Feedback>> getFeedbackExcerise(ICourse course, IExercise excerise) {
-		Optional<ParticipationDTO> participationOpt = getParticipationForExercise(course, excerise);
+	public Map<ResultsDTO, List<Feedback>> getFeedbackExcerise(ICourse course, IExercise exercise) {
+		Optional<ParticipationDTO> participationOpt = getParticipationForExercise(course, exercise);
 		if (participationOpt.isEmpty()) {
 			return new HashMap<>();
 		}
@@ -464,7 +464,8 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 			participationWithResults = this.artemisClient
 					.getParticipationWithLatestResultForExercise(participationOpt.get().getParticipationID());
 		} catch (ArtemisClientException e) {
-			e.printStackTrace();
+			this.error("Can't load results for selected exercise " + exercise.getShortName() //
+			+ ".\n No results found. Please check if a solution was submitted.", e);
 			return new HashMap<>();
 		}
 
@@ -487,6 +488,12 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 				resultFeedbackMap.put(result, Arrays.asList(feedbacks));
 			}
 		}
+		
+		if (resultFeedbackMap.isEmpty()) {
+			this.error("Can't load any feedback for selected exercise " + exercise.getShortName() //
+			+ ".\n No feedback found. Please check if a solution was submitted.",null );
+		}
+		
 		return resultFeedbackMap;
 	}
 	
