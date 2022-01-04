@@ -497,5 +497,4 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 		
 		return courses;
 	}
-
 }

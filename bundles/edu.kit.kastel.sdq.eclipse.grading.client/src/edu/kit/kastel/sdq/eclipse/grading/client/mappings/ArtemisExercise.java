@@ -94,6 +94,12 @@ public class ArtemisExercise implements IExercise {
 		this.course = course;
 		this.exam = exam;
 	}
+	
+	public void init(IMappingLoader client, ICourse course) {
+		this.client = client;
+		this.course = course;
+		this.exam = Optional.empty();
+	}
 
 	@Override
 	public ISubmission getSubmission(int id) throws ArtemisClientException {
