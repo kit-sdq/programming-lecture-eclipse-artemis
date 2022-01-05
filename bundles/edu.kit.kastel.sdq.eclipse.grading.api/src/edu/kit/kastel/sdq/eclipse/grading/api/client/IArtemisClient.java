@@ -111,7 +111,7 @@ public interface IArtemisClient {
 	
 	ParticipationDTO getParticipationWithLatestResultForExercise(int participationId)  throws ArtemisClientException;
 	
-	IStudentExam startExam(ICourse course, IExam exam) throws ArtemisClientException;
+	IStudentExam startExam(IExam exam) throws ArtemisClientException;
 	
 	Feedback[] getFeedbackForResult(int particiaptionId, int resultId) throws ArtemisClientException;
 }

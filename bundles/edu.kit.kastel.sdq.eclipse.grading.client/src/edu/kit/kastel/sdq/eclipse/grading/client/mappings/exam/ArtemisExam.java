@@ -1,6 +1,7 @@
 package edu.kit.kastel.sdq.eclipse.grading.client.mappings.exam;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -21,6 +22,12 @@ public class ArtemisExam implements IExam, Serializable {
 	private String title;
 	@JsonProperty
 	private int numberOfCorrectionRounds;
+	@JsonProperty
+	private Date startDate;
+	@JsonProperty
+	private Date endDate;
+	@JsonProperty
+	private boolean started;
 
 	private transient ICourse course;
 	private transient List<IExerciseGroup> exerciseGroups;
@@ -61,4 +68,35 @@ public class ArtemisExam implements IExam, Serializable {
 		return this.numberOfCorrectionRounds >= 2;
 	}
 
+	public Date getEndDate() {
+		return endDate;
+	}
+
+	public int getNumberOfCorrectionRounds() {
+		return numberOfCorrectionRounds;
+	}
+
+	public Date getStartDate() {
+		return startDate;
+	}
+
+	public boolean isStarted() {
+		return started;
+	}
+
+	public ICourse getCourse() {
+		return course;
+	}
+
+	@Override
+	public boolean isExamExpired(Date currentDate) {
+		boolean result = false;
+		if (startDate != null) {
+			result = startDate.after(currentDate);
+		}
+		if (endDate != null) {
+			result = endDate.before(currentDate);
+		}
+		return result;
+	}
 }

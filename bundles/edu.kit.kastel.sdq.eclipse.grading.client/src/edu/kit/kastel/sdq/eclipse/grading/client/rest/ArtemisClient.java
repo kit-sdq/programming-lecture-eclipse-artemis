@@ -352,10 +352,10 @@ public class ArtemisClient extends AbstractArtemisClient implements IMappingLoad
 	}
 	
 	@Override
-	public IStudentExam startExam(ICourse course, IExam exam) throws ArtemisClientException {
+	public IStudentExam startExam(IExam exam) throws ArtemisClientException {
 		this.checkAuthentication();
 
-		final Response exercisesRsp = this.endpoint.path(COURSES_PATHPART).path(String.valueOf(course.getCourseId())).path(EXAMS_PATHPART).path(String.valueOf(exam.getExamId())).path("start").request()
+		final Response exercisesRsp = this.endpoint.path(EXAMS_PATHPART).path(String.valueOf(exam.getExamId())).path("start").request()
 				.header(AUTHORIZATION_NAME, this.token).buildGet().invoke();
 
 		this.throwIfStatusUnsuccessful(exercisesRsp);

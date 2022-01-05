@@ -6,6 +6,7 @@ import java.lang.System.Logger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -277,8 +278,31 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 	}
 
 	private List<IExercise> getExercisesFromExam(final String examTitle, List<ICourse> courses) {
-		IExam foundExam = null;
-		ICourse foundCourse = null;
+		IExam foundExam = filterGetExamObjectFromLoadedCourses(examTitle, courses);
+		if (foundExam == null) {
+			this.error("No exam found for examTitle=" + examTitle, null);
+			return List.of();
+		}
+		if (foundExam.isExamExpired(new Date())) {
+			this.error("The selected exam is expired.", null);
+			return List.of();
+		}
+		try {
+			boolean userFeedback = this.confirm("Do you really want to start the exam?");
+			if (userFeedback) {
+				return this.artemisClient.startExam(foundExam).getExercises();
+			} else {
+				return List.of();
+			}
+			
+		} catch (final Exception e) {
+			this.error("API error, can not request start exam", e);
+			return List.of();
+		}
+
+	}
+	
+	private IExam filterGetExamObjectFromLoadedCourses(String examTitle, List<ICourse> courses) {
 		for (ICourse course : courses) {
 			List<IExam> filteredExams;
 			try {
@@ -291,21 +315,11 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 			if (filteredExams.size() == 1) {
 				IExam exam = filteredExams.iterator().next();
 				if (exam.getTitle().equals(examTitle)) {
-					foundExam = exam;
-					foundCourse = course;
+					return exam;
 				}
 			}
 		}
-		if (foundExam == null) {
-			this.error("No exam found for examTitle=" + examTitle, null);
-			return List.of();
-		}
-		try {
-			return this.artemisClient.startExam(foundCourse, foundExam).getExercises();
-		} catch (final Exception e) {
-			return List.of();
-		}
-
+		return null;
 	}
 
 	@Override
