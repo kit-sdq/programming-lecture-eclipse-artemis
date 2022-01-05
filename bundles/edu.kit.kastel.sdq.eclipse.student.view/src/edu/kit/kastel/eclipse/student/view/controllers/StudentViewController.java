@@ -5,6 +5,7 @@ import java.util.Map;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.Feedback;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ICourse;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ResultsDTO;
 
 public class StudentViewController extends AssessmentViewController {
@@ -38,7 +39,7 @@ public class StudentViewController extends AssessmentViewController {
 	}
 	
 	public boolean canSubmit() {
-		return getSystemwideController().isSelectedExerciseExpired();
+		return !getSystemwideController().isSelectedExerciseExpired();
 	}
 	
 	public boolean canClean() {
@@ -47,5 +48,9 @@ public class StudentViewController extends AssessmentViewController {
 	
 	public boolean canFetchFeedback() {
 		return true;
+	}
+	
+	public IExercise getCurrentSelectedExercise() {
+		return getSystemwideController().getCurrentSelectedExercise();
 	}
  }

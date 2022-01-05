@@ -15,7 +15,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
@@ -26,8 +25,13 @@ import org.eclipse.ui.part.ViewPart;
 
 import edu.kit.kastel.eclipse.student.view.controllers.StudentViewController;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.Feedback;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ResultsDTO;
-import edu.kit.kastel.sdq.eclipse.grading.api.backendstate.Transition;
+import org.eclipse.wb.swt.SWTResourceManager;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.jface.fieldassist.ControlDecoration;
+
 
 /**
  * This class creates the view elements for the artemis grading process. It is
@@ -43,16 +47,20 @@ public class ArtemisStudentView extends ViewPart {
 	private ScrolledComposite scrolledCompositeGrading;
     private ScrolledComposite scrolledCompositeFeedback;
 	private Composite gradingComposite;
-    private Composite feedbackComposite;
+    private Composite feedbackContainerComposite;
+    private Composite feedbackContentComposite;
 	private Combo examCombo;
 	private Combo exerciseCombo;
 	private Combo courseCombo;
 	private Button btnSubmitExcerise;
 	private Button btnClean;
-    private Button btnFeedback;
     private Map<ResultsDTO, List<Feedback>> resultFeedbackMap = new HashMap<>();
     private Table feedbackTabel;
-    private Table resultTabel;
+    
+    private Label resultScore;
+    private Label btnResultSuccessfull;
+    private Label lblResultExerciseDescription;
+    private Label lblResultExerciseShortName;
 
 	public ArtemisStudentView() {
 		this.viewController = new StudentViewController();
@@ -74,58 +82,85 @@ public class ArtemisStudentView extends ViewPart {
         this.scrolledCompositeFeedback.setExpandHorizontal(true);
         this.scrolledCompositeFeedback.setExpandVertical(true);
 
-        this.feedbackComposite = new Composite(this.scrolledCompositeFeedback, SWT.NONE);
-        this.scrolledCompositeFeedback.setContent(this.feedbackComposite);
-        feedbackComposite.setSize(scrolledCompositeFeedback.getSize());
-        this.scrolledCompositeFeedback.setMinSize(this.feedbackComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-        feedbackComposite.setLayout(new GridLayout(1, true));
-        feedbackComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+        this.feedbackContainerComposite = new Composite(this.scrolledCompositeFeedback, SWT.NONE);
+        this.scrolledCompositeFeedback.setContent(this.feedbackContainerComposite);
+        feedbackContainerComposite.setSize(scrolledCompositeFeedback.getSize());
+        this.scrolledCompositeFeedback.setMinSize(this.feedbackContainerComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+        feedbackContainerComposite.setLayout(new GridLayout(1, true));
+        feedbackContainerComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
-        Label labelFeedback = new Label(feedbackComposite, SWT.NONE);
-        labelFeedback.setText("Get feedback for excercise");
+        Label labelFeedback = new Label(feedbackContainerComposite, SWT.NONE);
+        labelFeedback.setFont(SWTResourceManager.getFont("Segoe UI", 18, SWT.BOLD));
+        labelFeedback.setText("Feedback");
 
-        btnFeedback = new Button(feedbackComposite, SWT.NONE);
-        btnFeedback.setText(NO_SELECTED);
-        btnFeedback.setSize(80, 20);
-        btnFeedback.setLayoutData(new GridData(SWT.NONE, SWT.CENTER, false, false, 1, 1));
-        btnFeedback.setEnabled(false);
-        btnFeedback.addListener(SWT.Selection, e -> {
-            getFeedbackForExcerise();
-        });
-
-        Label labelResult = new Label(feedbackComposite, SWT.NONE);
-        labelResult.setText("Summary of all executed tests");
+        Label labelResult = new Label(feedbackContainerComposite, SWT.NONE);
+        labelResult.setText("Summary of all executed tests for selected exercise");
         
-        createTabelForResult(feedbackComposite);
+        this.feedbackContentComposite = new Composite(feedbackContainerComposite, SWT.NONE);
+        feedbackContentComposite.setTouchEnabled(true);
+        feedbackContentComposite.setLayout(new GridLayout(1, true));
+        GridData gd_feedbackContentComposite = new GridData(SWT.FILL, SWT.FILL, true, true);
+        gd_feedbackContentComposite.widthHint = 515;
+        feedbackContentComposite.setLayoutData(gd_feedbackContentComposite);
+        feedbackContentComposite.setVisible(true);
+        Composite resultContentComposite = new Composite(feedbackContentComposite, SWT.BORDER);
+        GridData gd_resultContentComposite = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+        gd_resultContentComposite.heightHint = 108;
+        gd_resultContentComposite.widthHint = 518;
+        resultContentComposite.setLayoutData(gd_resultContentComposite);
         
-        Label labelFeedback2 = new Label(feedbackComposite, SWT.NONE);
-        labelFeedback2.setText("Results of all tests");
-        createTableForFeedback(feedbackComposite);
+        lblResultExerciseShortName = new Label(resultContentComposite, SWT.NONE);
+        lblResultExerciseShortName.setText("Name");
+        lblResultExerciseShortName.setTouchEnabled(true);
+        lblResultExerciseShortName.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.BOLD));
+        lblResultExerciseShortName.setBounds(22, 9, 105, 20);
         
-        scrolledCompositeFeedback.setContent(feedbackComposite);
-        scrolledCompositeFeedback.setMinSize(feedbackComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+        lblResultExerciseDescription = new Label(resultContentComposite, SWT.NONE);
+        lblResultExerciseDescription.setBounds(22, 35, 461, 21);
+        
+        btnResultSuccessfull = new Label(resultContentComposite, SWT.RIGHT);
+        btnResultSuccessfull.setForeground(SWTResourceManager.getColor(SWT.COLOR_GREEN));
+        btnResultSuccessfull.setBounds(360, 9, 123, 20);
+        btnResultSuccessfull.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.BOLD));
+        btnResultSuccessfull.setText("Successfull");
+        
+        resultScore = new Label(resultContentComposite, SWT.RIGHT);
+        resultScore.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.BOLD | SWT.ITALIC));
+        resultScore.setBounds(36, 78, 447, 20);
+        resultScore.setText("0 / 20");
+        
+        Label separator = new Label(resultContentComposite, SWT.SEPARATOR | SWT.HORIZONTAL);
+        separator.setBounds(20, 62, 476, 10);
+        
+        Label labelFeedback2 = new Label(feedbackContentComposite, SWT.NONE);
+        labelFeedback2.setFont(SWTResourceManager.getFont("Segoe UI", 10, SWT.BOLD));
+        labelFeedback2.setText("Summary of all executed tests");
+        createTableForFeedback(feedbackContentComposite);
+        
+        scrolledCompositeFeedback.setContent(feedbackContainerComposite);
+        scrolledCompositeFeedback.setMinSize(feedbackContainerComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 	}
 
-	private void createExamComboList(Combo courseCombo, Combo examCombo, Combo examExerciseCombo) {
+	private void createExamComboList(Combo courseCombo, Combo examCombo, Combo exerciseCombo) {
 		examCombo.removeAll();
-		examExerciseCombo.removeAll();
+		exerciseCombo.removeAll();
 		this.viewController.getExerciseShortNames(courseCombo.getItem(courseCombo.getSelectionIndex()))
-				.forEach(examExerciseCombo::add);
+				.forEach(exerciseCombo::add);
 		examCombo.add("None");
 		this.viewController.getExamShortNames(courseCombo.getItem(courseCombo.getSelectionIndex()))
 				.forEach(examCombo::add);
 		examCombo.addListener(SWT.Selection, e -> {
-			examExerciseCombo.removeAll();
+			exerciseCombo.removeAll();
 			if ("None".equals(examCombo.getItem(examCombo.getSelectionIndex()))) {
 				this.viewController.getExerciseShortNames(courseCombo.getItem(courseCombo.getSelectionIndex()))
-						.forEach(examExerciseCombo::add);
+						.forEach(exerciseCombo::add);
 			} else {
 				this.viewController.getExercisesShortNamesForExam(examCombo.getItem(examCombo.getSelectionIndex()))
-						.forEach(examExerciseCombo::add);
+						.forEach(exerciseCombo::add);
 			}
 		});
-		examExerciseCombo.addListener(SWT.Selection, e -> {
-			this.viewController.setExerciseID(examExerciseCombo.getItem(examExerciseCombo.getSelectionIndex()));
+		exerciseCombo.addListener(SWT.Selection, e -> {
+			handleExerciseComboListEvent(exerciseCombo);
 		});
 	}
 
@@ -144,18 +179,27 @@ public class ArtemisStudentView extends ViewPart {
 		this.scrolledCompositeGrading.setMinSize(this.gradingComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		gradingComposite.setLayout(new GridLayout(1, true));
 		
-		Composite assessmentComposite = new Composite(gradingComposite, SWT.NONE);
+		Composite assessmentComposite = new Composite(gradingComposite, SWT.BORDER);
+		GridData gd_assessmentComposite = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
+		gd_assessmentComposite.widthHint = 326;
+		assessmentComposite.setLayoutData(gd_assessmentComposite);
 		assessmentComposite.setLayout(new GridLayout(2, false));
 
 		Label lblCourse = new Label(assessmentComposite, SWT.NONE);
-		lblCourse.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblCourse.setFont(SWTResourceManager.getFont("Segoe UI", 9, SWT.BOLD));
+		GridData gd_lblCourse = new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1);
+		gd_lblCourse.widthHint = 164;
+		lblCourse.setLayoutData(gd_lblCourse);
 		lblCourse.setText("Course");
 
 		this.courseCombo = new Combo(assessmentComposite, SWT.READ_ONLY);
-		this.courseCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		GridData gd_courseCombo = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
+		gd_courseCombo.widthHint = 188;
+		this.courseCombo.setLayoutData(gd_courseCombo);
 
 		Label lblExam = new Label(assessmentComposite, SWT.NONE);
-		lblExam.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblExam.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
+		lblExam.setFont(SWTResourceManager.getFont("Segoe UI", 9, SWT.BOLD));
 		lblExam.setText("Exam");
 
 		this.examCombo = new Combo(assessmentComposite, SWT.READ_ONLY);
@@ -167,14 +211,12 @@ public class ArtemisStudentView extends ViewPart {
 		 */
 
 		Label lblExercise = new Label(assessmentComposite, SWT.NONE);
-		lblExercise.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblExercise.setFont(SWTResourceManager.getFont("Segoe UI", 9, SWT.BOLD));
+		lblExercise.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
 		lblExercise.setText("Exercise");
 
 		this.exerciseCombo = new Combo(assessmentComposite, SWT.READ_ONLY);
 		this.exerciseCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		this.exerciseCombo.addListener(SWT.Selection, e -> {
-			updateButtons(e);
-		});
 
 		this.loadExamComboEntries(this.courseCombo, this.examCombo, this.exerciseCombo);
 
@@ -184,87 +226,114 @@ public class ArtemisStudentView extends ViewPart {
 
 		Button btnRefreshArtemisState = new Button(buttons, SWT.NONE);
 		btnRefreshArtemisState.setText("Refresh Artemis State");
-		btnRefreshArtemisState.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		GridData gd_btnRefreshArtemisState = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
+		gd_btnRefreshArtemisState.widthHint = 157;
+		btnRefreshArtemisState.setLayoutData(gd_btnRefreshArtemisState);
 
 		this.addSelectionListenerForRefreshArtemisStateButton(btnRefreshArtemisState);
 
 		Button btnLoadExercise = new Button(buttons, SWT.NONE);
 		btnLoadExercise.setText("Start Exercise");
-		btnLoadExercise.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		GridData gd_btnLoadExercise = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
+		gd_btnLoadExercise.widthHint = 152;
+		btnLoadExercise.setLayoutData(gd_btnLoadExercise);
 
 		this.addLoadExerciseListenerForButton(btnLoadExercise);
 
 		// Submit
 		
-		Composite submitArea = new Composite(gradingComposite, SWT.None);
-		submitArea.setLayout(new GridLayout(1, true));
+		Composite submitArea = new Composite(gradingComposite, SWT.BORDER);
+		GridData gd_submitArea = new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1);
+		gd_submitArea.widthHint = 403;
+		submitArea.setLayoutData(gd_submitArea);
+		submitArea.setLayout(new GridLayout(2, true));
 
 		Label label1 = new Label(submitArea, SWT.NONE);
+		label1.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
+		label1.setFont(SWTResourceManager.getFont("Segoe UI", 9, SWT.BOLD));
 		label1.setText("Submit your solution");
-
-		btnSubmitExcerise = new Button(submitArea, SWT.NONE);
-		btnSubmitExcerise.setText(NO_SELECTED);
-		btnSubmitExcerise.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-		btnSubmitExcerise.setEnabled(false);
 		
-		this.addSelectionListenerForSubmitButton(btnSubmitExcerise);
-		
-		
-		// MORE BUTTONS
-		Composite cleanArea = new Composite(gradingComposite, SWT.None);
-		cleanArea.setLayout(new GridLayout(1, true));
-
-		Label labelClean = new Label(submitArea, SWT.NONE);
-		labelClean.setText("Clean your last changes");
-
-		btnClean = new Button(submitArea, SWT.NONE);
-		btnClean.setText(NO_SELECTED);
-		btnClean.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-		btnClean.addListener(SWT.Selection, e -> {
-			cleanWorkspaceForSelectedExercise();
-		});
-		btnClean.setEnabled(false);
+				Label labelClean = new Label(submitArea, SWT.NONE);
+				labelClean.setFont(SWTResourceManager.getFont("Segoe UI", 9, SWT.BOLD));
+				labelClean.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
+				labelClean.setText("Clean your last changes");
+								
+								Composite composite = new Composite(submitArea, SWT.NONE);
+								GridData gd_composite = new GridData(SWT.LEFT, SWT.FILL, false, false, 1, 1);
+								gd_composite.widthHint = 191;
+								composite.setLayoutData(gd_composite);
+								composite.setLayout(new GridLayout(1, false));
+								
+										btnSubmitExcerise = new Button(composite, SWT.NONE);
+										GridData gd_btnSubmitExcerise = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+										gd_btnSubmitExcerise.widthHint = 168;
+										btnSubmitExcerise.setLayoutData(gd_btnSubmitExcerise);
+										btnSubmitExcerise.addSelectionListener(new SelectionAdapter() {
+											@Override
+											public void widgetSelected(SelectionEvent e) {
+											}
+										});
+										btnSubmitExcerise.setText(NO_SELECTED);
+										btnSubmitExcerise.setEnabled(false);
+										
+										this.addSelectionListenerForSubmitButton(btnSubmitExcerise);
+										
+										ControlDecoration controlDecoration = new ControlDecoration(btnSubmitExcerise, SWT.RIGHT | SWT.CENTER);
+										controlDecoration.setMarginWidth(5);
+										controlDecoration.setDescriptionText("Some description");
+								
+								Composite composite_1 = new Composite(submitArea, SWT.NONE);
+								GridData gd_composite_1 = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
+								gd_composite_1.widthHint = 191;
+								composite_1.setLayoutData(gd_composite_1);
+								composite_1.setLayout(new GridLayout(1, false));
+								
+										btnClean = new Button(composite_1, SWT.NONE);
+										GridData gd_btnClean = new GridData(SWT.CENTER, SWT.CENTER, false, false, 2, 1);
+										gd_btnClean.widthHint = 168;
+										btnClean.setLayoutData(gd_btnClean);
+										btnClean.setText(NO_SELECTED);
+										btnClean.addListener(SWT.Selection, e -> {
+											cleanWorkspaceForSelectedExercise();
+										});
+										btnClean.setEnabled(false);
+										
+										ControlDecoration controlDecoration_1 = new ControlDecoration(btnClean, SWT.RIGHT | SWT.CENTER);
+										controlDecoration_1.setMarginWidth(5);
+										controlDecoration_1.setDescriptionText("Some description");
 		
 		
 		scrolledCompositeGrading.setContent(gradingComposite);
 		scrolledCompositeGrading.setMinSize(gradingComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 
 	}
+	
+	private void handleExerciseComboListEvent(Combo exerciseCombo) {
+		String exerciseShortName = exerciseCombo.getItem(exerciseCombo.getSelectionIndex());
+		this.viewController.setExerciseID(exerciseShortName);
+		getFeedbackForExcerise();
+		updateButtons(exerciseShortName);
+	}
 
 	private void createStudentTab(TabFolder tabFolder) {
 		TabItem gradingTabItem = new TabItem(tabFolder, SWT.NONE);
 		gradingTabItem.setText("Student");
 
-		this.scrolledCompositeGrading = new ScrolledComposite(tabFolder, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
-		gradingTabItem.setControl(this.scrolledCompositeGrading);
-		scrolledCompositeGrading.setLayout(new GridLayout(1, true));
-		this.scrolledCompositeGrading.setExpandHorizontal(true);
-		this.scrolledCompositeGrading.setExpandVertical(true);
-
-		this.gradingComposite = new Composite(this.scrolledCompositeGrading, SWT.NONE);
-		this.scrolledCompositeGrading.setContent(this.gradingComposite);
-		this.scrolledCompositeGrading.setMinSize(this.gradingComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-
-		gradingComposite.setLayout(new GridLayout(1, true));
-
 	}
 	
-	private void updateButtons(Event e) {
-		setButtonText(e);
+	private void updateButtons(String exerciseName) {
+		setButtonText(exerciseName);
 		enableButtons();
 	}
 	
-	private void setButtonText(Event e) {
-		String exerciseName = ((Combo) e.widget).getText();
+	private void setButtonText(String exerciseName) {
 		this.btnSubmitExcerise.setText("Submit: " + exerciseName);
 		this.btnClean.setText("Clean: " + exerciseName);
-        this.btnFeedback.setText("Feedback: " + exerciseName);
 	}
 	
 	private void enableButtons() {
         this.btnSubmitExcerise.setEnabled(this.viewController.canSubmit());
         btnClean.setEnabled(this.viewController.canClean());
-        btnFeedback.setEnabled(this.viewController.canFetchFeedback());
 	}
 
 	/**
@@ -297,37 +366,20 @@ public class ArtemisStudentView extends ViewPart {
 	
     private void getFeedbackForExcerise() {
         this.resultFeedbackMap = this.viewController.getFeedbackExcerise();
+        IExercise exercise = this.viewController.getCurrentSelectedExercise();
         if (!resultFeedbackMap.isEmpty()) {
             Entry<ResultsDTO, List<Feedback>> entry = resultFeedbackMap.entrySet().iterator().next();
             feedbackTabel.removeAll();
-            resultTabel.removeAll();
-            addResultToTable(resultTabel, entry);
             addFeedbackToTable(feedbackTabel, entry);
-            feedbackComposite.pack();
+            addResultToTab(entry, exercise);
+            feedbackContainerComposite.pack();
+            feedbackContentComposite.setVisible(true);
         } else {
             feedbackTabel.removeAll();
-            resultTabel.removeAll();
+            resetFeedback();
         }
     }
 
-    private void createTabelForResult(Composite parent) {
-        resultTabel = new Table(parent, SWT.BORDER | SWT.V_SCROLL);
-        resultTabel.setToolTipText("Feedbacks for Excerise");
-        resultTabel.setLinesVisible(true);
-        resultTabel.setHeaderVisible(true);
-        resultTabel.setLayout(new GridLayout(1, true));
-        resultTabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-        resultTabel.setVisible(false);
-        final Rectangle clientArea = parent.getClientArea();
-        resultTabel.setBounds(clientArea.x, clientArea.y, 400, 10);
-        String[] colNames = { "Description", "Score", "Positiv", "Rated", "Date" };
-
-        for (int loopIndex = 0; loopIndex < colNames.length; loopIndex++) {
-            final TableColumn column = new TableColumn(resultTabel, SWT.NULL);
-            column.setText(colNames[loopIndex]);
-            column.setWidth(80);
-        }
-    }
 
     private void createTableForFeedback(Composite parent) {
         feedbackTabel = new Table(parent, SWT.BORDER | SWT.V_SCROLL);
@@ -335,11 +387,12 @@ public class ArtemisStudentView extends ViewPart {
         feedbackTabel.setLinesVisible(true);
         feedbackTabel.setHeaderVisible(true);
         feedbackTabel.setLayout(new GridLayout(1, true));
-        feedbackTabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-        feedbackTabel.setVisible(false);
+        GridData gd_feedbackTabel = new GridData(SWT.LEFT, SWT.FILL, true, true);
+        gd_feedbackTabel.widthHint = 500;
+        feedbackTabel.setLayoutData(gd_feedbackTabel);
         final Rectangle clientArea = parent.getClientArea();
-        feedbackTabel.setBounds(clientArea.x, clientArea.y, 400, 400);
-        String[] colNames = { "Name", "Credits", "Positiv", "Type" };
+        feedbackTabel.setBounds(clientArea.x, clientArea.y, 500,500);
+        String[] colNames = { "Name", "Credits", "Success", "Type" };
 
         for (int loopIndex = 0; loopIndex < colNames.length; loopIndex++) {
             final TableColumn column = new TableColumn(feedbackTabel, SWT.NULL);
@@ -348,24 +401,22 @@ public class ArtemisStudentView extends ViewPart {
         }
     }
 
-    private void addResultToTable(Table table, Entry<ResultsDTO, List<Feedback>> entry) {
+    private void addResultToTab(Entry<ResultsDTO, List<Feedback>> entry, IExercise exercise) {
         Display display = Display.getDefault();
         if (entry != null) {
             ResultsDTO result = entry.getKey();
-            final TableItem item = new TableItem(table, SWT.NULL);
-            item.setText(0, result.resultString);
-            item.setText(1, "" + result.score);
-            item.setText(2, result.successful ? "successful" : "failed");
-            item.setForeground(2, result.successful ? display.getSystemColor(SWT.COLOR_GREEN)
-                    : display.getSystemColor(SWT.COLOR_RED));
-            item.setText(3, result.rated.toString());
-            item.setText(4, result.completionDate.toString());
-            table.pack();
-            table.setVisible(true);
+            this.btnResultSuccessfull.setForeground((result.successful ? display.getSystemColor(SWT.COLOR_GREEN)
+                    : display.getSystemColor(SWT.COLOR_RED)));
+            btnResultSuccessfull.setText(result.successful ? "success" : "failed");
+            
+            if (exercise != null) {
+            	lblResultExerciseShortName.setText(exercise.getTitle());
+            	lblResultExerciseDescription.setText(result.completionDate);
+            	resultScore.setText(result.resultString);
+            } else {
+            	resultScore.setText(Integer.toString(result.score));
+            }
         }
-        table.pack();
-        table.setVisible(true);
-
     }
 
     private void addFeedbackToTable(Table table, Entry<ResultsDTO, List<Feedback>> entry) {
@@ -380,8 +431,6 @@ public class ArtemisStudentView extends ViewPart {
                         : display.getSystemColor(SWT.COLOR_RED));
                 item.setText(3, feedback.getType().toString());
             }
-            table.pack();
-            table.setVisible(true);
         }
 
     }
@@ -397,20 +446,23 @@ public class ArtemisStudentView extends ViewPart {
 		this.exerciseCombo.removeAll();
 		resetButtonText();
 		resetButtonEnable();
+		resetFeedback();
 		this.viewController.fetchCourses();
 		this.viewController.getCourseShortNames().forEach(courseShortName -> this.courseCombo.add(courseShortName));
+	}
+	
+	private void resetFeedback() {
+		feedbackContentComposite.setVisible(false);
 	}
 	
 	private void resetButtonText() {
 		this.btnSubmitExcerise.setText(NO_SELECTED);
 		this.btnClean.setText(NO_SELECTED);
-		this.btnFeedback.setText(NO_SELECTED);
 	}
 	
 	private void resetButtonEnable() {
 		this.btnSubmitExcerise.setEnabled(false);
 		this.btnClean.setEnabled(false);
-		this.btnFeedback.setEnabled(false);
 	}
 	
 	private void cleanWorkspaceForSelectedExercise() {

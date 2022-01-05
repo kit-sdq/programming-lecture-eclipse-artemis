@@ -178,5 +178,7 @@ public interface ISystemwideController extends IController {
 	Map<ResultsDTO, List<Feedback>> getFeedbackExcerise();
 	
 	boolean isSelectedExerciseExpired();
+	
+	IExercise getCurrentSelectedExercise();
 
 }

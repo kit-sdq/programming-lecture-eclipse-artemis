@@ -494,8 +494,17 @@ public class SystemwideController extends AbstractController implements ISystemw
 	@Override
 	public boolean isSelectedExerciseExpired() {
 		if (exercise != null ) {
-			return exercise.getDueDate().before(new Date());
+			if(exercise.getDueDate() != null) {
+				return exercise.getDueDate().before(new Date());
+			} else {
+				return false;
+			}
 		}
-		return false;
+		return true;
+	}
+	
+	@Override
+	public IExercise getCurrentSelectedExercise() {
+		return exercise;
 	}
 }
