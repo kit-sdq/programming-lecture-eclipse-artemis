@@ -1,6 +1,7 @@
 package edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -54,6 +55,10 @@ public class Feedback implements Serializable {
 	 *         or negative.
 	 */
 	public double getCredits() {
+		if (Objects.equals("NEVER", visibility)) {
+			// Bugfix for wrong Artemis points for NEVER visibility
+			return 0;
+		}
 		return this.credits;
 	}
 
