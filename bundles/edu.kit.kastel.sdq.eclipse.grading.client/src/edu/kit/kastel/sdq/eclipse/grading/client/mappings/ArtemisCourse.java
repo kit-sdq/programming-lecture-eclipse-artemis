@@ -44,6 +44,7 @@ public class ArtemisCourse implements ICourse, Serializable {
 	public List<IExam> getExams() throws ArtemisClientException {
 		if (this.exams == null) {
 			this.exams = this.client.getExamsForCourse(this);
+			this.exams.sort((e1, e2) -> e1.getTitle().compareTo(e2.getTitle()));
 		}
 		return this.exams;
 	}
@@ -52,6 +53,7 @@ public class ArtemisCourse implements ICourse, Serializable {
 	public List<IExercise> getExercises() throws ArtemisClientException {
 		if (this.exercises == null) {
 			this.exercises = this.client.getNormalExercisesForCourse(this);
+			this.exercises.sort((e1, e2) -> e1.getShortName().compareTo(e2.getShortName()));
 		}
 		return this.exercises;
 	}
