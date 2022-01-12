@@ -34,7 +34,7 @@ jobs:
       run: mvn -U -B package --file pom.xml
 
     - name: Deploy GH Pages
-      uses: JamesIves/github-pages-deploy-action@4.1.8
+      uses: JamesIves/github-pages-deploy-action@v4.2.2
       with:
         BRANCH: gh-pages 
         FOLDER: releng/edu.kit.kastel.sdq.eclipse.grading.updatesite/target/repository
