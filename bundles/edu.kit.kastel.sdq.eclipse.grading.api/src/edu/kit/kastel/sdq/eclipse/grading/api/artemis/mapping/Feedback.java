@@ -1,6 +1,7 @@
 package edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -26,7 +27,7 @@ public class Feedback implements Serializable {
 	private static final long serialVersionUID = 4531964872375020131L;
 
 	private String type;
-	private Double credits;
+	private double credits;
 	private Integer id; // null for all manual feedback
 	private Boolean positive; // null for all manual feedback
 	private String visibility; // null for all manual feedback
@@ -53,7 +54,11 @@ public class Feedback implements Serializable {
 	 * @return this Feedbacks contribution to the total credit sum. Can be positive
 	 *         or negative.
 	 */
-	public Double getCredits() {
+	public double getCredits() {
+		if (Objects.equals("NEVER", visibility)) {
+			// Bugfix for wrong Artemis points for NEVER visibility
+			return 0;
+		}
 		return this.credits;
 	}
 

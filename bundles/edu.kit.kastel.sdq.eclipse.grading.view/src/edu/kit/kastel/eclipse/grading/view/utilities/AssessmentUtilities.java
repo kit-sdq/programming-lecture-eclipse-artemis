@@ -26,6 +26,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
 public final class AssessmentUtilities {
 
 	public static final String MARKER_NAME = "edu.kit.kastel.eclipse.grading.view.assessment.marker";
+	public static final String MARKER_ATTRIBUTE_ANNOTATION_ID = "annotationID";
 	public static final String MARKER_ATTRIBUTE_ERROR = "errorType";
 	public static final String MARKER_ATTRIBUTE_ERROR_DESCRIPTION = "errorTypeDescription";
 	public static final String MARKER_ATTRIBUTE_CLASS_NAME = "className";

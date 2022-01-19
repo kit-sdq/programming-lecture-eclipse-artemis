@@ -1,5 +1,7 @@
 package edu.kit.kastel.eclipse.grading.view.observers;
 
+import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.MessageDialog;
 
 import edu.kit.kastel.eclipse.grading.view.utilities.AssessmentUtilities;
@@ -11,19 +13,24 @@ import edu.kit.kastel.sdq.eclipse.grading.api.controller.IAlertObserver;
  *
  */
 public class ViewAlertObserver implements IAlertObserver {
-
+	
+	private static final ILog log = Platform.getLog(ViewAlertObserver.class); 
+	
 	@Override
-	public void error(String errorMsg, Throwable cause) {
+	public void error(String errorMsg, Throwable cause) {	
+		log.error(errorMsg, cause);
 		MessageDialog.openError(AssessmentUtilities.getWindowsShell(), "Error", errorMsg);
 	}
 
 	@Override
 	public void info(String infoMsg) {
+		log.info(infoMsg);
 		MessageDialog.openInformation(AssessmentUtilities.getWindowsShell(), "Info", infoMsg);
 	}
 
 	@Override
 	public void warn(String warningMsg) {
+		log.warn(warningMsg);
 		MessageDialog.openWarning(AssessmentUtilities.getWindowsShell(), "Warning", warningMsg);
 	}
 	@Override

@@ -141,7 +141,9 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 	private boolean existsAndNotify(File file) {
 		if (file.exists()) {
 			this.warn("Project " + file.getName() + " could not be cloned since the workspace "
-					+ "already contains a project with that name. Please delete it and retry.");
+					+ "already contains a project with that name. " + System.lineSeparator()
+					+ "Trying to load and merge previously created annotations. Please double-check them before submitting the assessment! " + System.lineSeparator()
+					+ "If you want to start again from skretch, please delete the project and retry.");
 			return true;
 		}
 		return false;

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/edu.kit.kastel.sdq.eclipse.grading.feature_1.0.0.qualifier.jar" id="edu.kit.kastel.sdq.eclipse.grading.feature" version="1.0.0.qualifier">
+      <category name="Eclipse Grading"/>
+   </feature>
+   <feature id="edu.kit.kastel.sdq.eclipse.grading.feature.source" version="1.0.0.qualifier">
+      <category name="Eclipse Grading"/>
+   </feature>
+   <feature id="org.eclipse.jgit">
+      <category name="Eclipse Grading Dev"/>
+   </feature>
+   <feature id="org.eclipse.pde">
+      <category name="Eclipse Grading Dev"/>
+   </feature>
+   <bundle id="com.fasterxml.jackson.core.jackson-annotations">
+      <category name="Eclipse Grading Dev"/>
+   </bundle>
+   <bundle id="com.fasterxml.jackson.core.jackson-annotations.source">
+      <category name="Eclipse Grading Dev"/>
+   </bundle>
+   <bundle id="com.fasterxml.jackson.core.jackson-core">
+      <category name="Eclipse Grading Dev"/>
+   </bundle>
+   <bundle id="com.fasterxml.jackson.core.jackson-core.source">
+      <category name="Eclipse Grading Dev"/>
+   </bundle>
+   <bundle id="com.fasterxml.jackson.core.jackson-databind">
+      <category name="Eclipse Grading Dev"/>
+   </bundle>
+   <bundle id="com.fasterxml.jackson.core.jackson-databind.source">
+      <category name="Eclipse Grading Dev"/>
+   </bundle>
+   <bundle id="javax.ws.rs">
+      <category name="Eclipse Grading Dev"/>
+   </bundle>
+   <bundle id="javax.ws.rs.source">
+      <category name="Eclipse Grading Dev"/>
+   </bundle>
+   <bundle id="jakarta.xml.bind">
+      <category name="Eclipse Grading Dev"/>
+   </bundle>
+   <bundle id="org.glassfish.jersey.core.jersey-client">
+      <category name="Eclipse Grading Dev"/>
+   </bundle>
+   <bundle id="org.glassfish.jersey.core.jersey-client.source">
+      <category name="Eclipse Grading Dev"/>
+   </bundle>
+   <bundle id="org.glassfish.jersey.core.jersey-common">
+      <category name="Eclipse Grading Dev"/>
+   </bundle>
+   <bundle id="org.glassfish.jersey.core.jersey-common.source">
+      <category name="Eclipse Grading Dev"/>
+   </bundle>
+   <bundle id="org.glassfish.jersey.inject.jersey-hk2">
+      <category name="Eclipse Grading Dev"/>
+   </bundle>
+   <bundle id="org.glassfish.jersey.inject.jersey-hk2.source">
+      <category name="Eclipse Grading Dev"/>
+   </bundle>
+   <bundle id="com.sun.xml.bind">
+      <category name="Eclipse Grading Dev"/>
+   </bundle>
+   <bundle id="org.eclipse.egit.core">
+      <category name="Eclipse Grading Dev"/>
+   </bundle>
+   <bundle id="org.eclipse.jface.text">
+      <category name="Eclipse Grading Dev"/>
+   </bundle>
+   <bundle id="org.eclipse.egit">
+      <category name="Eclipse Grading Dev"/>
+   </bundle>
+   <category-def name="Eclipse Grading" label="Eclipse Grading">
+      <description>
+         Plugin for easier grading with Artemis and Eclipse
+      </description>
+   </category-def>
+   <category-def name="Eclipse Grading Dev" label="Eclipse Grading Development"/>
+</site>

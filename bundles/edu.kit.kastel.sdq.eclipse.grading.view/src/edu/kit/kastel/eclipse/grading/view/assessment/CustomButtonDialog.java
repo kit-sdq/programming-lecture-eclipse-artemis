@@ -36,6 +36,7 @@ public class CustomButtonDialog extends Dialog {
 	private IMistakeType customMistake;
 	private final AssessmentViewController viewController;
 	private final String ratingGroupName;
+	private boolean closedByOk;
 
 	public CustomButtonDialog(Shell parentShell, AssessmentViewController viewController, String ratingGroupName, IMistakeType mistake) {
 		super(parentShell);
@@ -53,7 +54,7 @@ public class CustomButtonDialog extends Dialog {
 	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		newShell.setText("Create custom error");
+		newShell.setText("Create custom penalty");
 	}
 
 	@Override
@@ -72,7 +73,8 @@ public class CustomButtonDialog extends Dialog {
 		
 		GridData customMessageInputFieldData;
 		if (userWantsBigWindow) {
-			this.customMessageInputField = new Text(comp, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL  |SWT.H_SCROLL);
+			int textWrapping = Activator.getDefault().getPreferenceStore().getBoolean(PreferenceConstants.PREFERS_TEXT_WRAPPING_IN_PENALTY_TEXT_PATH) ? SWT.WRAP : 0;
+			this.customMessageInputField = new Text(comp, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | textWrapping);
 			customMessageInputFieldData = new GridData(GridData.FILL_BOTH);
 			
 			// Calculating height and width based on the lineHeight (theoretically) ensures proper scaling across screen-sizes.
@@ -86,14 +88,17 @@ public class CustomButtonDialog extends Dialog {
 			customMessageInputFieldData = data;
 		}
 		
-		final Label customPenaltyLabel = new Label(comp, SWT.RIGHT);
-		customPenaltyLabel.setText("Custom Penalty: ");
-		this.customPenaltyInputField = new Spinner(comp, SWT.SINGLE | SWT.BORDER);
-		this.customPenaltyInputField.setDigits(1);
-		this.customPenaltyInputField.setIncrement(5);
+		
 				
 		this.customMessageInputField.setLayoutData(customMessageInputFieldData);
-		this.customPenaltyInputField.setLayoutData(data);
+		if (this.customMistake != null) {	// Don't display the spinner if points are determined internally. 
+			final Label customPenaltyLabel = new Label(comp, SWT.RIGHT);
+			customPenaltyLabel.setText("Custom Penalty: ");
+			this.customPenaltyInputField = new Spinner(comp, SWT.SINGLE | SWT.BORDER);
+			this.customPenaltyInputField.setDigits(1);
+			this.customPenaltyInputField.setIncrement(5);
+			this.customPenaltyInputField.setLayoutData(data);			
+		}
 
 		return comp;
 	}
@@ -108,10 +113,21 @@ public class CustomButtonDialog extends Dialog {
 
 	@Override
 	protected void okPressed() {
+		this.closedByOk = true;
 		this.customMessage = this.customMessageInputField.getText();
-		this.customPenalty = Double.parseDouble(this.customPenaltyInputField.getText().replace(',', '.'));
-		this.viewController.addAssessmentAnnotation(this.customMistake, this.customMessage, this.customPenalty, this.ratingGroupName);
+		if (this.customMistake != null) {	// don't create an annotation iff the annotation is generated externally.
+			this.customPenalty = Double.parseDouble(this.customPenaltyInputField.getText().replace(',', '.'));
+			this.viewController.addAssessmentAnnotation(this.customMistake, this.customMessage, this.customPenalty, this.ratingGroupName);
+		}
 		super.okPressed();
+	}
+	
+	/**
+	 * Check to figure out how the dialog was closed
+	 * @return true iff the user clicked on ok, false if not.
+	 */
+	public boolean isClosedByOk() {
+		return closedByOk;
 	}
 	
 	/**

@@ -1,8 +1,6 @@
 package edu.kit.kastel.sdq.eclipse.grading.client.mappings;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -18,18 +16,16 @@ public class ArtemisCourse implements ICourse, Serializable {
 
 	@JsonProperty(value = "id")
 	private int courseId;
-	
 	@JsonProperty
 	private String title;
-	
 	@JsonProperty
 	private String shortName;
 
 	@JsonProperty("instructorGroupName")
 	private String instructorGroup;
 
-	private transient IExercise[] exercises;
-	private transient IExam[] exams;
+	private transient List<IExercise> exercises;
+	private transient List<IExam> exams;
 	private transient IMappingLoader client;
 
 	/**
@@ -47,17 +43,19 @@ public class ArtemisCourse implements ICourse, Serializable {
 	@Override
 	public List<IExam> getExamsForCourse() throws ArtemisClientException {
 		if (this.exams == null) {
-			this.exams = (IExam[]) this.client.getExamsForCourse(this).toArray();
+			this.exams = this.client.getExamsForCourse(this);
+			this.exams.sort((e1, e2) -> e1.getTitle().compareTo(e2.getTitle()));
 		}
-		return Arrays.asList(this.exams);
+		return this.exams;
 	}
 
 	@Override
 	public List<IExercise> getExercisesForCourse() throws ArtemisClientException {
 		if (this.exercises == null) {
-			this.exercises = (IExercise[]) this.client.getNormalExercisesForCourse(this).toArray();
+			this.exercises = this.client.getNormalExercisesForCourse(this);
+			this.exercises.sort((e1, e2) -> e1.getShortName().compareTo(e2.getShortName()));
 		}
-		return Arrays.asList(this.exercises);
+		return this.exercises;
 	}
 
 	@Override
