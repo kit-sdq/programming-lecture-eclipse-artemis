@@ -276,6 +276,15 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 	public List<IExercise> getExercisesFromExam(final String examTitle) {
 		return this.getExercisesFromExam(examTitle, this.getCourses());
 	}
+	
+	@Override
+	public Date getCurrentDate() {
+		try {
+			return this.artemisClient.getTime();
+		} catch (ArtemisClientException e) {
+			return new Date();
+		}
+	}
 
 	private List<IExercise> getExercisesFromExam(final String examTitle, List<ICourse> courses) {
 		IExam foundExam = filterGetExamObjectFromLoadedCourses(examTitle, courses);
@@ -283,7 +292,7 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 			this.error("No exam found for examTitle=" + examTitle, null);
 			return List.of();
 		}
-		if (foundExam.isExamExpired(new Date())) {
+		if (foundExam.isExamExpired(getCurrentDate())) {
 			this.error("The selected exam is expired.", null);
 			return List.of();
 		}

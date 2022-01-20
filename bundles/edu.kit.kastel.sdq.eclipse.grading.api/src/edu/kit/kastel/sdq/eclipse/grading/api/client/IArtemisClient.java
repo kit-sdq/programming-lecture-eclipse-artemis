@@ -2,6 +2,7 @@ package edu.kit.kastel.sdq.eclipse.grading.api.client;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -114,4 +115,6 @@ public interface IArtemisClient {
 	IStudentExam startExam(IExam exam) throws ArtemisClientException;
 	
 	Feedback[] getFeedbackForResult(int particiaptionId, int resultId) throws ArtemisClientException;
+	
+	Date getTime() throws ArtemisClientException;
 }

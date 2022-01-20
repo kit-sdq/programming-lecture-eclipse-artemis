@@ -75,6 +75,12 @@ public class ArtemisStudentView extends ViewPart {
 			this.viewController.onSubmitSolution();
 		});
 	}
+	
+	private void addSelectionListenerForReloadButton(Button btn) {
+		btn.addListener(SWT.Selection, e -> {
+			getFeedbackForExcerise();
+		});
+	}
 
 	private void createResultTab(TabFolder tabFolder) {
 		TabItem tbtmAssessment = new TabItem(tabFolder, SWT.NONE);
@@ -93,10 +99,29 @@ public class ArtemisStudentView extends ViewPart {
 				.setMinSize(this.feedbackContainerComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		feedbackContainerComposite.setLayout(new GridLayout(1, true));
 		feedbackContainerComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-
-		Label labelFeedback = new Label(feedbackContainerComposite, SWT.NONE);
-		labelFeedback.setFont(SWTResourceManager.getFont("Segoe UI", 18, SWT.BOLD));
-		labelFeedback.setText("Feedback");
+		
+		Composite composite = new Composite(feedbackContainerComposite, SWT.NONE);
+		composite.setLayout(new GridLayout(13, false));
+		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
+		
+				Label labelFeedback = new Label(composite, SWT.NONE);
+				labelFeedback.setFont(SWTResourceManager.getFont("Segoe UI", 18, SWT.BOLD));
+				labelFeedback.setText("Feedback");
+				new Label(composite, SWT.NONE);
+				new Label(composite, SWT.NONE);
+				new Label(composite, SWT.NONE);
+				new Label(composite, SWT.NONE);
+				new Label(composite, SWT.NONE);
+				new Label(composite, SWT.NONE);
+				new Label(composite, SWT.NONE);
+				new Label(composite, SWT.NONE);
+				new Label(composite, SWT.NONE);
+				new Label(composite, SWT.NONE);
+				new Label(composite, SWT.NONE);
+				
+				Button btnNewButton = new Button(composite, SWT.NONE);
+				btnNewButton.setText("Reload");
+				addSelectionListenerForReloadButton(btnNewButton);
 
 		Label labelResult = new Label(feedbackContainerComposite, SWT.NONE);
 		labelResult.setText("Summary of all executed tests for the selected exercise");
@@ -118,20 +143,20 @@ public class ArtemisStudentView extends ViewPart {
 		lblResultExerciseShortName.setText("Name");
 		lblResultExerciseShortName.setTouchEnabled(true);
 		lblResultExerciseShortName.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.BOLD));
-		lblResultExerciseShortName.setBounds(22, 9, 105, 20);
+		lblResultExerciseShortName.setBounds(22, 9, 105, 28);
 
 		lblResultExerciseDescription = new Label(resultContentComposite, SWT.NONE);
 		lblResultExerciseDescription.setBounds(22, 35, 461, 21);
 
 		btnResultSuccessfull = new Label(resultContentComposite, SWT.RIGHT);
 		btnResultSuccessfull.setForeground(SWTResourceManager.getColor(SWT.COLOR_GREEN));
-		btnResultSuccessfull.setBounds(360, 9, 123, 20);
+		btnResultSuccessfull.setBounds(360, 9, 123, 28);
 		btnResultSuccessfull.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.BOLD));
 		btnResultSuccessfull.setText("Successfull");
 
 		resultScore = new Label(resultContentComposite, SWT.RIGHT);
 		resultScore.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.BOLD | SWT.ITALIC));
-		resultScore.setBounds(36, 78, 447, 20);
+		resultScore.setBounds(36, 78, 447, 30);
 		resultScore.setText("0 / 20");
 
 		Label separator = new Label(resultContentComposite, SWT.SEPARATOR | SWT.HORIZONTAL);
@@ -273,11 +298,6 @@ public class ArtemisStudentView extends ViewPart {
 		GridData gd_btnSubmitExcerise = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
 		gd_btnSubmitExcerise.widthHint = 168;
 		btnSubmitExcerise.setLayoutData(gd_btnSubmitExcerise);
-		btnSubmitExcerise.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-			}
-		});
 		btnSubmitExcerise.setText(NO_SELECTED);
 		btnSubmitExcerise.setEnabled(false);
 
@@ -321,7 +341,7 @@ public class ArtemisStudentView extends ViewPart {
 
 	private void createStudentTab(TabFolder tabFolder) {
 		TabItem gradingTabItem = new TabItem(tabFolder, SWT.NONE);
-		gradingTabItem.setText("Student");
+		gradingTabItem.setText("Exam");
 
 	}
 

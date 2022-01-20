@@ -1,5 +1,6 @@
 package edu.kit.kastel.sdq.eclipse.grading.api.controller;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -154,5 +155,7 @@ public interface IArtemisController extends IController {
 	Map<ResultsDTO, List<Feedback>> getFeedbackExcerise(ICourse course, IExercise excerise);
 	
 	List<ICourse> fetchCourses();
+
+	Date getCurrentDate();
 	
 }
