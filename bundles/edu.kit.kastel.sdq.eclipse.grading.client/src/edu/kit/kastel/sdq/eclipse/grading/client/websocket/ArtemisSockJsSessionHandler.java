@@ -7,38 +7,46 @@ import org.springframework.messaging.simp.stomp.StompHeaders;
 import org.springframework.messaging.simp.stomp.StompSession;
 import org.springframework.messaging.simp.stomp.StompSessionHandler;
 
+import edu.kit.kastel.sdq.eclipse.grading.api.client.websocket.WebsocketCallback;
+
 public class ArtemisSockJsSessionHandler implements StompSessionHandler  {
 	
-	private static final String topic1 = "/user/topic/newSubmissions";
-	private static final String topic2 = "/user/topic/newResults";
+	private static final String TOPIC_NEW_SUBMISSION = "/user/topic/newSubmissions";
+	private static final String TOPIC_NEW_RESULT = "/user/topic/newResults";
+	
+	private WebsocketCallback callback;
+	
+	public ArtemisSockJsSessionHandler(WebsocketCallback callback) {
+		this.callback = callback;
+	}
 
 	@Override
 	public Type getPayloadType(StompHeaders headers) {
-		// TODO Auto-generated method stub
 		System.out.println("--------payload---------");
 		return Object.class;
 	}
 	@Override
 	public void handleFrame(StompHeaders headers, Object payload) {
-		// TODO Auto-generated method stub
 		System.out.println("----------frame-------");
-		System.out.println(payload.toString());
+		callback.handleFrame(payload);
 	}
 	@Override
 	public void afterConnected(StompSession session, StompHeaders connectedHeaders) {
-		System.out.println("---------afterConnected--------");
-		session.subscribe(topic1, this);
-		session.subscribe(topic2, this);
+		System.out.println("---------afterConnected--123------");
+		session.subscribe(TOPIC_NEW_SUBMISSION, this);
+		session.subscribe(TOPIC_NEW_RESULT, this);
 	}
 	@Override
 	public void handleException(StompSession session, StompCommand command, StompHeaders headers, byte[] payload,
 			Throwable exception) {
-		// TODO Auto-generated method stub
+		System.out.println("---------------------------");
 		exception.printStackTrace();
+		callback.handleException(exception);
 	}
 	@Override
 	public void handleTransportError(StompSession session, Throwable exception) {
-		// TODO Auto-generated method stub
+		System.out.println("---------------------------3");
 		exception.printStackTrace();
+		callback.handleTransportError(exception);
 	}
 }

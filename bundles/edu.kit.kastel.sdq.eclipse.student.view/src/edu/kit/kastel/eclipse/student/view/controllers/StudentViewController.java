@@ -7,6 +7,7 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.Feedback;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ICourse;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ResultsDTO;
+import edu.kit.kastel.sdq.eclipse.grading.api.client.websocket.WebsocketCallback;
 
 public class StudentViewController extends AssessmentViewController {
 	
@@ -44,6 +45,10 @@ public class StudentViewController extends AssessmentViewController {
 	
 	public boolean canClean() {
 		return true;
+	}
+	
+	public boolean connectToWebsocket(WebsocketCallback callBack) {
+		return getArtemisController().connectToWebsocket(callBack);
 	}
 	
 	public boolean canFetchFeedback() {

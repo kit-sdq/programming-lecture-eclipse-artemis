@@ -77,7 +77,7 @@
             restorable="true">
       </view>
       <view
-            class="edu.kit.kastel.eclipse.student.view.assessment.ArtemisStudentView"
+            class="edu.kit.kastel.eclipse.student.view.ui.ArtemisStudentView"
             id="edu.kit.kastel.eclipse.student.view.assessment.ArtemisGradingView"
             name="Artemis Student"
             restorable="true">

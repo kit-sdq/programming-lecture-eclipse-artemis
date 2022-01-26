@@ -4,15 +4,13 @@ Bundle-Name: edu.kit.kastel.sdq.eclipse.grading.client
 Bundle-SymbolicName: edu.kit.kastel.sdq.eclipse.grading.client;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-11
-Require-Bundle: com.fasterxml.jackson.core.jackson-core,
- com.fasterxml.jackson.core.jackson-databind,
- com.fasterxml.jackson.core.jackson-annotations,
- org.eclipse.core.commands,
+Require-Bundle: org.eclipse.core.commands,
  org.eclipse.egit.core,
  org.eclipse.jgit,
  com.sun.xml.bind,
  jakarta.xml.bind,
  javax.ws.rs,
+ javax.websocket,
  org.glassfish.jersey.core.jersey-common,
  org.glassfish.jersey.core.jersey-client,
  org.glassfish.jersey.inject.jersey-hk2,
@@ -20,10 +18,23 @@ Require-Bundle: com.fasterxml.jackson.core.jackson-core,
  org.glassfish.hk2.api,
  org.glassfish.hk2.locator,
  org.glassfish.hk2.utils,
- org.slf4j.api,
- org.junit,
- SpringWebsocketDependencyPlugin;bundle-version="1.0.0"
+ org.slf4j.api
 Export-Package: edu.kit.kastel.sdq.eclipse.grading.client.git,
  edu.kit.kastel.sdq.eclipse.grading.client.mappings,
- edu.kit.kastel.sdq.eclipse.grading.client.rest
+ edu.kit.kastel.sdq.eclipse.grading.client.rest,
+ edu.kit.kastel.sdq.eclipse.grading.client.websocket
 Automatic-Module-Name: edu.kit.kastel.sdq.eclipse.grading.client
+Bundle-ClassPath: lib/jackson-annotations-2.10.2.jar,
+ lib/jackson-core-2.10.2.jar,
+ lib/jackson-databind-2.10.2.jar,
+ lib/spring-aop-5.3.15.jar,
+ lib/spring-beans-5.3.0.jar,
+ lib/spring-context-5.3.15.jar,
+ lib/spring-core-5.3.15.jar,
+ lib/spring-expression-5.3.15.jar,
+ lib/spring-jcl-5.3.15.jar,
+ lib/spring-messaging-5.3.0.jar,
+ lib/spring-web-5.3.15.jar,
+ lib/spring-websocket-5.3.15.jar,
+ lib/tyrus-standalone-client-1.9.jar,
+ .

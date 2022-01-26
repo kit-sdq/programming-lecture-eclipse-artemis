@@ -13,6 +13,7 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExam;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ResultsDTO;
+import edu.kit.kastel.sdq.eclipse.grading.api.client.websocket.WebsocketCallback;
 
 /**
  * Works as an interface from backend to ArtemisClient
@@ -157,5 +158,7 @@ public interface IArtemisController extends IController {
 	List<ICourse> fetchCourses();
 
 	Date getCurrentDate();
+	
+	boolean connectToWebsocket(WebsocketCallback callback);
 	
 }

@@ -7,8 +7,8 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.text.ITextSelection;
 
 import edu.kit.kastel.eclipse.student.view.activator.Activator;
-import edu.kit.kastel.eclipse.student.view.assessment.ArtemisStudentView;
 import edu.kit.kastel.eclipse.student.view.observers.ViewAlertObserver;
+import edu.kit.kastel.eclipse.student.view.ui.ArtemisStudentView;
 import edu.kit.kastel.eclipse.student.view.utilities.AssessmentUtilities;
 import edu.kit.kastel.sdq.eclipse.grading.api.ArtemisClientException;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ICourse;

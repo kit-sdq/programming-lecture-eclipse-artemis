@@ -244,7 +244,8 @@ public class ArtemisClient extends AbstractArtemisClient implements IMappingLoad
 	private boolean isStatusSuccessful(final Response response) {
 		return Family.SUCCESSFUL.equals(response.getStatusInfo().getFamily());
 	}
-
+	
+	@Override
 	public String login() throws ArtemisClientException {
 		String payload = this.payload(this.getAuthenticationEntity());
 		final Response authenticationResponse = this.apiEndpoint.path("authenticate").request().buildPost(Entity.json(payload)).invoke();

@@ -117,4 +117,6 @@ public interface IArtemisClient {
 	Feedback[] getFeedbackForResult(int particiaptionId, int resultId) throws ArtemisClientException;
 	
 	Date getTime() throws ArtemisClientException;
+	
+	String login() throws ArtemisClientException;
 }
