@@ -25,32 +25,30 @@ public class ArtemisSockJsSessionHandler extends StompSessionHandlerAdapter  {
 	public Type getPayloadType(StompHeaders headers) {
 		return Object.class;
 	}
+	
 	@Override
 	public void handleFrame(StompHeaders headers, Object payload) {
-		System.out.println("----------frame-------");
 		if (!headers.get("destination").isEmpty() && headers.get("destination").get(0).equals(TOPIC_NEW_RESULT)) {
 			callback.handleResult(payload);
 		} else if(!headers.get("destination").isEmpty() && headers.get("destination").get(0).equals(TOPIC_NEW_SUBMISSION)) {
 			callback.handleSubmission(payload);
 		}
 	}
+	
 	@Override
 	public void afterConnected(StompSession session, StompHeaders connectedHeaders) {
-		System.out.println("---------afterConnected--123------");
 		session.subscribe(TOPIC_NEW_SUBMISSION, this);
 		session.subscribe(TOPIC_NEW_RESULT, this);
 	}
+	
 	@Override
 	public void handleException(StompSession session, StompCommand command, StompHeaders headers, byte[] payload,
 			Throwable exception) {
-		System.out.println("---------------------------");
-		exception.printStackTrace();
 		callback.handleException(exception);
 	}
+	
 	@Override
 	public void handleTransportError(StompSession session, Throwable exception) {
-		System.out.println("---------------------------3");
-		exception.printStackTrace();
 		callback.handleTransportError(exception);
 	}
 }

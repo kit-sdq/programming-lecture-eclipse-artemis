@@ -1,5 +1,7 @@
 package edu.kit.kastel.eclipse.student.view.ui;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,6 +38,8 @@ import edu.kit.kastel.sdq.eclipse.grading.api.client.websocket.WebsocketCallback
 public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 	private static final String RELOAD_BTN_TEXT = "Reload";
 	private static final String LOAD_BTN_TEXT = "Loading...";
+	private static final int ROUND_DECIMAL_PLACES = 2;
+	private static final String CHECK_UTF8 = new String(new byte[] { (byte) 0xE2,  (byte) 0x9C, (byte) 0x93  }, StandardCharsets.UTF_8);
 
 	private Display display;
 	private StudentViewController viewController;
@@ -240,28 +244,42 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 	}
 
 	private void addFeedbackToTable(Table table, List<Feedback> entries) {
-		Display display = Display.getDefault();
-		String checkSign = "";
-		checkSign = new String(new byte[] { (byte) 0xE2,  (byte) 0x9C, (byte) 0x93  }, StandardCharsets.UTF_8);
+		Display display = getDisplay();
 
 		if (entries != null) {
-			sortEntries(entries);
+			sortEntriesAlphabetically(entries);
 			for (var feedback : entries) {
+				double roundedCredits = roundToDeciamlPlaces(feedback.getCredits());
 				final TableItem item = new TableItem(table, SWT.NULL);
 				item.setText(0, feedback.getText());
-				item.setText(1, "" + feedback.getCredits());
+				item.setText(1, "" + roundedCredits);
 				item.setText(2, feedback.getPositive() ? "successful" : "failed");
 				item.setForeground(2, feedback.getPositive() ? display.getSystemColor(SWT.COLOR_GREEN)
 						: display.getSystemColor(SWT.COLOR_RED));
-				item.setText(3, (feedback.getDetailText() != null) ? checkSign : "X");
+				item.setText(3, (feedback.getDetailText() != null) ? CHECK_UTF8 : "X");
 				item.setForeground(3, (feedback.getDetailText() != null) ? display.getSystemColor(SWT.COLOR_GREEN)
 						: display.getSystemColor(SWT.COLOR_RED));
 			}
 		}
-
+	}
+	
+	private Display getDisplay() {
+		if(display == null) {
+			return Display.getDefault();
+		}
+		return display;
+	}
+	
+	private double roundToDeciamlPlaces(Double credits) {
+		if (credits == null) {
+			return 0.0;
+		}
+		
+		BigDecimal bd = new BigDecimal(credits).setScale(ROUND_DECIMAL_PLACES, RoundingMode.HALF_UP);
+	    return bd.doubleValue();
 	}
 
-	private void sortEntries(final List<Feedback> feedbacks) {
+	private void sortEntriesAlphabetically(final List<Feedback> feedbacks) {
 		// TODO: maybe add different sorting
 		Collections.sort(feedbacks, new Comparator<Feedback>() {
 			@Override
@@ -295,14 +313,6 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 		feedbackContainerComposite.pack();
 		feedbackContentComposite.setVisible(true);
 
-	}
-
-	/**
-	 * @wbp.parser.entryPoint
-	 */
-	private void createView(Composite parent) {
-		TabFolder tabFolder = new TabFolder(parent, SWT.NONE);
-		create(tabFolder);
 	}
 
 	@Override

@@ -31,6 +31,7 @@ import edu.kit.kastel.sdq.eclipse.grading.api.client.websocket.WebsocketCallback
 public class ArtemisFeedbackWebsocket implements IWebsocketClient {
 	private static final String WEBSOCKET_PATH = "/websocket/tracker";
 	private static final String TOKEN_QUERY_PATH = "access_token";
+	
 	private String baseUrl = "";
 	private String token = "";
 	private String stompUrl = "";
@@ -95,7 +96,7 @@ public class ArtemisFeedbackWebsocket implements IWebsocketClient {
 
 			public void checkServerTrusted(java.security.cert.X509Certificate[] certs, String authType) {
 			}
-		} };
+		}};
 
 		SSLContext sc;
 		sc = SSLContext.getInstance("SSL");
