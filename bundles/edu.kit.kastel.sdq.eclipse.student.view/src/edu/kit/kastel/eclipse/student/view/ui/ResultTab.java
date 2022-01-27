@@ -51,6 +51,7 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 	private Label btnResultSuccessfull;
 	private Label lblResultExerciseDescription;
 	private Label lblResultExerciseShortName;
+	private Label lblPoints;
 	private Button btnReload;
 	private Button btnLoading;
 	private Composite composite_1;
@@ -83,7 +84,7 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 		GridLayout gl_composite = new GridLayout(2, true);
 		composite.setLayout(gl_composite);
 		GridData gd_composite = new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1);
-		gd_composite.widthHint = 515;
+		gd_composite.widthHint = 527;
 		composite.setLayoutData(gd_composite);
 
 		Label labelFeedback = new Label(composite, SWT.NONE);
@@ -93,7 +94,7 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 		composite_1 = new Composite(composite, SWT.NONE);
 		composite_1.setLayout(new GridLayout(2, true));
 		GridData gd_composite_1 = new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1);
-		gd_composite_1.widthHint = 256;
+		gd_composite_1.widthHint = 257;
 		composite_1.setLayoutData(gd_composite_1);
 									
 		btnLoading = new Button(composite_1, SWT.CENTER);
@@ -145,13 +146,18 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 		btnResultSuccessfull.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.BOLD));
 		btnResultSuccessfull.setText("Successfull");
 
-		resultScore = new Label(resultContentComposite, SWT.RIGHT);
-		resultScore.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.BOLD | SWT.ITALIC));
-		resultScore.setBounds(36, 78, 447, 30);
-		resultScore.setText("0 / 20");
-
 		Label separator = new Label(resultContentComposite, SWT.SEPARATOR | SWT.HORIZONTAL);
 		separator.setBounds(20, 62, 476, 10);
+		
+		lblPoints = new Label(resultContentComposite, SWT.NONE);
+		lblPoints.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.BOLD | SWT.ITALIC));
+		lblPoints.setBounds(22, 78, 186, 30);
+		lblPoints.setText("");
+		
+				resultScore = new Label(resultContentComposite, SWT.RIGHT);
+				resultScore.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.BOLD | SWT.ITALIC));
+				resultScore.setBounds(30, 78, 453, 30);
+				resultScore.setText("0 / 20");
 
 		Label labelFeedback2 = new Label(feedbackContentComposite, SWT.NONE);
 		labelFeedback2.setFont(SWTResourceManager.getFont("Segoe UI", 10, SWT.BOLD));
@@ -226,6 +232,7 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 				lblResultExerciseShortName.setText(exercise.getTitle());
 				lblResultExerciseDescription.setText(result.completionDate);
 				resultScore.setText(result.resultString);
+				lblPoints.setText("Points: " + result.score + "%");
 			} else {
 				resultScore.setText(Integer.toString(result.score));
 			}

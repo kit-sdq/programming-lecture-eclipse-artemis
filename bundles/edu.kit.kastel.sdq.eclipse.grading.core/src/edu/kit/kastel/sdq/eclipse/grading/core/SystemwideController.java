@@ -316,9 +316,6 @@ public class SystemwideController extends AbstractController implements ISystemw
 
 	@Override
 	public void setExerciseId(final String exerciseShortName) throws ArtemisClientException {
-		if (this.applyTransitionAndNotifyIfNotAllowed(Transition.SET_EXERCISE_ID)) {
-			return;
-		}
 
 		// Normal exercises
 		List<IExercise> exercises = this.course.getExercisesForCourse();
