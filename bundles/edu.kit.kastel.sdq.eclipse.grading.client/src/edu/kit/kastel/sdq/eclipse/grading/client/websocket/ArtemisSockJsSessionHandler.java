@@ -5,11 +5,12 @@ import java.lang.reflect.Type;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 import org.springframework.messaging.simp.stomp.StompSession;
-import org.springframework.messaging.simp.stomp.StompSessionHandler;
+import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
 
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ResultsDTO;
 import edu.kit.kastel.sdq.eclipse.grading.api.client.websocket.WebsocketCallback;
 
-public class ArtemisSockJsSessionHandler implements StompSessionHandler  {
+public class ArtemisSockJsSessionHandler extends StompSessionHandlerAdapter  {
 	
 	private static final String TOPIC_NEW_SUBMISSION = "/user/topic/newSubmissions";
 	private static final String TOPIC_NEW_RESULT = "/user/topic/newResults";
@@ -22,13 +23,16 @@ public class ArtemisSockJsSessionHandler implements StompSessionHandler  {
 
 	@Override
 	public Type getPayloadType(StompHeaders headers) {
-		System.out.println("--------payload---------");
 		return Object.class;
 	}
 	@Override
 	public void handleFrame(StompHeaders headers, Object payload) {
 		System.out.println("----------frame-------");
-		callback.handleFrame(payload);
+		if (!headers.get("destination").isEmpty() && headers.get("destination").get(0).equals(TOPIC_NEW_RESULT)) {
+			callback.handleResult(payload);
+		} else if(!headers.get("destination").isEmpty() && headers.get("destination").get(0).equals(TOPIC_NEW_SUBMISSION)) {
+			callback.handleSubmission(payload);
+		}
 	}
 	@Override
 	public void afterConnected(StompSession session, StompHeaders connectedHeaders) {

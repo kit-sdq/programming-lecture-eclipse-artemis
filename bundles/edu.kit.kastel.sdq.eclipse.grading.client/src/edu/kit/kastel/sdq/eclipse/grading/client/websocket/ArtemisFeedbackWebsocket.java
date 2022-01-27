@@ -12,6 +12,10 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
+
+import org.springframework.messaging.converter.MappingJackson2MessageConverter;
+import org.springframework.messaging.converter.SimpleMessageConverter;
+import org.springframework.messaging.converter.StringMessageConverter;
 import org.springframework.messaging.simp.stomp.StompSession;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
@@ -39,6 +43,7 @@ public class ArtemisFeedbackWebsocket implements IWebsocketClient {
 	
 	@Override
 	public void connect(WebsocketCallback callback, String token) throws ArtemisWebsocketException {
+		stompUrl = stompUrl+token;
 		StandardWebSocketClient simpleWebSocketClient = configureStandartWebsocketClientWithSSl();
 		SockJsClient sockJsClient = configureSockJsClient(simpleWebSocketClient);
 		WebSocketStompClient stompClient = configureStompClient(sockJsClient);
@@ -62,6 +67,7 @@ public class ArtemisFeedbackWebsocket implements IWebsocketClient {
 
 	private WebSocketStompClient configureStompClient(SockJsClient sockJsClient) {
 		WebSocketStompClient stompClient = new WebSocketStompClient(sockJsClient);
+		stompClient.setMessageConverter(new MappingJackson2MessageConverter());
 		return stompClient;
 	}
 

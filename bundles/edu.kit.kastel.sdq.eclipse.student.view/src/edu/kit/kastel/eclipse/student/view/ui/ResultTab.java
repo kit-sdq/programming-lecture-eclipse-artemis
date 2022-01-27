@@ -1,8 +1,7 @@
 package edu.kit.kastel.eclipse.student.view.ui;
 
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -33,12 +32,11 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.Feedback;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ResultsDTO;
 import edu.kit.kastel.sdq.eclipse.grading.api.client.websocket.WebsocketCallback;
-import org.eclipse.swt.layout.RowLayout;
 
-public class ResultTab implements ArtemisStudentTab, WebsocketCallback{
-	private static final String RELOAD_BTN_TEXT= "Reload";
+public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
+	private static final String RELOAD_BTN_TEXT = "Reload";
 	private static final String LOAD_BTN_TEXT = "Loading...";
-	
+
 	private Display display;
 	private StudentViewController viewController;
 
@@ -54,12 +52,13 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback{
 	private Label lblResultExerciseDescription;
 	private Label lblResultExerciseShortName;
 	private Button btnReload;
-	
-	
+	private Button btnLoading;
+	private Composite composite_1;
+
 	public ResultTab(StudentViewController viewController) {
 		this.viewController = viewController;
 	}
-	
+
 	@Override
 	public void create(TabFolder tabFolder) {
 		display = tabFolder.getDisplay();
@@ -83,14 +82,34 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback{
 		Composite composite = new Composite(feedbackContainerComposite, SWT.NONE);
 		GridLayout gl_composite = new GridLayout(2, true);
 		composite.setLayout(gl_composite);
-		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
+		GridData gd_composite = new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1);
+		gd_composite.widthHint = 515;
+		composite.setLayoutData(gd_composite);
 
 		Label labelFeedback = new Label(composite, SWT.NONE);
 		labelFeedback.setFont(SWTResourceManager.getFont("Segoe UI", 18, SWT.BOLD));
-		labelFeedback.setText("Feedback      ");
-
-		btnReload = new Button(composite, SWT.CENTER);
-		btnReload.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		labelFeedback.setText("Feedback");
+		
+		composite_1 = new Composite(composite, SWT.NONE);
+		composite_1.setLayout(new GridLayout(2, true));
+		GridData gd_composite_1 = new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1);
+		gd_composite_1.widthHint = 256;
+		composite_1.setLayoutData(gd_composite_1);
+									
+		btnLoading = new Button(composite_1, SWT.CENTER);
+		GridData gd_btnRLoading = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_btnRLoading.widthHint = 80;
+		btnLoading.setLayoutData(gd_btnRLoading);
+		btnLoading.setText("Loading...");
+		btnLoading.setEnabled(false);
+		btnLoading.setVisible(false);
+								
+						
+		btnReload = new Button(composite_1, SWT.CENTER);
+		GridData gd_btnReload = new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1);
+		gd_btnReload.horizontalIndent = 5;
+		gd_btnReload.widthHint = 117;
+		btnReload.setLayoutData(gd_btnReload);
 		btnReload.setText("Reload");
 		addSelectionListenerForReloadButton(btnReload);
 
@@ -142,10 +161,10 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback{
 		scrolledCompositeFeedback.setContent(feedbackContainerComposite);
 		scrolledCompositeFeedback.setMinSize(feedbackContainerComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 	}
-	
+
 	@Override
 	public void reset() {
-		feedbackContentComposite.setVisible(false);	
+		feedbackContentComposite.setVisible(false);
 	}
 
 	@Override
@@ -216,12 +235,8 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback{
 	private void addFeedbackToTable(Table table, List<Feedback> entries) {
 		Display display = Display.getDefault();
 		String checkSign = "";
-		try {
-			checkSign = new String(new byte[] { (byte) 0xE2, (byte) 0xE2}, "utf-8");
-		} catch (UnsupportedEncodingException e) {
-			checkSign = "Y";
-		}
-		
+		checkSign = new String(new byte[] { (byte) 0xE2,  (byte) 0x9C, (byte) 0x93  }, StandardCharsets.UTF_8);
+
 		if (entries != null) {
 			sortEntries(entries);
 			for (var feedback : entries) {
@@ -232,15 +247,15 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback{
 				item.setForeground(2, feedback.getPositive() ? display.getSystemColor(SWT.COLOR_GREEN)
 						: display.getSystemColor(SWT.COLOR_RED));
 				item.setText(3, (feedback.getDetailText() != null) ? checkSign : "X");
-				item.setForeground(3, (feedback.getDetailText() != null)? display.getSystemColor(SWT.COLOR_GREEN)
+				item.setForeground(3, (feedback.getDetailText() != null) ? display.getSystemColor(SWT.COLOR_GREEN)
 						: display.getSystemColor(SWT.COLOR_RED));
 			}
 		}
 
 	}
-	
+
 	private void sortEntries(final List<Feedback> feedbacks) {
-		//TODO: maybe add different sorting
+		// TODO: maybe add different sorting
 		Collections.sort(feedbacks, new Comparator<Feedback>() {
 			@Override
 			public int compare(Feedback o1, Feedback o2) {
@@ -260,21 +275,21 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback{
 			reset();
 		}
 	}
-	
+
 	private void handleNewResult(ResultsDTO result, List<Feedback> feedbacks) {
 		IExercise exercise = this.viewController.getCurrentSelectedExercise();
-		
+
 		this.lastResult = result;
 		this.feedbackOfLastResult = feedbacks;
-		
+
 		feedbackTabel.removeAll();
 		addFeedbackToTable(feedbackTabel, feedbackOfLastResult);
 		addResultToTab(lastResult, exercise);
 		feedbackContainerComposite.pack();
 		feedbackContentComposite.setVisible(true);
-		
+
 	}
-	
+
 	/**
 	 * @wbp.parser.entryPoint
 	 */
@@ -284,30 +299,45 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback{
 	}
 
 	@Override
-	public void handleFrame(Object payload) {
-		this.btnReload.setEnabled(false);
-		this.btnReload.setText(LOAD_BTN_TEXT);
+	public void handleSubmission(Object payload) {
+		if (display != null) {
+			this.display.syncExec(() -> {
+				this.btnLoading.setVisible(true);
+			});
+		}
 	}
 
 	@Override
-	public void handleFrame(ResultsDTO result) {
-		this.btnReload.setEnabled(true);
-		this.btnReload.setText(RELOAD_BTN_TEXT);
-		handleNewResult(result, Arrays.asList(result.feedbacks));
+	public void handleResult(Object payload) {
+		if (display != null) {
+			this.display.syncExec(() -> {
+				this.btnLoading.setVisible(false);
+				this.getFeedbackForExcerise();
+			});
+		}
 	}
 
 	@Override
 	public void handleException(Throwable e) {
-		handleWebsocketError();
-		e.printStackTrace();
+		if (display != null) {
+			this.display.syncExec(() -> {
+				handleWebsocketError();
+				e.printStackTrace();
+			});
+		}
+
 	}
 
 	@Override
 	public void handleTransportError(Throwable e) {
-		handleWebsocketError();
-		e.printStackTrace();
+		if (display != null) {
+			this.display.syncExec(() -> {
+				handleWebsocketError();
+				e.printStackTrace();
+			});
+		}
 	}
-	
+
 	private void handleWebsocketError() {
 		this.btnReload.setEnabled(false);
 		this.btnReload.setText("ERROR");

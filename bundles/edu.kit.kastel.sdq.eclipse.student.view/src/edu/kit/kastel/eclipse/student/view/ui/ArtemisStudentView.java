@@ -1,8 +1,10 @@
 package edu.kit.kastel.eclipse.student.view.ui;
 
 import org.eclipse.jface.fieldassist.ControlDecoration;
+import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -38,6 +40,9 @@ public class ArtemisStudentView extends ViewPart {
 	private Combo examCombo;
 	private Combo exerciseCombo;
 	private Combo courseCombo;
+	
+	private ControlDecoration controlDecorationSubmitted;
+	private ControlDecoration controlDecorationClean;
 
 	public ArtemisStudentView() {
 		this.viewController = new StudentViewController();
@@ -170,10 +175,14 @@ public class ArtemisStudentView extends ViewPart {
 
 		this.addSelectionListenerForSubmitButton(btnSubmitExcerise);
 
-		ControlDecoration controlDecoration = new ControlDecoration(btnSubmitExcerise, SWT.RIGHT | SWT.CENTER);
-		controlDecoration.setMarginWidth(5);
-		controlDecoration.setDescriptionText("Some description");
-
+		Image image = FieldDecorationRegistry.getDefault()
+                .getFieldDecoration(FieldDecorationRegistry.DEC_WARNING).getImage();
+		controlDecorationSubmitted = new ControlDecoration(btnSubmitExcerise, SWT.RIGHT | SWT.CENTER);
+		controlDecorationSubmitted.setImage(image);
+		controlDecorationSubmitted.setMarginWidth(5);
+		controlDecorationSubmitted.setDescriptionText("The exercise is expired and can therefore not be submitted!");
+		controlDecorationSubmitted.hide();
+		
 		Composite composite_1 = new Composite(submitArea, SWT.NONE);
 		GridData gd_composite_1 = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
 		gd_composite_1.widthHint = 191;
@@ -190,9 +199,11 @@ public class ArtemisStudentView extends ViewPart {
 		});
 		btnClean.setEnabled(false);
 
-		ControlDecoration controlDecoration_1 = new ControlDecoration(btnClean, SWT.RIGHT | SWT.CENTER);
-		controlDecoration_1.setMarginWidth(5);
-		controlDecoration_1.setDescriptionText("Some description");
+		controlDecorationClean = new ControlDecoration(btnClean, SWT.RIGHT | SWT.CENTER);
+		controlDecorationClean.setMarginWidth(5);
+		controlDecorationSubmitted.setImage(image);
+		controlDecorationClean.setDescriptionText("The exercise can not be cleaned!");
+		controlDecorationClean.hide();
 
 		scrolledCompositeGrading.setContent(gradingComposite);
 		scrolledCompositeGrading.setMinSize(gradingComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
@@ -246,8 +257,20 @@ public class ArtemisStudentView extends ViewPart {
 	}
 
 	private void enableButtons() {
-		this.btnSubmitExcerise.setEnabled(this.viewController.canSubmit());
-		btnClean.setEnabled(this.viewController.canClean());
+		boolean canSubmit = this.viewController.canSubmit();
+		boolean canClean = this.viewController.canClean();
+		this.btnSubmitExcerise.setEnabled(canSubmit);
+		btnClean.setEnabled(canClean);
+		if(!canSubmit) {
+			this.controlDecorationSubmitted.show();
+		} else {
+			this.controlDecorationSubmitted.hide();
+		}
+		if(!canClean) {
+			this.controlDecorationClean.show();
+		} else {
+			this.controlDecorationClean.hide();
+		}
 	}
 	
 	private void cleanWorkspaceForSelectedExercise() {

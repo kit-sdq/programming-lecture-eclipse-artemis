@@ -322,9 +322,9 @@ public class SystemwideController extends AbstractController implements ISystemw
 
 		// Normal exercises
 		List<IExercise> exercises = this.course.getExercisesForCourse();
-		// exam exercises
-		this.course.getExamsForCourse().stream().map(e -> artemisGUIController.getExercisesFromExam(e.getTitle()))
-				.forEach(e -> e.forEach(exercises::add));
+		// exam exercises TODO: What to do with exams
+		//this.course.getExamsForCourse().stream().map(e -> artemisGUIController.getExercisesFromExam(e.getTitle()))
+		//		.forEach(e -> e.forEach(exercises::add));
 
 		for (IExercise ex : exercises) {
 			if (ex.getShortName().equals(exerciseShortName)) {

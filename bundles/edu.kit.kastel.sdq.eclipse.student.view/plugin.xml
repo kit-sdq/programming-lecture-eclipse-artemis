@@ -78,6 +78,7 @@
       </view>
       <view
             class="edu.kit.kastel.eclipse.student.view.ui.ArtemisStudentView"
+            icon="icons/sample.png"
             id="edu.kit.kastel.eclipse.student.view.assessment.ArtemisGradingView"
             name="Artemis Student"
             restorable="true">
