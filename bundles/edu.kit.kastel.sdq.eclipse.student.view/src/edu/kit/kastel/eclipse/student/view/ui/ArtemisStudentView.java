@@ -17,6 +17,7 @@ import org.eclipse.ui.part.ViewPart;
 import org.eclipse.wb.swt.SWTResourceManager;
 
 import edu.kit.kastel.eclipse.student.view.controllers.StudentViewController;
+
 import java.util.ArrayList;
 import java.util.List;
 

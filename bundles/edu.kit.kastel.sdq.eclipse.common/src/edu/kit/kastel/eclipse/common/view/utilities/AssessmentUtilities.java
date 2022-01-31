@@ -1,4 +1,4 @@
-package edu.kit.kastel.eclipse.grading.view.utilities;
+package edu.kit.kastel.eclipse.common.view.utilities;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspace;
