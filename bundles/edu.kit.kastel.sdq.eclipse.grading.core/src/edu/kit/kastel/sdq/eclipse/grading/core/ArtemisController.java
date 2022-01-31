@@ -15,6 +15,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.swing.plaf.synth.SynthOptionPaneUI;
+
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 
@@ -31,6 +33,9 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ParticipationDTO;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ResultsDTO;
 import edu.kit.kastel.sdq.eclipse.grading.api.client.AbstractArtemisClient;
+import edu.kit.kastel.sdq.eclipse.grading.api.client.websocket.ArtemisWebsocketException;
+import edu.kit.kastel.sdq.eclipse.grading.api.client.websocket.IWebsocketClient;
+import edu.kit.kastel.sdq.eclipse.grading.api.client.websocket.WebsocketCallback;
 import edu.kit.kastel.sdq.eclipse.grading.api.controller.AbstractController;
 import edu.kit.kastel.sdq.eclipse.grading.api.controller.IArtemisController;
 import edu.kit.kastel.sdq.eclipse.grading.api.controller.IAssessmentController;
@@ -40,6 +45,7 @@ import edu.kit.kastel.sdq.eclipse.grading.api.model.IRatingGroup;
 import edu.kit.kastel.sdq.eclipse.grading.client.git.GitException;
 import edu.kit.kastel.sdq.eclipse.grading.client.git.GitHandler;
 import edu.kit.kastel.sdq.eclipse.grading.client.rest.ArtemisClient;
+import edu.kit.kastel.sdq.eclipse.grading.client.websocket.ArtemisFeedbackWebsocket;
 import edu.kit.kastel.sdq.eclipse.grading.core.artemis.AnnotationMapper;
 import edu.kit.kastel.sdq.eclipse.grading.core.artemis.WorkspaceUtil;
 import edu.kit.kastel.sdq.eclipse.grading.core.artemis.calculation.DefaultPenaltyCalculationStrategy;
@@ -50,6 +56,7 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 
 	private final SystemwideController systemwideController;
 	protected final AbstractArtemisClient artemisClient;
+	private final IWebsocketClient websocketClient;
 
 	private String username;
 	private String password;
@@ -64,6 +71,7 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 		this.artemisClient = new ArtemisClient(username, password, host);
 		this.systemwideController = systemwideController;
 		this.lockResults = new HashMap<>();
+		this.websocketClient = new ArtemisFeedbackWebsocket(host);
 	}
 
 	@Override
@@ -278,6 +286,15 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 	public List<IExercise> getExercisesFromExam(final String examTitle) {
 		return this.getExercisesFromExam(examTitle, this.getCourses());
 	}
+	
+	@Override
+	public Date getCurrentDate() {
+		try {
+			return this.artemisClient.getTime();
+		} catch (ArtemisClientException e) {
+			return new Date();
+		}
+	}
 
 	private List<IExercise> getExercisesFromExam(final String examTitle, List<ICourse> courses) {
 		IExam foundExam = filterGetExamObjectFromLoadedCourses(examTitle, courses);
@@ -285,7 +302,7 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 			this.error("No exam found for examTitle=" + examTitle, null);
 			return List.of();
 		}
-		if (foundExam.isExamExpired(new Date())) {
+		if (foundExam.isExamExpired(getCurrentDate())) {
 			this.error("The selected exam is expired.", null);
 			return List.of();
 		}
@@ -519,5 +536,38 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 		}
 		
 		return courses;
+	}
+
+	@Override
+	public boolean connectToWebsocket(WebsocketCallback callback) {
+		String token = "";
+		try {
+			token = this.artemisClient.login();
+		} catch (ArtemisClientException e) {
+			System.out.println("Error, can not login.");
+			return false;
+		} catch (Exception e) {
+			System.out.println("Unexpected error during login.");
+			return false;
+		}
+		try {
+			this.websocketClient.connect(callback, this.getToken());
+			return true;
+		} catch (ArtemisWebsocketException e) {
+			System.out.println("Can not connect to websocket.");
+			return false;
+		}
+	}
+	
+	private String getToken() {
+		try {
+			return this.artemisClient.login();
+		} catch (ArtemisClientException e) {
+			System.out.println("Error, can not login.");
+			return "";
+		} catch (Exception e) {
+			System.out.println("Unexpected error during login.");
+			return "";
+		}
 	}
 }

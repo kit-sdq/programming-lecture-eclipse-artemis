@@ -1,4 +1,4 @@
-package edu.kit.kastel.eclipse.student.view.assessment;
+package edu.kit.kastel.eclipse.student.view.ui;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;

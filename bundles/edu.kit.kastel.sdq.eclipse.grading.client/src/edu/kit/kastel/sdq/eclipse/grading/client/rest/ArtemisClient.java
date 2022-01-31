@@ -2,6 +2,7 @@ package edu.kit.kastel.sdq.eclipse.grading.client.rest;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -54,14 +55,16 @@ public class ArtemisClient extends AbstractArtemisClient implements IMappingLoad
 	
 	private static final String JSON_PARSE_ERROR_MESSAGE_CORRUPT_JSON_STRUCTURE = "Error parsing json: Corrupt Json Structure";
 	private ObjectMapper orm = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
-	private WebTarget endpoint;
+	
+	private WebTarget rootEndpoint;
+	private WebTarget apiEndpoint;
 	private String token;
 
 	public ArtemisClient(final String username, final String password, final String hostName) {
 		super(username, password, hostName);
 
-		this.endpoint = ClientBuilder.newBuilder().build().target(this.getApiRoot());
+		this.apiEndpoint = ClientBuilder.newBuilder().build().target(this.getApiRoot());
+		this.rootEndpoint = ClientBuilder.newBuilder().build().target(hostName);
 		this.token = null;
 	}
 
@@ -111,7 +114,7 @@ public class ArtemisClient extends AbstractArtemisClient implements IMappingLoad
 	public Assessor getAssessor() throws ArtemisClientException {
 		this.checkAuthentication();
 
-		final Response rsp = this.endpoint.path(USERS_PATHPART).path(this.getArtemisUsername()).request().header(AUTHORIZATION_NAME, this.token).buildGet()
+		final Response rsp = this.apiEndpoint.path(USERS_PATHPART).path(this.getArtemisUsername()).request().header(AUTHORIZATION_NAME, this.token).buildGet()
 				.invoke();
 		this.throwIfStatusUnsuccessful(rsp);
 		return this.read(rsp.readEntity(String.class), Assessor.class);
@@ -120,7 +123,7 @@ public class ArtemisClient extends AbstractArtemisClient implements IMappingLoad
 	@Override
 	public List<ICourse> getCourses() throws ArtemisClientException {
 		this.checkAuthentication();
-		final Response rsp = this.endpoint.path(COURSES_PATHPART).path("for-dashboard").request().header(AUTHORIZATION_NAME, this.token).buildGet().invoke();
+		final Response rsp = this.apiEndpoint.path(COURSES_PATHPART).path("for-dashboard").request().header(AUTHORIZATION_NAME, this.token).buildGet().invoke();
 		this.throwIfStatusUnsuccessful(rsp);
 		String rspString = rsp.readEntity(String.class);
 
@@ -133,7 +136,7 @@ public class ArtemisClient extends AbstractArtemisClient implements IMappingLoad
 
 	@Override
 	public List<IExam> getExamsForCourse(ICourse course) throws ArtemisClientException {
-		final Response examsRsp = this.endpoint.path(COURSES_PATHPART).path(String.valueOf(course.getCourseId())).path(EXAMS_PATHPART).request()
+		final Response examsRsp = this.apiEndpoint.path(COURSES_PATHPART).path(String.valueOf(course.getCourseId())).path(EXAMS_PATHPART).request()
 				.header(AUTHORIZATION_NAME, this.token).buildGet().invoke();
 		this.throwIfStatusUnsuccessful(examsRsp);
 
@@ -146,7 +149,7 @@ public class ArtemisClient extends AbstractArtemisClient implements IMappingLoad
 	
 	@Override
 	public List<IExercise> getExercisesForCourse(ICourse artemisCourse) throws ArtemisClientException {
-		final Response eexerciseRsp = this.endpoint.path(COURSES_PATHPART).path(String.valueOf(artemisCourse.getCourseId())).path(EXERCISES_PATHPART).request()
+		final Response eexerciseRsp = this.apiEndpoint.path(COURSES_PATHPART).path(String.valueOf(artemisCourse.getCourseId())).path(EXERCISES_PATHPART).request()
 				.header(AUTHORIZATION_NAME, this.token).buildGet().invoke();
 		this.throwIfStatusUnsuccessful(eexerciseRsp);
 
@@ -160,7 +163,7 @@ public class ArtemisClient extends AbstractArtemisClient implements IMappingLoad
 	@Override
 	public List<IExerciseGroup> getExerciseGroupsForExam(IExam exam, ICourse course) throws ArtemisClientException {
 		this.checkAuthentication();
-		final Response rsp = this.endpoint.path(COURSES_PATHPART).path(String.valueOf(course.getCourseId())).path(EXAMS_PATHPART)
+		final Response rsp = this.apiEndpoint.path(COURSES_PATHPART).path(String.valueOf(course.getCourseId())).path(EXAMS_PATHPART)
 				.path(String.valueOf(exam.getExamId())).path("exam-for-assessment-dashboard") // web client does it that way..
 				.request().header(AUTHORIZATION_NAME, this.token).buildGet().invoke(); // synchronous variant
 		this.throwIfStatusUnsuccessful(rsp);
@@ -187,7 +190,7 @@ public class ArtemisClient extends AbstractArtemisClient implements IMappingLoad
 	public List<IExercise> getNormalExercisesForCourse(ICourse course) throws ArtemisClientException {
 		this.checkAuthentication();
 
-		final Response exercisesRsp = this.endpoint.path(COURSES_PATHPART).path(String.valueOf(course.getCourseId())).path("with-exercises").request()
+		final Response exercisesRsp = this.apiEndpoint.path(COURSES_PATHPART).path(String.valueOf(course.getCourseId())).path("with-exercises").request()
 				.header(AUTHORIZATION_NAME, this.token).buildGet().invoke();
 
 		this.throwIfStatusUnsuccessful(exercisesRsp);
@@ -217,7 +220,7 @@ public class ArtemisClient extends AbstractArtemisClient implements IMappingLoad
 		this.checkAuthentication();
 		boolean isInstructor = exercise.getCourse().isInstructor(this.getAssessor());
 
-		final Response rsp = this.endpoint.path(EXERCISES_PATHPART).path(String.valueOf(exercise.getExerciseId())).path(PROGRAMMING_SUBMISSION_PATHPART) //
+		final Response rsp = this.apiEndpoint.path(EXERCISES_PATHPART).path(String.valueOf(exercise.getExerciseId())).path(PROGRAMMING_SUBMISSION_PATHPART) //
 				.queryParam("assessedByTutor", !isInstructor) //
 				.queryParam("correction-round", correctionRound) //
 				.request().header(AUTHORIZATION_NAME, this.token).buildGet().invoke();
@@ -247,15 +250,17 @@ public class ArtemisClient extends AbstractArtemisClient implements IMappingLoad
 	private boolean isStatusSuccessful(final Response response) {
 		return Family.SUCCESSFUL.equals(response.getStatusInfo().getFamily());
 	}
-
-	private void login() throws ArtemisClientException {
+	
+	@Override
+	public String login() throws ArtemisClientException {
 		String payload = this.payload(this.getAuthenticationEntity());
-		final Response authenticationResponse = this.endpoint.path("authenticate").request().buildPost(Entity.json(payload)).invoke();
+		final Response authenticationResponse = this.apiEndpoint.path("authenticate").request().buildPost(Entity.json(payload)).invoke();
 
 		this.throwIfStatusUnsuccessful(authenticationResponse);
 		final String authRspEntity = authenticationResponse.readEntity(String.class);
 		final String rawToken = this.readTree(authRspEntity).get("id_token").asText();
 		this.token = "Bearer " + rawToken;
+		return rawToken;
 	}
 
 	@Override
@@ -276,7 +281,7 @@ public class ArtemisClient extends AbstractArtemisClient implements IMappingLoad
 	public ILockResult startAssessment(ISubmission submission) throws ArtemisClientException {
 		this.checkAuthentication();
 
-		final Response rsp = this.endpoint.path(PROGRAMMING_SUBMISSION_PATHPART).path(String.valueOf(submission.getSubmissionId())).path("lock").request()
+		final Response rsp = this.apiEndpoint.path(PROGRAMMING_SUBMISSION_PATHPART).path(String.valueOf(submission.getSubmissionId())).path("lock").request()
 				.header(AUTHORIZATION_NAME, this.token).buildGet().invoke(); // synchronous variant
 		this.throwIfStatusUnsuccessful(rsp);
 		return this.read(rsp.readEntity(String.class), LockResult.class);
@@ -286,7 +291,7 @@ public class ArtemisClient extends AbstractArtemisClient implements IMappingLoad
 	public Optional<ILockResult> startNextAssessment(IExercise exercise, int correctionRound) throws ArtemisClientException {
 		this.checkAuthentication();
 
-		final Response rsp = this.endpoint.path(EXERCISES_PATHPART).path(String.valueOf(exercise.getExerciseId()))
+		final Response rsp = this.apiEndpoint.path(EXERCISES_PATHPART).path(String.valueOf(exercise.getExerciseId()))
 				.path("programming-submission-without-assessment").queryParam("correction-round", correctionRound).queryParam("lock", true).request()
 				.header(AUTHORIZATION_NAME, this.token).buildGet().invoke();
 
@@ -302,7 +307,7 @@ public class ArtemisClient extends AbstractArtemisClient implements IMappingLoad
 	public ParticipationDTO startParticipationForExercise(ICourse course, IExercise exercise) throws ArtemisClientException {
 		this.checkAuthentication();
 
-		final Response exercisesRsp = this.endpoint.path(EXERCISES_PATHPART).path(String.valueOf(exercise.getExerciseId())).path("participations").request()
+		final Response exercisesRsp = this.apiEndpoint.path(EXERCISES_PATHPART).path(String.valueOf(exercise.getExerciseId())).path("participations").request()
 				.header(AUTHORIZATION_NAME, this.token).buildPost(null).invoke();
 
 		this.throwIfStatusUnsuccessful(exercisesRsp);
@@ -317,7 +322,7 @@ public class ArtemisClient extends AbstractArtemisClient implements IMappingLoad
 	public ParticipationDTO resumeParticipationForExercise(ICourse course, IExercise exercise) throws ArtemisClientException {
 		this.checkAuthentication();
 
-		final Response exercisesRsp = this.endpoint.path(EXERCISES_PATHPART).path(String.valueOf(exercise.getExerciseId())).path("resume-programming-participation").request()
+		final Response exercisesRsp = this.apiEndpoint.path(EXERCISES_PATHPART).path(String.valueOf(exercise.getExerciseId())).path("resume-programming-participation").request()
 				.header(AUTHORIZATION_NAME, this.token).buildPut(null).invoke();
 
 		this.throwIfStatusUnsuccessful(exercisesRsp);
@@ -333,7 +338,7 @@ public class ArtemisClient extends AbstractArtemisClient implements IMappingLoad
 			throws ArtemisClientException {
 		this.checkAuthentication();
 
-		final Response exercisesRsp = this.endpoint.path(EXERCISES_PATHPART).path(String.valueOf(exercise.getExerciseId())).path("participation").request()
+		final Response exercisesRsp = this.apiEndpoint.path(EXERCISES_PATHPART).path(String.valueOf(exercise.getExerciseId())).path("participation").request()
 				.header(AUTHORIZATION_NAME, this.token).buildGet().invoke();
 
 		this.throwIfStatusUnsuccessful(exercisesRsp);
@@ -349,7 +354,7 @@ public class ArtemisClient extends AbstractArtemisClient implements IMappingLoad
 			throws ArtemisClientException {
 		this.checkAuthentication();
 
-		final Response exercisesRsp = this.endpoint.path(PARTICIPATION_PATHPART).path(Integer.toString(participationId)).path("withLatestResult").request()
+		final Response exercisesRsp = this.apiEndpoint.path(PARTICIPATION_PATHPART).path(Integer.toString(participationId)).path("withLatestResult").request()
 				.header(AUTHORIZATION_NAME, this.token).buildGet().invoke();
 
 		this.throwIfStatusUnsuccessful(exercisesRsp);
@@ -364,7 +369,7 @@ public class ArtemisClient extends AbstractArtemisClient implements IMappingLoad
 	public IStudentExam startExam(IExam exam) throws ArtemisClientException {
 		this.checkAuthentication();
 
-		final Response exercisesRsp = this.endpoint.path(EXAMS_PATHPART).path(String.valueOf(exam.getExamId())).path("start").request()
+		final Response exercisesRsp = this.apiEndpoint.path(EXAMS_PATHPART).path(String.valueOf(exam.getExamId())).path("start").request()
 				.header(AUTHORIZATION_NAME, this.token).buildGet().invoke();
 
 		this.throwIfStatusUnsuccessful(exercisesRsp);
@@ -378,7 +383,7 @@ public class ArtemisClient extends AbstractArtemisClient implements IMappingLoad
 	public Feedback[] getFeedbackForResult(int participationId, int resultId) throws ArtemisClientException {
 		this.checkAuthentication();
 
-		final Response exercisesRsp = this.endpoint.path(PARTICIPATION_PATHPART).path(Integer.toString(participationId)).path(RESULT_PATHPART).path(Integer.toString(resultId)).path("details").request()
+		final Response exercisesRsp = this.apiEndpoint.path(PARTICIPATION_PATHPART).path(Integer.toString(participationId)).path(RESULT_PATHPART).path(Integer.toString(resultId)).path("details").request()
 				.header(AUTHORIZATION_NAME, this.token).buildGet().invoke();
 
 		this.throwIfStatusUnsuccessful(exercisesRsp);
@@ -417,6 +422,18 @@ public class ArtemisClient extends AbstractArtemisClient implements IMappingLoad
 		} catch (JsonProcessingException e) {
 			throw new ArtemisClientException(e.getMessage(), e);
 		}
+	}
+
+	@Override
+	public Date getTime() throws ArtemisClientException {
+
+		final Response exercisesRsp = this.rootEndpoint.path("time").request().buildGet().invoke();
+
+		this.throwIfStatusUnsuccessful(exercisesRsp);
+		
+		final JsonNode exercisesAndParticipationsJsonNode = this.readTree(exercisesRsp.readEntity(String.class));
+		
+		return this.read(exercisesAndParticipationsJsonNode.toString(), Date.class);
 	}
 
 }

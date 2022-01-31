@@ -316,14 +316,12 @@ public class SystemwideController extends AbstractController implements ISystemw
 
 	@Override
 	public void setExerciseId(final String exerciseShortName) throws ArtemisClientException {
-		if (this.applyTransitionAndNotifyIfNotAllowed(Transition.SET_EXERCISE_ID)) {
-			return;
-		}
 
 		// Normal exercises
 		List<IExercise> exercises = this.course.getExercisesForCourse();
-		// exam exercises
-		this.course.getExamsForCourse().stream().map(e -> artemisGUIController.getExercisesFromExam(e.getTitle())).forEach(e -> e.forEach(exercises::add));
+		// exam exercises TODO: What to do with exams
+		//this.course.getExamsForCourse().stream().map(e -> artemisGUIController.getExercisesFromExam(e.getTitle()))
+		//		.forEach(e -> e.forEach(exercises::add));
 
 		for (IExercise ex : exercises) {
 			if (ex.getShortName().equals(exerciseShortName)) {
@@ -435,74 +433,82 @@ public class SystemwideController extends AbstractController implements ISystemw
 		}
 		return true;
 	}
-	
+
 	@Override
 	public boolean submitSolution() {
 		if (this.nullCheckMembersAndNotify(true, true, false)) {
 			this.warn("No excercise is selected");
 			return false;
 		}
-		
+
 		if (isSelectedExerciseExpired()) {
-			this.error("Can't submit exercise. Excerise is out-of-date, it was due to: " + this.exercise.getDueDate().toGMTString(), null);
+			this.error("Can't submit exercise. Excerise is out-of-date, it was due to: "
+					+ this.exercise.getDueDate().toGMTString(), null);
 			return false;
 		}
-		
-		if(!this.confirm("Your solutions will be submitted for the selected exercise. Make sure all files are saved.")) {
+
+		if (!this.confirm(
+				"Your solutions will be submitted for the selected exercise. Make sure all files are saved.")) {
 			return false;
 		}
-		
-		if (!this.getArtemisGUIController().submitSolution(this.course, this.exercise, this.projectFileNamingStrategy)) {
+
+		if (!this.getArtemisGUIController().submitSolution(this.course, this.exercise,
+				this.projectFileNamingStrategy)) {
 			this.warn("Your Solution was not submitted");
 			return false;
 		}
 		this.info("Your solution was successfully submitted");
 		return true;
 	}
-	
+
 	@Override
 	public boolean cleanWorkspace() {
 		if (this.nullCheckMembersAndNotify(true, true, false)) {
 			this.warn("No excercise is selected");
 			return false;
 		}
-		if(!this.confirm("Your changes will be deleted. Are you sure?")) {
+		if (!this.confirm("Your changes will be deleted. Are you sure?")) {
 			return false;
 		}
-		
-		Optional<Set<String>> deletedFiles = this.getArtemisGUIController().cleanWorkspace(this.course, this.exercise, this.projectFileNamingStrategy);
+
+		Optional<Set<String>> deletedFiles = this.getArtemisGUIController().cleanWorkspace(this.course, this.exercise,
+				this.projectFileNamingStrategy);
 		if (deletedFiles.isEmpty()) {
 			this.warn("ERROR, occured while cleaning the workspace");
 			return false;
 		}
-		this.info("Your workspace was successfully cleaned. \n"
-				+ "Following files have been reset: \n" + deletedFiles.get());
+		this.info("Your workspace was successfully cleaned. \n" + "Following files have been reset: \n"
+				+ deletedFiles.get());
 		return true;
-		
+
 	}
-	
+
 	@Override
 	public Map<ResultsDTO, List<Feedback>> getFeedbackExcerise() {
 		if (this.nullCheckMembersAndNotify(true, true, false)) {
 			this.warn("No excercise is selected");
 			return new HashMap<>();
 		}
-		
-		return  this.getArtemisGUIController().getFeedbackExcerise(this.course, this.exercise);
+
+		return this.getArtemisGUIController().getFeedbackExcerise(this.course, this.exercise);
 	}
-	
+
 	@Override
 	public boolean isSelectedExerciseExpired() {
-		if (exercise != null ) {
-			if(exercise.getDueDate() != null) {
-				return exercise.getDueDate().before(new Date());
+		if (exercise != null) {
+			if (exercise.getDueDate() != null) {
+				return exercise.getDueDate().before(getCurrentDate());
 			} else {
 				return false;
 			}
 		}
 		return true;
 	}
-	
+
+	private Date getCurrentDate() {
+		return this.artemisGUIController.getCurrentDate();
+	}
+
 	@Override
 	public IExercise getCurrentSelectedExercise() {
 		return exercise;

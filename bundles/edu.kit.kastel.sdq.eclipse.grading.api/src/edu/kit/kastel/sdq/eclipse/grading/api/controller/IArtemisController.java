@@ -1,5 +1,6 @@
 package edu.kit.kastel.sdq.eclipse.grading.api.controller;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -12,6 +13,7 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExam;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ResultsDTO;
+import edu.kit.kastel.sdq.eclipse.grading.api.client.websocket.WebsocketCallback;
 
 /**
  * Works as an interface from backend to ArtemisClient
@@ -154,5 +156,9 @@ public interface IArtemisController extends IController {
 	Map<ResultsDTO, List<Feedback>> getFeedbackExcerise(ICourse course, IExercise excerise);
 	
 	List<ICourse> fetchCourses();
+
+	Date getCurrentDate();
+	
+	boolean connectToWebsocket(WebsocketCallback callback);
 	
 }

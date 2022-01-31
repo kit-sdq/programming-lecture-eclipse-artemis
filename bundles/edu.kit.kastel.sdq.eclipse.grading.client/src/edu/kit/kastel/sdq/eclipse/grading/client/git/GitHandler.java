@@ -13,6 +13,7 @@ import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.errors.NoWorkTreeException;
 import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.transport.PushResult;
 import org.eclipse.jgit.transport.URIish;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.eclipse.jgit.util.FileUtils;
@@ -71,7 +72,7 @@ public final class GitHandler {
 		pushCommand.setCredentialsProvider(new UsernamePasswordCredentialsProvider(gitUsername, gitPassword));
 		// you can add more settings here if needed
 		try {
-			pushCommand.call();
+			PushResult result = pushCommand.call().iterator().next();
 		} catch (GitAPIException e) {
 			throw new GitException("ERROR, can not push to origin git repo for exercise " + exerciseRepo.getPath(),e);
 		}
