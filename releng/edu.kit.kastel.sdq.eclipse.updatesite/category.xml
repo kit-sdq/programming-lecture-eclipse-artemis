@@ -85,7 +85,11 @@
    <bundle id="org.eclipse.egit">
       <category name="Eclipse Grading Dev"/>
    </bundle>
+   <feature id="org.springframework.websocket-messaging.feature">
+      <category name="Eclipse Grading Dev"/>
+   </feature>
+      <feature id="org.glassfish.tyrus.client.feature">
+      <category name="Eclipse Grading Dev"/>
+   </feature>
    <category-def name="Eclipse Grading Dev" label="Eclipse Grading Development"/>
-   
-   <repository-reference location="https://kit-sdq.github.io/programming-lecture-eclipse-artemis.p2" enabled="true" />
 </site>

@@ -22,19 +22,20 @@ Require-Bundle: org.eclipse.core.commands,
  org.glassfish.hk2.utils,
  org.slf4j.api,
  org.eclipse.osgi,
- org.eclipse.core.runtime
+ org.eclipse.core.runtime,
+ org.springframework.spring-aop,
+ org.springframework.spring-beans,
+ org.springframework.spring-context,
+ org.springframework.spring-core,
+ org.springframework.spring-expression,
+ org.springframework.spring-jcl,
+ org.springframework.spring-web,
+ org.springframework.spring-websocket,
+ org.springframework.spring-messaging,
+ org.glassfish.tyrus.bundles.tyrus-standalone-client;bundle-version="[1.9.0,1.9.0]"
 Export-Package: edu.kit.kastel.sdq.eclipse.grading.client.git,
  edu.kit.kastel.sdq.eclipse.grading.client.mappings,
  edu.kit.kastel.sdq.eclipse.grading.client.rest,
  edu.kit.kastel.sdq.eclipse.grading.client.websocket
 Automatic-Module-Name: edu.kit.kastel.sdq.eclipse.grading.client
-Bundle-ClassPath: lib/spring-messaging-5.3.0.jar,
- .,
- lib/spring-websocket-5.3.15.jar,
- lib/tyrus-standalone-client-1.9.jar,
- lib/spring-core-5.3.15.jar,
- lib/spring-context-5.3.15.jar,
- lib/spring-expression-5.3.15.jar,
- lib/spring-jcl-5.3.15.jar,
- lib/spring-web-5.3.15.jar,
- lib/spring-beans-5.3.0.jar
+Bundle-ClassPath: .

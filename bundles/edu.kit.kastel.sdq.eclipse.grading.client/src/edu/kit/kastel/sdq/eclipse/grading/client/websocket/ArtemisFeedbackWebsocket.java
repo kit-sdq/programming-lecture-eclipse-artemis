@@ -12,9 +12,11 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
+import javax.websocket.WebSocketContainer;
 
+import org.glassfish.tyrus.client.ClientManager;
+import org.glassfish.tyrus.container.grizzly.client.GrizzlyClientContainer;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
-import org.springframework.messaging.simp.stomp.StompSession;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
 import org.springframework.web.socket.sockjs.client.SockJsClient;
@@ -68,7 +70,8 @@ public class ArtemisFeedbackWebsocket implements IWebsocketClient {
 	}
 
 	private StandardWebSocketClient configureStandartWebsocketClientWithSSl() throws ArtemisWebsocketException {
-		StandardWebSocketClient simpleWebSocketClient = new StandardWebSocketClient();
+		WebSocketContainer webSocketContainer = ClientManager.createClient(GrizzlyClientContainer.class.getName());
+		StandardWebSocketClient simpleWebSocketClient = new StandardWebSocketClient(webSocketContainer);
 
 		Map<String, Object> properties = new HashMap<>();
 		try {
