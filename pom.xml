@@ -39,6 +39,11 @@
 			<url>https://download.eclipse.org/tools/orbit/downloads/drops/R20210602031627/repository</url>
 		</repository>
 		<repository>
+			<id>Eclipse P2 for External Deps</id>
+			<layout>p2</layout>
+			<url>https://kit-sdq.github.io/programming-lecture-eclipse-artemis.p2</url>
+		</repository>
+		<repository>
 			<id>CheckStyle</id>
 			<layout>p2</layout>
 			<url>https://checkstyle.org/eclipse-cs-update-site</url>
