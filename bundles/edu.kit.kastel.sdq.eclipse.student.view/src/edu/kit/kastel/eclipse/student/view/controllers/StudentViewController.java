@@ -3,16 +3,20 @@ package edu.kit.kastel.eclipse.student.view.controllers;
 import java.util.List;
 import java.util.Map;
 
+import edu.kit.kastel.eclipse.common.view.controllers.AArtemisViewController;
+import edu.kit.kastel.eclipse.student.view.activator.Activator;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.Feedback;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ICourse;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ResultsDTO;
 import edu.kit.kastel.sdq.eclipse.grading.api.client.websocket.WebsocketCallback;
 
-public class StudentViewController extends AssessmentViewController {
+public class StudentViewController extends AArtemisViewController {
 	
 	public StudentViewController() {
 		super();
+		Activator.getDefault().createSystemWideController();
+		setSystemwideController(Activator.getDefault().getSystemwideController());
+		this.initializeControllersAndObserver();
 	}
 	
 	public void startExercise() {
@@ -31,12 +35,8 @@ public class StudentViewController extends AssessmentViewController {
 		return getSystemwideController().getFeedbackExcerise();
 	}
 	
-	public List<String> getCourseShortNames() {
-		return getArtemisController().getCourseShortNames();
-	}
-	
 	public void fetchCourses() {
-		getArtemisController().fetchCourses();
+		getArtemisGUIController().fetchCourses();
 	}
 	
 	public boolean canSubmit() {
@@ -48,7 +48,7 @@ public class StudentViewController extends AssessmentViewController {
 	}
 	
 	public boolean connectToWebsocket(WebsocketCallback callBack) {
-		return getArtemisController().connectToWebsocket(callBack);
+		return getArtemisGUIController().connectToWebsocket(callBack);
 	}
 	
 	public boolean canFetchFeedback() {

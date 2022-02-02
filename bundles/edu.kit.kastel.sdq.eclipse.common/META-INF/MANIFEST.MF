@@ -18,5 +18,7 @@ Require-Bundle: org.eclipse.ui,
  edu.kit.kastel.sdq.eclipse.grading.core
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-ActivationPolicy: lazy
-Bundle-Activator: edu.kit.kastel.eclipse.grading.view.activator.Activator
+Bundle-Activator: edu.kit.kastel.eclipse.common.view.activator.Activator
 Automatic-Module-Name: edu.kit.kastel.sdq.eclipse.common
+Export-Package: edu.kit.kastel.eclipse.common.view.controllers,
+ edu.kit.kastel.eclipse.common.view.utilities

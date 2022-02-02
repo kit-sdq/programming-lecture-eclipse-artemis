@@ -363,9 +363,9 @@ version(s), and exceptions or additional permissions here}.&quot;
       <plugin id="org.eclipse.equinox.common" autoStart="true" startLevel="2" />
       <plugin id="org.eclipse.equinox.event" autoStart="true" startLevel="2" />
       <plugin id="org.eclipse.equinox.simpleconfigurator" autoStart="true" startLevel="1" />
-      <property name="org.eclipse.ui/org.eclipse.ui.edit.text.encoding" value="UTF-8" />
       <property name="org.eclipse.core.resources/encoding" value="UTF-8" />
       <property name="osgi.instance.area.default" value="./workspace-student" />
+      <property name="org.eclipse.ui/org.eclipse.ui.edit.text.encoding" value="UTF-8" />
    </configurations>
 
    <preferencesInfo>

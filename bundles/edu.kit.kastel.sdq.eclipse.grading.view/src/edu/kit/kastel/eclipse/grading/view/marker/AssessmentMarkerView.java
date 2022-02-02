@@ -2,7 +2,7 @@ package edu.kit.kastel.eclipse.grading.view.marker;
 
 import org.eclipse.ui.views.markers.MarkerSupportView;
 
-import edu.kit.kastel.eclipse.grading.view.utilities.AssessmentUtilities;
+import edu.kit.kastel.eclipse.common.view.utilities.AssessmentUtilities;
 
 /**
  * Class of the marker view

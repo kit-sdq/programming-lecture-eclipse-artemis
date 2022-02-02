@@ -23,10 +23,10 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.part.ViewPart;
 
+import edu.kit.kastel.eclipse.common.view.utilities.AssessmentUtilities;
 import edu.kit.kastel.eclipse.grading.view.activator.Activator;
 import edu.kit.kastel.eclipse.grading.view.controllers.AssessmentViewController;
 import edu.kit.kastel.eclipse.grading.view.listeners.KeyboardAwareMouseListener;
-import edu.kit.kastel.eclipse.grading.view.utilities.AssessmentUtilities;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.SubmissionFilter;
 import edu.kit.kastel.sdq.eclipse.grading.api.backendstate.Transition;
 import edu.kit.kastel.sdq.eclipse.grading.api.controller.ISystemwideController;

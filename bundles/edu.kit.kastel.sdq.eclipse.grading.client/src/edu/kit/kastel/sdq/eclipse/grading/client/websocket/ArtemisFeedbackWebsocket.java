@@ -14,8 +14,6 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
-import org.springframework.messaging.converter.SimpleMessageConverter;
-import org.springframework.messaging.converter.StringMessageConverter;
 import org.springframework.messaging.simp.stomp.StompSession;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
@@ -35,7 +33,6 @@ public class ArtemisFeedbackWebsocket implements IWebsocketClient {
 	private String baseUrl = "";
 	private String token = "";
 	private String stompUrl = "";
-	private StompSession session;
 
 	public ArtemisFeedbackWebsocket(String baseUrl) {
 		this.baseUrl = baseUrl;
@@ -49,12 +46,10 @@ public class ArtemisFeedbackWebsocket implements IWebsocketClient {
 		SockJsClient sockJsClient = configureSockJsClient(simpleWebSocketClient);
 		WebSocketStompClient stompClient = configureStompClient(sockJsClient);
 		try {
-			session = stompClient.connect(stompUrl, new ArtemisSockJsSessionHandler(callback)).get();
+			stompClient.connect(stompUrl, new ArtemisSockJsSessionHandler(callback)).get();
 		} catch (InterruptedException | ExecutionException e) {
 			throw new ArtemisWebsocketException("Error can not connect to websocket", e);
 		}
-
-		System.out.println(session.isConnected());
 	}
 
 	private SockJsClient configureSockJsClient(StandardWebSocketClient simpleWebSocketClient) {

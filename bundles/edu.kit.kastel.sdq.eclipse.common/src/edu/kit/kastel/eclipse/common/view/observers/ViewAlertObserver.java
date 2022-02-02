@@ -1,10 +1,10 @@
-package edu.kit.kastel.eclipse.grading.view.observers;
+package edu.kit.kastel.eclipse.common.view.observers;
 
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.MessageDialog;
 
-import edu.kit.kastel.eclipse.grading.view.utilities.AssessmentUtilities;
+import edu.kit.kastel.eclipse.common.view.utilities.AssessmentUtilities;
 import edu.kit.kastel.sdq.eclipse.grading.api.controller.IAlertObserver;
 
 /**

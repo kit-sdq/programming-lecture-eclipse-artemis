@@ -28,7 +28,6 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.ILockResult;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IProjectFileNamingStrategy;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.Assessor;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.Feedback;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.FeedbackType;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ICourse;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExam;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
@@ -39,7 +38,6 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ParticipationDTO;
 import edu.kit.kastel.sdq.eclipse.grading.api.client.AbstractArtemisClient;
 import edu.kit.kastel.sdq.eclipse.grading.client.git.GitException;
 import edu.kit.kastel.sdq.eclipse.grading.client.git.GitHandler;
-import edu.kit.kastel.sdq.eclipse.grading.client.mappings.ArtemisCourse;
 import edu.kit.kastel.sdq.eclipse.grading.client.mappings.ArtemisDashboardCourse;
 import edu.kit.kastel.sdq.eclipse.grading.client.mappings.ArtemisExercise;
 import edu.kit.kastel.sdq.eclipse.grading.client.mappings.ArtemisSubmission;
@@ -270,7 +268,7 @@ public class ArtemisClient extends AbstractArtemisClient implements IMappingLoad
 		String assessmentPayload = this.payload(assessment);
 		log.info(String.format("Saving assessment for submission %s with json: %s", assessment.getId(), assessmentPayload));
 		
-		final Response rsp = this.endpoint.path("participations").path(String.valueOf(participation.getParticipationID())) //
+		final Response rsp = this.apiEndpoint.path("participations").path(String.valueOf(participation.getParticipationID())) //
 				.path("manual-results") //
 				.queryParam("submit", submit) //
 				.request().header(AUTHORIZATION_NAME, this.token).buildPut(Entity.json(assessmentPayload)).invoke();
