@@ -16,6 +16,7 @@ import javax.ws.rs.core.Response.Status.Family;
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.Platform;
 
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -52,7 +53,7 @@ public class ArtemisClient extends AbstractArtemisClient implements IMappingLoad
 	private static final ILog log = Platform.getLog(ArtemisClient.class);
 	
 	private static final String JSON_PARSE_ERROR_MESSAGE_CORRUPT_JSON_STRUCTURE = "Error parsing json: Corrupt Json Structure";
-	private ObjectMapper orm = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+	private ObjectMapper orm = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false).setSerializationInclusion(Include.NON_NULL);
 	
 	private WebTarget rootEndpoint;
 	private WebTarget apiEndpoint;
@@ -368,6 +369,34 @@ public class ArtemisClient extends AbstractArtemisClient implements IMappingLoad
 		this.checkAuthentication();
 
 		final Response exercisesRsp = this.apiEndpoint.path(EXAMS_PATHPART).path(String.valueOf(exam.getExamId())).path("start").request()
+				.header(AUTHORIZATION_NAME, this.token).buildGet().invoke();
+
+		this.throwIfStatusUnsuccessful(exercisesRsp);
+		
+		// get the part of the json that we want to deserialize
+		final JsonNode exercisesAndParticipationsJsonNode = this.readTree(exercisesRsp.readEntity(String.class));
+		return this.read(exercisesAndParticipationsJsonNode.toString(), ArtemisStudentExam.class); 
+	}
+	
+	@Override
+	public IStudentExam conductExam(ICourse course, IExam exam) throws ArtemisClientException {
+		this.checkAuthentication();
+
+		final Response exercisesRsp = this.apiEndpoint.path(COURSES_PATHPART).path(String.valueOf(course.getCourseId())).path(EXAMS_PATHPART).path(String.valueOf(exam.getExamId())).path(STUDENT_EXAM_PATH).path("conduction").request()
+				.header(AUTHORIZATION_NAME, this.token).buildGet().invoke();
+
+		this.throwIfStatusUnsuccessful(exercisesRsp);
+		
+		// get the part of the json that we want to deserialize
+		final JsonNode exercisesAndParticipationsJsonNode = this.readTree(exercisesRsp.readEntity(String.class));
+		return this.read(exercisesAndParticipationsJsonNode.toString(), ArtemisStudentExam.class); 
+	}
+
+	@Override
+	public IStudentExam findExamForSummary(ICourse course, IExam exam) throws ArtemisClientException {
+		this.checkAuthentication();
+
+		final Response exercisesRsp = this.apiEndpoint.path(COURSES_PATHPART).path(String.valueOf(course.getCourseId())).path(EXAMS_PATHPART).path(String.valueOf(exam.getExamId())).path(STUDENT_EXAM_PATH).path("summary").request()
 				.header(AUTHORIZATION_NAME, this.token).buildGet().invoke();
 
 		this.throwIfStatusUnsuccessful(exercisesRsp);

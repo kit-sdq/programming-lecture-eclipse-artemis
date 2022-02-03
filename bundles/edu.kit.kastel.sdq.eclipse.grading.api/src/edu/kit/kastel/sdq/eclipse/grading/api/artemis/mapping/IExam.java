@@ -17,4 +17,10 @@ public interface IExam extends Serializable {
 	String getTitle();
 	
 	boolean isExamExpired(Date currentDate);
+
+	Date getStartDate();
+
+	boolean isStarted();
+
+	Date getEndDate();
 }

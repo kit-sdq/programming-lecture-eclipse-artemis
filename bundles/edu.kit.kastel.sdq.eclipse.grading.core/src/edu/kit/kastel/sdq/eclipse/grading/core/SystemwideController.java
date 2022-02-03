@@ -20,6 +20,7 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.Feedback;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ICourse;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExam;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IStudentExam;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ResultsDTO;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.SubmissionFilter;
@@ -43,8 +44,9 @@ public class SystemwideController extends AbstractController implements ISystemw
 	private ICourse course;
 	private IExercise exercise;
 	private ISubmission submission;
-	private IExam exam;
+	private IStudentExam exam;
 	private Map<ResultsDTO, List<Feedback>> resultFeedbackMap;
+	private String examName = "";
 
 	private IProjectFileNamingStrategy projectFileNamingStrategy;
 
@@ -313,15 +315,35 @@ public class SystemwideController extends AbstractController implements ISystemw
 		this.error("No Course with the given shortName \"" + courseShortName + "\" found.", null);
 		return List.of();
 	}
-
+	
 	@Override
 	public void setExerciseId(final String exerciseShortName) throws ArtemisClientException {
 
 		// Normal exercises
 		List<IExercise> exercises = this.course.getExercisesForCourse();
-		// exam exercises TODO: What to do with exams
-		//this.course.getExamsForCourse().stream().map(e -> artemisGUIController.getExercisesFromExam(e.getTitle()))
-		//		.forEach(e -> e.forEach(exercises::add));
+		
+		this.course.getExamsForCourse().stream().map(e -> artemisGUIController.getExercisesFromExam(e.getTitle()).getExercises())
+				.forEach(e -> e.forEach(exercises::add));
+
+		for (IExercise ex : exercises) {
+			if (ex.getShortName().equals(exerciseShortName)) {
+				this.exercise = ex;
+				return;
+			}
+		}
+
+		this.error("No Exercise with the given shortName \"" + exerciseShortName + "\" found.", null);
+	}
+
+	@Override
+	public void setExerciseIdWithSelectedExam(final String exerciseShortName) throws ArtemisClientException {
+		List<IExercise> exercises = new ArrayList<>();
+		// Normal exercises
+		if(exam == null) {
+			this.course.getExercisesForCourse().forEach(exercises::add);
+		} else {
+			exam.getExercises().forEach(exercises::add);
+		}
 
 		for (IExercise ex : exercises) {
 			if (ex.getShortName().equals(exerciseShortName)) {
@@ -512,5 +534,43 @@ public class SystemwideController extends AbstractController implements ISystemw
 	@Override
 	public IExercise getCurrentSelectedExercise() {
 		return exercise;
+	}
+	
+	@Override
+	public IExam setExam(String examName) {
+		Optional<IExam> examOpt;
+		try {
+			examOpt = this.course.getExamsForCourse().stream().filter(exam -> examName.equals(exam.getTitle())).findFirst();
+			if (examOpt.isPresent()) {
+				this.examName = examName;
+			}
+			return examOpt.orElse(null);
+		} catch (ArtemisClientException e) {
+			this.error("Can not set exam!", e);
+			return null;
+		}
+	}
+	
+	@Override
+	public IExam getExam() {
+		return exam.getExam();
+	}
+	
+	@Override
+	public IExam startExam() {
+		if(exam != null) {
+			if (this.confirm("Are you sure to start the exam?")) {
+				exam = this.artemisGUIController.startExam(course, exam.getExam());
+				return exam.getExam();
+			}
+		}
+		return null;
+	}
+	
+	@Override
+	public List<IExercise> getExerciseShortNamesFromExam(String examShortName) {
+		if(exam == null || !exam.getExam().getTitle().equals(examShortName))
+			exam = this.artemisGUIController.getExercisesFromExam(examShortName);
+		return exam.getExercises();
 	}
 }

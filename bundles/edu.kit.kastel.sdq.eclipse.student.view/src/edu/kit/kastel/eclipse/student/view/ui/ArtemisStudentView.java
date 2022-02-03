@@ -227,7 +227,9 @@ public class ArtemisStudentView extends ViewPart {
 				.forEach(examCombo::add);
 		examCombo.addListener(SWT.Selection, e -> {
 			exerciseCombo.removeAll();
-			if ("None".equals(examCombo.getItem(examCombo.getSelectionIndex()))) {
+			String examName = examCombo.getItem(examCombo.getSelectionIndex());
+			this.viewController.setExam(examName);
+			if ("None".equals(examName)) {
 				this.viewController.getExerciseShortNames(courseCombo.getItem(courseCombo.getSelectionIndex()))
 						.forEach(exerciseCombo::add);
 			} else {

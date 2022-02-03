@@ -11,6 +11,7 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.Feedback;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ICourse;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExam;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IStudentExam;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ResultsDTO;
 import edu.kit.kastel.sdq.eclipse.grading.api.client.websocket.WebsocketCallback;
@@ -75,7 +76,7 @@ public interface IArtemisController extends IController {
 
 	List<IExercise> getExercises(ICourse course, boolean withExamExercises);
 
-	List<IExercise> getExercisesFromExam(String examTitle);
+	IStudentExam getExercisesFromExam(String examTitle);
 
 	/**
 	 *
@@ -160,5 +161,6 @@ public interface IArtemisController extends IController {
 	Date getCurrentDate();
 	
 	boolean connectToWebsocket(WebsocketCallback callback);
+	IStudentExam startExam(ICourse course,IExam exam);
 	
 }
