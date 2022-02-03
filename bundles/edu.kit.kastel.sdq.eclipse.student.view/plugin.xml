@@ -31,7 +31,7 @@
             class="edu.kit.kastel.eclipse.student.view.perspective.Perspective"
             fixed="false"
             id="edu.kit.kastel.eclipse.student.view.perspective.Perspective"
-            name="Artemis Perspective">
+            name="Artemis Student">
       </perspective>
    </extension>
 </plugin>

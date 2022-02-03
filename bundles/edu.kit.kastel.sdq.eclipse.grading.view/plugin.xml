@@ -172,7 +172,7 @@
             class="edu.kit.kastel.eclipse.grading.view.perspective.Perspective"
             fixed="false"
             id="edu.kit.kastel.eclipse.grading.view.perspective.Perspective"
-            name="Artemis Perspective">
+            name="Artemis Grading">
       </perspective>
    </extension>
 </plugin>
