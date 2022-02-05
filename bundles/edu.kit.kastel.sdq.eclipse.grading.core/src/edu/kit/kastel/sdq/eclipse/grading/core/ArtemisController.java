@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -29,6 +30,7 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ICourse;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExam;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExerciseGroup;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IStudentExam;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ParticipationDTO;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ResultsDTO;
@@ -61,7 +63,7 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 	private String username;
 	private String password;
 	private final Map<Integer, ILockResult> lockResults;
-	
+
 	private List<ICourse> courses;
 
 	protected ArtemisController(final SystemwideController systemwideController, final String host,
@@ -150,7 +152,8 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 		if (file.exists()) {
 			this.warn("Project " + file.getName() + " could not be cloned since the workspace "
 					+ "already contains a project with that name. " + System.lineSeparator()
-					+ "Trying to load and merge previously created annotations. Please double-check them before submitting the assessment! " + System.lineSeparator()
+					+ "Trying to load and merge previously created annotations. Please double-check them before submitting the assessment! "
+					+ System.lineSeparator()
 					+ "If you want to start again from skretch, please delete the project and retry.");
 			return true;
 		}
@@ -205,7 +208,7 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 		return coursesWithCorrectID.iterator().next();
 
 	}
-	
+
 	@Override
 	public List<ICourse> fetchCourses() {
 		if (!this.artemisClient.isReady()) {
@@ -283,10 +286,10 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 	}
 
 	@Override
-	public List<IExercise> getExercisesFromExam(final String examTitle) {
+	public IStudentExam getExercisesFromExam(final String examTitle) {
 		return this.getExercisesFromExam(examTitle, this.getCourses());
 	}
-	
+
 	@Override
 	public Date getCurrentDate() {
 		try {
@@ -296,32 +299,29 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 		}
 	}
 
-	private List<IExercise> getExercisesFromExam(final String examTitle, List<ICourse> courses) {
-		IExam foundExam = filterGetExamObjectFromLoadedCourses(examTitle, courses);
-		if (foundExam == null) {
+	private IStudentExam getExercisesFromExam(final String examTitle, List<ICourse> courses) {
+		Entry<ICourse, IExam> foundEntry = filterGetExamObjectFromLoadedCourses(examTitle, courses);
+		if (foundEntry == null) {
 			this.error("No exam found for examTitle=" + examTitle, null);
-			return List.of();
-		}
-		if (foundExam.isExamExpired(getCurrentDate())) {
-			this.error("The selected exam is expired.", null);
-			return List.of();
+			return null;
 		}
 		try {
-			boolean userFeedback = this.confirm("Do you really want to start the exam?");
-			if (userFeedback) {
-				return this.artemisClient.startExam(foundExam).getExercises();
-			} else {
-				return List.of();
-			}
-			
-		} catch (final Exception e) {
-			this.error("API error, can not request start exam", e);
-			return List.of();
+			return this.artemisClient.findExamForSummary(foundEntry.getKey(), foundEntry.getValue());
+		} catch (Exception e) {
+			this.error("The exam has not been submitted yet. \n"
+					+ "You can only view results after the exam was submitted. \n"
+					+ "To submit the exam you have to submit the exam in the Artemis webclient!. It is not possible in Eclipse!. \n"
+					+ "To load exercises for the exam in to your local workspace you have to start the exam first! \n"
+					+ "After starting the exam you can load exercises in the workspace und submit solutions \n "
+					+ "After submitting solutions you can view results in the Result-Tab.", e);
 		}
-
+		if( this.confirm("Do you want to start the exam now?") ) {
+			return this.startExam(foundEntry.getKey(), foundEntry.getValue());
+		}
+		return null;
 	}
-	
-	private IExam filterGetExamObjectFromLoadedCourses(String examTitle, List<ICourse> courses) {
+
+	private Entry<ICourse, IExam> filterGetExamObjectFromLoadedCourses(String examTitle, List<ICourse> courses) {
 		for (ICourse course : courses) {
 			List<IExam> filteredExams;
 			try {
@@ -334,7 +334,7 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 			if (filteredExams.size() == 1) {
 				IExam exam = filteredExams.iterator().next();
 				if (exam.getTitle().equals(examTitle)) {
-					return exam;
+					return Map.entry(course, exam);
 				}
 			}
 		}
@@ -358,7 +358,7 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 
 	@Override
 	public List<String> getExerciseShortNamesFromExam(final String examTitle) {
-		return this.getExercisesFromExam(examTitle).stream().map(IExercise::getShortName).collect(Collectors.toList());
+		return this.getExercisesFromExam(examTitle).getExercises().stream().map(IExercise::getShortName).collect(Collectors.toList());
 	}
 
 	@Override
@@ -480,7 +480,7 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 			return Optional.of(GitHandler.cleanRepo(gitFileInRepo));
 		} catch (GitException e) {
 			this.error("Can't clean selected exercise " + exercise.getShortName() //
-			+ ".\n Exercise not found in workspace. \n Please load exercise first", e);
+					+ ".\n Exercise not found in workspace. \n Please load exercise first", e);
 			return Optional.empty();
 		}
 	}
@@ -498,7 +498,7 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 					.getParticipationWithLatestResultForExercise(participationOpt.get().getParticipationID());
 		} catch (ArtemisClientException e) {
 			this.error("Can't load results for selected exercise " + exercise.getShortName() //
-			+ ".\n No results found. Please check if a solution was submitted.", e);
+					+ ".\n No results found. Please check if a solution was submitted.", e);
 			return new HashMap<>();
 		}
 
@@ -521,35 +521,25 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 				resultFeedbackMap.put(result, Arrays.asList(feedbacks));
 			}
 		}
-		
+
 		if (resultFeedbackMap.isEmpty()) {
 			this.error("Can't load any feedback for selected exercise " + exercise.getShortName() //
-			+ ".\n No feedback found. Please check if a solution was submitted.",null );
+					+ ".\n No feedback found. Please check if a solution was submitted.", null);
 		}
-		
+
 		return resultFeedbackMap;
 	}
-	
+
 	public List<ICourse> getCourses() {
 		if (courses == null) {
 			courses = this.fetchCourses();
 		}
-		
+
 		return courses;
 	}
 
 	@Override
 	public boolean connectToWebsocket(WebsocketCallback callback) {
-		String token = "";
-		try {
-			token = this.artemisClient.login();
-		} catch (ArtemisClientException e) {
-			System.out.println("Error, can not login.");
-			return false;
-		} catch (Exception e) {
-			System.out.println("Unexpected error during login.");
-			return false;
-		}
 		try {
 			this.websocketClient.connect(callback, this.getToken());
 			return true;
@@ -559,6 +549,16 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 		}
 	}
 	
+	@Override
+	public IStudentExam startExam(ICourse course, IExam exam) {
+		try {
+			return this.artemisClient.conductExam(course, exam);
+		} catch (ArtemisClientException e) {
+			this.error("Error, can not start the exam: " + exam.getTitle(), e);
+			return null;
+		}
+	}
+
 	private String getToken() {
 		try {
 			return this.artemisClient.login();

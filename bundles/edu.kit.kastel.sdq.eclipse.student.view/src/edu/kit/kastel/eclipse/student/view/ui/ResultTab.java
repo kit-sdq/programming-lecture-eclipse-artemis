@@ -177,11 +177,6 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 		feedbackContentComposite.setVisible(false);
 	}
 
-	@Override
-	public void callEvent() {
-		getFeedbackForExcerise();
-	}
-
 	private void addSelectionListenerForReloadButton(Button btn) {
 		btn.addListener(SWT.Selection, e -> {
 			getFeedbackForExcerise();
@@ -358,5 +353,17 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 	private void handleWebsocketError() {
 		this.btnReload.setEnabled(false);
 		this.btnReload.setText("ERROR");
+	}
+
+	@Override
+	public void callExercisesEvent() {
+		getFeedbackForExcerise();
+		
+	}
+
+	@Override
+	public void callExamEvent() {
+		// TODO Auto-generated method stub
+		
 	}
 }

@@ -7,6 +7,7 @@ import java.util.Set;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.ArtemisClientException;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.Feedback;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExam;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ResultsDTO;
@@ -180,5 +181,15 @@ public interface ISystemwideController extends IController {
 	boolean isSelectedExerciseExpired();
 	
 	IExercise getCurrentSelectedExercise();
+
+	IExam setExam(String examName);
+
+	void setExerciseIdWithSelectedExam(String exerciseShortName) throws ArtemisClientException;
+	
+	IExam getExam();
+	
+	IExam startExam();
+	
+	List<IExercise> getExerciseShortNamesFromExam(String examShortName);
 
 }

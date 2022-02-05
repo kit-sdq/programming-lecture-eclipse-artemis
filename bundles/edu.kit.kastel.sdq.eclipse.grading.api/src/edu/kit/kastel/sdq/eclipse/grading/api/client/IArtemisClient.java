@@ -19,6 +19,7 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExerciseGroup;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IStudentExam;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ParticipationDTO;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ResultsDTO;
 
 public interface IArtemisClient {
 	/**
@@ -31,7 +32,7 @@ public interface IArtemisClient {
 	 * @return the artemis "assessor" object (needed for submitting the assessment).
 	 * @throws ArtemisClientException if some errors occur while parsing the result.
 	 */
-	Assessor getAssessor() throws ArtemisClientException ;
+	Assessor getAssessor() throws ArtemisClientException;
 
 	/**
 	 *
@@ -114,7 +115,32 @@ public interface IArtemisClient {
 	
 	IStudentExam startExam(IExam exam) throws ArtemisClientException;
 	
-	Feedback[] getFeedbackForResult(int particiaptionId, int resultId) throws ArtemisClientException;
+	/**
+	 * GET /courses/{courseId}/exams/{examId}/student-exams/conduction : Find a student exam for the user.
+     * This will be used for the actual conduction of the exam. The student exam will be returned with the exercises
+     * and with the student participation and with the submissions.
+     * NOTE: when this is called it will also mark the student exam as started
+     * 
+	 * @param course
+	 * @param exam
+	 * @return the startet exam, including exercises, participation and submissions.
+	 * @throws ArtemisClientException
+	 */
+	IStudentExam conductExam(ICourse course, IExam exam) throws ArtemisClientException;
+	
+	/**
+     * GET /courses/{courseId}/exams/{examId}/student-exams/summary : Find a student exam for the summary.
+     * This will be used to display the summary of the exam. The student exam will be returned with the exercises
+     * and with the student participation and with the submissions.
+     * 
+	 * @param course
+	 * @param exam
+	 * @return  the found exam, including exercises, participation and submissions.
+	 * @throws ArtemisClientException
+	 */
+	IStudentExam findExamForSummary(ICourse course, IExam exam) throws ArtemisClientException;
+	
+	Feedback[] getFeedbackForResult(ParticipationDTO particiaptionId, ResultsDTO resultId) throws ArtemisClientException;
 	
 	Date getTime() throws ArtemisClientException;
 	

@@ -47,7 +47,7 @@ public class ArtemisDashboardCourse implements ICourse, Serializable {
 	}
 
 	@Override
-	public List<IExam> getExamsForCourse() throws ArtemisClientException {
+	public List<IExam> getExams() throws ArtemisClientException {
 		if(exams == null) {
 			this.exams = (ArtemisExam[]) this.client.getExamsForCourse(this).toArray();
 		}
@@ -55,9 +55,9 @@ public class ArtemisDashboardCourse implements ICourse, Serializable {
 	}
 
 	@Override
-	public List<IExercise> getExercisesForCourse() throws ArtemisClientException {
+	public List<IExercise> getExercises() throws ArtemisClientException {
 		if(exercises == null) {
-			this.exercises = (ArtemisExercise[]) this.client.getExercisesForCourse(this).toArray();
+			this.exercises = (ArtemisExercise[]) this.client.getStudentExercisesForCourse(this).toArray();
 		}
 		return Arrays.asList(exercises);
 	}

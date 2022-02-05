@@ -15,9 +15,10 @@ public interface IMappingLoader {
 
 	List<IExam> getExamsForCourse(ICourse artemisCourse) throws ArtemisClientException;
 	
-	List<IExercise> getExercisesForCourse(ICourse artemisCourse) throws ArtemisClientException;
+	List<IExercise> getStudentExercisesForCourse(ICourse artemisCourse) throws ArtemisClientException;
 
 	List<IExercise> getNormalExercisesForCourse(ICourse artemisCourse) throws ArtemisClientException;
 
 	ISubmission getSubmissionById(IExercise artemisExercise, int submissionId) throws ArtemisClientException;
+
 }

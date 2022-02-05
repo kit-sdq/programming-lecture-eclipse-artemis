@@ -41,7 +41,7 @@ public class ArtemisCourse implements ICourse, Serializable {
 	}
 
 	@Override
-	public List<IExam> getExamsForCourse() throws ArtemisClientException {
+	public List<IExam> getExams() throws ArtemisClientException {
 		if (this.exams == null) {
 			this.exams = this.client.getExamsForCourse(this);
 			this.exams.sort((e1, e2) -> e1.getTitle().compareTo(e2.getTitle()));
@@ -50,7 +50,7 @@ public class ArtemisCourse implements ICourse, Serializable {
 	}
 
 	@Override
-	public List<IExercise> getExercisesForCourse() throws ArtemisClientException {
+	public List<IExercise> getExercises() throws ArtemisClientException {
 		if (this.exercises == null) {
 			this.exercises = this.client.getNormalExercisesForCourse(this);
 			this.exercises.sort((e1, e2) -> e1.getShortName().compareTo(e2.getShortName()));

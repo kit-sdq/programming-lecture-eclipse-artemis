@@ -227,13 +227,16 @@ public class ArtemisStudentView extends ViewPart {
 				.forEach(examCombo::add);
 		examCombo.addListener(SWT.Selection, e -> {
 			exerciseCombo.removeAll();
-			if ("None".equals(examCombo.getItem(examCombo.getSelectionIndex()))) {
+			String examName = examCombo.getItem(examCombo.getSelectionIndex());
+			this.viewController.setExam(examName);
+			if ("None".equals(examName)) {
 				this.viewController.getExerciseShortNames(courseCombo.getItem(courseCombo.getSelectionIndex()))
 						.forEach(exerciseCombo::add);
 			} else {
 				this.viewController.getExercisesShortNamesForExam(examCombo.getItem(examCombo.getSelectionIndex()))
 						.forEach(exerciseCombo::add);
 			}
+			callAllTabsForExamEvent();
 		});
 		exerciseCombo.addListener(SWT.Selection, e -> {
 			handleExerciseComboListEvent(exerciseCombo);
@@ -331,6 +334,10 @@ public class ArtemisStudentView extends ViewPart {
 	}
 	
 	private void callAllTabsForExerciseEvent() {
-		this.tabs.forEach(ArtemisStudentTab::callEvent);
+		this.tabs.forEach(ArtemisStudentTab::callExercisesEvent);
+	}
+	
+	private void callAllTabsForExamEvent() {
+		this.tabs.forEach(ArtemisStudentTab::callExamEvent);
 	}
 }
