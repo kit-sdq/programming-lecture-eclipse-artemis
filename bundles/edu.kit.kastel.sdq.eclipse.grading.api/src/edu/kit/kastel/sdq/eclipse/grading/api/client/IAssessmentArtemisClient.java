@@ -52,13 +52,6 @@ public interface IAssessmentArtemisClient {
 	 * @throws ArtemisClientException if some errors occur while parsing the result
 	 *                                or if authentication fails.
 	 */
-	Optional<ILockResult> startNextAssessment(IExercise exerciseID, int correctionRound) throws ArtemisClientException;
-
-	/**
-	 *
-	 * @return the artemis "assessor" object (needed for submitting the assessment).
-	 * @throws ArtemisClientException if some errors occur while parsing the result.
-	 */
-	Assessor getAssessor() throws ArtemisClientException;
+	Optional<ILockResult> startNextAssessment(IExercise exercise, int correctionRound) throws ArtemisClientException;
 
 }
