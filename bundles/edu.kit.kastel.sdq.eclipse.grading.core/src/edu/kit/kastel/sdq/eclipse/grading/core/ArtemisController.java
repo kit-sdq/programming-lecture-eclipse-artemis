@@ -235,7 +235,7 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 				return List.of();
 			}
 
-			return course.getExamsForCourse().stream().map(IExam::getTitle).collect(Collectors.toList());
+			return course.getExams().stream().map(IExam::getTitle).collect(Collectors.toList());
 		} catch (final Exception e) {
 			this.error(e.getMessage(), e);
 			return List.of();
@@ -268,10 +268,10 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 			return List.of();
 		}
 		try {
-			List<IExercise> allExercises = new ArrayList<>(course.getExercisesForCourse());
+			List<IExercise> allExercises = new ArrayList<>(course.getExercises());
 			if (withExamExercises) {
 
-				for (IExam e : course.getExamsForCourse()) {
+				for (IExam e : course.getExams()) {
 					for (IExerciseGroup g : e.getExerciseGroups()) {
 						allExercises.addAll(g.getExercises());
 					}
@@ -315,7 +315,7 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 					+ "After starting the exam you can load exercises in the workspace und submit solutions \n "
 					+ "After submitting solutions you can view results in the Result-Tab.", e);
 		}
-		if( this.confirm("Do you want to start the exam now?") ) {
+		if (this.confirm("Do you want to start the exam now?")) {
 			return this.startExam(foundEntry.getKey(), foundEntry.getValue());
 		}
 		return null;
@@ -325,7 +325,7 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 		for (ICourse course : courses) {
 			List<IExam> filteredExams;
 			try {
-				filteredExams = course.getExamsForCourse().stream().filter(exam -> exam.getTitle().equals(examTitle))
+				filteredExams = course.getExams().stream().filter(exam -> exam.getTitle().equals(examTitle))
 						.collect(Collectors.toList());
 			} catch (final Exception e) {
 				this.error(e.getMessage(), e);
@@ -349,7 +349,7 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 		}
 
 		try {
-			return course.getExercisesForCourse().stream().map(IExercise::getShortName).collect(Collectors.toList());
+			return course.getExercises().stream().map(IExercise::getShortName).collect(Collectors.toList());
 		} catch (ArtemisClientException e) {
 			this.error(e.getMessage(), e);
 			return List.of();
@@ -358,7 +358,8 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 
 	@Override
 	public List<String> getExerciseShortNamesFromExam(final String examTitle) {
-		return this.getExercisesFromExam(examTitle).getExercises().stream().map(IExercise::getShortName).collect(Collectors.toList());
+		return this.getExercisesFromExam(examTitle).getExercises().stream().map(IExercise::getShortName)
+				.collect(Collectors.toList());
 	}
 
 	@Override
@@ -512,8 +513,7 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 			if (result.hasFeedback) {
 				Feedback[] feedbacks = {};
 				try {
-					feedbacks = this.artemisClient.getFeedbackForResult(participationOpt.get().getParticipationID(),
-							result.id);
+					feedbacks = this.artemisClient.getFeedbackForResult(participationOpt.get(), result);
 				} catch (ArtemisClientException e) {
 					e.printStackTrace();
 					break;
@@ -548,7 +548,7 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 			return false;
 		}
 	}
-	
+
 	@Override
 	public IStudentExam startExam(ICourse course, IExam exam) {
 		try {

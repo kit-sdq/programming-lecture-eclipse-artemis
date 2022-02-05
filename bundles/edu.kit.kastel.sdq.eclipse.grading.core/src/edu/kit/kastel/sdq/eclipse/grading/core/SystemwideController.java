@@ -309,7 +309,7 @@ public class SystemwideController extends AbstractController implements ISystemw
 		for (ICourse c : this.getArtemisGUIController().getCourses()) {
 			if (c.getShortName().equals(courseShortName)) {
 				this.course = c;
-				return c.getExercisesForCourse().stream().map(IExercise::getShortName).collect(Collectors.toList());
+				return c.getExercises().stream().map(IExercise::getShortName).collect(Collectors.toList());
 			}
 		}
 		this.error("No Course with the given shortName \"" + courseShortName + "\" found.", null);
@@ -320,9 +320,9 @@ public class SystemwideController extends AbstractController implements ISystemw
 	public void setExerciseId(final String exerciseShortName) throws ArtemisClientException {
 
 		// Normal exercises
-		List<IExercise> exercises = this.course.getExercisesForCourse();
+		List<IExercise> exercises = this.course.getExercises();
 		
-		this.course.getExamsForCourse().stream().map(e -> artemisGUIController.getExercisesFromExam(e.getTitle()).getExercises())
+		this.course.getExams().stream().map(e -> artemisGUIController.getExercisesFromExam(e.getTitle()).getExercises())
 				.forEach(e -> e.forEach(exercises::add));
 
 		for (IExercise ex : exercises) {
@@ -340,7 +340,7 @@ public class SystemwideController extends AbstractController implements ISystemw
 		List<IExercise> exercises = new ArrayList<>();
 		// Normal exercises
 		if(exam == null) {
-			this.course.getExercisesForCourse().forEach(exercises::add);
+			this.course.getExercises().forEach(exercises::add);
 		} else {
 			exam.getExercises().forEach(exercises::add);
 		}
@@ -540,7 +540,7 @@ public class SystemwideController extends AbstractController implements ISystemw
 	public IExam setExam(String examName) {
 		Optional<IExam> examOpt;
 		try {
-			examOpt = this.course.getExamsForCourse().stream().filter(exam -> examName.equals(exam.getTitle())).findFirst();
+			examOpt = this.course.getExams().stream().filter(exam -> examName.equals(exam.getTitle())).findFirst();
 			if (examOpt.isPresent()) {
 				this.examName = examName;
 			}

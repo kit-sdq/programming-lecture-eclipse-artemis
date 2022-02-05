@@ -53,25 +53,13 @@ public class ArtemisClient extends AbstractArtemisClient implements IMappingLoad
 
 	private static final ILog log = Platform.getLog(ArtemisClient.class);
 	
-	private static final String JSON_PARSE_ERROR_MESSAGE_CORRUPT_JSON_STRUCTURE = "Error parsing json: Corrupt Json Structure";
-	private ObjectMapper orm = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false).setSerializationInclusion(Include.NON_NULL);
-	
-	private WebTarget rootEndpoint;
 	private WebTarget apiEndpoint;
-	private String token;
 
 	public ArtemisClient(final String username, final String password, final String hostName) {
 		super(username, password, hostName);
 
 		this.apiEndpoint = ClientBuilder.newBuilder().build().target(this.getApiRoot());
-		this.rootEndpoint = ClientBuilder.newBuilder().build().target(hostName);
 		this.token = null;
-	}
-
-	private void checkAuthentication() throws ArtemisClientException {
-		if (this.token == null) {
-			this.login();
-		}
 	}
 	
 	@Override
@@ -247,9 +235,6 @@ public class ArtemisClient extends AbstractArtemisClient implements IMappingLoad
 		return target;
 	}
 
-	private boolean isStatusSuccessful(final Response response) {
-		return Family.SUCCESSFUL.equals(response.getStatusInfo().getFamily());
-	}
 	
 	@Override
 	public String login() throws ArtemisClientException {
@@ -421,36 +406,7 @@ public class ArtemisClient extends AbstractArtemisClient implements IMappingLoad
 		return this.read(exercisesAndParticipationsJsonNode.toString(), Feedback[].class);
 	}
 
-	private void throwIfStatusUnsuccessful(final Response response) throws ArtemisClientException {
-		if (!this.isStatusSuccessful(response)) {
-			throw new ArtemisClientException("Communication with \"" + this.getApiRoot() + "\" failed with status \"" + response.getStatus() + ": "
-					+ response.getStatusInfo().getReasonPhrase() + "\".");
-		}
-	}
 
-	private <E> E read(String rspEntity, Class<E> clazz) throws ArtemisClientException {
-		try {
-			return this.orm.readValue(rspEntity, clazz);
-		} catch (Exception e) {
-			throw new ArtemisClientException(e.getMessage(), e);
-		}
-	}
-
-	private <E> String payload(E rspEntity) throws ArtemisClientException {
-		try {
-			return this.orm.writeValueAsString(rspEntity);
-		} catch (Exception e) {
-			throw new ArtemisClientException(e.getMessage(), e);
-		}
-	}
-
-	private JsonNode readTree(String readEntity) throws ArtemisClientException {
-		try {
-			return this.orm.readTree(readEntity);
-		} catch (JsonProcessingException e) {
-			throw new ArtemisClientException(e.getMessage(), e);
-		}
-	}
 
 	@Override
 	public Date getTime() throws ArtemisClientException {

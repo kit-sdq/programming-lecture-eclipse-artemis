@@ -15,4 +15,6 @@ Export-Package: edu.kit.kastel.sdq.eclipse.grading.api,
 Automatic-Module-Name: edu.kit.kastel.sdq.eclipse.grading.api
 Require-Bundle: com.fasterxml.jackson.core.jackson-databind,
  com.fasterxml.jackson.core.jackson-core,
- com.fasterxml.jackson.core.jackson-annotations
+ com.fasterxml.jackson.core.jackson-annotations,
+ javax.ws.rs
+Import-Package: javax.ws.rs.client
