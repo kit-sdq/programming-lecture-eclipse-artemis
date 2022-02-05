@@ -165,9 +165,10 @@ public class ExamTab implements ArtemisStudentTab {
 	}
 
 	@Override
-	public void callEvent() {
+	public void callExamEvent() {
 		setExam();
 	}
+
 
 	/**
 	 * @wbp.parser.entryPoint
@@ -175,5 +176,11 @@ public class ExamTab implements ArtemisStudentTab {
 	private void createView(Composite parent) {
 		TabFolder tabFolder = new TabFolder(parent, SWT.NONE);
 		create(tabFolder);
+	}
+
+	@Override
+	public void callExercisesEvent() {
+		setExam();
+		
 	}
 }

@@ -27,7 +27,7 @@ public class Feedback implements Serializable {
 	private static final long serialVersionUID = 4531964872375020131L;
 
 	private String type;
-	private double credits;
+	private Double credits;
 	private Integer id; // null for all manual feedback
 	private Boolean positive; // null for all manual feedback
 	private String visibility; // null for all manual feedback
@@ -39,14 +39,14 @@ public class Feedback implements Serializable {
 	public Feedback(@JsonProperty("type") String type, @JsonProperty("credits") Double credits, @JsonProperty("id") Integer id,
 			@JsonProperty("positive") Boolean positive, @JsonProperty("visibility") String visibility, @JsonProperty("text") String text,
 			@JsonProperty("reference") String reference, @JsonProperty("detailText") String detailText) {
-		this.type = type != null ? type : "";
-		this.credits = credits != null ? credits : 0.0;
-		this.id = id != null ? id : 0;
-		this.positive = positive != null ? positive : false;
-		this.visibility = visibility != null ? visibility : "";
-		this.text = text != null ? text : "";
-		this.reference = reference != null ? reference : "";
-		this.detailText = detailText != null ? detailText : "";
+		this.type = type;
+		this.credits = credits;
+		this.id = id;
+		this.positive = positive;
+		this.visibility = visibility;
+		this.text = text;
+		this.reference = reference;
+		this.detailText = detailText;
 	}
 
 	/**

@@ -36,6 +36,7 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExerciseGroup;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IStudentExam;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ParticipationDTO;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ResultsDTO;
 import edu.kit.kastel.sdq.eclipse.grading.api.client.AbstractArtemisClient;
 import edu.kit.kastel.sdq.eclipse.grading.client.git.GitException;
 import edu.kit.kastel.sdq.eclipse.grading.client.git.GitHandler;
@@ -147,7 +148,7 @@ public class ArtemisClient extends AbstractArtemisClient implements IMappingLoad
 	}
 	
 	@Override
-	public List<IExercise> getExercisesForCourse(ICourse artemisCourse) throws ArtemisClientException {
+	public List<IExercise> getStudentExercisesForCourse(ICourse artemisCourse) throws ArtemisClientException {
 		final Response eexerciseRsp = this.apiEndpoint.path(COURSES_PATHPART).path(String.valueOf(artemisCourse.getCourseId())).path(EXERCISES_PATHPART).request()
 				.header(AUTHORIZATION_NAME, this.token).buildGet().invoke();
 		this.throwIfStatusUnsuccessful(eexerciseRsp);
@@ -407,10 +408,10 @@ public class ArtemisClient extends AbstractArtemisClient implements IMappingLoad
 	}
 	
 	@Override
-	public Feedback[] getFeedbackForResult(int participationId, int resultId) throws ArtemisClientException {
+	public Feedback[] getFeedbackForResult(ParticipationDTO participation, ResultsDTO result) throws ArtemisClientException {
 		this.checkAuthentication();
 
-		final Response exercisesRsp = this.apiEndpoint.path(PARTICIPATION_PATHPART).path(Integer.toString(participationId)).path(RESULT_PATHPART).path(Integer.toString(resultId)).path("details").request()
+		final Response exercisesRsp = this.apiEndpoint.path(PARTICIPATION_PATHPART).path(Integer.toString(participation.getParticipationID())).path(RESULT_PATHPART).path(Integer.toString(result.id)).path("details").request()
 				.header(AUTHORIZATION_NAME, this.token).buildGet().invoke();
 
 		this.throwIfStatusUnsuccessful(exercisesRsp);

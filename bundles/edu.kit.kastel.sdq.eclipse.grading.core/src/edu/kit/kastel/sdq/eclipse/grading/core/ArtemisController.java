@@ -309,11 +309,11 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 			return this.artemisClient.findExamForSummary(foundEntry.getKey(), foundEntry.getValue());
 		} catch (Exception e) {
 			this.error("The exam has not been submitted yet. \n"
-					+ "You can only view results after the exam was submittet. \n"
+					+ "You can only view results after the exam was submitted. \n"
 					+ "To submit the exam you have to submit the exam in the Artemis webclient!. It is not possible in Eclipse!. \n"
-					+ "To load the exercises for the exam in to you local workspace you have to start the exam first! \n"
+					+ "To load exercises for the exam in to your local workspace you have to start the exam first! \n"
 					+ "After starting the exam you can load exercises in the workspace und submit solutions \n "
-					+ "After submitting solutions you view a result in the Result-Tab.", e);
+					+ "After submitting solutions you can view results in the Result-Tab.", e);
 		}
 		if( this.confirm("Do you want to start the exam now?") ) {
 			return this.startExam(foundEntry.getKey(), foundEntry.getValue());

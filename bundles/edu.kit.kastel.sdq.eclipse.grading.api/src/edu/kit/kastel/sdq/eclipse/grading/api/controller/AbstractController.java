@@ -49,6 +49,9 @@ public abstract class AbstractController {
 	 */
 	protected boolean confirm(String warningMsg) {
 		boolean result = true;
+		if (this.observers.isEmpty()) {
+			return false;
+		}
 		for (var observer: observers) {
 			result = result && observer.confirm(warningMsg);
 		}

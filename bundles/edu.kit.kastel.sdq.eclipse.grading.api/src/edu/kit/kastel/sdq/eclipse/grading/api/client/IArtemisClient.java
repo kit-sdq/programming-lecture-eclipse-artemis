@@ -19,6 +19,7 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExerciseGroup;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IStudentExam;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ParticipationDTO;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ResultsDTO;
 
 public interface IArtemisClient {
 	/**
@@ -31,7 +32,7 @@ public interface IArtemisClient {
 	 * @return the artemis "assessor" object (needed for submitting the assessment).
 	 * @throws ArtemisClientException if some errors occur while parsing the result.
 	 */
-	Assessor getAssessor() throws ArtemisClientException ;
+	Assessor getAssessor() throws ArtemisClientException;
 
 	/**
 	 *
@@ -139,7 +140,7 @@ public interface IArtemisClient {
 	 */
 	IStudentExam findExamForSummary(ICourse course, IExam exam) throws ArtemisClientException;
 	
-	Feedback[] getFeedbackForResult(int particiaptionId, int resultId) throws ArtemisClientException;
+	Feedback[] getFeedbackForResult(ParticipationDTO particiaptionId, ResultsDTO resultId) throws ArtemisClientException;
 	
 	Date getTime() throws ArtemisClientException;
 	

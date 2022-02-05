@@ -12,10 +12,6 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExam;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
 
-/**
- * @author behrl
- *
- */
 public class ArtemisExercise implements IExercise {
 	private static final long serialVersionUID = 5892461865571113106L;
 
@@ -99,9 +95,7 @@ public class ArtemisExercise implements IExercise {
 	}
 	
 	public void init(IMappingLoader client, ICourse course) {
-		this.client = client;
-		this.course = course;
-		this.exam = Optional.empty();
+		this.init(client, course, Optional.empty());
 	}
 
 	@Override

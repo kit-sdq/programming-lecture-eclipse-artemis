@@ -236,6 +236,7 @@ public class ArtemisStudentView extends ViewPart {
 				this.viewController.getExercisesShortNamesForExam(examCombo.getItem(examCombo.getSelectionIndex()))
 						.forEach(exerciseCombo::add);
 			}
+			callAllTabsForExamEvent();
 		});
 		exerciseCombo.addListener(SWT.Selection, e -> {
 			handleExerciseComboListEvent(exerciseCombo);
@@ -333,6 +334,10 @@ public class ArtemisStudentView extends ViewPart {
 	}
 	
 	private void callAllTabsForExerciseEvent() {
-		this.tabs.forEach(ArtemisStudentTab::callEvent);
+		this.tabs.forEach(ArtemisStudentTab::callExercisesEvent);
+	}
+	
+	private void callAllTabsForExamEvent() {
+		this.tabs.forEach(ArtemisStudentTab::callExamEvent);
 	}
 }
