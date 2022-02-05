@@ -7,14 +7,14 @@ import edu.kit.kastel.sdq.eclipse.grading.api.ArtemisClientException;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ICourse;
 import edu.kit.kastel.sdq.eclipse.grading.api.controller.IAlertObserver;
 import edu.kit.kastel.sdq.eclipse.grading.api.controller.IArtemisController;
-import edu.kit.kastel.sdq.eclipse.grading.api.controller.ISystemwideController;
+import edu.kit.kastel.sdq.eclipse.grading.api.controller.IGradingSystemwideController;
 
 /**
  * This abstract class is the base for controllers for a view for artemis. It holds all general controllers for the backend calls.
  */
 public abstract class AArtemisViewController {
 	private IArtemisController artemisGUIController;
-	private ISystemwideController systemwideController;
+	private IGradingSystemwideController systemwideController;
 	private IAlertObserver alertObserver;
 
 	public AArtemisViewController() {
@@ -87,7 +87,7 @@ public abstract class AArtemisViewController {
 		return this.artemisGUIController;
 	}
 	
-	protected ISystemwideController getSystemwideController() {
+	protected IGradingSystemwideController getSystemwideController() {
 		return this.systemwideController;
 	}
 
@@ -95,7 +95,7 @@ public abstract class AArtemisViewController {
 		return alertObserver;
 	}
 
-	protected void setSystemwideController(ISystemwideController systemwideController) {
+	protected void setSystemwideController(IGradingSystemwideController systemwideController) {
 		this.systemwideController = systemwideController;
 	}
 	

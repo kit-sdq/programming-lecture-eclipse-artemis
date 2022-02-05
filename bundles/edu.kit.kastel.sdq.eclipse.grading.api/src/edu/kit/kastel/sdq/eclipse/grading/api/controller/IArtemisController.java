@@ -17,7 +17,7 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ResultsDTO;
 import edu.kit.kastel.sdq.eclipse.grading.api.client.websocket.WebsocketCallback;
 
 /**
- * Works as an interface from backend to ArtemisClient
+ * Works as an interface from backend to REST-clients
  *
  */
 public interface IArtemisController extends IController {
@@ -148,19 +148,12 @@ public interface IArtemisController extends IController {
 	 */
 	Optional<ISubmission> startNextAssessment(IExercise exercise, int correctionRound);
 	
-	boolean loadExerciseInWorkspaceForStudent(ICourse course, IExercise exercise, IProjectFileNamingStrategy projectNaming);
-	
-	boolean submitSolution(ICourse course, IExercise exercise, IProjectFileNamingStrategy projectNaming);
-
-	Optional<Set<String>> cleanWorkspace(ICourse course, IExercise exercise, IProjectFileNamingStrategy projectNaming);
-	
 	Map<ResultsDTO, List<Feedback>> getFeedbackExcerise(ICourse course, IExercise excerise);
 	
 	List<ICourse> fetchCourses();
 
 	Date getCurrentDate();
 	
-	boolean connectToWebsocket(WebsocketCallback callback);
 	IStudentExam startExam(ICourse course,IExam exam);
 	
 }

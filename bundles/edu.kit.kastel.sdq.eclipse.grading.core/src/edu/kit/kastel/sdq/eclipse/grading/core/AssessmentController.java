@@ -28,7 +28,7 @@ import edu.kit.kastel.sdq.eclipse.grading.core.model.annotation.IAnnotationDao;
 
 public class AssessmentController extends AbstractController implements IAssessmentController {
 
-	private SystemwideController systemWideController;
+	private GradingSystemwideController systemWideController;
 
 	private IAnnotationDao annotationDao;
 
@@ -44,7 +44,7 @@ public class AssessmentController extends AbstractController implements IAssessm
 	 * @param exerciseName the shortName of the exercise (must be same in the config
 	 *                     file).
 	 */
-	protected AssessmentController(SystemwideController systemWideController, ICourse course, IExercise exercise, ISubmission submission) {
+	protected AssessmentController(GradingSystemwideController systemWideController, ICourse course, IExercise exercise, ISubmission submission) {
 		this.systemWideController = systemWideController;
 
 		this.course = course;
