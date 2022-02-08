@@ -15,13 +15,13 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IProjectFileNamingStrategy
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ICourse;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ParticipationDTO;
+import edu.kit.kastel.sdq.eclipse.grading.api.controller.AbstractController;
 import edu.kit.kastel.sdq.eclipse.grading.api.controller.IExerciseArtemisController;
 import edu.kit.kastel.sdq.eclipse.grading.client.git.GitException;
 import edu.kit.kastel.sdq.eclipse.grading.client.git.GitHandler;
 import edu.kit.kastel.sdq.eclipse.grading.core.artemis.WorkspaceUtil;
 
-public class ExerciseArtemisController implements IExerciseArtemisController {
+public class ExerciseArtemisController extends AbstractController implements IExerciseArtemisController {
 	private static final ILog log = Platform.getLog(ExerciseArtemisController.class);
 	private String username;
 	private String password;
@@ -30,50 +30,33 @@ public class ExerciseArtemisController implements IExerciseArtemisController {
 		this.username = username;
 		this.password = password;
 	}
-	
+
 	@Override
-	public boolean loadExerciseInWorkspaceForStudent(ICourse course, IExercise exercise,
-			IProjectFileNamingStrategy projectNaming) {
+	public void loadExerciseInWorkspaceForStudent(ICourse course, IExercise exercise,
+			IProjectFileNamingStrategy projectNaming, String repoUrl) throws ArtemisClientException {
 		final File eclipseWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile();
 
 		// abort if directory already exists.
-		if (this.existsAndNotify(projectNaming.getProjectFileInWorkspace(eclipseWorkspaceRoot, exercise, null))) {
-			return false;
-		}
-		Optional<ParticipationDTO> optParticipation = getParticipationForExercise(course, exercise);
+		this.existsAndThrow(projectNaming.getProjectFileInWorkspace(eclipseWorkspaceRoot, exercise, null));
 
-		ParticipationDTO participation;
-
-		if (optParticipation.isEmpty()) {
-			try {
-				participation = artemisClient.startParticipationForExercise(course, exercise);
-			} catch (ArtemisClientException e) {
-				this.error("The selected Exercise can not be startet.", e);
-				return false;
-			}
-		} else {
-			participation = optParticipation.get();
-		}
 		try {
-			this.exerciseController.downloadExercise(exercise, eclipseWorkspaceRoot, participation.getRepositoryUrl(),
-					projectNaming);
+			this.downloadExercise(exercise, eclipseWorkspaceRoot, repoUrl, projectNaming);
 		} catch (ArtemisClientException e) {
-			this.error(e.getMessage(), e);
-			return false;
+			throw new ArtemisClientException("Error, can not download exercise.", e);
 		}
 		try {
 			WorkspaceUtil.createEclipseProject(
 					projectNaming.getProjectFileInWorkspace(eclipseWorkspaceRoot, exercise, null));
 		} catch (CoreException e) {
-			this.error("Project could not be created: " + e.getMessage(), null);
+			throw new ArtemisClientException("Error, can not create project.", e);
 		}
-		return true;
 	}
 
 	@Override
 	public void downloadExerciseAndSubmission(IExercise exercise, ISubmission submission, File dir,
 			IProjectFileNamingStrategy namingStrategy) throws ArtemisClientException {
 		final File projectDirectory = namingStrategy.getProjectFileInWorkspace(dir, exercise, submission);
+		this.existsAndThrow(projectDirectory);
 		try {
 			if (projectDirectory.exists()) {
 				throw new ArtemisClientException(
@@ -91,7 +74,6 @@ public class ExerciseArtemisController implements IExerciseArtemisController {
 
 	}
 
-	@Override
 	public void downloadExercise(IExercise exercise, File dir, String repoUrl,
 			IProjectFileNamingStrategy namingStrategy) throws ArtemisClientException {
 		final File projectDirectory = namingStrategy.getProjectFileInWorkspace(dir, exercise, null);
@@ -110,20 +92,20 @@ public class ExerciseArtemisController implements IExerciseArtemisController {
 
 	@Override
 	public Optional<Set<String>> cleanWorkspace(ICourse course, IExercise exercise,
-			IProjectFileNamingStrategy projectNaming) throws ArtemisClientException {
+			IProjectFileNamingStrategy projectNaming) {
 		final File eclipseWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile();
 		File exeriseRepo = projectNaming.getProjectFileInWorkspace(eclipseWorkspaceRoot, exercise, null);
 		File gitFileInRepo = projectNaming.getGitFileInProjectDirectory(exeriseRepo);
 		try {
 			return Optional.of(GitHandler.cleanRepo(gitFileInRepo));
 		} catch (GitException e) {
-			throw new ArtemisClientException("Can't clean selected exercise " + exercise.getShortName() //
-					+ ".\n Exercise not found in workspace. \n Please load exercise first", e);
+			return Optional.empty();
 		}
 	}
-	
+
 	@Override
-	public boolean commitAndPushExercise(ICourse course, IExercise exercise, IProjectFileNamingStrategy projectNaming)  throws ArtemisClientException{
+	public boolean commitAndPushExercise(ICourse course, IExercise exercise, IProjectFileNamingStrategy projectNaming)
+			throws ArtemisClientException {
 		final File eclipseWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile();
 		File exeriseRepo = projectNaming.getProjectFileInWorkspace(eclipseWorkspaceRoot, exercise, null);
 		File gitFileInRepo = projectNaming.getGitFileInProjectDirectory(exeriseRepo);
@@ -137,8 +119,19 @@ public class ExerciseArtemisController implements IExerciseArtemisController {
 		try {
 			GitHandler.pushExercise(username, password, gitFileInRepo);
 		} catch (GitException e) {
-			throw new ArtemisClientException("Can't upload solution. Please check if submissions are still possible.", e);
+			throw new ArtemisClientException("Can't upload solution. Please check if submissions are still possible.",
+					e);
 		}
 		return true;
+	}
+	
+	private void existsAndThrow(File file) throws ArtemisClientException {
+		if (file.exists()) {
+			throw new ArtemisClientException("Project " + file.getName() + " could not be cloned since the workspace "
+					+ "already contains a project with that name. " + System.lineSeparator()
+					+ "Trying to load and merge previously created annotations. Please double-check them before submitting the assessment! "
+					+ System.lineSeparator()
+					+ "If you want to start again from skretch, please delete the project and retry.");
+		}
 	}
 }

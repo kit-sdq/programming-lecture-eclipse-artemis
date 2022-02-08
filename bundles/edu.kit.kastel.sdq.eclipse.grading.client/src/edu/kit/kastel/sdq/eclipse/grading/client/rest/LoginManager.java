@@ -1,6 +1,8 @@
 package edu.kit.kastel.sdq.eclipse.grading.client.rest;
 
 import java.io.Serializable;
+
+import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
@@ -23,18 +25,30 @@ public class LoginManager extends AbstractArtemisClient implements IAuthenticati
 	private WebTarget endpoint;
 	private Assessor assessor;
 	
-	public LoginManager(String hostname, String username, String password) throws ArtemisClientException {
+	public LoginManager(String hostname, String username, String password) {
 		super(hostname);
 		this.username = username;
 		this.password = password;	
 		this.endpoint = getEndpoint(this.getApiRootURL());
-		this.assessor = this.fetchAssesor();
-		this.token = login();
+	}
+	
+	public void init() throws ArtemisClientException {
+		try {
+			this.token = this.login();
+			this.assessor = this.fetchAssesor();
+		} catch(ProcessingException e) {
+			throw new ArtemisClientException(e.getMessage(), e);
+		}
 	}
 	
 	@Override
-	public String getToken() {
+	public String getRawToken() {
 		return token;
+	}
+	
+	@Override
+	public String getBearerToken() {
+		return "Bearer " + token;
 	}
 	
 	@Override
@@ -43,13 +57,13 @@ public class LoginManager extends AbstractArtemisClient implements IAuthenticati
 	}
 	
 	private Assessor fetchAssesor() throws ArtemisClientException {
-		final Response rsp = this.endpoint.path(USERS_PATHPART).path(username).request().header(AUTHORIZATION_NAME, getToken()).buildGet()
+		final Response rsp = this.endpoint.path(USERS_PATHPART).path(username).request().header(AUTHORIZATION_NAME, getBearerToken()).buildGet()
 				.invoke();
 		this.throwIfStatusUnsuccessful(rsp);
 		return this.read(rsp.readEntity(String.class), Assessor.class);
 	}
 	
-	private String login() throws ArtemisClientException {
+	private String login() throws ArtemisClientException,ProcessingException {
 		String payload = this.payload(this.getAuthenticationEntity());
 		final Response authenticationResponse = this.endpoint.path("authenticate").request().buildPost(Entity.json(payload)).invoke();
 

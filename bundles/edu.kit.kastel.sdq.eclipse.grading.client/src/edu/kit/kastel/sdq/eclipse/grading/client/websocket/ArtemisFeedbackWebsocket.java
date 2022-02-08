@@ -14,6 +14,8 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import javax.websocket.WebSocketContainer;
 
+import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.Platform;
 import org.glassfish.tyrus.client.ClientManager;
 import org.glassfish.tyrus.container.grizzly.client.GrizzlyClientContainer;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
@@ -29,6 +31,8 @@ import edu.kit.kastel.sdq.eclipse.grading.api.client.websocket.IWebsocketClient;
 import edu.kit.kastel.sdq.eclipse.grading.api.client.websocket.WebsocketCallback;
 
 public class ArtemisFeedbackWebsocket implements IWebsocketClient {
+	private static final ILog log = Platform.getLog(ArtemisFeedbackWebsocket.class);
+
 	private static final String WEBSOCKET_PATH = "/websocket/tracker";
 	private static final String TOKEN_QUERY_PATH = "access_token";
 	
@@ -44,7 +48,7 @@ public class ArtemisFeedbackWebsocket implements IWebsocketClient {
 	@Override
 	public void connect(WebsocketCallback callback, String token) throws ArtemisWebsocketException {
 		stompUrl = stompUrl+token;
-		StandardWebSocketClient simpleWebSocketClient = configureStandartWebsocketClientWithSSl();
+		StandardWebSocketClient simpleWebSocketClient = configureStandartWebsocketClientWithSSL();
 		SockJsClient sockJsClient = configureSockJsClient(simpleWebSocketClient);
 		WebSocketStompClient stompClient = configureStompClient(sockJsClient);
 		try {
@@ -52,6 +56,7 @@ public class ArtemisFeedbackWebsocket implements IWebsocketClient {
 		} catch (InterruptedException | ExecutionException e) {
 			throw new ArtemisWebsocketException("Error can not connect to websocket", e);
 		}
+		log.info("Successfully connected to websocket");
 	}
 
 	private SockJsClient configureSockJsClient(StandardWebSocketClient simpleWebSocketClient) {
@@ -69,7 +74,7 @@ public class ArtemisFeedbackWebsocket implements IWebsocketClient {
 		return stompClient;
 	}
 
-	private StandardWebSocketClient configureStandartWebsocketClientWithSSl() throws ArtemisWebsocketException {
+	private StandardWebSocketClient configureStandartWebsocketClientWithSSL() throws ArtemisWebsocketException {
 		WebSocketContainer webSocketContainer = ClientManager.createClient(GrizzlyClientContainer.class.getName());
 		StandardWebSocketClient simpleWebSocketClient = new StandardWebSocketClient(webSocketContainer);
 

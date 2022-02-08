@@ -16,12 +16,27 @@ public class RestClientManager {
 	private String hostname = "";
 	
 	private IAuthenticationArtemisClient loginManager;
+	private ISubmissionsArtemisClient submissionClient;
+	private ICourseArtemisClient courseClient;
+	private IExamArtemisClient examClient;
+	private IFeedbackArtemisClient feedbackClient;
+	private IParticipationArtemisClient participationClient;
+	private IUtilArtemisClient utilClient;
+	private IAssessmentArtemisClient assessmentClient;
 	
-	public RestClientManager(String hostname, String username, String password) throws ArtemisClientException {
+	public RestClientManager(String hostname, String username, String password) {
 		this.username = username;
 		this.password = password;	
 		this.hostname = hostname;
+		
 		this.loginManager = new LoginManager(hostname, username, password);
+	}
+	
+	public void login() throws ArtemisClientException {
+		if(!isReady()) {
+			throw new ArtemisClientException("No credentials set in the preferences tab.");
+		}
+		loginManager.init();
 	}
 	
     public boolean isReady() {
@@ -29,33 +44,49 @@ public class RestClientManager {
     }
 	
 	public IAuthenticationArtemisClient getAuthenticationClient() {
+
 		return loginManager;
 	}
+	
 	public ISubmissionsArtemisClient getSubmissionArtemisClient() {
-			return new SubmissionsArtemisClient(hostname, loginManager.getToken(), loginManager.getAssessor());
+		if(submissionClient == null)
+			submissionClient = new SubmissionsArtemisClient(hostname, loginManager.getBearerToken(), loginManager.getAssessor());
+		return submissionClient;
 	}
 	
 	public ICourseArtemisClient getCourseArtemisClient() {
-		return new MappingLoaderArtemisClient(getSubmissionArtemisClient(), hostname, loginManager.getToken());
+		if (courseClient== null)
+			courseClient = new MappingLoaderArtemisClient(getSubmissionArtemisClient(), hostname, loginManager.getBearerToken());
+		return courseClient;
 	}
 	
 	public IExamArtemisClient getExamArtemisClient() {
-		return new ExamArtemisClient(hostname, loginManager.getToken());
+		if (examClient== null)
+			examClient = new ExamArtemisClient(hostname, loginManager.getBearerToken());
+		return examClient;
 	}
 	
 	public IFeedbackArtemisClient getFeedbackArtemisClient() {
-		return new FeedbackArtemisClient(hostname, loginManager.getToken());
+		if(feedbackClient == null)
+			feedbackClient = new FeedbackArtemisClient(hostname, loginManager.getBearerToken());
+		return feedbackClient;
 	}
 	
 	public IParticipationArtemisClient getParticipationArtemisClient() {
-		return new ParticipationArtemisClient(hostname, loginManager.getToken());
+		if(participationClient == null)
+			participationClient = new ParticipationArtemisClient(hostname, loginManager.getBearerToken());
+		return participationClient;
 	}
 	
 	public IUtilArtemisClient getUtilArtemisClient() {
-		return new UtilArtemisClient(hostname, loginManager.getToken());
+		if(utilClient == null)
+			utilClient =  new UtilArtemisClient(hostname, loginManager.getBearerToken());
+		return utilClient;
 	}
 	
 	public IAssessmentArtemisClient getAssessmentArtemisClient() {
-		return new AssessmentArtemisClient(hostname, loginManager.getToken());
+		if(assessmentClient == null)
+			assessmentClient = new AssessmentArtemisClient(hostname, loginManager.getBearerToken());
+		return assessmentClient;
 	}
 }

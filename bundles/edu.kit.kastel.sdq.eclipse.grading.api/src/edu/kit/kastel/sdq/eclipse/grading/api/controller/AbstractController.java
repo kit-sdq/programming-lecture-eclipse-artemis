@@ -3,11 +3,18 @@ package edu.kit.kastel.sdq.eclipse.grading.api.controller;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AbstractController {
+public abstract class AbstractController implements IController {
 	private List<IAlertObserver> observers = new ArrayList<>();
+	private IConfirmObserver confirmObserver;
 
+	@Override
 	public void addAlertObserver(IAlertObserver observer) {
 		this.observers.add(observer);
+	}
+	
+	@Override
+	public void addConfirmObserver(IConfirmObserver observer) {
+		this.confirmObserver = observer;
 	}
 
 	/**
@@ -42,21 +49,11 @@ public abstract class AbstractController {
 		this.printToConsoleIfNoObserversRegistered(warningMsg, null);
 	}
 	
-	/**
-	 * Alert all observers
-	 *
-	 * @param warningMsg
-	 */
-	protected boolean confirm(String warningMsg) {
-		boolean result = true;
-		if (this.observers.isEmpty()) {
-			return false;
+	public boolean confirm(String msg) {
+		if(confirmObserver != null) {
+			return this.confirmObserver.confirm(msg);
 		}
-		for (var observer: observers) {
-			result = result && observer.confirm(warningMsg);
-		}
-		this.printToConsoleIfNoObserversRegistered(warningMsg, null);
-		return result;
+		return false;
 	}
 
 	private void printToConsoleIfNoObserversRegistered(String msg, Throwable cause) {

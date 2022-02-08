@@ -10,7 +10,9 @@ public interface IAuthenticationArtemisClient {
 	 * @return security token
 	 * @throws ArtemisClientException
 	 */
-	String getToken();
+	String getRawToken();
+	
+	String getBearerToken();
 	
 	/**
 	 *
@@ -18,4 +20,6 @@ public interface IAuthenticationArtemisClient {
 	 * @throws ArtemisClientException if some errors occur while parsing the result.
 	 */
 	Assessor getAssessor();
+	
+	void init() throws ArtemisClientException;
 }

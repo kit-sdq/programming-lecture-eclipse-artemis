@@ -17,6 +17,4 @@ public interface IAlertObserver {
 	void info(String infoMsg);
 
 	void warn(String warningMsg);
-	
-	boolean confirm(String msg);
 }

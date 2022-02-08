@@ -13,6 +13,7 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExam;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IStudentExam;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ParticipationDTO;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ResultsDTO;
 import edu.kit.kastel.sdq.eclipse.grading.api.client.websocket.WebsocketCallback;
 
@@ -21,15 +22,6 @@ import edu.kit.kastel.sdq.eclipse.grading.api.client.websocket.WebsocketCallback
  *
  */
 public interface IArtemisController extends IController {
-
-	/**
-	 * Download submissions defined by the given submissionIds
-	 *
-	 * @param submissionIds
-	 * @return whether download was successful or not
-	 */
-	boolean downloadExerciseAndSubmission(ICourse courseID, IExercise exerciseID, ISubmission submissionID, IProjectFileNamingStrategy projectNaming);
-
 	/**
 	 *
 	 * @return all IFeedbacks that were gotten in the process of locking the given
@@ -113,7 +105,7 @@ public interface IArtemisController extends IController {
 	 *
 	 * @return whether the operation was successful.
 	 */
-	boolean saveAssessment(IExercise exercise, ISubmission submission, boolean submit, boolean invalidSubmission);
+	boolean saveAssessment(IAssessmentController assessmentController, IExercise exercise, ISubmission submission, boolean submit, boolean invalidSubmission);
 
 	/**
 	 * Starts an assessment for the given submission. Acquires a lock in the
@@ -155,5 +147,7 @@ public interface IArtemisController extends IController {
 	Date getCurrentDate();
 	
 	IStudentExam startExam(ICourse course,IExam exam);
+	
+	Optional<ParticipationDTO> getParticipation(ICourse course, IExercise exercise);
 	
 }

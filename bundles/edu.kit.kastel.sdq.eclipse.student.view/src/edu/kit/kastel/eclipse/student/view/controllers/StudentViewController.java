@@ -12,30 +12,34 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExam;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ResultsDTO;
 import edu.kit.kastel.sdq.eclipse.grading.api.client.websocket.WebsocketCallback;
+import edu.kit.kastel.sdq.eclipse.grading.api.controller.IStudentSystemwideController;
+import edu.kit.kastel.sdq.eclipse.grading.api.controller.ISystemwideController;
+import edu.kit.kastel.sdq.eclipse.grading.api.controller.IWebsocketController;
 
 public class StudentViewController extends AArtemisViewController {
+	private IStudentSystemwideController systemwideController;
 	
 	public StudentViewController() {
 		super();
 		Activator.getDefault().createSystemWideController();
-		setSystemwideController(Activator.getDefault().getSystemwideController());
+		systemwideController = Activator.getDefault().getSystemwideController();
 		this.initializeControllersAndObserver();
 	}
 	
 	public void startExercise() {
-		getSystemwideController().loadExerciseForStudent();
+		systemwideController.loadExerciseForStudent();
 	}
 	
 	public void onSubmitSolution() {
-		getSystemwideController().submitSolution();
+		systemwideController.submitSolution();
 	}
 	
 	public void cleanWorkspace() {
-		getSystemwideController().cleanWorkspace();
+		systemwideController.cleanWorkspace();
 	}
 	
 	public Map<ResultsDTO, List<Feedback>> getFeedbackExcerise() {
-		return getSystemwideController().getFeedbackExcerise();
+		return systemwideController.getFeedbackExcerise();
 	}
 	
 	public void fetchCourses() {
@@ -43,7 +47,7 @@ public class StudentViewController extends AArtemisViewController {
 	}
 	
 	public boolean canSubmit() {
-		return !getSystemwideController().isSelectedExerciseExpired();
+		return !systemwideController.isSelectedExerciseExpired();
 	}
 	
 	public boolean canClean() {
@@ -51,7 +55,7 @@ public class StudentViewController extends AArtemisViewController {
 	}
 	
 	public boolean connectToWebsocket(WebsocketCallback callBack) {
-		return getArtemisGUIController().connectToWebsocket(callBack);
+		return systemwideController.connectToWebsocket(callBack);
 	}
 	
 	public boolean canFetchFeedback() {
@@ -59,32 +63,41 @@ public class StudentViewController extends AArtemisViewController {
 	}
 	
 	public IExercise getCurrentSelectedExercise() {
-		return getSystemwideController().getCurrentSelectedExercise();
+		return systemwideController.getCurrentSelectedExercise();
 	}
 	
 	@Override
 	public void setExerciseID(final String exerciseShortName) {
 		try {
-			getSystemwideController().setExerciseIdWithSelectedExam(exerciseShortName);
+			systemwideController.setExerciseIdWithSelectedExam(exerciseShortName);
 		} catch (ArtemisClientException e) {
 			getAlertObserver().error(e.getMessage(), e);
 		}
 	}
 	
+	public void setExamToNull() {
+		systemwideController.setExamToNull();
+	}
+	
 	@Override
 	public List<String> getExercisesShortNamesForExam(String examShortName) {
-		return getSystemwideController().getExerciseShortNamesFromExam(examShortName).stream().map(IExercise::getShortName).collect(Collectors.toList());
+		return systemwideController.getExerciseShortNamesFromExam(examShortName).stream().map(IExercise::getShortName).collect(Collectors.toList());
 	}
 	
 	public IExam setExam(String examName) {
-		return getSystemwideController().setExam(examName);
+		return systemwideController.setExam(examName);
 	}
 	
 	public IExam getCurrentlySelectedExam() {
-		return getSystemwideController().getExam();
+		return systemwideController.getExam();
 	}
 	
 	public IExam startExam() {
-		return getSystemwideController().startExam();
+		return systemwideController.startExam();
+	}
+	
+	@Override
+	protected ISystemwideController getSystemwideController() {
+		return this.systemwideController;
 	}
  }

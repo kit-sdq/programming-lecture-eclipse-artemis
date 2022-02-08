@@ -54,10 +54,10 @@ public class Feedback implements Serializable {
 	 * @return this Feedbacks contribution to the total credit sum. Can be positive
 	 *         or negative.
 	 */
-	public double getCredits() {
+	public Double getCredits() {
 		if (Objects.equals("NEVER", visibility)) {
 			// Bugfix for wrong Artemis points for NEVER visibility
-			return 0;
+			return 0.0;
 		}
 		return this.credits;
 	}

@@ -1,8 +1,6 @@
 package edu.kit.kastel.sdq.eclipse.grading.core;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,60 +9,59 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.preference.IPreferenceStore;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.ArtemisClientException;
 import edu.kit.kastel.sdq.eclipse.grading.api.PreferenceConstants;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IProjectFileNamingStrategy;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.Feedback;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ICourse;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExam;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IStudentExam;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ResultsDTO;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.SubmissionFilter;
 import edu.kit.kastel.sdq.eclipse.grading.api.backendstate.Transition;
-import edu.kit.kastel.sdq.eclipse.grading.api.controller.AbstractController;
 import edu.kit.kastel.sdq.eclipse.grading.api.controller.IArtemisController;
 import edu.kit.kastel.sdq.eclipse.grading.api.controller.IAssessmentController;
 import edu.kit.kastel.sdq.eclipse.grading.api.controller.IGradingSystemwideController;
 import edu.kit.kastel.sdq.eclipse.grading.api.controller.ISystemwideController;
 import edu.kit.kastel.sdq.eclipse.grading.core.artemis.WorkspaceUtil;
-import edu.kit.kastel.sdq.eclipse.grading.core.artemis.naming.ProjectFileNamingStrategies;
 import edu.kit.kastel.sdq.eclipse.grading.core.config.ConfigDAO;
 import edu.kit.kastel.sdq.eclipse.grading.core.config.JsonFileConfigDao;
 
 public class GradingSystemwideController extends SystemwideController implements  IGradingSystemwideController {
 
-	private final Map<Integer, IAssessmentController> assessmentControllers;
+	private final Map<Integer, IAssessmentController> assessmentControllers  = new HashMap<>();
 
 	private ConfigDAO configDao;
 
 	private ISubmission submission;
-	private IStudentExam exam;
-	private Map<ResultsDTO, List<Feedback>> resultFeedbackMap;
-	private String examName = "";
-
 
 	private BackendStateMachine backendStateMachine;
 
-	private IPreferenceStore preferenceStore;
-
 	public GradingSystemwideController(final IPreferenceStore preferenceStore) {
-		super(preferenceStore);
-		this(preferenceStore.getString(PreferenceConstants.ARTEMIS_URL), //
+		super(preferenceStore.getString(PreferenceConstants.ARTEMIS_USER), //
+				preferenceStore.getString(PreferenceConstants.ARTEMIS_PASSWORD) );
+		createController(preferenceStore.getString(PreferenceConstants.ARTEMIS_URL), //
 				preferenceStore.getString(PreferenceConstants.ARTEMIS_USER), //
 				preferenceStore.getString(PreferenceConstants.ARTEMIS_PASSWORD) //
 		);
+		this.preferenceStore = preferenceStore;
+
+		// initialize config
+		this.updateConfigFile();
+		
+		this.initPreferenceStoreCallback(preferenceStore);
 	}
 
-	private GradingSystemwideController(final String artemisHost, final String username, final String password) {
-		super(artemisHost, username, password);
-		this.assessmentControllers = new HashMap<>();
-		this.artemisGUIController = new ArtemisController(this, artemisHost, username, password);
-		this.projectFileNamingStrategy = ProjectFileNamingStrategies.DEFAULT.get();
+	public GradingSystemwideController(final String artemisHost, final String username, final String password) {
+		super(username, password);
+		createController(artemisHost, username, password);
+	}
+	
+	private void createController(final String artemisHost, final String username, final String password) {
+		this.artemisGUIController = new ArtemisController(artemisHost, username, password);
 		this.backendStateMachine = new BackendStateMachine();
+		this.artemisGUIController = new ArtemisController(artemisHost, username, password);
 	}
 
 	private boolean applyTransitionAndNotifyIfNotAllowed(Transition transition) {
@@ -114,7 +111,7 @@ public class GradingSystemwideController extends SystemwideController implements
 	 *
 	 * @return this system's configDao.
 	 */
-	protected ConfigDAO getConfigDao() {
+	public ConfigDAO getConfigDao() {
 		return this.configDao;
 	}
 
@@ -168,36 +165,9 @@ public class GradingSystemwideController extends SystemwideController implements
 			return;
 		}
 
-		this.getArtemisGUIController().startAssessment(this.submission);
-		this.getArtemisGUIController().downloadExerciseAndSubmission(this.course, this.exercise, this.submission,
+		this.artemisGUIController.startAssessment(this.submission);
+		this.downloadExerciseAndSubmission(this.course, this.exercise, this.submission,
 				this.projectFileNamingStrategy);
-	}
-
-	/**
-	 *
-	 * @return true if at least one of those three is null
-	 */
-	private boolean nullCheckMembersAndNotify(boolean checkCourseID, boolean checkExerciseID,
-			boolean checkSubmissionID) {
-		String alert = "[";
-		boolean somethingNull = false;
-		if (checkCourseID && this.course == null) {
-			alert += "Course is not set ";
-			somethingNull = true;
-		}
-		if (checkExerciseID && this.exercise == null) {
-			alert += "Exercise is not set ";
-			somethingNull = true;
-		}
-		if (checkSubmissionID && this.submission == null) {
-			alert += "Submission is not set ";
-			somethingNull = true;
-		}
-		if (somethingNull) {
-			alert += "]";
-			this.warn(alert);
-		}
-		return somethingNull;
 	}
 
 	@Override
@@ -206,7 +176,7 @@ public class GradingSystemwideController extends SystemwideController implements
 			return;
 		}
 
-		if (this.artemisGUIController.saveAssessment(this.exercise, this.submission, true, true)) {
+		if (this.artemisGUIController.saveAssessment(getCurrentAssessmentController(), exercise, this.submission, true, true)) {
 			this.getCurrentAssessmentController().deleteEclipseProject(this.projectFileNamingStrategy);
 			this.submission = null;
 		}
@@ -234,7 +204,7 @@ public class GradingSystemwideController extends SystemwideController implements
 			return;
 		}
 
-		this.artemisGUIController.saveAssessment(this.exercise, this.submission, false, false);
+		this.artemisGUIController.saveAssessment(getCurrentAssessmentController(), this.exercise, this.submission, false, false);
 	}
 
 	public void setArtemisController(IArtemisController artemisController) {
@@ -313,7 +283,7 @@ public class GradingSystemwideController extends SystemwideController implements
 		this.submission = optionalSubmissionID.get();
 
 		// perform download. Revert state if that fails.
-		if (!this.getArtemisGUIController().downloadExerciseAndSubmission(this.course, this.exercise, this.submission,
+		if (!this.downloadExerciseAndSubmission(this.course, this.exercise, this.submission,
 				this.projectFileNamingStrategy)) {
 			this.backendStateMachine.revertLatestTransition();
 			return false;
@@ -348,7 +318,7 @@ public class GradingSystemwideController extends SystemwideController implements
 			return;
 		}
 
-		if (this.artemisGUIController.saveAssessment(this.exercise, this.submission, true, false)) {
+		if (this.artemisGUIController.saveAssessment(getCurrentAssessmentController(), this.exercise, this.submission, true, false)) {
 			this.getCurrentAssessmentController().deleteEclipseProject(this.projectFileNamingStrategy);
 			this.assessmentControllers.remove(this.submission.getSubmissionId());
 			this.submission = null;
@@ -370,4 +340,38 @@ public class GradingSystemwideController extends SystemwideController implements
 
 		}
 	}
+	
+	private boolean nullCheckMembersAndNotify(boolean checkCourseID, boolean checkExerciseID, boolean checkSubmissionID) {
+		boolean somethingNull = this.nullCheckMembersAndNotify(checkCourseID, checkExerciseID);
+		if (checkSubmissionID && this.submission == null) {
+			this.warn("Submission is not set ");
+			somethingNull = true;
+		}
+		return somethingNull;
+	}
+
+	@Override
+	void refreshArtemisController(String url, String user, String pass) {
+		this.createController(url, user, pass);
+	}
+	
+    @Override
+    public boolean downloadExerciseAndSubmission(ICourse course, IExercise exercise, ISubmission submission,
+            IProjectFileNamingStrategy projectNaming) {
+        final File eclipseWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile();
+
+        try {
+            this.exerciseController.downloadExerciseAndSubmission(exercise, submission, eclipseWorkspaceRoot, projectNaming);
+        } catch (ArtemisClientException e) {
+            this.error(e.getMessage(), e);
+            return false;
+        }
+        try {
+            WorkspaceUtil.createEclipseProject(
+                    projectNaming.getProjectFileInWorkspace(eclipseWorkspaceRoot, exercise, submission));
+        } catch (CoreException e) {
+            this.error("Project could not be created: " + e.getMessage(), null);
+        }
+        return true;
+    }
 }

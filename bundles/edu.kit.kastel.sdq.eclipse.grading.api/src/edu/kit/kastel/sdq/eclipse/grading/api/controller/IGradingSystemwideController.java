@@ -2,20 +2,18 @@ package edu.kit.kastel.sdq.eclipse.grading.api.controller;
 
 import java.io.File;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.ArtemisClientException;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.Feedback;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExam;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IProjectFileNamingStrategy;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ICourse;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ResultsDTO;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.SubmissionFilter;
 import edu.kit.kastel.sdq.eclipse.grading.api.backendstate.State;
 import edu.kit.kastel.sdq.eclipse.grading.api.backendstate.Transition;
 
-public interface IGradingSystemwideController extends IController {
+public interface IGradingSystemwideController extends ISystemwideController {
 
 	/**
 	 * <B>BACKLOG</B><br/>
@@ -154,6 +152,15 @@ public interface IGradingSystemwideController extends IController {
 	 * <li>See docs/Zustandshaltung-Automat
 	 */
 	void submitAssessment();
+	
+    /**
+     * Download submissions defined by the given submissionIds
+     *
+     * @param submissionIds
+     * @return whether download was successful or not
+     */
+    boolean downloadExerciseAndSubmission(ICourse courseID, IExercise exerciseID, ISubmission submissionID, IProjectFileNamingStrategy projectNaming);
+
 	
 
 

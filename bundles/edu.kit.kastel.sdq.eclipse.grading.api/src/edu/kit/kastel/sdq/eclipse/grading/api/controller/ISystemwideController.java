@@ -4,12 +4,18 @@ import java.util.List;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.ArtemisClientException;
 
-public interface ISystemwideController {
+public interface ISystemwideController extends IController {
 	/**
 	 *
 	 * @return the one artemis gui controller.
 	 */
 	IArtemisController getArtemisGUIController();
+	
+	/**
+	 * 
+	 * @return the one exercise controller to load submit and clean exercises.
+	 */
+	IExerciseArtemisController getExerciseArtemisController();
 	
 	/**
 	 *
