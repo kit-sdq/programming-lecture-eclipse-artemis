@@ -34,12 +34,14 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.Feedback;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ResultsDTO;
 import edu.kit.kastel.sdq.eclipse.grading.api.client.websocket.WebsocketCallback;
+import org.eclipse.swt.graphics.Point;
 
 public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 	private static final String RELOAD_BTN_TEXT = "Reload";
 	private static final String LOAD_BTN_TEXT = "Loading...";
 	private static final int ROUND_DECIMAL_PLACES = 2;
-	private static final String CHECK_UTF8 = new String(new byte[] { (byte) 0xE2,  (byte) 0x9C, (byte) 0x93  }, StandardCharsets.UTF_8);
+	private static final String CHECK_MARK_IN_UTF8 = new String(new byte[] { (byte) 0xE2, (byte) 0x9C, (byte) 0x93 },
+			StandardCharsets.UTF_8);
 
 	private Display display;
 	private StudentViewController viewController;
@@ -58,7 +60,6 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 	private Label lblPoints;
 	private Button btnReload;
 	private Button btnLoading;
-	private Composite composite_1;
 
 	public ResultTab(StudentViewController viewController) {
 		this.viewController = viewController;
@@ -87,81 +88,90 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 		Composite composite = new Composite(feedbackContainerComposite, SWT.NONE);
 		GridLayout gl_composite = new GridLayout(2, true);
 		composite.setLayout(gl_composite);
-		GridData gd_composite = new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1);
-		gd_composite.widthHint = 527;
-		composite.setLayoutData(gd_composite);
+		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
 
 		Label labelFeedback = new Label(composite, SWT.NONE);
 		labelFeedback.setFont(SWTResourceManager.getFont("Segoe UI", 18, SWT.BOLD));
-		labelFeedback.setText("Feedback");
-		
-		composite_1 = new Composite(composite, SWT.NONE);
-		composite_1.setLayout(new GridLayout(2, true));
-		GridData gd_composite_1 = new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1);
-		gd_composite_1.widthHint = 257;
+		labelFeedback.setText("Results");
+
+		Composite composite_1 = new Composite(composite, SWT.NONE);
+		GridLayout gl_composite_1 = new GridLayout(2, true);
+		gl_composite_1.verticalSpacing = 0;
+		gl_composite_1.marginWidth = 0;
+		composite_1.setLayout(gl_composite_1);
+		GridData gd_composite_1 = new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1);
+		gd_composite_1.widthHint = 238;
 		composite_1.setLayoutData(gd_composite_1);
-									
+
 		btnLoading = new Button(composite_1, SWT.CENTER);
-		GridData gd_btnRLoading = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		GridData gd_btnRLoading = new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1);
 		gd_btnRLoading.widthHint = 80;
 		btnLoading.setLayoutData(gd_btnRLoading);
-		btnLoading.setText("Loading...");
+		btnLoading.setText(LOAD_BTN_TEXT);
 		btnLoading.setEnabled(false);
 		btnLoading.setVisible(false);
-								
-						
+
 		btnReload = new Button(composite_1, SWT.CENTER);
-		GridData gd_btnReload = new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1);
+		GridData gd_btnReload = new GridData(SWT.RIGHT, SWT.FILL, true, false, 1, 1);
+		gd_btnReload.widthHint = 90;
 		gd_btnReload.horizontalIndent = 5;
-		gd_btnReload.widthHint = 117;
 		btnReload.setLayoutData(gd_btnReload);
-		btnReload.setText("Reload");
+		btnReload.setText(RELOAD_BTN_TEXT);
 		addSelectionListenerForReloadButton(btnReload);
 
 		Label labelResult = new Label(feedbackContainerComposite, SWT.NONE);
 		labelResult.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-		labelResult.setText("  Summary of all executed tests for the selected exercise");
+		labelResult.setText("  Summary of the results for the currently selected exercise.");
 
 		this.feedbackContentComposite = new Composite(feedbackContainerComposite, SWT.NONE);
 		feedbackContentComposite.setTouchEnabled(true);
 		feedbackContentComposite.setLayout(new GridLayout(1, true));
-		GridData gd_feedbackContentComposite = new GridData(SWT.FILL, SWT.FILL, true, true);
-		gd_feedbackContentComposite.widthHint = 515;
-		feedbackContentComposite.setLayoutData(gd_feedbackContentComposite);
+		feedbackContentComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 		feedbackContentComposite.setVisible(false);
 		Composite resultContentComposite = new Composite(feedbackContentComposite, SWT.BORDER);
-		GridData gd_resultContentComposite = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-		gd_resultContentComposite.heightHint = 108;
-		gd_resultContentComposite.widthHint = 518;
-		resultContentComposite.setLayoutData(gd_resultContentComposite);
+		resultContentComposite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true, 1, 1));
+		resultContentComposite.setLayout(new GridLayout(1, false));
 
-		lblResultExerciseShortName = new Label(resultContentComposite, SWT.NONE);
+		Composite composite_2 = new Composite(resultContentComposite, SWT.NONE);
+		composite_2.setLayout(new GridLayout(2, false));
+		composite_2.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+
+		lblResultExerciseShortName = new Label(composite_2, SWT.NONE);
+		GridData gd_lblResultExerciseShortName = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
+		gd_lblResultExerciseShortName.widthHint = 316;
+		lblResultExerciseShortName.setLayoutData(gd_lblResultExerciseShortName);
 		lblResultExerciseShortName.setText("Name");
 		lblResultExerciseShortName.setTouchEnabled(true);
 		lblResultExerciseShortName.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.BOLD));
-		lblResultExerciseShortName.setBounds(22, 9, 105, 28);
 
-		lblResultExerciseDescription = new Label(resultContentComposite, SWT.NONE);
-		lblResultExerciseDescription.setBounds(22, 35, 461, 21);
-
-		btnResultSuccessfull = new Label(resultContentComposite, SWT.RIGHT);
+		btnResultSuccessfull = new Label(composite_2, SWT.RIGHT);
 		btnResultSuccessfull.setForeground(SWTResourceManager.getColor(SWT.COLOR_GREEN));
 		btnResultSuccessfull.setBounds(360, 9, 123, 28);
 		btnResultSuccessfull.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.BOLD));
 		btnResultSuccessfull.setText("Successfull");
 
+		lblResultExerciseDescription = new Label(resultContentComposite, SWT.NONE);
+		lblResultExerciseDescription.setText("22.23.123");
+		GridData gd_lblResultExerciseDescription = new GridData(SWT.LEFT, SWT.FILL, true, true, 1, 1);
+		gd_lblResultExerciseDescription.horizontalIndent = 5;
+		lblResultExerciseDescription.setLayoutData(gd_lblResultExerciseDescription);
+
 		Label separator = new Label(resultContentComposite, SWT.SEPARATOR | SWT.HORIZONTAL);
-		separator.setBounds(20, 62, 476, 10);
-		
-		lblPoints = new Label(resultContentComposite, SWT.NONE);
+		separator.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true, 1, 1));
+
+		Composite composite_3 = new Composite(resultContentComposite, SWT.NONE);
+		composite_3.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
+		composite_3.setLayout(new GridLayout(2, false));
+
+		lblPoints = new Label(composite_3, SWT.NONE);
 		lblPoints.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.BOLD | SWT.ITALIC));
 		lblPoints.setBounds(22, 78, 186, 30);
-		lblPoints.setText("");
-		
-				resultScore = new Label(resultContentComposite, SWT.RIGHT);
-				resultScore.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.BOLD | SWT.ITALIC));
-				resultScore.setBounds(30, 78, 453, 30);
-				resultScore.setText("0 / 20");
+		lblPoints.setText("70%");
+
+		resultScore = new Label(composite_3, SWT.RIGHT);
+		resultScore.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, true, false, 1, 1));
+		resultScore.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.BOLD | SWT.ITALIC));
+		resultScore.setText("0 / 20");
 
 		Label labelFeedback2 = new Label(feedbackContentComposite, SWT.NONE);
 		labelFeedback2.setFont(SWTResourceManager.getFont("Segoe UI", 10, SWT.BOLD));
@@ -169,7 +179,7 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 		createTableForFeedback(feedbackContentComposite);
 
 		scrolledCompositeFeedback.setContent(feedbackContainerComposite);
-		scrolledCompositeFeedback.setMinSize(feedbackContainerComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+		scrolledCompositeFeedback.setMinSize(new Point(64, 64));
 	}
 
 	@Override
@@ -189,17 +199,14 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 		feedbackTabel.setLinesVisible(true);
 		feedbackTabel.setHeaderVisible(true);
 		feedbackTabel.setLayout(new GridLayout(1, true));
-		GridData gd_feedbackTabel = new GridData(SWT.LEFT, SWT.FILL, true, true);
-		gd_feedbackTabel.widthHint = 500;
-		feedbackTabel.setLayoutData(gd_feedbackTabel);
-		final Rectangle clientArea = parent.getClientArea();
-		feedbackTabel.setBounds(clientArea.x, clientArea.y, 500, 500);
+		feedbackTabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		String[] colNames = { "Name", "Credits", "Success", "Detailed Text" };
+		int[] width = { 200, 100, 100, 100 };
 
 		for (int loopIndex = 0; loopIndex < colNames.length; loopIndex++) {
 			final TableColumn column = new TableColumn(feedbackTabel, SWT.NULL);
+			column.setWidth(width[loopIndex]);
 			column.setText(colNames[loopIndex]);
-			column.setWidth(110);
 		}
 
 		feedbackTabel.addListener(SWT.Selection, e -> {
@@ -251,27 +258,27 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 				item.setText(2, feedback.getPositive() ? "successful" : "failed");
 				item.setForeground(2, feedback.getPositive() ? display.getSystemColor(SWT.COLOR_GREEN)
 						: display.getSystemColor(SWT.COLOR_RED));
-				item.setText(3, (feedback.getDetailText() != null) ? CHECK_UTF8 : "X");
+				item.setText(3, (feedback.getDetailText() != null) ? CHECK_MARK_IN_UTF8 : "X");
 				item.setForeground(3, (feedback.getDetailText() != null) ? display.getSystemColor(SWT.COLOR_GREEN)
 						: display.getSystemColor(SWT.COLOR_RED));
 			}
 		}
 	}
-	
+
 	private Display getDisplay() {
-		if(display == null) {
+		if (display == null) {
 			return Display.getDefault();
 		}
 		return display;
 	}
-	
+
 	private double roundToDeciamlPlaces(Double credits) {
 		if (credits == null) {
 			return 0.0;
 		}
-		
+
 		BigDecimal bd = new BigDecimal(credits).setScale(ROUND_DECIMAL_PLACES, RoundingMode.HALF_UP);
-	    return bd.doubleValue();
+		return bd.doubleValue();
 	}
 
 	private void sortEntriesAlphabetically(final List<Feedback> feedbacks) {
@@ -358,12 +365,19 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 	@Override
 	public void callExercisesEvent() {
 		getFeedbackForExcerise();
-		
+
 	}
 
 	@Override
 	public void callExamEvent() {
-		// TODO Auto-generated method stub
-		
+		reset();
+	}
+
+	/**
+	 * @wbp.parser.entryPoint
+	 */
+	private void createView(Composite parent) {
+		TabFolder tabFolder = new TabFolder(parent, SWT.NONE);
+		create(tabFolder);
 	}
 }

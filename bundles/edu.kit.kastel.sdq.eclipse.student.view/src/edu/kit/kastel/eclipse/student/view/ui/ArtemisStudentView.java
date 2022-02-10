@@ -85,25 +85,20 @@ public class ArtemisStudentView extends ViewPart {
 		this.scrolledCompositeGrading.setContent(this.gradingComposite);
 		this.scrolledCompositeGrading.setMinSize(this.gradingComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		gradingComposite.setLayout(new GridLayout(1, true));
+		gradingComposite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true, 1, 1));
 
 		Composite assessmentComposite = new Composite(gradingComposite, SWT.BORDER);
-		GridData gd_assessmentComposite = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
-		gd_assessmentComposite.widthHint = 326;
-		assessmentComposite.setLayoutData(gd_assessmentComposite);
+		assessmentComposite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		assessmentComposite.setLayout(new GridLayout(2, false));
 
 		Label lblCourse = new Label(assessmentComposite, SWT.NONE);
 		lblCourse.setAlignment(SWT.CENTER);
 		lblCourse.setFont(SWTResourceManager.getFont("Segoe UI", 9, SWT.BOLD));
-		GridData gd_lblCourse = new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1);
-		gd_lblCourse.widthHint = 164;
-		lblCourse.setLayoutData(gd_lblCourse);
+		lblCourse.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, true, 1, 1));
 		lblCourse.setText("Course");
 
 		this.courseCombo = new Combo(assessmentComposite, SWT.READ_ONLY);
-		GridData gd_courseCombo = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
-		gd_courseCombo.widthHint = 188;
-		this.courseCombo.setLayoutData(gd_courseCombo);
+		this.courseCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
 		Label lblExam = new Label(assessmentComposite, SWT.NONE);
 		lblExam.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
@@ -123,32 +118,28 @@ public class ArtemisStudentView extends ViewPart {
 
 		this.loadExamComboEntries(this.courseCombo, this.examCombo, this.exerciseCombo);
 
-		Composite buttons = new Composite(assessmentComposite, SWT.NONE);
+		Composite buttons = new Composite(gradingComposite, SWT.BORDER);
 		buttons.setLayout(new GridLayout(2, false));
-		buttons.setLayoutData(new GridData(SWT.CENTER, SWT.FILL, true, true, 2, 1));
+		buttons.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1));
 
 		Button btnRefreshArtemisState = new Button(buttons, SWT.NONE);
 		btnRefreshArtemisState.setText("Refresh Artemis State");
-		GridData gd_btnRefreshArtemisState = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
-		gd_btnRefreshArtemisState.widthHint = 157;
+		GridData gd_btnRefreshArtemisState = new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1);
+		gd_btnRefreshArtemisState.widthHint = 155;
 		btnRefreshArtemisState.setLayoutData(gd_btnRefreshArtemisState);
 
 		this.addSelectionListenerForRefreshArtemisStateButton(btnRefreshArtemisState);
 
 		Button btnLoadExercise = new Button(buttons, SWT.NONE);
 		btnLoadExercise.setText("Start Exercise");
-		GridData gd_btnLoadExercise = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
-		gd_btnLoadExercise.widthHint = 152;
-		btnLoadExercise.setLayoutData(gd_btnLoadExercise);
+		btnLoadExercise.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
 
 		this.addLoadExerciseListenerForButton(btnLoadExercise);
 
 		// Submit
 
 		Composite submitArea = new Composite(gradingComposite, SWT.BORDER);
-		GridData gd_submitArea = new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1);
-		gd_submitArea.widthHint = 403;
-		submitArea.setLayoutData(gd_submitArea);
+		submitArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
 		submitArea.setLayout(new GridLayout(2, true));
 
 		Label label1 = new Label(submitArea, SWT.NONE);
@@ -162,15 +153,11 @@ public class ArtemisStudentView extends ViewPart {
 		labelClean.setText("Clean your last changes");
 
 		Composite composite = new Composite(submitArea, SWT.NONE);
-		GridData gd_composite = new GridData(SWT.LEFT, SWT.FILL, false, false, 1, 1);
-		gd_composite.widthHint = 191;
-		composite.setLayoutData(gd_composite);
+		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
 		composite.setLayout(new GridLayout(1, false));
 
 		btnSubmitExcerise = new Button(composite, SWT.NONE);
-		GridData gd_btnSubmitExcerise = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-		gd_btnSubmitExcerise.widthHint = 168;
-		btnSubmitExcerise.setLayoutData(gd_btnSubmitExcerise);
+		btnSubmitExcerise.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
 		btnSubmitExcerise.setText(NO_SELECTED);
 		btnSubmitExcerise.setEnabled(false);
 
@@ -185,15 +172,11 @@ public class ArtemisStudentView extends ViewPart {
 		controlDecorationSubmitted.hide();
 		
 		Composite composite_1 = new Composite(submitArea, SWT.NONE);
-		GridData gd_composite_1 = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
-		gd_composite_1.widthHint = 191;
-		composite_1.setLayoutData(gd_composite_1);
+		composite_1.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		composite_1.setLayout(new GridLayout(1, false));
 
 		btnClean = new Button(composite_1, SWT.NONE);
-		GridData gd_btnClean = new GridData(SWT.CENTER, SWT.CENTER, false, false, 2, 1);
-		gd_btnClean.widthHint = 168;
-		btnClean.setLayoutData(gd_btnClean);
+		btnClean.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1));
 		btnClean.setText(NO_SELECTED);
 		btnClean.addListener(SWT.Selection, e -> {
 			cleanWorkspaceForSelectedExercise();

@@ -1,8 +1,5 @@
 package edu.kit.kastel.eclipse.student.view.ui;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.layout.FillLayout;
@@ -12,31 +9,22 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
-import org.eclipse.swt.widgets.Table;
-
 import edu.kit.kastel.eclipse.student.view.controllers.StudentViewController;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.Feedback;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExam;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ResultsDTO;
-
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.wb.swt.SWTResourceManager;
 
 public class ExamTab implements ArtemisStudentTab {
 	private StudentViewController viewController;
 
-	private ScrolledComposite scrolledCompositeFeedback;
-	private Composite feedbackContainerComposite;
-	private Composite feedbackContentComposite;
+	private ScrolledComposite scrolledCompositeExam;
+	private Composite examContainerComposite;
+	private Composite examContentComposite;
 
 	private Label resultScore;
-	private Label btnResultSuccessfull;
-	private Label lblResultExerciseDescription;
-	private Label lblResultExerciseShortName;
-	private Label lblPoints;
-	private Button btnReload;
-	private Button btnLoading;
-	private Composite composite_1;
+	private Label lblExamDescription;
+	private Label lblExamShortName;
+	private Button btnStart;
 
 	private IExam exam;
 
@@ -49,90 +37,76 @@ public class ExamTab implements ArtemisStudentTab {
 		TabItem gradingTabItem = new TabItem(tabFolder, SWT.NONE);
 		gradingTabItem.setText("Exam");
 
-		this.scrolledCompositeFeedback = new ScrolledComposite(tabFolder, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
-		gradingTabItem.setControl(this.scrolledCompositeFeedback);
-		scrolledCompositeFeedback.setLayout(new FillLayout());
-		this.scrolledCompositeFeedback.setExpandHorizontal(true);
-		this.scrolledCompositeFeedback.setExpandVertical(true);
+		this.scrolledCompositeExam = new ScrolledComposite(tabFolder, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+		gradingTabItem.setControl(this.scrolledCompositeExam);
+		scrolledCompositeExam.setLayout(new FillLayout());
+		this.scrolledCompositeExam.setExpandHorizontal(true);
+		this.scrolledCompositeExam.setExpandVertical(true);
 
-		this.feedbackContainerComposite = new Composite(this.scrolledCompositeFeedback, SWT.NONE);
-		this.scrolledCompositeFeedback.setContent(this.feedbackContainerComposite);
-		feedbackContainerComposite.setSize(scrolledCompositeFeedback.getSize());
-		this.scrolledCompositeFeedback
-				.setMinSize(this.feedbackContainerComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-		feedbackContainerComposite.setLayout(new GridLayout(1, true));
-		feedbackContainerComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		this.examContainerComposite = new Composite(this.scrolledCompositeExam, SWT.NONE);
+		this.scrolledCompositeExam.setContent(this.examContainerComposite);
+		examContainerComposite.setSize(scrolledCompositeExam.getSize());
+		this.scrolledCompositeExam
+				.setMinSize(this.examContainerComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+		examContainerComposite.setLayout(new GridLayout(1, true));
+		examContainerComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
-		Composite composite = new Composite(feedbackContainerComposite, SWT.NONE);
+		Composite composite = new Composite(examContainerComposite, SWT.NONE);
 		GridLayout gl_composite = new GridLayout(2, true);
 		composite.setLayout(gl_composite);
-		GridData gd_composite = new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1);
-		gd_composite.widthHint = 527;
-		composite.setLayoutData(gd_composite);
+		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
 
 		Label labelFeedback = new Label(composite, SWT.NONE);
 		labelFeedback.setFont(SWTResourceManager.getFont("Segoe UI", 18, SWT.BOLD));
 		labelFeedback.setText("Exam");
 
-		composite_1 = new Composite(composite, SWT.NONE);
-		composite_1.setLayout(new GridLayout(2, true));
-		GridData gd_composite_1 = new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1);
-		gd_composite_1.widthHint = 257;
+		Composite composite_1 = new Composite(composite, SWT.NONE);
+		GridLayout gl_composite_1 = new GridLayout(2, true);
+		gl_composite_1.verticalSpacing = 0;
+		gl_composite_1.marginWidth = 0;
+		composite_1.setLayout(gl_composite_1);
+		GridData gd_composite_1 = new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1);
+		gd_composite_1.widthHint = 238;
 		composite_1.setLayoutData(gd_composite_1);
 
-		btnLoading = new Button(composite_1, SWT.CENTER);
-		GridData gd_btnRLoading = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-		gd_btnRLoading.widthHint = 80;
-		btnLoading.setLayoutData(gd_btnRLoading);
-		btnLoading.setText("Loading...");
-		btnLoading.setEnabled(false);
-		btnLoading.setVisible(false);
-
-		btnReload = new Button(composite_1, SWT.CENTER);
-		GridData gd_btnReload = new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1);
+		btnStart = new Button(composite_1, SWT.CENTER);
+		GridData gd_btnReload = new GridData(SWT.RIGHT, SWT.FILL, true, false, 1, 1);
+		gd_btnReload.widthHint = 90;
 		gd_btnReload.horizontalIndent = 5;
-		gd_btnReload.widthHint = 117;
-		btnReload.setLayoutData(gd_btnReload);
-		btnReload.setText("Start");
-		addSelectionListenerForStartButton(btnReload);
+		btnStart.setLayoutData(gd_btnReload);
+		btnStart.setText("Start");
+		addSelectionListenerForStartButton(btnStart);
 
-		Label labelResult = new Label(feedbackContainerComposite, SWT.NONE);
+		Label labelResult = new Label(examContainerComposite, SWT.NONE);
 		labelResult.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-		labelResult.setText("  Summary of the currently selected exam.");
+		labelResult.setText("  Summary of the currently selected exam. \n Please remember to submit the exam in Artemis! \n You can not submit the exam here. \n" + getLink());
 
-		this.feedbackContentComposite = new Composite(feedbackContainerComposite, SWT.NONE);
-		feedbackContentComposite.setTouchEnabled(true);
-		feedbackContentComposite.setLayout(new GridLayout(1, true));
-		GridData gd_feedbackContentComposite = new GridData(SWT.FILL, SWT.FILL, true, true);
-		gd_feedbackContentComposite.widthHint = 515;
-		feedbackContentComposite.setLayoutData(gd_feedbackContentComposite);
-		feedbackContentComposite.setVisible(false);
-		Composite resultContentComposite = new Composite(feedbackContentComposite, SWT.BORDER);
-		GridData gd_resultContentComposite = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-		gd_resultContentComposite.heightHint = 108;
-		gd_resultContentComposite.widthHint = 518;
-		resultContentComposite.setLayoutData(gd_resultContentComposite);
+		this.examContentComposite = new Composite(examContainerComposite, SWT.NONE);
+		examContentComposite.setTouchEnabled(true);
+		examContentComposite.setLayout(new GridLayout(1, true));
+		examContentComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		examContentComposite.setVisible(false);
+		Composite resultContentComposite = new Composite(examContentComposite, SWT.BORDER);
+		resultContentComposite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true, 1, 1));
+		resultContentComposite.setLayout(new GridLayout(1, false));
 
-		lblResultExerciseShortName = new Label(resultContentComposite, SWT.NONE);
-		lblResultExerciseShortName.setText("Name");
-		lblResultExerciseShortName.setTouchEnabled(true);
-		lblResultExerciseShortName.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.BOLD));
-		lblResultExerciseShortName.setBounds(22, 9, 105, 28);
+		lblExamShortName = new Label(resultContentComposite, SWT.NONE);
+		GridData gd_lblResultExerciseShortName = new GridData(SWT.FILL, SWT.CENTER, true, true, 1, 1);
+		gd_lblResultExerciseShortName.widthHint = 409;
+		lblExamShortName.setLayoutData(gd_lblResultExerciseShortName);
+		lblExamShortName.setText("Name");
+		lblExamShortName.setTouchEnabled(true);
+		lblExamShortName.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.BOLD));
 
-		lblResultExerciseDescription = new Label(resultContentComposite, SWT.NONE);
-		lblResultExerciseDescription.setBounds(22, 35, 461, 21);
+		lblExamDescription = new Label(resultContentComposite, SWT.NONE);
+		lblExamDescription.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, true, 1, 1));
 
 		Label separator = new Label(resultContentComposite, SWT.SEPARATOR | SWT.HORIZONTAL);
-		separator.setBounds(20, 62, 476, 10);
-
-		lblPoints = new Label(resultContentComposite, SWT.NONE);
-		lblPoints.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.BOLD | SWT.ITALIC));
-		lblPoints.setBounds(22, 78, 186, 30);
-		lblPoints.setText("");
+		separator.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true, 1, 1));
 
 		resultScore = new Label(resultContentComposite, SWT.RIGHT);
+		resultScore.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, true, true, 1, 1));
 		resultScore.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.BOLD | SWT.ITALIC));
-		resultScore.setBounds(30, 78, 453, 30);
 		resultScore.setText("0 / 20");
 
 	}
@@ -146,11 +120,11 @@ public class ExamTab implements ArtemisStudentTab {
 
 	private void setExamDataToUI() {
 		if (exam != null) {
-			lblResultExerciseShortName.setText(exam.getTitle());
+			lblExamShortName.setText(exam.getTitle());
 			resultScore.setText("Due to: " + exam.getEndDate());
-			lblResultExerciseDescription.setText("Starts at: " + exam.getStartDate());
-			btnReload.setEnabled(!exam.isStarted());
-			feedbackContentComposite.setVisible(true);
+			lblExamDescription.setText("Starts at: " + exam.getStartDate());
+			btnStart.setEnabled(!exam.isStarted());
+			examContentComposite.setVisible(true);
 		}
 	}
 
@@ -161,7 +135,7 @@ public class ExamTab implements ArtemisStudentTab {
 
 	@Override
 	public void reset() {
-		feedbackContentComposite.setVisible(false);
+		examContentComposite.setVisible(false);
 	}
 
 	@Override
@@ -181,6 +155,9 @@ public class ExamTab implements ArtemisStudentTab {
 	@Override
 	public void callExercisesEvent() {
 		setExam();
-		
+	}
+	
+	private String getLink() {
+		return "www.artemis-test.ipd.kit.edu";
 	}
 }
