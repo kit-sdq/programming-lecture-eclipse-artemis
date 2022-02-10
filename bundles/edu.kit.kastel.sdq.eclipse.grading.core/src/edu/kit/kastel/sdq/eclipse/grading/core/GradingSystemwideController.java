@@ -373,7 +373,7 @@ public class GradingSystemwideController extends SystemwideController implements
 	}
 
 	@Override
-	void refreshArtemisController(String url, String user, String pass) {
+	protected void refreshArtemisController(String url, String user, String pass) {
 		this.createController(url, user, pass);
 	}
 	

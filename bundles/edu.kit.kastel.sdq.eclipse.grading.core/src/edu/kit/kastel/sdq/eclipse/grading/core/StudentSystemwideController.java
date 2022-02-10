@@ -259,7 +259,7 @@ public class StudentSystemwideController extends SystemwideController implements
 	}
 
 	@Override
-	void refreshArtemisController(String url, String user, String pass) {
+	protected void refreshArtemisController(String url, String user, String pass) {
 		this.createControllers(url, user, pass);
 	}
 }

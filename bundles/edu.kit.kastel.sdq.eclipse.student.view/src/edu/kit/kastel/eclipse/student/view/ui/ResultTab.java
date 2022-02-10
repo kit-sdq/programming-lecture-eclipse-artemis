@@ -191,6 +191,8 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 	@Override
 	public void reset() {
 		feedbackContentComposite.setVisible(false);
+		btnLoading.setText(LOAD_BTN_TEXT);
+		btnLoading.setVisible(false);
 	}
 
 	private void addSelectionListenerForReloadButton(Button btn) {
@@ -364,8 +366,8 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 	}
 
 	private void handleWebsocketError() {
-		this.btnReload.setEnabled(false);
-		this.btnReload.setText("ERROR");
+		this.btnLoading.setVisible(true);
+		this.btnLoading.setText("ERROR");
 	}
 
 	@Override

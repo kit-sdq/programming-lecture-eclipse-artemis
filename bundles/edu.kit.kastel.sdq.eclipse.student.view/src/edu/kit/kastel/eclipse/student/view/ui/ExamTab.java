@@ -93,32 +93,25 @@ public class ExamTab implements ArtemisStudentTab {
 		examContentComposite.setTouchEnabled(true);
 		examContentComposite.setLayout(new GridLayout(1, true));
 		examContentComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-		examContentComposite.setVisible(true);
+		examContentComposite.setVisible(false);
 		Composite resultContentComposite = new Composite(examContentComposite, SWT.BORDER);
 		resultContentComposite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true, 1, 1));
 		resultContentComposite.setLayout(new GridLayout(1, false));
 
 		lblExamShortName = new Label(resultContentComposite, SWT.NONE);
-		GridData gd_lblResultExerciseShortName = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
-		gd_lblResultExerciseShortName.widthHint = 409;
-		lblExamShortName.setLayoutData(gd_lblResultExerciseShortName);
+		lblExamShortName.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		lblExamShortName.setText("Name");
 		lblExamShortName.setTouchEnabled(true);
 		lblExamShortName.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.BOLD));
 
 		lblExamDescription = new Label(resultContentComposite, SWT.NONE);
-		GridData gd_lblExamDescription = new GridData(SWT.LEFT, SWT.FILL, true, true, 1, 1);
-		gd_lblExamDescription.widthHint = 404;
-		lblExamDescription.setLayoutData(gd_lblExamDescription);
-		lblExamDescription.setText("sdfhasdklfh  asdsa sdf");
+		lblExamDescription.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, true, true, 1, 1));
 
 		Label separator = new Label(resultContentComposite, SWT.SEPARATOR | SWT.HORIZONTAL);
 		separator.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true, 1, 1));
 
 		resultScore = new Label(resultContentComposite, SWT.RIGHT);
-		GridData gd_resultScore = new GridData(SWT.RIGHT, SWT.FILL, true, true, 1, 1);
-		gd_resultScore.widthHint = 279;
-		resultScore.setLayoutData(gd_resultScore);
+		resultScore.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, true, true, 1, 1));
 		resultScore.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.BOLD | SWT.ITALIC));
 		resultScore.setText(" ldfgdfg Due tzo 0 / 20");
 
@@ -138,6 +131,7 @@ public class ExamTab implements ArtemisStudentTab {
 			lblExamDescription.setText("Starts at: " + exam.getStartDate());
 			btnStart.setEnabled(!exam.isStarted());
 			examContentComposite.setVisible(true);
+			examContentComposite.pack();
 		}
 	}
 

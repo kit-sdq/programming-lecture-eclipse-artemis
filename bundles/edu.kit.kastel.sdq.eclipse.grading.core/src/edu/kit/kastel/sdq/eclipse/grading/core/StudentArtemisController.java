@@ -24,35 +24,38 @@ public class StudentArtemisController extends ArtemisController implements IStud
 	protected StudentArtemisController(String host, String username, String password) {
 		super(host, username, password);
 	}
-	
+
 	@Override
 	public List<ICourse> getCourses() {
-		if(this.courses == null)
+		if (this.courses == null)
 			this.courses = fetchCourses();
 		return this.courses;
 	}
-	
+
 	@Override
 	public IStudentExam getExercisesFromStudentExam(final String examTitle) {
 		return this.getExercisesFromExamOrStartExam(examTitle, this.getCourses());
 	}
-	
+
 	@Override
 	public List<String> getExerciseShortNamesFromExam(final String examTitle) {
 		return this.getExercisesFromStudentExam(examTitle).getExercises().stream().map(IExercise::getShortName)
 				.collect(Collectors.toList());
 	}
-	
+
 	@Override
 	public IStudentExam startExam(ICourse course, IExam exam) {
 		try {
-			return this.clientManager.getExamArtemisClient().conductExam(course, exam);
+			if (this.confirm("Do you want to start the exam now?")) {
+				return this.clientManager.getExamArtemisClient().conductExam(course, exam);
+			}
+
 		} catch (ArtemisClientException e) {
 			this.error("Error, can not start the exam: " + exam.getTitle(), e);
-			return new ArtemisStudentExam();
 		}
+		return new ArtemisStudentExam();
 	}
-	
+
 	@Override
 	public Optional<ParticipationDTO> getParticipation(ICourse course, IExercise exercise) {
 		Optional<ParticipationDTO> participation = getParticipationForExercise(course, exercise);
@@ -67,7 +70,7 @@ public class StudentArtemisController extends ArtemisController implements IStud
 		}
 		return participation;
 	}
-	
+
 	@Override
 	public Map<ResultsDTO, List<Feedback>> getFeedbackExcerise(ICourse course, IExercise exercise) {
 		Optional<ParticipationDTO> participationOpt = getParticipationForExercise(course, exercise);
@@ -112,7 +115,7 @@ public class StudentArtemisController extends ArtemisController implements IStud
 
 		return resultFeedbackMap;
 	}
-	
+
 	@Override
 	public List<ICourse> fetchCourses() {
 		if (!this.clientManager.isReady()) {
@@ -126,7 +129,6 @@ public class StudentArtemisController extends ArtemisController implements IStud
 		}
 	}
 
-	
 	private IStudentExam getExercisesFromExamOrStartExam(final String examTitle, List<ICourse> courses) {
 		Entry<ICourse, IExam> foundEntry = filterGetExamObjectFromLoadedCourses(examTitle, courses);
 		if (foundEntry == null) {
@@ -144,12 +146,9 @@ public class StudentArtemisController extends ArtemisController implements IStud
 					+ "After starting the exam you can load exercises in the workspace und submit solutions \n "
 					+ "After submitting solutions you can view results in the Result-Tab.", e);
 		}
-		if (this.confirm("Do you want to start the exam now?")) {
-			return this.startExam(foundEntry.getKey(), foundEntry.getValue());
-		}
-		return new ArtemisStudentExam();
+		return this.startExam(foundEntry.getKey(), foundEntry.getValue());
 	}
-	
+
 	private Optional<ParticipationDTO> getParticipationForExercise(ICourse course, IExercise exercise) {
 		try {
 			return Optional

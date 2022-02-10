@@ -56,7 +56,7 @@ public abstract class SystemwideController extends AbstractController implements
 		return exerciseController;
 	}
 
-	abstract void refreshArtemisController(String url, String user, String pass);
+	protected abstract void refreshArtemisController(String url, String user, String pass);
 	
 	protected boolean nullCheckMembersAndNotify(boolean checkCourseID, boolean checkExerciseID) {
 		String alert = "[";
