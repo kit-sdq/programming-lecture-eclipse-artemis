@@ -21,6 +21,7 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExerciseGroup;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
 import edu.kit.kastel.sdq.eclipse.grading.api.client.ICourseArtemisClient;
 import edu.kit.kastel.sdq.eclipse.grading.api.client.ISubmissionsArtemisClient;
+import edu.kit.kastel.sdq.eclipse.grading.client.mappings.ArtemisCourse;
 import edu.kit.kastel.sdq.eclipse.grading.client.mappings.ArtemisDashboardCourse;
 import edu.kit.kastel.sdq.eclipse.grading.client.mappings.ArtemisExercise;
 import edu.kit.kastel.sdq.eclipse.grading.client.mappings.IMappingLoader;
@@ -41,9 +42,22 @@ public class MappingLoaderArtemisClient extends AbstractArtemisClient implements
 		this.token = token;
 		this.submissionClient = submissionClient;
 	}
+	
+	@Override
+	public List<ICourse> getCoursesForAssessment() throws ArtemisClientException {
+		final Response rsp = this.endpoint.path(COURSES_PATHPART).request().header(AUTHORIZATION_NAME, this.token).buildGet().invoke();
+		this.throwIfStatusUnsuccessful(rsp);
+		String rspString = rsp.readEntity(String.class);
+
+		ArtemisCourse[] coursesArray = this.read(rspString, ArtemisCourse[].class);
+		for (ArtemisCourse course : coursesArray) {
+			course.init(this);
+		}
+		return Arrays.asList(coursesArray);
+	}
 
 	@Override
-	public List<ICourse> getCourses() throws ArtemisClientException {
+	public List<ICourse> getCoursesForDashboard() throws ArtemisClientException {
 		final Response rsp = this.endpoint.path(COURSES_PATHPART).path("for-dashboard").request().header(AUTHORIZATION_NAME, this.token).buildGet().invoke();
 		this.throwIfStatusUnsuccessful(rsp);
 		String rspString = rsp.readEntity(String.class);

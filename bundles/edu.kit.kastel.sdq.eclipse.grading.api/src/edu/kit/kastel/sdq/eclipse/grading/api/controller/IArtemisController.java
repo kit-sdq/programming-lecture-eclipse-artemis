@@ -68,7 +68,7 @@ public interface IArtemisController extends IController {
 
 	List<IExercise> getExercises(ICourse course, boolean withExamExercises);
 
-	IStudentExam getExercisesFromExam(String examTitle);
+	List<IExercise> getExercisesFromExam(String examTitle);
 
 	/**
 	 *
@@ -140,14 +140,8 @@ public interface IArtemisController extends IController {
 	 */
 	Optional<ISubmission> startNextAssessment(IExercise exercise, int correctionRound);
 	
-	Map<ResultsDTO, List<Feedback>> getFeedbackExcerise(ICourse course, IExercise excerise);
-	
-	List<ICourse> fetchCourses();
-
 	Date getCurrentDate();
-	
-	IStudentExam startExam(ICourse course,IExam exam);
-	
-	Optional<ParticipationDTO> getParticipation(ICourse course, IExercise exercise);
+
+	List<ICourse> fetchCourses();
 	
 }

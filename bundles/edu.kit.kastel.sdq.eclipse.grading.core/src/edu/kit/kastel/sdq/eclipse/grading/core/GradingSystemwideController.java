@@ -1,6 +1,7 @@
 package edu.kit.kastel.sdq.eclipse.grading.core;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +17,7 @@ import edu.kit.kastel.sdq.eclipse.grading.api.ArtemisClientException;
 import edu.kit.kastel.sdq.eclipse.grading.api.PreferenceConstants;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IProjectFileNamingStrategy;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ICourse;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExam;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.SubmissionFilter;
@@ -23,7 +25,6 @@ import edu.kit.kastel.sdq.eclipse.grading.api.backendstate.Transition;
 import edu.kit.kastel.sdq.eclipse.grading.api.controller.IArtemisController;
 import edu.kit.kastel.sdq.eclipse.grading.api.controller.IAssessmentController;
 import edu.kit.kastel.sdq.eclipse.grading.api.controller.IGradingSystemwideController;
-import edu.kit.kastel.sdq.eclipse.grading.api.controller.ISystemwideController;
 import edu.kit.kastel.sdq.eclipse.grading.core.artemis.WorkspaceUtil;
 import edu.kit.kastel.sdq.eclipse.grading.core.config.ConfigDAO;
 import edu.kit.kastel.sdq.eclipse.grading.core.config.JsonFileConfigDao;
@@ -180,6 +181,27 @@ public class GradingSystemwideController extends SystemwideController implements
 			this.getCurrentAssessmentController().deleteEclipseProject(this.projectFileNamingStrategy);
 			this.submission = null;
 		}
+	}
+	
+	@Override
+	public void setExerciseId(final String exerciseShortName) throws ArtemisClientException {
+		if (this.applyTransitionAndNotifyIfNotAllowed(Transition.SET_EXERCISE_ID)) {
+			return;
+		}
+		// Normal exercises
+		List<IExercise> exercises = new ArrayList<>(this.course.getExercises());
+		// exam exercises
+		for (IExam ex : this.course.getExams()) {
+			ex.getExerciseGroups().forEach(g -> exercises.addAll(g.getExercises()));
+		}
+
+		for (IExercise ex : exercises) {
+			if (ex.getShortName().equals(exerciseShortName)) {
+				this.exercise = ex;
+				return;
+			}
+		}
+		this.error("No Exercise with the given shortName \"" + exerciseShortName + "\" found.", null);
 	}
 
 	@Override

@@ -1,16 +1,11 @@
 package edu.kit.kastel.sdq.eclipse.grading.core;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.eclipse.jface.preference.IPreferenceStore;
 
-import edu.kit.kastel.sdq.eclipse.grading.api.ArtemisClientException;
 import edu.kit.kastel.sdq.eclipse.grading.api.PreferenceConstants;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IProjectFileNamingStrategy;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ICourse;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
-import edu.kit.kastel.sdq.eclipse.grading.api.backendstate.Transition;
 import edu.kit.kastel.sdq.eclipse.grading.api.controller.AbstractController;
 import edu.kit.kastel.sdq.eclipse.grading.api.controller.IArtemisController;
 import edu.kit.kastel.sdq.eclipse.grading.api.controller.IExerciseArtemisController;
@@ -33,25 +28,6 @@ public abstract class SystemwideController extends AbstractController implements
 	@Override
 	public IArtemisController getArtemisGUIController() {
 		return this.artemisGUIController;
-	}
-	
-	@Override
-	public void setExerciseId(final String exerciseShortName) throws ArtemisClientException {
-
-		// Normal exercises
-		List<IExercise> exercises = this.course.getExercises();
-		
-		this.course.getExams().stream().map(e -> artemisGUIController.getExercisesFromExam(e.getTitle()).getExercises())
-				.forEach(e -> e.forEach(exercises::add));
-
-		for (IExercise ex : exercises) {
-			if (ex.getShortName().equals(exerciseShortName)) {
-				this.exercise = ex;
-				return;
-			}
-		}
-
-		this.error("No Exercise with the given shortName \"" + exerciseShortName + "\" found.", null);
 	}
 	
 	protected void initPreferenceStoreCallback(final IPreferenceStore preferenceStore) {

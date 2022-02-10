@@ -21,15 +21,15 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IStudentExam;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ParticipationDTO;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ResultsDTO;
 import edu.kit.kastel.sdq.eclipse.grading.api.client.websocket.WebsocketCallback;
-import edu.kit.kastel.sdq.eclipse.grading.api.controller.IExerciseArtemisController;
+import edu.kit.kastel.sdq.eclipse.grading.api.controller.IStudentArtemisController;
 import edu.kit.kastel.sdq.eclipse.grading.api.controller.IStudentSystemwideController;
 import edu.kit.kastel.sdq.eclipse.grading.api.controller.IWebsocketController;
 
 public class StudentSystemwideController extends SystemwideController implements IStudentSystemwideController {
 
 	private IStudentExam exam;
-	private String examName = "";
 	private IWebsocketController websocketController;
+	private IStudentArtemisController studentController;
 	
 	public StudentSystemwideController(final IPreferenceStore preferenceStore) {
 		super(preferenceStore.getString(PreferenceConstants.ARTEMIS_USER), //
@@ -49,9 +49,29 @@ public class StudentSystemwideController extends SystemwideController implements
 	}
 	
 	private void createControllers(final String artemisHost, final String username, final String password) {
-		ArtemisController controller = new ArtemisController(artemisHost, username, password);
+		StudentArtemisController controller = new StudentArtemisController(artemisHost, username, password);
 		this.artemisGUIController = controller;
 		this.websocketController = controller;
+		this.studentController = controller;
+	}
+	
+	@Override
+	public void setExerciseId(final String exerciseShortName) throws ArtemisClientException {
+
+		// Normal exercises
+		List<IExercise> exercises = this.course.getExercises();
+		
+		this.course.getExams().stream().map(e -> studentController.getExercisesFromStudentExam(e.getTitle()).getExercises())
+				.forEach(e -> e.forEach(exercises::add));
+
+		for (IExercise ex : exercises) {
+			if (ex.getShortName().equals(exerciseShortName)) {
+				this.exercise = ex;
+				return;
+			}
+		}
+
+		this.error("No Exercise with the given shortName \"" + exerciseShortName + "\" found.", null);
 	}
 
 	@Override
@@ -61,7 +81,7 @@ public class StudentSystemwideController extends SystemwideController implements
 			return false;
 		}
 		
-		Optional<ParticipationDTO> participation = this.artemisGUIController.getParticipation(course, exercise);
+		Optional<ParticipationDTO> participation = this.studentController.getParticipation(course, exercise);
 		if (participation.isEmpty()) {
 			this.warn("Can not create participation for exercise.");
 			return false;
@@ -133,7 +153,7 @@ public class StudentSystemwideController extends SystemwideController implements
 			return new HashMap<>();
 		}
 
-		return this.getArtemisGUIController().getFeedbackExcerise(this.course, this.exercise);
+		return this.studentController.getFeedbackExcerise(this.course, this.exercise);
 	}
 
 	@Override
@@ -162,9 +182,6 @@ public class StudentSystemwideController extends SystemwideController implements
 		Optional<IExam> examOpt;
 		try {
 			examOpt = this.course.getExams().stream().filter(exam -> examName.equals(exam.getTitle())).findFirst();
-			if (examOpt.isPresent()) {
-				this.examName = examName;
-			}
 			return examOpt.orElse(null);
 		} catch (ArtemisClientException e) {
 			this.error("Can not set exam!", e);
@@ -184,7 +201,7 @@ public class StudentSystemwideController extends SystemwideController implements
 	public IExam startExam() {
 		if(exam != null) {
 			if (this.confirm("Are you sure to start the exam?")) {
-				exam = this.artemisGUIController.startExam(course, exam.getExam());
+				exam = this.studentController.startExam(course, exam.getExam());
 				return exam.getExam();
 			}
 		}
@@ -194,7 +211,7 @@ public class StudentSystemwideController extends SystemwideController implements
 	@Override
 	public List<IExercise> getExerciseShortNamesFromExam(String examShortName) {
 		if(exam == null || exam.getExam() == null || !exam.getExam().getTitle().equals(examShortName))
-			exam = this.artemisGUIController.getExercisesFromExam(examShortName);
+			exam = this.studentController.getExercisesFromStudentExam(examShortName);
 		return exam.getExercises();
 	}
 	
