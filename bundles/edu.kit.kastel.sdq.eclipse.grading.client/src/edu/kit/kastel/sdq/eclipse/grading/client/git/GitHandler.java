@@ -7,6 +7,8 @@ import java.util.Set;
 import org.eclipse.jgit.api.CheckoutCommand;
 import org.eclipse.jgit.api.CloneCommand;
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.PullCommand;
+import org.eclipse.jgit.api.PullResult;
 import org.eclipse.jgit.api.PushCommand;
 import org.eclipse.jgit.api.ResetCommand.ResetType;
 import org.eclipse.jgit.api.Status;
@@ -72,7 +74,29 @@ public final class GitHandler {
 		pushCommand.setCredentialsProvider(new UsernamePasswordCredentialsProvider(gitUsername, gitPassword));
 		// you can add more settings here if needed
 		try {
-			pushCommand.call().iterator().next();
+			PushResult result = pushCommand.call().iterator().next();
+		} catch (GitAPIException e) {
+			throw new GitException("ERROR, can not push to origin git repo for exercise " + exerciseRepo.getPath(),e);
+		}
+		
+	}
+	
+	public static void pullExercise(String gitUsername, String gitPassword, File exerciseRepo) throws GitException {
+		Git git;
+		try {
+			git = Git.open(exerciseRepo);	
+		} catch (IOException e) {
+			throw new GitException("ERROR, can not open git repo for exercise " + exerciseRepo.getPath(),e);
+		}
+		
+		PullCommand pullCommand = git.pull();
+		pullCommand.setCredentialsProvider(new UsernamePasswordCredentialsProvider(gitUsername, gitPassword));
+		// you can add more settings here if needed
+		try { 
+			PullResult result = pullCommand.call();
+			if(!result.isSuccessful()) {
+				throw new GitException("ERROR, can not push to origin git repo for exercise " + exerciseRepo.getPath());
+			}
 		} catch (GitAPIException e) {
 			throw new GitException("ERROR, can not push to origin git repo for exercise " + exerciseRepo.getPath(),e);
 		}

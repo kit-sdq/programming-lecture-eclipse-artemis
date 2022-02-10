@@ -1,6 +1,7 @@
 package edu.kit.kastel.sdq.eclipse.grading.client.websocket;
 
 import java.lang.reflect.Type;
+import java.util.List;
 
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.Platform;
@@ -31,9 +32,12 @@ public class ArtemisSockJsSessionHandler extends StompSessionHandlerAdapter  {
 	@Override
 	public void handleFrame(StompHeaders headers, Object payload) {
 		log.info("Websocket - received frame!");
-		if (!headers.get("destination").isEmpty() && headers.get("destination").get(0).equals(TOPIC_NEW_RESULT)) {
+		List<String> topics = headers.get("destination");
+		if (!topics.isEmpty() && topics.get(0).equals(TOPIC_NEW_RESULT)) {
+			log.info("Websocket - new result received!");
 			callback.handleResult(payload);
-		} else if(!headers.get("destination").isEmpty() && headers.get("destination").get(0).equals(TOPIC_NEW_SUBMISSION)) {
+		} else if(!topics.isEmpty() && topics.get(0).equals(TOPIC_NEW_SUBMISSION)) {
+			log.info("Websocket - new submission received!");
 			callback.handleSubmission(payload);
 		}
 	}

@@ -6,9 +6,6 @@ import java.util.Set;
 
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.ILog;
-import org.eclipse.core.runtime.Platform;
-
 import edu.kit.kastel.sdq.eclipse.grading.api.ArtemisClientException;
 import edu.kit.kastel.sdq.eclipse.grading.api.Constants;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IProjectFileNamingStrategy;
@@ -22,7 +19,6 @@ import edu.kit.kastel.sdq.eclipse.grading.client.git.GitHandler;
 import edu.kit.kastel.sdq.eclipse.grading.core.artemis.WorkspaceUtil;
 
 public class ExerciseArtemisController extends AbstractController implements IExerciseArtemisController {
-	private static final ILog log = Platform.getLog(ExerciseArtemisController.class);
 	private String username;
 	private String password;
 
@@ -110,7 +106,8 @@ public class ExerciseArtemisController extends AbstractController implements IEx
 		File exeriseRepo = projectNaming.getProjectFileInWorkspace(eclipseWorkspaceRoot, exercise, null);
 		File gitFileInRepo = projectNaming.getGitFileInProjectDirectory(exeriseRepo);
 		try {
-			GitHandler.commitExercise(username, username + "@student.kit.edu", "Test Commit Artemis", gitFileInRepo);
+			GitHandler.pullExercise(username, password, exeriseRepo);
+			GitHandler.commitExercise(username, username, createCommitMsg(course, exercise), gitFileInRepo);
 		} catch (GitException e) {
 			throw new ArtemisClientException("Can't save selected exercise " + exercise.getShortName() //
 					+ ".\n Exercise not found in workspace. \n Please load exercise bevor submitting it.", e);
@@ -133,5 +130,9 @@ public class ExerciseArtemisController extends AbstractController implements IEx
 					+ System.lineSeparator()
 					+ "If you want to start again from skretch, please delete the project and retry.");
 		}
+	}
+	
+	private String createCommitMsg(ICourse course, IExercise exercise) {
+		return String.format("[ECLIPSE-STUDENT] - uploaded new solution for exercise %s of course %s.", exercise.getShortName(), course.getShortName());
 	}
 }
