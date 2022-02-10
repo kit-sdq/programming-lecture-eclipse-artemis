@@ -70,7 +70,7 @@ public class ArtemisCourse implements ICourse, Serializable {
 
 	@Override
 	public boolean isInstructor(Assessor assessor) {
-		return assessor.getGroups().contains(this.instructorGroup);
+		return (assessor != null) && assessor.getGroups().contains(this.instructorGroup);
 	}
 
 	public void init(IMappingLoader client) {

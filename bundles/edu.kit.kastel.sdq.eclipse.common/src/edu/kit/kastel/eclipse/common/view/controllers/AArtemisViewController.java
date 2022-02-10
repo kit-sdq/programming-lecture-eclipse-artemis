@@ -7,6 +7,7 @@ import edu.kit.kastel.sdq.eclipse.grading.api.ArtemisClientException;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ICourse;
 import edu.kit.kastel.sdq.eclipse.grading.api.controller.IAlertObserver;
 import edu.kit.kastel.sdq.eclipse.grading.api.controller.IArtemisController;
+import edu.kit.kastel.sdq.eclipse.grading.api.controller.IGradingSystemwideController;
 import edu.kit.kastel.sdq.eclipse.grading.api.controller.ISystemwideController;
 
 /**
@@ -14,17 +15,19 @@ import edu.kit.kastel.sdq.eclipse.grading.api.controller.ISystemwideController;
  */
 public abstract class AArtemisViewController {
 	private IArtemisController artemisGUIController;
-	private ISystemwideController systemwideController;
 	private IAlertObserver alertObserver;
 
 	public AArtemisViewController() {
 	}
 
 	protected void initializeControllersAndObserver() {
-		this.alertObserver = new ViewAlertObserver();
-		this.artemisGUIController = this.systemwideController.getArtemisGUIController();
-		this.systemwideController.addAlertObserver(this.alertObserver);
+		ViewAlertObserver observer = new ViewAlertObserver();
+		this.alertObserver = observer;
+		this.artemisGUIController = getSystemwideController().getArtemisGUIController();
+		this.getSystemwideController().addAlertObserver(this.alertObserver);
+		this.getSystemwideController().addConfirmObserver(observer);
 		this.artemisGUIController.addAlertObserver(this.alertObserver);
+		this.artemisGUIController.addConfirmObserver(observer);
 	}
 	
 	/**
@@ -55,7 +58,7 @@ public abstract class AArtemisViewController {
 	 */
 	public List<String> getExerciseShortNames(String courseName) {
 		try {
-			return this.systemwideController.setCourseIdAndGetExerciseShortNames(courseName);
+			return this.getSystemwideController().setCourseIdAndGetExerciseShortNames(courseName);
 		} catch (ArtemisClientException e) {
 			this.alertObserver.error(e.getMessage(), e);
 			return List.of();
@@ -77,7 +80,7 @@ public abstract class AArtemisViewController {
 	 */
 	public void setExerciseID(String exerciseShortName) {
 		try {
-			this.systemwideController.setExerciseId(exerciseShortName);
+			this.getSystemwideController().setExerciseId(exerciseShortName);
 		} catch (ArtemisClientException e) {
 			this.alertObserver.error(e.getMessage(), e);
 		}
@@ -87,16 +90,10 @@ public abstract class AArtemisViewController {
 		return this.artemisGUIController;
 	}
 	
-	protected ISystemwideController getSystemwideController() {
-		return this.systemwideController;
-	}
+	protected abstract ISystemwideController getSystemwideController();
 
 	protected IAlertObserver getAlertObserver() {
 		return alertObserver;
-	}
-
-	protected void setSystemwideController(ISystemwideController systemwideController) {
-		this.systemwideController = systemwideController;
 	}
 	
 

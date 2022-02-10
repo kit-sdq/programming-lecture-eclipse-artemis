@@ -13,23 +13,15 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExam;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IStudentExam;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ParticipationDTO;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ResultsDTO;
 import edu.kit.kastel.sdq.eclipse.grading.api.client.websocket.WebsocketCallback;
 
 /**
- * Works as an interface from backend to ArtemisClient
+ * Works as an interface from backend to REST-clients
  *
  */
 public interface IArtemisController extends IController {
-
-	/**
-	 * Download submissions defined by the given submissionIds
-	 *
-	 * @param submissionIds
-	 * @return whether download was successful or not
-	 */
-	boolean downloadExerciseAndSubmission(ICourse courseID, IExercise exerciseID, ISubmission submissionID, IProjectFileNamingStrategy projectNaming);
-
 	/**
 	 *
 	 * @return all IFeedbacks that were gotten in the process of locking the given
@@ -76,7 +68,7 @@ public interface IArtemisController extends IController {
 
 	List<IExercise> getExercises(ICourse course, boolean withExamExercises);
 
-	IStudentExam getExercisesFromExam(String examTitle);
+	List<IExercise> getExercisesFromExam(String examTitle);
 
 	/**
 	 *
@@ -113,7 +105,7 @@ public interface IArtemisController extends IController {
 	 *
 	 * @return whether the operation was successful.
 	 */
-	boolean saveAssessment(IExercise exercise, ISubmission submission, boolean submit, boolean invalidSubmission);
+	boolean saveAssessment(IAssessmentController assessmentController, IExercise exercise, ISubmission submission, boolean submit, boolean invalidSubmission);
 
 	/**
 	 * Starts an assessment for the given submission. Acquires a lock in the
@@ -148,19 +140,8 @@ public interface IArtemisController extends IController {
 	 */
 	Optional<ISubmission> startNextAssessment(IExercise exercise, int correctionRound);
 	
-	boolean loadExerciseInWorkspaceForStudent(ICourse course, IExercise exercise, IProjectFileNamingStrategy projectNaming);
-	
-	boolean submitSolution(ICourse course, IExercise exercise, IProjectFileNamingStrategy projectNaming);
-
-	Optional<Set<String>> cleanWorkspace(ICourse course, IExercise exercise, IProjectFileNamingStrategy projectNaming);
-	
-	Map<ResultsDTO, List<Feedback>> getFeedbackExcerise(ICourse course, IExercise excerise);
-	
-	List<ICourse> fetchCourses();
-
 	Date getCurrentDate();
-	
-	boolean connectToWebsocket(WebsocketCallback callback);
-	IStudentExam startExam(ICourse course,IExam exam);
+
+	List<ICourse> fetchCourses();
 	
 }

@@ -29,7 +29,7 @@ import edu.kit.kastel.eclipse.grading.view.controllers.AssessmentViewController;
 import edu.kit.kastel.eclipse.grading.view.listeners.KeyboardAwareMouseListener;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.SubmissionFilter;
 import edu.kit.kastel.sdq.eclipse.grading.api.backendstate.Transition;
-import edu.kit.kastel.sdq.eclipse.grading.api.controller.ISystemwideController;
+import edu.kit.kastel.sdq.eclipse.grading.api.controller.IGradingSystemwideController;
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IMistakeType;
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IRatingGroup;
 
@@ -516,7 +516,7 @@ public class ArtemisGradingView extends ViewPart {
 	 */
 	private void updateCorrectedSubmissionCount() {
 		if (this.exerciseCombo.getSelectionIndex() != -1) {
-			ISystemwideController sc = Activator.getDefault().getSystemwideController();
+			IGradingSystemwideController sc = Activator.getDefault().getSystemwideController();
 			correctionCountLbl.setText(String.format("Started submissions: %d  Submitted: %d", 
 					sc.getBegunSubmissionsProjectNames(SubmissionFilter.ALL).size(),
 					sc.getBegunSubmissionsProjectNames(SubmissionFilter.SAVED_AND_SUBMITTED).size()));		

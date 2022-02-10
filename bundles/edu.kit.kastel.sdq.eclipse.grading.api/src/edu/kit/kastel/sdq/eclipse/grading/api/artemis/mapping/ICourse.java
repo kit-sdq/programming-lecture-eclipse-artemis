@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.List;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.ArtemisClientException;
-import edu.kit.kastel.sdq.eclipse.grading.api.client.AbstractArtemisClient;
 
 /**
  * This Class represents an artemis course.

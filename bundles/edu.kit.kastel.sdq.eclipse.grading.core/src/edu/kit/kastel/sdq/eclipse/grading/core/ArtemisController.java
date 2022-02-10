@@ -1,163 +1,64 @@
 package edu.kit.kastel.sdq.eclipse.grading.core;
 
-import java.io.File;
 import java.io.IOException;
-import java.lang.System.Logger;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
-
-import javax.swing.plaf.synth.SynthOptionPaneUI;
-
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.ArtemisClientException;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.ILockResult;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IProjectFileNamingStrategy;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.Feedback;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.FeedbackType;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ICourse;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExam;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExerciseGroup;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IStudentExam;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ParticipationDTO;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ResultsDTO;
-import edu.kit.kastel.sdq.eclipse.grading.api.client.AbstractArtemisClient;
 import edu.kit.kastel.sdq.eclipse.grading.api.client.websocket.ArtemisWebsocketException;
 import edu.kit.kastel.sdq.eclipse.grading.api.client.websocket.IWebsocketClient;
 import edu.kit.kastel.sdq.eclipse.grading.api.client.websocket.WebsocketCallback;
 import edu.kit.kastel.sdq.eclipse.grading.api.controller.AbstractController;
 import edu.kit.kastel.sdq.eclipse.grading.api.controller.IArtemisController;
 import edu.kit.kastel.sdq.eclipse.grading.api.controller.IAssessmentController;
+import edu.kit.kastel.sdq.eclipse.grading.api.controller.IWebsocketController;
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IAnnotation;
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IMistakeType;
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IRatingGroup;
-import edu.kit.kastel.sdq.eclipse.grading.client.git.GitException;
-import edu.kit.kastel.sdq.eclipse.grading.client.git.GitHandler;
-import edu.kit.kastel.sdq.eclipse.grading.client.rest.ArtemisClient;
+import edu.kit.kastel.sdq.eclipse.grading.client.rest.RestClientManager;
 import edu.kit.kastel.sdq.eclipse.grading.client.websocket.ArtemisFeedbackWebsocket;
 import edu.kit.kastel.sdq.eclipse.grading.core.artemis.AnnotationMapper;
-import edu.kit.kastel.sdq.eclipse.grading.core.artemis.WorkspaceUtil;
 import edu.kit.kastel.sdq.eclipse.grading.core.artemis.calculation.DefaultPenaltyCalculationStrategy;
 import edu.kit.kastel.sdq.eclipse.grading.core.artemis.calculation.IPenaltyCalculationStrategy;
 import edu.kit.kastel.sdq.eclipse.grading.core.artemis.calculation.ZeroedPenaltyCalculationStrategy;
 
-public class ArtemisController extends AbstractController implements IArtemisController {
+public class ArtemisController extends AbstractController implements IArtemisController, IWebsocketController {
 
-	private final SystemwideController systemwideController;
-	protected final AbstractArtemisClient artemisClient;
 	private final IWebsocketClient websocketClient;
-
-	private String username;
-	private String password;
 	private final Map<Integer, ILockResult> lockResults;
+	protected final RestClientManager clientManager;
+	protected List<ICourse> courses;
 
-	private List<ICourse> courses;
-
-	protected ArtemisController(final SystemwideController systemwideController, final String host,
-			final String username, final String password) {
-		this.username = username;
-		this.password = password;
-		this.artemisClient = new ArtemisClient(username, password, host);
-		this.systemwideController = systemwideController;
+	protected ArtemisController(final String host, final String username, final String password) {
+		this.clientManager = new RestClientManager(host, username, password);
 		this.lockResults = new HashMap<>();
 		this.websocketClient = new ArtemisFeedbackWebsocket(host);
+
+		loginOrNotify();
 	}
 
-	@Override
-	public boolean downloadExerciseAndSubmission(ICourse course, IExercise exercise, ISubmission submission,
-			IProjectFileNamingStrategy projectNaming) {
-		final File eclipseWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile();
-
-		// abort if directory already exists.
-		if (this.existsAndNotify(projectNaming.getProjectFileInWorkspace(eclipseWorkspaceRoot, exercise, submission))) {
-			return false;
-		}
-
+	private void loginOrNotify() {
 		try {
-			this.artemisClient.downloadExerciseAndSubmission(exercise, submission, eclipseWorkspaceRoot, projectNaming);
+			this.clientManager.login();
 		} catch (ArtemisClientException e) {
 			this.error(e.getMessage(), e);
-			return false;
 		}
-		try {
-			WorkspaceUtil.createEclipseProject(
-					projectNaming.getProjectFileInWorkspace(eclipseWorkspaceRoot, exercise, submission));
-		} catch (CoreException e) {
-			this.error("Project could not be created: " + e.getMessage(), null);
-		}
-		return true;
-	}
-
-	@Override
-	public boolean loadExerciseInWorkspaceForStudent(ICourse course, IExercise exercise,
-			IProjectFileNamingStrategy projectNaming) {
-		final File eclipseWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile();
-
-		// abort if directory already exists.
-		if (this.existsAndNotify(projectNaming.getProjectFileInWorkspace(eclipseWorkspaceRoot, exercise, null))) {
-			return false;
-		}
-		Optional<ParticipationDTO> optParticipation = getParticipationForExercise(course, exercise);
-
-		ParticipationDTO participation;
-
-		if (optParticipation.isEmpty()) {
-			try {
-				participation = artemisClient.startParticipationForExercise(course, exercise);
-			} catch (ArtemisClientException e) {
-				this.error("The selected Exercise can not be startet.", e);
-				return false;
-			}
-		} else {
-			participation = optParticipation.get();
-		}
-		try {
-			this.artemisClient.downloadExercise(exercise, eclipseWorkspaceRoot, projectNaming,
-					participation.getRepositoryUrl());
-		} catch (ArtemisClientException e) {
-			this.error(e.getMessage(), e);
-			return false;
-		}
-		try {
-			WorkspaceUtil.createEclipseProject(
-					projectNaming.getProjectFileInWorkspace(eclipseWorkspaceRoot, exercise, null));
-		} catch (CoreException e) {
-			this.error("Project could not be created: " + e.getMessage(), null);
-		}
-		return true;
-	}
-
-	private Optional<ParticipationDTO> getParticipationForExercise(ICourse course, IExercise exercise) {
-		try {
-			return Optional.of(artemisClient.getParticipationForExercise(course, exercise));
-		} catch (ArtemisClientException e) {
-			return Optional.empty();
-		}
-	}
-
-	private boolean existsAndNotify(File file) {
-		if (file.exists()) {
-			this.warn("Project " + file.getName() + " could not be cloned since the workspace "
-					+ "already contains a project with that name. " + System.lineSeparator()
-					+ "Trying to load and merge previously created annotations. Please double-check them before submitting the assessment! "
-					+ System.lineSeparator()
-					+ "If you want to start again from skretch, please delete the project and retry.");
-			return true;
-		}
-		return false;
 	}
 
 	@Override
@@ -173,7 +74,7 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 	@Override
 	public List<ISubmission> getBegunSubmissions(IExercise exercise) {
 		try {
-			return this.artemisClient.getSubmissions(exercise);
+			return this.clientManager.getSubmissionArtemisClient().getSubmissions(exercise);
 		} catch (Exception e) {
 			this.error(e.getMessage(), e);
 			return List.of();
@@ -208,14 +109,14 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 		return coursesWithCorrectID.iterator().next();
 
 	}
-
+	
 	@Override
 	public List<ICourse> fetchCourses() {
-		if (!this.artemisClient.isReady()) {
+		if (!this.clientManager.isReady()) {
 			return List.of();
 		}
 		try {
-			return this.artemisClient.getCourses();
+			return this.clientManager.getCourseArtemisClient().getCoursesForAssessment();
 		} catch (final Exception e) {
 			this.error(e.getMessage(), e);
 			return List.of();
@@ -235,7 +136,7 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 				return List.of();
 			}
 
-			return course.getExamsForCourse().stream().map(IExam::getTitle).collect(Collectors.toList());
+			return course.getExams().stream().map(IExam::getTitle).collect(Collectors.toList());
 		} catch (final Exception e) {
 			this.error(e.getMessage(), e);
 			return List.of();
@@ -268,10 +169,10 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 			return List.of();
 		}
 		try {
-			List<IExercise> allExercises = new ArrayList<>(course.getExercisesForCourse());
+			List<IExercise> allExercises = new ArrayList<>(course.getExercises());
 			if (withExamExercises) {
 
-				for (IExam e : course.getExamsForCourse()) {
+				for (IExam e : course.getExams()) {
 					for (IExerciseGroup g : e.getExerciseGroups()) {
 						allExercises.addAll(g.getExercises());
 					}
@@ -286,46 +187,64 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 	}
 
 	@Override
-	public IStudentExam getExercisesFromExam(final String examTitle) {
-		return this.getExercisesFromExam(examTitle, this.getCourses());
-	}
-
-	@Override
 	public Date getCurrentDate() {
 		try {
-			return this.artemisClient.getTime();
+			return this.clientManager.getUtilArtemisClient().getTime();
 		} catch (ArtemisClientException e) {
 			return new Date();
 		}
 	}
-
-	private IStudentExam getExercisesFromExam(final String examTitle, List<ICourse> courses) {
-		Entry<ICourse, IExam> foundEntry = filterGetExamObjectFromLoadedCourses(examTitle, courses);
-		if (foundEntry == null) {
-			this.error("No exam found for examTitle=" + examTitle, null);
-			return null;
-		}
-		try {
-			return this.artemisClient.findExamForSummary(foundEntry.getKey(), foundEntry.getValue());
-		} catch (Exception e) {
-			this.error("The exam has not been submitted yet. \n"
-					+ "You can only view results after the exam was submitted. \n"
-					+ "To submit the exam you have to submit the exam in the Artemis webclient!. It is not possible in Eclipse!. \n"
-					+ "To load exercises for the exam in to your local workspace you have to start the exam first! \n"
-					+ "After starting the exam you can load exercises in the workspace und submit solutions \n "
-					+ "After submitting solutions you can view results in the Result-Tab.", e);
-		}
-		if( this.confirm("Do you want to start the exam now?") ) {
-			return this.startExam(foundEntry.getKey(), foundEntry.getValue());
-		}
-		return null;
+	
+	@Override
+	public List<IExercise> getExercisesFromExam(final String examTitle) {
+		return this.getExercisesFromExam(examTitle, this.getCourses());
+	}
+	
+	@Override
+	public List<String> getExerciseShortNamesFromExam(final String examTitle) {
+		return this.getExercisesFromExam(examTitle).stream().map(IExercise::getShortName).collect(Collectors.toList());
 	}
 
-	private Entry<ICourse, IExam> filterGetExamObjectFromLoadedCourses(String examTitle, List<ICourse> courses) {
+	private List<IExercise> getExercisesFromExam(final String examTitle, List<ICourse> courses) {
+		IExam foundExam = null;
+
 		for (ICourse course : courses) {
 			List<IExam> filteredExams;
 			try {
-				filteredExams = course.getExamsForCourse().stream().filter(exam -> exam.getTitle().equals(examTitle))
+				filteredExams = course.getExams().stream().filter(exam -> exam.getTitle().equals(examTitle))
+						.collect(Collectors.toList());
+			} catch (final Exception e) {
+				this.error(e.getMessage(), e);
+				continue;
+			}
+			if (filteredExams.size() == 1) {
+				IExam exam = filteredExams.iterator().next();
+				if (exam.getTitle().equals(examTitle)) {
+					foundExam = exam;
+				}
+			}
+		}
+		if (foundExam == null) {
+			this.error("No exam found for examTitle=" + examTitle, null);
+			return List.of();
+		}
+		try {
+			return foundExam.getExerciseGroups().stream().map(IExerciseGroup::getExercises).flatMap(Collection::stream)
+					.collect(Collectors.toList());
+		} catch (final Exception e) {
+			this.error(e.getMessage(), e);
+			return List.of();
+		}
+
+	}
+
+	
+
+	protected Entry<ICourse, IExam> filterGetExamObjectFromLoadedCourses(String examTitle, List<ICourse> courses) {
+		for (ICourse course : courses) {
+			List<IExam> filteredExams;
+			try {
+				filteredExams = course.getExams().stream().filter(exam -> exam.getTitle().equals(examTitle))
 						.collect(Collectors.toList());
 			} catch (final Exception e) {
 				this.error(e.getMessage(), e);
@@ -349,18 +268,13 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 		}
 
 		try {
-			return course.getExercisesForCourse().stream().map(IExercise::getShortName).collect(Collectors.toList());
+			return course.getExercises().stream().map(IExercise::getShortName).collect(Collectors.toList());
 		} catch (ArtemisClientException e) {
 			this.error(e.getMessage(), e);
 			return List.of();
 		}
 	}
-
-	@Override
-	public List<String> getExerciseShortNamesFromExam(final String examTitle) {
-		return this.getExercisesFromExam(examTitle).getExercises().stream().map(IExercise::getShortName).collect(Collectors.toList());
-	}
-
+	
 	@Override
 	public List<Feedback> getPrecalculatedAutoFeedbacks(ISubmission submission) {
 		return this.lockResults.get(submission.getSubmissionId()).getLatestFeedback().stream()
@@ -369,9 +283,8 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 	}
 
 	@Override
-	public boolean saveAssessment(IExercise exercise, ISubmission submission, boolean submit,
-			boolean invalidSubmission) {
-		final IAssessmentController assessmentController = this.systemwideController.getCurrentAssessmentController();
+	public boolean saveAssessment(IAssessmentController assessmentController, IExercise exercise,
+			ISubmission submission, boolean submit, boolean invalidSubmission) {
 		if (!this.lockResults.containsKey(submission.getSubmissionId())) {
 			throw new IllegalStateException("Assessment not started, yet!");
 		}
@@ -388,8 +301,9 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 		try {
 			AnnotationMapper mapper = //
 					new AnnotationMapper(exercise, submission, annotations, mistakeTypes, ratingGroups,
-							this.artemisClient.getAssessor(), calculator, lock);
-			this.artemisClient.saveAssessment(participation, submit, mapper.createAssessmentResult());
+							this.clientManager.getAuthenticationClient().getAssessor(), calculator, lock);
+			this.clientManager.getAssessmentArtemisClient().saveAssessment(participation, submit,
+					mapper.createAssessmentResult());
 		} catch (IOException e) {
 			this.error("Local backend failed to format the annotations: " + e.getMessage(), e);
 			return false;
@@ -408,7 +322,8 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 	@Override
 	public void startAssessment(ISubmission submissionID) {
 		try {
-			this.lockResults.put(submissionID.getSubmissionId(), this.artemisClient.startAssessment(submissionID));
+			this.lockResults.put(submissionID.getSubmissionId(),
+					this.clientManager.getAssessmentArtemisClient().startAssessment(submissionID));
 		} catch (Exception e) {
 			this.error(Messages.ASSESSMENT_COULD_NOT_BE_STARTED_MESSAGE + e.getMessage(), e);
 		}
@@ -428,7 +343,8 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 	public Optional<ISubmission> startNextAssessment(IExercise exercise, int correctionRound) {
 		Optional<ILockResult> lockResultOptional;
 		try {
-			lockResultOptional = this.artemisClient.startNextAssessment(exercise, correctionRound);
+			lockResultOptional = this.clientManager.getAssessmentArtemisClient().startNextAssessment(exercise,
+					correctionRound);
 		} catch (Exception e) {
 			this.error(Messages.ASSESSMENT_COULD_NOT_BE_STARTED_MESSAGE + e.getMessage(), e);
 			return Optional.empty();
@@ -449,125 +365,21 @@ public class ArtemisController extends AbstractController implements IArtemisCon
 	}
 
 	@Override
-	public boolean submitSolution(ICourse course, IExercise exercise, IProjectFileNamingStrategy projectNaming) {
-		final File eclipseWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile();
-		File exeriseRepo = projectNaming.getProjectFileInWorkspace(eclipseWorkspaceRoot, exercise, null);
-		File gitFileInRepo = projectNaming.getGitFileInProjectDirectory(exeriseRepo);
-		try {
-			GitHandler.commitExercise(username, username + "@student.kit.edu", "Test Commit Artemis", gitFileInRepo);
-		} catch (GitException e) {
-			this.error("Can't save selected exercise " + exercise.getShortName() //
-					+ ".\n Exercise not found in workspace. \n Please load exercise bevor submitting it.", e);
-			return false;
-		}
-
-		try {
-			GitHandler.pushExercise(username, password, gitFileInRepo);
-		} catch (GitException e) {
-			this.error("Can't upload solution. Please check if submissions are still possible.", e);
-			return false;
-		}
-		return true;
-	}
-
-	@Override
-	public Optional<Set<String>> cleanWorkspace(ICourse course, IExercise exercise,
-			IProjectFileNamingStrategy projectNaming) {
-		final File eclipseWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile();
-		File exeriseRepo = projectNaming.getProjectFileInWorkspace(eclipseWorkspaceRoot, exercise, null);
-		File gitFileInRepo = projectNaming.getGitFileInProjectDirectory(exeriseRepo);
-		try {
-			return Optional.of(GitHandler.cleanRepo(gitFileInRepo));
-		} catch (GitException e) {
-			this.error("Can't clean selected exercise " + exercise.getShortName() //
-					+ ".\n Exercise not found in workspace. \n Please load exercise first", e);
-			return Optional.empty();
-		}
-	}
-
-	@Override
-	public Map<ResultsDTO, List<Feedback>> getFeedbackExcerise(ICourse course, IExercise exercise) {
-		Optional<ParticipationDTO> participationOpt = getParticipationForExercise(course, exercise);
-		if (participationOpt.isEmpty()) {
-			return new HashMap<>();
-		}
-
-		ParticipationDTO participationWithResults;
-		try {
-			participationWithResults = this.artemisClient
-					.getParticipationWithLatestResultForExercise(participationOpt.get().getParticipationID());
-		} catch (ArtemisClientException e) {
-			this.error("Can't load results for selected exercise " + exercise.getShortName() //
-					+ ".\n No results found. Please check if a solution was submitted.", e);
-			return new HashMap<>();
-		}
-
-		if (participationWithResults.getResults() == null) {
-			return new HashMap<>();
-		}
-
-		Map<ResultsDTO, List<Feedback>> resultFeedbackMap = new HashMap<>();
-
-		for (var result : participationWithResults.getResults()) {
-			if (result.hasFeedback) {
-				Feedback[] feedbacks = {};
-				try {
-					feedbacks = this.artemisClient.getFeedbackForResult(participationOpt.get().getParticipationID(),
-							result.id);
-				} catch (ArtemisClientException e) {
-					e.printStackTrace();
-					break;
-				}
-				resultFeedbackMap.put(result, Arrays.asList(feedbacks));
-			}
-		}
-
-		if (resultFeedbackMap.isEmpty()) {
-			this.error("Can't load any feedback for selected exercise " + exercise.getShortName() //
-					+ ".\n No feedback found. Please check if a solution was submitted.", null);
-		}
-
-		return resultFeedbackMap;
-	}
-
-	public List<ICourse> getCourses() {
-		if (courses == null) {
-			courses = this.fetchCourses();
-		}
-
-		return courses;
-	}
-
-	@Override
 	public boolean connectToWebsocket(WebsocketCallback callback) {
 		try {
-			this.websocketClient.connect(callback, this.getToken());
+			this.websocketClient.connect(callback, this.clientManager.getAuthenticationClient().getRawToken());
 			return true;
 		} catch (ArtemisWebsocketException e) {
 			System.out.println("Can not connect to websocket.");
 			return false;
 		}
 	}
-	
-	@Override
-	public IStudentExam startExam(ICourse course, IExam exam) {
-		try {
-			return this.artemisClient.conductExam(course, exam);
-		} catch (ArtemisClientException e) {
-			this.error("Error, can not start the exam: " + exam.getTitle(), e);
-			return null;
-		}
-	}
 
-	private String getToken() {
-		try {
-			return this.artemisClient.login();
-		} catch (ArtemisClientException e) {
-			System.out.println("Error, can not login.");
-			return "";
-		} catch (Exception e) {
-			System.out.println("Unexpected error during login.");
-			return "";
+	@Override
+	public List<ICourse> getCourses() {
+		if(courses == null) {
+			courses = fetchCourses();
 		}
+		return courses;
 	}
 }

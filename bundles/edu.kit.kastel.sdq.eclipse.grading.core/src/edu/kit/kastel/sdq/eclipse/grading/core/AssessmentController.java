@@ -15,6 +15,7 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
 import edu.kit.kastel.sdq.eclipse.grading.api.controller.AbstractController;
 import edu.kit.kastel.sdq.eclipse.grading.api.controller.IAssessmentController;
+import edu.kit.kastel.sdq.eclipse.grading.api.controller.IGradingSystemwideController;
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IAnnotation;
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IMistakeType;
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IRatingGroup;
@@ -28,8 +29,7 @@ import edu.kit.kastel.sdq.eclipse.grading.core.model.annotation.IAnnotationDao;
 
 public class AssessmentController extends AbstractController implements IAssessmentController {
 
-	private SystemwideController systemWideController;
-
+	private GradingSystemwideController systemWideController;
 	private IAnnotationDao annotationDao;
 
 	private final ICourse course;
@@ -44,7 +44,7 @@ public class AssessmentController extends AbstractController implements IAssessm
 	 * @param exerciseName the shortName of the exercise (must be same in the config
 	 *                     file).
 	 */
-	protected AssessmentController(SystemwideController systemWideController, ICourse course, IExercise exercise, ISubmission submission) {
+	protected AssessmentController(GradingSystemwideController systemWideController, ICourse course, IExercise exercise, ISubmission submission) {
 		this.systemWideController = systemWideController;
 
 		this.course = course;
@@ -202,7 +202,7 @@ public class AssessmentController extends AbstractController implements IAssessm
 	public void resetAndRestartAssessment(IProjectFileNamingStrategy projectNaming) {
 		this.deleteEclipseProject(projectNaming);
 		this.systemWideController.getArtemisGUIController().startAssessment(this.submission);
-		this.systemWideController.getArtemisGUIController().downloadExerciseAndSubmission(this.course, this.exercise, this.submission, projectNaming);
+		this.systemWideController.downloadExerciseAndSubmission(this.course, this.exercise, this.submission, projectNaming);
 
 		this.annotationDao = new DefaultAnnotationDao();
 
