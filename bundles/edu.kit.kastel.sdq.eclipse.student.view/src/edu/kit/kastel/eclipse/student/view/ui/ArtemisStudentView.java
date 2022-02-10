@@ -89,7 +89,7 @@ public class ArtemisStudentView extends ViewPart {
 
 		Composite assessmentComposite = new Composite(gradingComposite, SWT.BORDER);
 		assessmentComposite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		assessmentComposite.setLayout(new GridLayout(2, false));
+		assessmentComposite.setLayout(new GridLayout(2, true));
 
 		Label lblCourse = new Label(assessmentComposite, SWT.NONE);
 		lblCourse.setAlignment(SWT.CENTER);
@@ -119,7 +119,7 @@ public class ArtemisStudentView extends ViewPart {
 		this.loadExamComboEntries(this.courseCombo, this.examCombo, this.exerciseCombo);
 
 		Composite buttons = new Composite(gradingComposite, SWT.BORDER);
-		buttons.setLayout(new GridLayout(2, false));
+		buttons.setLayout(new GridLayout(2, true));
 		buttons.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1));
 
 		Button btnRefreshArtemisState = new Button(buttons, SWT.NONE);

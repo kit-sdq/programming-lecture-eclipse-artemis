@@ -127,7 +127,7 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 		feedbackContentComposite.setTouchEnabled(true);
 		feedbackContentComposite.setLayout(new GridLayout(1, true));
 		feedbackContentComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-		feedbackContentComposite.setVisible(false);
+		feedbackContentComposite.setVisible(true);
 		Composite resultContentComposite = new Composite(feedbackContentComposite, SWT.BORDER);
 		resultContentComposite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true, 1, 1));
 		resultContentComposite.setLayout(new GridLayout(1, false));
@@ -137,8 +137,8 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 		composite_2.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 
 		lblResultExerciseShortName = new Label(composite_2, SWT.NONE);
-		GridData gd_lblResultExerciseShortName = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
-		gd_lblResultExerciseShortName.widthHint = 316;
+		GridData gd_lblResultExerciseShortName = new GridData(SWT.FILL, SWT.CENTER, true, true, 1, 1);
+		gd_lblResultExerciseShortName.widthHint = 288;
 		lblResultExerciseShortName.setLayoutData(gd_lblResultExerciseShortName);
 		lblResultExerciseShortName.setText("Name");
 		lblResultExerciseShortName.setTouchEnabled(true);
@@ -153,6 +153,7 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 		lblResultExerciseDescription = new Label(resultContentComposite, SWT.NONE);
 		lblResultExerciseDescription.setText("22.23.123");
 		GridData gd_lblResultExerciseDescription = new GridData(SWT.LEFT, SWT.FILL, true, true, 1, 1);
+		gd_lblResultExerciseDescription.widthHint = 398;
 		gd_lblResultExerciseDescription.horizontalIndent = 5;
 		lblResultExerciseDescription.setLayoutData(gd_lblResultExerciseDescription);
 
@@ -164,12 +165,17 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 		composite_3.setLayout(new GridLayout(2, false));
 
 		lblPoints = new Label(composite_3, SWT.NONE);
+		GridData gd_lblPoints = new GridData(SWT.LEFT, SWT.CENTER, false, true, 1, 1);
+		gd_lblPoints.widthHint = 200;
+		lblPoints.setLayoutData(gd_lblPoints);
 		lblPoints.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.BOLD | SWT.ITALIC));
 		lblPoints.setBounds(22, 78, 186, 30);
 		lblPoints.setText("70%");
 
 		resultScore = new Label(composite_3, SWT.RIGHT);
-		resultScore.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, true, false, 1, 1));
+		GridData gd_resultScore = new GridData(SWT.RIGHT, SWT.CENTER, true, true, 1, 1);
+		gd_resultScore.widthHint = 195;
+		resultScore.setLayoutData(gd_resultScore);
 		resultScore.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.BOLD | SWT.ITALIC));
 		resultScore.setText("0 / 20");
 

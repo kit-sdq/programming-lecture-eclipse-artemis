@@ -53,45 +53,53 @@ public class ExamTab implements ArtemisStudentTab {
 
 		Composite composite = new Composite(examContainerComposite, SWT.NONE);
 		GridLayout gl_composite = new GridLayout(2, true);
+		gl_composite.marginHeight = 0;
+		gl_composite.verticalSpacing = 0;
 		composite.setLayout(gl_composite);
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
 
 		Label labelFeedback = new Label(composite, SWT.NONE);
+		GridData gd_labelFeedback = new GridData(SWT.LEFT, SWT.FILL, true, true, 1, 1);
+		gd_labelFeedback.heightHint = 36;
+		labelFeedback.setLayoutData(gd_labelFeedback);
 		labelFeedback.setFont(SWTResourceManager.getFont("Segoe UI", 18, SWT.BOLD));
 		labelFeedback.setText("Exam");
 
 		Composite composite_1 = new Composite(composite, SWT.NONE);
-		GridLayout gl_composite_1 = new GridLayout(2, true);
+		GridLayout gl_composite_1 = new GridLayout(1, true);
+		gl_composite_1.marginHeight = 0;
 		gl_composite_1.verticalSpacing = 0;
 		gl_composite_1.marginWidth = 0;
 		composite_1.setLayout(gl_composite_1);
-		GridData gd_composite_1 = new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1);
-		gd_composite_1.widthHint = 238;
+		GridData gd_composite_1 = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
+		gd_composite_1.heightHint = 43;
+		gd_composite_1.widthHint = 0;
 		composite_1.setLayoutData(gd_composite_1);
 
 		btnStart = new Button(composite_1, SWT.CENTER);
 		GridData gd_btnReload = new GridData(SWT.RIGHT, SWT.FILL, true, false, 1, 1);
-		gd_btnReload.widthHint = 90;
-		gd_btnReload.horizontalIndent = 5;
+		gd_btnReload.heightHint = 32;
+		gd_btnReload.widthHint = 80;
 		btnStart.setLayoutData(gd_btnReload);
 		btnStart.setText("Start");
 		addSelectionListenerForStartButton(btnStart);
+		new Label(composite_1, SWT.NONE);
 
 		Label labelResult = new Label(examContainerComposite, SWT.NONE);
-		labelResult.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-		labelResult.setText("  Summary of the currently selected exam. \n Please remember to submit the exam in Artemis! \n You can not submit the exam here. \n" + getLink());
+		labelResult.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		labelResult.setText("  Please remember to submit the exam in Artemis! \n  You can not submit the exam here. \n  " + getLink());
 
 		this.examContentComposite = new Composite(examContainerComposite, SWT.NONE);
 		examContentComposite.setTouchEnabled(true);
 		examContentComposite.setLayout(new GridLayout(1, true));
 		examContentComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-		examContentComposite.setVisible(false);
+		examContentComposite.setVisible(true);
 		Composite resultContentComposite = new Composite(examContentComposite, SWT.BORDER);
 		resultContentComposite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true, 1, 1));
 		resultContentComposite.setLayout(new GridLayout(1, false));
 
 		lblExamShortName = new Label(resultContentComposite, SWT.NONE);
-		GridData gd_lblResultExerciseShortName = new GridData(SWT.FILL, SWT.CENTER, true, true, 1, 1);
+		GridData gd_lblResultExerciseShortName = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
 		gd_lblResultExerciseShortName.widthHint = 409;
 		lblExamShortName.setLayoutData(gd_lblResultExerciseShortName);
 		lblExamShortName.setText("Name");
@@ -99,15 +107,20 @@ public class ExamTab implements ArtemisStudentTab {
 		lblExamShortName.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.BOLD));
 
 		lblExamDescription = new Label(resultContentComposite, SWT.NONE);
-		lblExamDescription.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, true, 1, 1));
+		GridData gd_lblExamDescription = new GridData(SWT.LEFT, SWT.FILL, true, true, 1, 1);
+		gd_lblExamDescription.widthHint = 404;
+		lblExamDescription.setLayoutData(gd_lblExamDescription);
+		lblExamDescription.setText("sdfhasdklfh  asdsa sdf");
 
 		Label separator = new Label(resultContentComposite, SWT.SEPARATOR | SWT.HORIZONTAL);
 		separator.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true, 1, 1));
 
 		resultScore = new Label(resultContentComposite, SWT.RIGHT);
-		resultScore.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, true, true, 1, 1));
+		GridData gd_resultScore = new GridData(SWT.RIGHT, SWT.FILL, true, true, 1, 1);
+		gd_resultScore.widthHint = 279;
+		resultScore.setLayoutData(gd_resultScore);
 		resultScore.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.BOLD | SWT.ITALIC));
-		resultScore.setText("0 / 20");
+		resultScore.setText(" ldfgdfg Due tzo 0 / 20");
 
 	}
 
