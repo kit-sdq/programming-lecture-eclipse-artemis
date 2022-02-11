@@ -36,4 +36,6 @@ public interface IStudentSystemwideController extends ISystemwideController {
 	boolean connectToWebsocket(WebsocketCallback callback);
 
 	void setExamToNull();
+
+	String getExamUrlForCurrentExam();
 }

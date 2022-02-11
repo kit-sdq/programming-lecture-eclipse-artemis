@@ -12,7 +12,6 @@ import java.util.Map.Entry;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -68,11 +67,11 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 	@Override
 	public void create(TabFolder tabFolder) {
 		display = tabFolder.getDisplay();
-		TabItem tbtmAssessment = new TabItem(tabFolder, SWT.NONE);
-		tbtmAssessment.setText("Test Results"); //$NON-NLS-1$
-
+		TabItem tbtmResult = new TabItem(tabFolder, SWT.NONE);
+		tbtmResult.setText("Test Results");
+		
 		this.scrolledCompositeFeedback = new ScrolledComposite(tabFolder, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
-		tbtmAssessment.setControl(this.scrolledCompositeFeedback);
+		tbtmResult.setControl(this.scrolledCompositeFeedback);
 		scrolledCompositeFeedback.setLayout(new FillLayout());
 		this.scrolledCompositeFeedback.setExpandHorizontal(true);
 		this.scrolledCompositeFeedback.setExpandVertical(true);
@@ -91,8 +90,8 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
 
 		Label labelFeedback = new Label(composite, SWT.NONE);
-		labelFeedback.setFont(SWTResourceManager.getFont("Segoe UI", 18, SWT.BOLD)); //$NON-NLS-1$
-		labelFeedback.setText("Results"); //$NON-NLS-1$
+		labelFeedback.setFont(SWTResourceManager.getFont("Segoe UI", 18, SWT.BOLD));
+		labelFeedback.setText("Results");
 
 		Composite composite_1 = new Composite(composite, SWT.NONE);
 		GridLayout gl_composite_1 = new GridLayout(2, true);
@@ -139,18 +138,18 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 		GridData gd_lblResultExerciseShortName = new GridData(SWT.FILL, SWT.CENTER, true, true, 1, 1);
 		gd_lblResultExerciseShortName.widthHint = 288;
 		lblResultExerciseShortName.setLayoutData(gd_lblResultExerciseShortName);
-		lblResultExerciseShortName.setText("Name"); //$NON-NLS-1$
+		lblResultExerciseShortName.setText("Name");
 		lblResultExerciseShortName.setTouchEnabled(true);
-		lblResultExerciseShortName.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.BOLD)); //$NON-NLS-1$
+		lblResultExerciseShortName.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.BOLD));
 
 		btnResultSuccessfull = new Label(composite_2, SWT.RIGHT);
 		btnResultSuccessfull.setForeground(SWTResourceManager.getColor(SWT.COLOR_GREEN));
 		btnResultSuccessfull.setBounds(360, 9, 123, 28);
-		btnResultSuccessfull.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.BOLD)); //$NON-NLS-1$
-		btnResultSuccessfull.setText("Successful"); //$NON-NLS-1$
+		btnResultSuccessfull.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.BOLD));
+		btnResultSuccessfull.setText("Successful");
 
 		lblResultExerciseDescription = new Label(resultContentComposite, SWT.NONE);
-		lblResultExerciseDescription.setText("22.23.123"); //$NON-NLS-1$
+		lblResultExerciseDescription.setText("22.23.123");
 		GridData gd_lblResultExerciseDescription = new GridData(SWT.LEFT, SWT.FILL, true, true, 1, 1);
 		gd_lblResultExerciseDescription.widthHint = 398;
 		gd_lblResultExerciseDescription.horizontalIndent = 5;
@@ -167,19 +166,19 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 		GridData gd_lblPoints = new GridData(SWT.LEFT, SWT.CENTER, false, true, 1, 1);
 		gd_lblPoints.widthHint = 200;
 		lblPoints.setLayoutData(gd_lblPoints);
-		lblPoints.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.BOLD | SWT.ITALIC)); //$NON-NLS-1$
+		lblPoints.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.BOLD | SWT.ITALIC));
 		lblPoints.setBounds(22, 78, 186, 30);
-		lblPoints.setText("70%"); //$NON-NLS-1$
+		lblPoints.setText("70%");
 
 		resultScore = new Label(composite_3, SWT.RIGHT);
 		GridData gd_resultScore = new GridData(SWT.RIGHT, SWT.CENTER, true, true, 1, 1);
 		gd_resultScore.widthHint = 195;
 		resultScore.setLayoutData(gd_resultScore);
-		resultScore.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.BOLD | SWT.ITALIC)); //$NON-NLS-1$
-		resultScore.setText("0 / 20"); //$NON-NLS-1$
+		resultScore.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.BOLD | SWT.ITALIC));
+		resultScore.setText("0 / 20");
 
 		Label labelFeedback2 = new Label(feedbackContentComposite, SWT.NONE);
-		labelFeedback2.setFont(SWTResourceManager.getFont("Segoe UI", 10, SWT.BOLD)); //$NON-NLS-1$
+		labelFeedback2.setFont(SWTResourceManager.getFont("Segoe UI", 10, SWT.BOLD));
 		labelFeedback2.setText(Messages.ResultTab_INFO_RESULT);
 		createTableForFeedback(feedbackContentComposite);
 

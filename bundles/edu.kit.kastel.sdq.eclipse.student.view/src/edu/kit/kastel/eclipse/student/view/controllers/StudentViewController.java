@@ -96,4 +96,8 @@ public class StudentViewController extends AArtemisViewController {
 	protected ISystemwideController getSystemwideController() {
 		return this.systemwideController;
 	}
+	
+	public String getExamUrlForCurrentExam() {
+		return systemwideController.getExamUrlForCurrentExam();
+	}
  }

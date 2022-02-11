@@ -32,6 +32,7 @@ public class StudentSystemwideController extends SystemwideController implements
 	private IStudentExam exam;
 	private IWebsocketController websocketController;
 	private IStudentArtemisController artemisGUIController;
+	private String artemisHost;
 
 	public StudentSystemwideController(final IPreferenceStore preferenceStore) {
 		super(preferenceStore.getString(PreferenceConstants.ARTEMIS_USER), //
@@ -54,6 +55,7 @@ public class StudentSystemwideController extends SystemwideController implements
 		StudentArtemisController controller = new StudentArtemisController(artemisHost, username, password);
 		this.artemisGUIController = controller;
 		this.websocketController = controller;
+		this.artemisHost = artemisHost;
 	}
 
 	@Override
@@ -266,5 +268,10 @@ public class StudentSystemwideController extends SystemwideController implements
 	@Override
 	public IArtemisController getArtemisGUIController() {
 		return artemisGUIController;
+	}
+	
+	@Override
+	public String getExamUrlForCurrentExam() {
+		return String.format(artemisHost + "/courses/%i/exams/%i", this.course.getCourseId(),  this.exam.getExam().getExamId());
 	}
 }
