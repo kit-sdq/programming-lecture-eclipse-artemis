@@ -292,7 +292,6 @@ public class ArtemisStudentView extends ViewPart {
 		this.courseCombo.removeAll();
 		this.examCombo.removeAll();
 		this.exerciseCombo.removeAll();
-		this.viewController.fetchCourses();
 		this.viewController.getCourseShortNames().forEach(courseShortName -> this.courseCombo.add(courseShortName));
 	}
 	private void resetButtons() {

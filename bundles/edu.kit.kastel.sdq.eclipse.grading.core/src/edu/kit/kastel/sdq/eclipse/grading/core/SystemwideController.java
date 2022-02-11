@@ -15,7 +15,6 @@ import edu.kit.kastel.sdq.eclipse.grading.core.artemis.naming.ProjectFileNamingS
 public abstract class SystemwideController extends AbstractController implements ISystemwideController {
 	protected ICourse course;
 	protected IExercise exercise;
-	protected IArtemisController artemisGUIController;
 	protected IPreferenceStore preferenceStore;
 	protected IProjectFileNamingStrategy projectFileNamingStrategy;
 	protected IExerciseArtemisController exerciseController;
@@ -24,12 +23,8 @@ public abstract class SystemwideController extends AbstractController implements
 		this.projectFileNamingStrategy = ProjectFileNamingStrategies.DEFAULT.get();
 		exerciseController = new ExerciseArtemisController(username, password);
 	}
-	
-	@Override
-	public IArtemisController getArtemisGUIController() {
-		return this.artemisGUIController;
-	}
-	
+	protected abstract void refreshArtemisController(String url, String user, String pass);
+		
 	protected void initPreferenceStoreCallback(final IPreferenceStore preferenceStore) {
 		// change preferences
 		this.preferenceStore.addPropertyChangeListener(event -> {
@@ -49,15 +44,7 @@ public abstract class SystemwideController extends AbstractController implements
 			this.refreshArtemisController(url, user, pass);
 		});
 	}
-	
-	
-	@Override
-	public IExerciseArtemisController getExerciseArtemisController() {
-		return exerciseController;
-	}
 
-	protected abstract void refreshArtemisController(String url, String user, String pass);
-	
 	protected boolean nullCheckMembersAndNotify(boolean checkCourseID, boolean checkExerciseID) {
 		String alert = "[";
 		boolean somethingNull = false;
@@ -74,6 +61,11 @@ public abstract class SystemwideController extends AbstractController implements
 			this.warn(alert);
 		}
 		return somethingNull;
+	}
+	
+	@Override
+	public IExerciseArtemisController getExerciseArtemisController() {
+		return exerciseController;
 	}
 
 }

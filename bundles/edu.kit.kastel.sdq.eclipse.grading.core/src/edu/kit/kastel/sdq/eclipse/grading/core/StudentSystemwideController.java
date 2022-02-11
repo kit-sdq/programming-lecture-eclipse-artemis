@@ -21,47 +21,49 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IStudentExam;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ParticipationDTO;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ResultsDTO;
 import edu.kit.kastel.sdq.eclipse.grading.api.client.websocket.WebsocketCallback;
+import edu.kit.kastel.sdq.eclipse.grading.api.controller.IArtemisController;
 import edu.kit.kastel.sdq.eclipse.grading.api.controller.IStudentArtemisController;
 import edu.kit.kastel.sdq.eclipse.grading.api.controller.IStudentSystemwideController;
 import edu.kit.kastel.sdq.eclipse.grading.api.controller.IWebsocketController;
+import edu.kit.kastel.sdq.eclipse.grading.core.messages.Messages;
 
 public class StudentSystemwideController extends SystemwideController implements IStudentSystemwideController {
 
 	private IStudentExam exam;
 	private IWebsocketController websocketController;
-	private IStudentArtemisController studentController;
-	
+	private IStudentArtemisController artemisGUIController;
+
 	public StudentSystemwideController(final IPreferenceStore preferenceStore) {
 		super(preferenceStore.getString(PreferenceConstants.ARTEMIS_USER), //
-				preferenceStore.getString(PreferenceConstants.ARTEMIS_PASSWORD) );
+				preferenceStore.getString(PreferenceConstants.ARTEMIS_PASSWORD));
 		createControllers(preferenceStore.getString(PreferenceConstants.ARTEMIS_URL), //
 				preferenceStore.getString(PreferenceConstants.ARTEMIS_USER), //
 				preferenceStore.getString(PreferenceConstants.ARTEMIS_PASSWORD) //
 		);
 		this.preferenceStore = preferenceStore;
-		
+
 		this.initPreferenceStoreCallback(preferenceStore);
 	}
-	
+
 	public StudentSystemwideController(final String artemisHost, final String username, final String password) {
-		super(username , password);
-		createControllers(artemisHost, username , password);
+		super(username, password);
+		createControllers(artemisHost, username, password);
 	}
-	
+
 	private void createControllers(final String artemisHost, final String username, final String password) {
 		StudentArtemisController controller = new StudentArtemisController(artemisHost, username, password);
 		this.artemisGUIController = controller;
 		this.websocketController = controller;
-		this.studentController = controller;
 	}
-	
+
 	@Override
 	public void setExerciseId(final String exerciseShortName) throws ArtemisClientException {
 
 		// Normal exercises
 		List<IExercise> exercises = this.course.getExercises();
-		
-		this.course.getExams().stream().map(e -> studentController.getExercisesFromStudentExam(e.getTitle()).getExercises())
+
+		this.course.getExams().stream()
+				.map(e -> artemisGUIController.getExercisesFromStudentExam(e.getTitle()).getExercises())
 				.forEach(e -> e.forEach(exercises::add));
 
 		for (IExercise ex : exercises) {
@@ -71,19 +73,19 @@ public class StudentSystemwideController extends SystemwideController implements
 			}
 		}
 
-		this.error("No Exercise with the given shortName \"" + exerciseShortName + "\" found.", null);
+		this.error("No Exercise with the given shortName \"" + exerciseShortName + "\" found.", null); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	@Override
 	public boolean loadExerciseForStudent() {
 		if (this.nullCheckMembersAndNotify(true, true)) {
-			this.warn("No excercise is selected");
+			this.warn("No excercise is selected"); //$NON-NLS-1$
 			return false;
 		}
-		
-		Optional<ParticipationDTO> participation = this.studentController.getParticipation(course, exercise);
+
+		Optional<ParticipationDTO> participation = this.artemisGUIController.getParticipation(course, exercise);
 		if (participation.isEmpty()) {
-			this.warn("Can not create participation for exercise.");
+			this.warn("Can not create participation for exercise."); //$NON-NLS-1$
 			return false;
 		}
 		// perform download. Revert state if that fails.
@@ -100,18 +102,17 @@ public class StudentSystemwideController extends SystemwideController implements
 	@Override
 	public boolean submitSolution() {
 		if (this.nullCheckMembersAndNotify(true, true)) {
-			this.warn("No excercise is selected");
+			this.warn("No excercise is selected"); //$NON-NLS-1$
 			return false;
 		}
 
 		if (isSelectedExerciseExpired()) {
-			this.error("Can't submit exercise. Excerise is out-of-date, it was due to: "
+			this.error("Can't submit exercise. Excerise is out-of-date, it was due to: " //$NON-NLS-1$
 					+ this.exercise.getDueDate().toGMTString(), null);
 			return false;
 		}
 
-		if (!this.confirm(
-				"Your solutions will be submitted for the selected exercise. Make sure all files are saved.")) {
+		if (!this.confirm(Messages.StudentSystemwideController_SUBMITTING_SOLUTION)) {
 			return false;
 		}
 
@@ -126,22 +127,21 @@ public class StudentSystemwideController extends SystemwideController implements
 	@Override
 	public boolean cleanWorkspace() {
 		if (this.nullCheckMembersAndNotify(true, true)) {
-			this.warn("No excercise is selected");
+			this.warn("No excercise is selected"); //$NON-NLS-1$
 			return false;
 		}
-		if (!this.confirm("Your changes will be deleted. Are you sure?")) {
+		if (!this.confirm(Messages.StudentSystemwideController_CLEAN)) {
 			return false;
 		}
 
 		Optional<Set<String>> deletedFiles = this.exerciseController.cleanWorkspace(this.course, this.exercise,
 				this.projectFileNamingStrategy);
 		if (deletedFiles.isEmpty()) {
-			this.warn("Can't clean selected exercise " + exercise.getShortName() //
-			+ ".\n Exercise not found in workspace. \n Please load exercise first");
+			this.warn("Can't clean selected exercise " + exercise.getShortName() // //$NON-NLS-1$
+					+ ".\n Exercise not found in workspace. \n Please load exercise first"); //$NON-NLS-1$
 			return false;
 		}
-		this.info("Your workspace was successfully cleaned. \n" + "Following files have been reset: \n"
-				+ deletedFiles.get());
+		this.info(Messages.StudentSystemwideController_CLEAN_SUCCESSFUL+ deletedFiles.get());
 		return true;
 
 	}
@@ -149,11 +149,11 @@ public class StudentSystemwideController extends SystemwideController implements
 	@Override
 	public Map<ResultsDTO, List<Feedback>> getFeedbackExcerise() {
 		if (this.nullCheckMembersAndNotify(true, true)) {
-			this.warn("No excercise is selected");
+			this.warn("No excercise is selected"); //$NON-NLS-1$
 			return new HashMap<>();
 		}
 
-		return this.studentController.getFeedbackExcerise(this.course, this.exercise);
+		return this.artemisGUIController.getFeedbackExcerise(this.course, this.exercise);
 	}
 
 	@Override
@@ -176,7 +176,7 @@ public class StudentSystemwideController extends SystemwideController implements
 	public IExercise getCurrentSelectedExercise() {
 		return exercise;
 	}
-	
+
 	@Override
 	public IExam setExam(String examName) {
 		Optional<IExam> examOpt;
@@ -184,11 +184,11 @@ public class StudentSystemwideController extends SystemwideController implements
 			examOpt = this.course.getExams().stream().filter(exam -> examName.equals(exam.getTitle())).findFirst();
 			return examOpt.orElse(null);
 		} catch (ArtemisClientException e) {
-			this.error("Can not set exam!", e);
+			this.error("Can not set exam!", e); //$NON-NLS-1$
 			return null;
 		}
 	}
-	
+
 	@Override
 	public IExam getExam() {
 		if (exam == null) {
@@ -196,38 +196,38 @@ public class StudentSystemwideController extends SystemwideController implements
 		}
 		return exam.getExam();
 	}
-	
+
 	@Override
 	public IExam startExam() {
-		if(exam != null) {
-			if (this.confirm("Are you sure to start the exam?")) {
-				exam = this.studentController.startExam(course, exam.getExam());
+		if (exam != null) {
+			if (this.confirm(Messages.StudentArtemisController_Confirm_Start_Exam)) {
+				exam = this.artemisGUIController.startExam(course, exam.getExam());
 				return exam.getExam();
 			}
 		}
 		return null;
 	}
-	
+
 	@Override
 	public List<IExercise> getExerciseShortNamesFromExam(String examShortName) {
-		if(exam == null || exam.getExam() == null || !exam.getExam().getTitle().equals(examShortName))
-			exam = this.studentController.getExercisesFromStudentExam(examShortName);
+		if (exam == null || exam.getExam() == null || !exam.getExam().getTitle().equals(examShortName))
+			exam = this.artemisGUIController.getExercisesFromStudentExam(examShortName);
 		return exam.getExercises();
 	}
-	
+
 	@Override
 	public void setExamToNull() {
 		exam = null;
 	}
-	
+
 	@Override
 	public void setExerciseIdWithSelectedExam(final String exerciseShortName) throws ArtemisClientException {
 		List<IExercise> exercises = new ArrayList<>();
 		// Normal exercises
-		if(exam != null) {
+		if (exam != null) {
 			exam.getExercises().forEach(exercises::add);
 		}
-		
+
 		this.course.getExercises().forEach(exercises::add);
 
 		for (IExercise ex : exercises) {
@@ -237,14 +237,14 @@ public class StudentSystemwideController extends SystemwideController implements
 			}
 		}
 
-		this.error("No Exercise with the given shortName \"" + exerciseShortName + "\" found.", null);
+		this.error("No Exercise with the given shortName \"" + exerciseShortName + "\" found.", null); //$NON-NLS-1$ //$NON-NLS-2$
 	}
-	
+
 	@Override
 	public boolean connectToWebsocket(WebsocketCallback callback) {
 		return this.websocketController.connectToWebsocket(callback);
 	}
-	
+
 	@Override
 	public List<String> setCourseIdAndGetExerciseShortNames(final String courseShortName)
 			throws ArtemisClientException {
@@ -254,12 +254,17 @@ public class StudentSystemwideController extends SystemwideController implements
 				return c.getExercises().stream().map(IExercise::getShortName).collect(Collectors.toList());
 			}
 		}
-		this.error("No Course with the given shortName \"" + courseShortName + "\" found.", null);
+		this.error("No Course with the given shortName \"" + courseShortName + "\" found.", null); //$NON-NLS-1$ //$NON-NLS-2$
 		return List.of();
 	}
 
 	@Override
 	protected void refreshArtemisController(String url, String user, String pass) {
 		this.createControllers(url, user, pass);
+	}
+
+	@Override
+	public IArtemisController getArtemisGUIController() {
+		return artemisGUIController;
 	}
 }

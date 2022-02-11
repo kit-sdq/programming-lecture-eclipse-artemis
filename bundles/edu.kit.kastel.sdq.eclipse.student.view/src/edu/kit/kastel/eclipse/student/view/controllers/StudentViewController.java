@@ -42,10 +42,6 @@ public class StudentViewController extends AArtemisViewController {
 		return systemwideController.getFeedbackExcerise();
 	}
 	
-	public void fetchCourses() {
-		getArtemisGUIController().fetchCourses();
-	}
-	
 	public boolean canSubmit() {
 		return !systemwideController.isSelectedExerciseExpired();
 	}

@@ -62,8 +62,8 @@ public class ExamTab implements ArtemisStudentTab {
 		GridData gd_labelFeedback = new GridData(SWT.LEFT, SWT.FILL, true, true, 1, 1);
 		gd_labelFeedback.heightHint = 36;
 		labelFeedback.setLayoutData(gd_labelFeedback);
-		labelFeedback.setFont(SWTResourceManager.getFont("Segoe UI", 18, SWT.BOLD));
-		labelFeedback.setText("Exam");
+		labelFeedback.setFont(SWTResourceManager.getFont("Segoe UI", 18, SWT.BOLD)); //$NON-NLS-1$
+		labelFeedback.setText("Exam"); //$NON-NLS-1$
 
 		Composite composite_1 = new Composite(composite, SWT.NONE);
 		GridLayout gl_composite_1 = new GridLayout(1, true);
@@ -81,13 +81,13 @@ public class ExamTab implements ArtemisStudentTab {
 		gd_btnReload.heightHint = 32;
 		gd_btnReload.widthHint = 80;
 		btnStart.setLayoutData(gd_btnReload);
-		btnStart.setText("Start");
+		btnStart.setText("Start"); //$NON-NLS-1$
 		addSelectionListenerForStartButton(btnStart);
 		new Label(composite_1, SWT.NONE);
 
 		Label labelResult = new Label(examContainerComposite, SWT.NONE);
 		labelResult.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		labelResult.setText("  Please remember to submit the exam in Artemis! \n  You can not submit the exam here. \n  " + getLink());
+		labelResult.setText(Messages.ExamTab_REMEMBER + getLink());
 
 		this.examContentComposite = new Composite(examContainerComposite, SWT.NONE);
 		examContentComposite.setTouchEnabled(true);
@@ -100,9 +100,9 @@ public class ExamTab implements ArtemisStudentTab {
 
 		lblExamShortName = new Label(resultContentComposite, SWT.NONE);
 		lblExamShortName.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
-		lblExamShortName.setText("Name");
+		lblExamShortName.setText("Name"); //$NON-NLS-1$
 		lblExamShortName.setTouchEnabled(true);
-		lblExamShortName.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.BOLD));
+		lblExamShortName.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.BOLD)); //$NON-NLS-1$
 
 		lblExamDescription = new Label(resultContentComposite, SWT.NONE);
 		lblExamDescription.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, true, true, 1, 1));
@@ -112,8 +112,8 @@ public class ExamTab implements ArtemisStudentTab {
 
 		resultScore = new Label(resultContentComposite, SWT.RIGHT);
 		resultScore.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, true, true, 1, 1));
-		resultScore.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.BOLD | SWT.ITALIC));
-		resultScore.setText(" ldfgdfg Due tzo 0 / 20");
+		resultScore.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.BOLD | SWT.ITALIC)); //$NON-NLS-1$
+		resultScore.setText(" ldfgdfg Due tzo 0 / 20"); //$NON-NLS-1$
 
 	}
 
@@ -127,8 +127,8 @@ public class ExamTab implements ArtemisStudentTab {
 	private void setExamDataToUI() {
 		if (exam != null) {
 			lblExamShortName.setText(exam.getTitle());
-			resultScore.setText("Due to: " + exam.getEndDate());
-			lblExamDescription.setText("Starts at: " + exam.getStartDate());
+			resultScore.setText(Messages.ExamTab_END + exam.getEndDate());
+			lblExamDescription.setText(Messages.ExamTab_START + exam.getStartDate());
 			btnStart.setEnabled(!exam.isStarted());
 			examContentComposite.setVisible(true);
 			examContentComposite.pack();
@@ -165,6 +165,6 @@ public class ExamTab implements ArtemisStudentTab {
 	}
 	
 	private String getLink() {
-		return "www.artemis-test.ipd.kit.edu";
+		return "www.artemis-test.ipd.kit.edu"; //$NON-NLS-1$
 	}
 }

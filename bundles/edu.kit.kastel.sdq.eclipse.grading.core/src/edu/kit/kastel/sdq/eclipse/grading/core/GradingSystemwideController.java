@@ -24,6 +24,7 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.SubmissionFilter;
 import edu.kit.kastel.sdq.eclipse.grading.api.backendstate.Transition;
 import edu.kit.kastel.sdq.eclipse.grading.api.controller.IArtemisController;
 import edu.kit.kastel.sdq.eclipse.grading.api.controller.IAssessmentController;
+import edu.kit.kastel.sdq.eclipse.grading.api.controller.IGradingArtemisController;
 import edu.kit.kastel.sdq.eclipse.grading.api.controller.IGradingSystemwideController;
 import edu.kit.kastel.sdq.eclipse.grading.core.artemis.WorkspaceUtil;
 import edu.kit.kastel.sdq.eclipse.grading.core.config.ConfigDAO;
@@ -32,7 +33,7 @@ import edu.kit.kastel.sdq.eclipse.grading.core.config.JsonFileConfigDao;
 public class GradingSystemwideController extends SystemwideController implements  IGradingSystemwideController {
 
 	private final Map<Integer, IAssessmentController> assessmentControllers  = new HashMap<>();
-
+	private IGradingArtemisController artemisGUIController;
 	private ConfigDAO configDao;
 
 	private ISubmission submission;
@@ -60,9 +61,8 @@ public class GradingSystemwideController extends SystemwideController implements
 	}
 	
 	private void createController(final String artemisHost, final String username, final String password) {
-		this.artemisGUIController = new ArtemisController(artemisHost, username, password);
+		this.artemisGUIController = new GradingArtemisController(artemisHost, username, password);
 		this.backendStateMachine = new BackendStateMachine();
-		this.artemisGUIController = new ArtemisController(artemisHost, username, password);
 	}
 
 	private boolean applyTransitionAndNotifyIfNotAllowed(Transition transition) {
@@ -229,10 +229,6 @@ public class GradingSystemwideController extends SystemwideController implements
 		this.artemisGUIController.saveAssessment(getCurrentAssessmentController(), this.exercise, this.submission, false, false);
 	}
 
-	public void setArtemisController(IArtemisController artemisController) {
-		this.artemisGUIController = artemisController;
-	}
-
 	@Override
 	public void setAssessedSubmissionByProjectName(String projectName) {
 		if (this.applyTransitionAndNotifyIfNotAllowed(Transition.SET_ASSESSED_SUBMISSION_BY_PROJECT_NAME)) {
@@ -294,7 +290,7 @@ public class GradingSystemwideController extends SystemwideController implements
 		}
 		this.updateConfigFile();
 
-		Optional<ISubmission> optionalSubmissionID = this.getArtemisGUIController().startNextAssessment(this.exercise,
+		Optional<ISubmission> optionalSubmissionID = this.artemisGUIController.startNextAssessment(this.exercise,
 				correctionRound);
 		if (optionalSubmissionID.isEmpty()) {
 			// revert!
@@ -396,4 +392,9 @@ public class GradingSystemwideController extends SystemwideController implements
         }
         return true;
     }
+
+	@Override
+	public IGradingArtemisController getArtemisGUIController() {
+		return artemisGUIController;
+	}
 }
