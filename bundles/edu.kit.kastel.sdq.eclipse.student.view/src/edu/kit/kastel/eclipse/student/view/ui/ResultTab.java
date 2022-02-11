@@ -107,7 +107,7 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 		gd_btnRLoading.widthHint = 80;
 		btnLoading.setLayoutData(gd_btnRLoading);
 		btnLoading.setText(LOAD_BTN_TEXT);
-		btnLoading.setVisible(true);
+		btnLoading.setVisible(false);
 
 		btnReload = new Button(composite_1, SWT.CENTER);
 		GridData gd_btnReload = new GridData(SWT.RIGHT, SWT.FILL, true, false, 1, 1);
@@ -125,7 +125,7 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 		feedbackContentComposite.setTouchEnabled(true);
 		feedbackContentComposite.setLayout(new GridLayout(1, true));
 		feedbackContentComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-		feedbackContentComposite.setVisible(true);
+		feedbackContentComposite.setVisible(false);
 		Composite resultContentComposite = new Composite(feedbackContentComposite, SWT.BORDER);
 		resultContentComposite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true, 1, 1));
 		resultContentComposite.setLayout(new GridLayout(1, false));
@@ -149,7 +149,7 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 		btnResultSuccessfull.setText("Successful");
 
 		lblResultExerciseDescription = new Label(resultContentComposite, SWT.NONE);
-		lblResultExerciseDescription.setText("22.23.123");
+		lblResultExerciseDescription.setText("22.03.2022");
 		GridData gd_lblResultExerciseDescription = new GridData(SWT.LEFT, SWT.FILL, true, true, 1, 1);
 		gd_lblResultExerciseDescription.widthHint = 398;
 		gd_lblResultExerciseDescription.horizontalIndent = 5;

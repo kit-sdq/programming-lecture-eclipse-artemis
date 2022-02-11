@@ -12,7 +12,7 @@ import edu.kit.kastel.sdq.eclipse.grading.core.GradingSystemwideController;
 public class Activator extends AbstractUIPlugin {
 
 	// The plug-in ID
-	public static final String PLUGIN_ID = "plugin_common_gui";  $
+	public static final String PLUGIN_ID = "plugin_common_gui";
 
 	// The shared instance
 	private static Activator plugin;

@@ -155,7 +155,7 @@ public class StudentSystemwideController extends SystemwideController implements
 			return new HashMap<>();
 		}
 
-		return this.artemisGUIController.getFeedbackExcerise(this.course, this.exercise);
+		return this.artemisGUIController.getFeedbackExercise(this.course, this.exercise);
 	}
 
 	@Override
@@ -272,6 +272,9 @@ public class StudentSystemwideController extends SystemwideController implements
 	
 	@Override
 	public String getExamUrlForCurrentExam() {
+		if(this.exam == null || this.exam.getExam() == null || this.course == null) {
+			return artemisHost;
+		}
 		return String.format(artemisHost + "/courses/%i/exams/%i", this.course.getCourseId(),  this.exam.getExam().getExamId());
 	}
 }

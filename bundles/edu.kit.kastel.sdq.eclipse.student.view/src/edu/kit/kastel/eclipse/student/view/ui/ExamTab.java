@@ -113,7 +113,7 @@ public class ExamTab implements ArtemisStudentTab {
 		resultScore = new Label(resultContentComposite, SWT.RIGHT);
 		resultScore.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, true, true, 1, 1));
 		resultScore.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.BOLD | SWT.ITALIC));
-		resultScore.setText(" ldfgdfg Due tzo 0 / 20");
+		resultScore.setText("Due to: 0 / 20");
 
 	}
 
