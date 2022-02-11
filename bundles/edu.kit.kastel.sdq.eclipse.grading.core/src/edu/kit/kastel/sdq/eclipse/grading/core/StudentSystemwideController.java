@@ -75,19 +75,19 @@ public class StudentSystemwideController extends SystemwideController implements
 			}
 		}
 
-		this.error("No Exercise with the given shortName \"" + exerciseShortName + "\" found.", null); //$NON-NLS-1$ //$NON-NLS-2$
+		this.error("No Exercise with the given shortName \"" + exerciseShortName + "\" found.", null);   //$NON-NLS-2$
 	}
 
 	@Override
 	public boolean loadExerciseForStudent() {
 		if (this.nullCheckMembersAndNotify(true, true)) {
-			this.warn("No excercise is selected"); //$NON-NLS-1$
+			this.warn("No excercise is selected");  
 			return false;
 		}
 
 		Optional<ParticipationDTO> participation = this.artemisGUIController.getParticipation(course, exercise);
 		if (participation.isEmpty()) {
-			this.warn("Can not create participation for exercise."); //$NON-NLS-1$
+			this.warn("Can not create participation for exercise.");  
 			return false;
 		}
 		// perform download. Revert state if that fails.
@@ -104,12 +104,12 @@ public class StudentSystemwideController extends SystemwideController implements
 	@Override
 	public boolean submitSolution() {
 		if (this.nullCheckMembersAndNotify(true, true)) {
-			this.warn("No excercise is selected"); //$NON-NLS-1$
+			this.warn("No excercise is selected");  
 			return false;
 		}
 
 		if (isSelectedExerciseExpired()) {
-			this.error("Can't submit exercise. Excerise is out-of-date, it was due to: " //$NON-NLS-1$
+			this.error("Can't submit exercise. Excerise is out-of-date, it was due to: "  
 					+ this.exercise.getDueDate().toGMTString(), null);
 			return false;
 		}
@@ -129,7 +129,7 @@ public class StudentSystemwideController extends SystemwideController implements
 	@Override
 	public boolean cleanWorkspace() {
 		if (this.nullCheckMembersAndNotify(true, true)) {
-			this.warn("No excercise is selected"); //$NON-NLS-1$
+			this.warn("No excercise is selected");  
 			return false;
 		}
 		if (!this.confirm(Messages.StudentSystemwideController_CLEAN)) {
@@ -139,8 +139,8 @@ public class StudentSystemwideController extends SystemwideController implements
 		Optional<Set<String>> deletedFiles = this.exerciseController.cleanWorkspace(this.course, this.exercise,
 				this.projectFileNamingStrategy);
 		if (deletedFiles.isEmpty()) {
-			this.warn("Can't clean selected exercise " + exercise.getShortName() // //$NON-NLS-1$
-					+ ".\n Exercise not found in workspace. \n Please load exercise first"); //$NON-NLS-1$
+			this.warn("Can't clean selected exercise " + exercise.getShortName() //  
+					+ ".\n Exercise not found in workspace. \n Please load exercise first");  
 			return false;
 		}
 		this.info(Messages.StudentSystemwideController_CLEAN_SUCCESSFUL+ deletedFiles.get());
@@ -151,7 +151,7 @@ public class StudentSystemwideController extends SystemwideController implements
 	@Override
 	public Map<ResultsDTO, List<Feedback>> getFeedbackExcerise() {
 		if (this.nullCheckMembersAndNotify(true, true)) {
-			this.warn("No excercise is selected"); //$NON-NLS-1$
+			this.warn("No excercise is selected");  
 			return new HashMap<>();
 		}
 
@@ -186,7 +186,7 @@ public class StudentSystemwideController extends SystemwideController implements
 			examOpt = this.course.getExams().stream().filter(exam -> examName.equals(exam.getTitle())).findFirst();
 			return examOpt.orElse(null);
 		} catch (ArtemisClientException e) {
-			this.error("Can not set exam!", e); //$NON-NLS-1$
+			this.error("Can not set exam!", e);  
 			return null;
 		}
 	}
@@ -239,7 +239,7 @@ public class StudentSystemwideController extends SystemwideController implements
 			}
 		}
 
-		this.error("No Exercise with the given shortName \"" + exerciseShortName + "\" found.", null); //$NON-NLS-1$ //$NON-NLS-2$
+		this.error("No Exercise with the given shortName \"" + exerciseShortName + "\" found.", null);   //$NON-NLS-2$
 	}
 
 	@Override
@@ -256,7 +256,7 @@ public class StudentSystemwideController extends SystemwideController implements
 				return c.getExercises().stream().map(IExercise::getShortName).collect(Collectors.toList());
 			}
 		}
-		this.error("No Course with the given shortName \"" + courseShortName + "\" found.", null); //$NON-NLS-1$ //$NON-NLS-2$
+		this.error("No Course with the given shortName \"" + courseShortName + "\" found.", null);   //$NON-NLS-2$
 		return List.of();
 	}
 

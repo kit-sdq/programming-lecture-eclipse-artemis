@@ -3,7 +3,7 @@ package edu.kit.kastel.sdq.eclipse.grading.core.messages;
 import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
-	private static final String BUNDLE_NAME = Messages.class.getPackageName() + ".messages"; //$NON-NLS-1$
+	private static final String BUNDLE_NAME = Messages.class.getPackageName() + ".messages";  
 	public static String StudentArtemisController_EXAM_INFO;
 	public static String StudentArtemisController_Confirm_Start_Exam;
 	public static String StudentSystemwideController_CLEAN_SUCCESSFUL;
