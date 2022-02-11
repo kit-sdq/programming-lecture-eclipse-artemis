@@ -275,6 +275,6 @@ public class StudentSystemwideController extends SystemwideController implements
 		if(this.exam == null || this.exam.getExam() == null || this.course == null) {
 			return artemisHost;
 		}
-		return String.format(artemisHost + "/courses/%i/exams/%i", this.course.getCourseId(),  this.exam.getExam().getExamId());
+		return String.format(artemisHost + "/courses/%d/exams/%d", this.course.getCourseId(),  this.exam.getExam().getExamId());
 	}
 }
