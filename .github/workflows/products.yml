@@ -32,7 +32,7 @@ jobs:
         restore-keys: ${{ runner.os }}-maven-
 
     - name: Build with Maven
-      run: mvn -U -B -Pproducts package --file pom.xml
+      run: mvn -U -B -Pproducts package
 
     - name: Move Distributions
       run: |
