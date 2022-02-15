@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
@@ -13,9 +14,17 @@
 	<packaging>pom</packaging>
 	<name>Releng Modules</name>
 
+	<profiles>
+		<profile>
+			<id>products</id>
+			<modules>
+				<module>edu.kit.kastel.sdq.eclipse.grading.product</module>
+				<module>edu.kit.kastel.sdq.eclipse.student.product</module>
+			</modules>
+		</profile>
+	</profiles>
+
 	<modules>
-        <module>edu.kit.kastel.sdq.eclipse.grading.product</module>
-        <module>edu.kit.kastel.sdq.eclipse.student.product</module>
-        <module>edu.kit.kastel.sdq.eclipse.updatesite</module>
-    </modules>
+		<module>edu.kit.kastel.sdq.eclipse.updatesite</module>
+	</modules>
 </project>
