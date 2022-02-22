@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: edu.kit.kastel.sdq.eclipse.grading.core
-Bundle-SymbolicName: edu.kit.kastel.sdq.eclipse.grading.core
+Bundle-SymbolicName: edu.kit.kastel.sdq.eclipse.common.core
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Export-Package: edu.kit.kastel.sdq.eclipse.grading.core,
