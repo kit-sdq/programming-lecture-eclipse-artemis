@@ -11,9 +11,9 @@ import edu.kit.kastel.sdq.eclipse.grading.api.client.ISubmissionsArtemisClient;
 import edu.kit.kastel.sdq.eclipse.grading.api.client.IUtilArtemisClient;
 
 public class RestClientManager {
-	private String username = "";
-	private String password = "";
-	private String hostname = "";
+	private final String username;
+	private final String password;
+	private final String hostname;
 
 	private IAuthenticationArtemisClient loginManager;
 	private ISubmissionsArtemisClient submissionClient;

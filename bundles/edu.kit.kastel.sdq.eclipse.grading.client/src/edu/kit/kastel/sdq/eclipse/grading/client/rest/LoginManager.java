@@ -35,7 +35,7 @@ public class LoginManager extends AbstractArtemisClient implements IAuthenticati
 	public void init() throws ArtemisClientException {
 		try {
 			this.token = this.login();
-			this.assessor = this.fetchAssesor();
+			this.assessor = this.fetchAssessor();
 		} catch (ProcessingException e) {
 			throw new ArtemisClientException(e.getMessage(), e);
 		}
@@ -56,7 +56,7 @@ public class LoginManager extends AbstractArtemisClient implements IAuthenticati
 		return assessor;
 	}
 
-	private Assessor fetchAssesor() throws ArtemisClientException {
+	private Assessor fetchAssessor() throws ArtemisClientException {
 		final Response rsp = this.endpoint.path(USERS_PATHPART).path(username).request().header(AUTHORIZATION_NAME, getBearerToken()).buildGet().invoke();
 		this.throwIfStatusUnsuccessful(rsp);
 		return this.read(rsp.readEntity(String.class), Assessor.class);
