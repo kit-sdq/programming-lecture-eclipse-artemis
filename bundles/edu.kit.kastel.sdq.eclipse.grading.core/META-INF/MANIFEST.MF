@@ -18,7 +18,7 @@ Require-Bundle: com.fasterxml.jackson.core.jackson-databind,
  org.eclipse.m2e.core,
  org.eclipse.m2e.core.ui,
  org.eclipse.jdt.core,
- edu.kit.kastel.sdq.eclipse.grading.api,
+ edu.kit.kastel.sdq.eclipse.common.api,
  edu.kit.kastel.sdq.eclipse.grading.client,
  org.eclipse.jface
 Automatic-Module-Name: edu.kit.kastel.sdq.eclipse.grading.core
