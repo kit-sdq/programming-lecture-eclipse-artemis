@@ -36,14 +36,7 @@ public class StudentArtemisController extends ArtemisController implements IStud
 		super(host, username, password);
 		this.websocketClient = new ArtemisFeedbackWebsocket(host);
 	}
-
-	@Override
-	public List<ICourse> getCourses() {
-		if (this.courses == null)
-			this.courses = fetchCourses();
-		return this.courses;
-	}
-
+	
 	@Override
 	public IStudentExam getExercisesFromStudentExam(final String examTitle) {
 		return this.getExercisesFromExamOrStartExam(examTitle, this.getCourses());

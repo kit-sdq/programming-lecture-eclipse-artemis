@@ -17,7 +17,7 @@ public class Activator extends AbstractUIPlugin {
 	// The shared instance
 	private static Activator plugin;
 
-	private IGradingSystemwideController systemwideController;
+	private ISystemwideController systemwideController;
 
 	/**
 	 * The constructor
@@ -51,7 +51,7 @@ public class Activator extends AbstractUIPlugin {
 	 * Creates a new instance of the SystemWideController
 	 */
 	public void createSystemWideController() {
-		this.systemwideController = new GradingSystemwideController(this.getPreferenceStore());
+		this.systemwideController = new SystemwideController(this.getPreferenceStore());
 	}
 
 	public IGradingSystemwideController getSystemwideController() {

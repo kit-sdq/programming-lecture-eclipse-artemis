@@ -74,7 +74,7 @@ public final class GitHandler {
 		pushCommand.setCredentialsProvider(new UsernamePasswordCredentialsProvider(gitUsername, gitPassword));
 		// you can add more settings here if needed
 		try {
-			PushResult result = pushCommand.call().iterator().next();
+			pushCommand.call().iterator().next();
 		} catch (GitAPIException e) {
 			throw new GitException("ERROR, can not push to origin git repo for exercise " + exerciseRepo.getPath(),e);
 		}

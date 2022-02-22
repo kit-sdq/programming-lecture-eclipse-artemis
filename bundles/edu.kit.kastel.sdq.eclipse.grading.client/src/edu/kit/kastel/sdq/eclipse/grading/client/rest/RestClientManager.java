@@ -1,4 +1,4 @@
-package edu.kit.kastel.sdq.eclipse.grading.client.rest;
+7package edu.kit.kastel.sdq.eclipse.grading.client.rest;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.ArtemisClientException;
 import edu.kit.kastel.sdq.eclipse.grading.api.client.IAssessmentArtemisClient;

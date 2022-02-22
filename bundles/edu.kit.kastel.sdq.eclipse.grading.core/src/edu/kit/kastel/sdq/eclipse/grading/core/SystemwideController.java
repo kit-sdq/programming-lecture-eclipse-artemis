@@ -23,6 +23,7 @@ public abstract class SystemwideController extends AbstractController implements
 		this.projectFileNamingStrategy = ProjectFileNamingStrategies.DEFAULT.get();
 		exerciseController = new ExerciseArtemisController(username, password);
 	}
+	
 	protected abstract void refreshArtemisController(String url, String user, String pass);
 		
 	protected void initPreferenceStoreCallback(final IPreferenceStore preferenceStore) {

@@ -14,7 +14,6 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
-import javax.net.ssl.X509TrustManager;
 import javax.websocket.WebSocketContainer;
 
 import org.eclipse.core.runtime.ILog;
@@ -38,19 +37,19 @@ public class ArtemisFeedbackWebsocket implements IWebsocketClient {
 
 	private static final String WEBSOCKET_PATH = "/websocket/tracker";
 	private static final String TOKEN_QUERY_PATH = "access_token";
-	
-	private String baseUrl = "";
-	private String token = "";
-	private String stompUrl = "";
+
+	private String baseUrl;
+	private String token;
+	private String stompUrl;
 
 	public ArtemisFeedbackWebsocket(String baseUrl) {
 		this.baseUrl = baseUrl;
 		this.stompUrl = buildStompUrl();
 	}
-	
+
 	@Override
 	public void connect(WebsocketCallback callback, String token) throws ArtemisWebsocketException {
-		stompUrl = stompUrl+token;
+		stompUrl = stompUrl + token;
 		StandardWebSocketClient simpleWebSocketClient = configureStandartWebsocketClientWithSSL();
 		SockJsClient sockJsClient = configureSockJsClient(simpleWebSocketClient);
 		WebSocketStompClient stompClient = configureStompClient(sockJsClient);
@@ -91,8 +90,10 @@ public class ArtemisFeedbackWebsocket implements IWebsocketClient {
 		return simpleWebSocketClient;
 	}
 
-	private SSLContext configureSSLContext() throws NoSuchAlgorithmException, KeyManagementException, KeyStoreException {
-		TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+	private SSLContext configureSSLContext()
+			throws NoSuchAlgorithmException, KeyManagementException, KeyStoreException {
+		TrustManagerFactory trustManagerFactory = TrustManagerFactory
+				.getInstance(TrustManagerFactory.getDefaultAlgorithm());
 		trustManagerFactory.init((KeyStore) null);
 		TrustManager[] trustAllCerts = trustManagerFactory.getTrustManagers();
 

@@ -29,14 +29,6 @@ public class GradingArtemisController extends ArtemisController implements IGrad
 	}
 
 	@Override
-	public List<ICourse> getCourses() {
-		if (courses == null) {
-			courses = fetchCourses();
-		}
-		return courses;
-	}
-
-	@Override
 	public List<String> getExerciseShortNamesFromExam(final String examTitle) {
 		return this.getExercisesFromExam(examTitle).stream().map(IExercise::getShortName).collect(Collectors.toList());
 	}

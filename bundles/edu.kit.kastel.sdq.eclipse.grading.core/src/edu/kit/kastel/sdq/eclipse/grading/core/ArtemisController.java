@@ -37,7 +37,12 @@ public abstract class ArtemisController extends AbstractController implements IA
 	protected abstract List<ICourse> fetchCourses();
 	
 	@Override
-	public abstract List<ICourse> getCourses();
+	public final List<ICourse> getCourses() {
+		if (courses == null) {
+			courses = fetchCourses();
+		}
+		return courses;
+	}
 	
 	@Override
 	public List<Feedback> getAllFeedbacksGottenFromLocking(ISubmission submission) {
