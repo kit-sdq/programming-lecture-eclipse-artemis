@@ -7,7 +7,7 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.ITextSelection;
 
-import edu.kit.kastel.eclipse.common.view.controllers.AArtemisViewController;
+import edu.kit.kastel.eclipse.common.view.controllers.AbstractArtemisViewController;
 import edu.kit.kastel.eclipse.common.view.utilities.AssessmentUtilities;
 import edu.kit.kastel.eclipse.grading.view.activator.Activator;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.SubmissionFilter;
@@ -27,7 +27,7 @@ import edu.kit.kastel.sdq.eclipse.grading.api.model.IRatingGroup;
  * @see {@link ArtemisStudentView}
  *
  */
-public class AssessmentViewController extends AArtemisViewController {
+public class AssessmentViewController extends AbstractArtemisViewController {
 	private IAssessmentController assessmentController;
 	private IGradingSystemwideController systemwideController;
 

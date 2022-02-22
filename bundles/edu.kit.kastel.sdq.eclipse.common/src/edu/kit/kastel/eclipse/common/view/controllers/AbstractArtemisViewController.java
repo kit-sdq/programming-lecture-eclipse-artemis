@@ -14,11 +14,11 @@ import edu.kit.kastel.sdq.eclipse.grading.api.controller.ISystemwideController;
  * This abstract class is the base for controllers for a view for artemis. It
  * holds all general controllers for the backend calls.
  */
-public abstract class AArtemisViewController {
+public abstract class AbstractArtemisViewController {
 	private IArtemisController artemisGUIController;
 	private IAlertObserver alertObserver;
 
-	public AArtemisViewController() {
+	public AbstractArtemisViewController() {
 	}
 
 	protected void initializeControllersAndObserver() {

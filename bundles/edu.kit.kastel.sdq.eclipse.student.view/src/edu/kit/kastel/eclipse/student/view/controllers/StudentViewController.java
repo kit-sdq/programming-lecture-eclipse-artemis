@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import edu.kit.kastel.eclipse.common.view.controllers.AArtemisViewController;
+import edu.kit.kastel.eclipse.common.view.controllers.AbstractArtemisViewController;
 import edu.kit.kastel.eclipse.student.view.activator.Activator;
 import edu.kit.kastel.sdq.eclipse.grading.api.ArtemisClientException;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.Feedback;
@@ -16,7 +16,7 @@ import edu.kit.kastel.sdq.eclipse.grading.api.controller.IStudentSystemwideContr
 import edu.kit.kastel.sdq.eclipse.grading.api.controller.ISystemwideController;
 import edu.kit.kastel.sdq.eclipse.grading.api.controller.IWebsocketController;
 
-public class StudentViewController extends AArtemisViewController {
+public class StudentViewController extends AbstractArtemisViewController {
 	private IStudentSystemwideController systemwideController;
 
 	public StudentViewController() {

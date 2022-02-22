@@ -23,7 +23,6 @@ import org.eclipse.jgit.util.FileUtils;
 public final class GitHandler {
 
 	private static final String REMOTE_NAME = "origin";
-	private static final String COMMIT_MSG = "Artemis";
 
 	public static void cloneRepo(final File destination, String repoURL, final String branch) throws GitException {
 		Repository repository = null;
@@ -111,6 +110,7 @@ public final class GitHandler {
 			throw new GitException("ERROR, can not open git repo for exercise " + exerciseRepo.getPath(), e);
 		}
 		try {
+			git.add().addFilepattern(".");
 			Status status = git.status().call();
 			Set<String> untrackedChanges = status.getUncommittedChanges();
 			git.reset().setMode(ResetType.HARD).call();
