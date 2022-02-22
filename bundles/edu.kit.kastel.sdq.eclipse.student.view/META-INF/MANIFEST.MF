@@ -14,7 +14,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.egit.core,
  org.eclipse.jface.text,
  edu.kit.kastel.sdq.eclipse.common.api,
- edu.kit.kastel.sdq.eclipse.grading.client,
+ edu.kit.kastel.sdq.eclipse.common.client,
  edu.kit.kastel.sdq.eclipse.grading.core,
  edu.kit.kastel.sdq.eclipse.common.view
 Bundle-RequiredExecutionEnvironment: JavaSE-11
