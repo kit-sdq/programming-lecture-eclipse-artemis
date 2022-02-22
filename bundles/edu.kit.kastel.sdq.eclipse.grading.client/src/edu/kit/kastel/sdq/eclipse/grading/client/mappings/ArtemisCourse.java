@@ -52,7 +52,7 @@ public class ArtemisCourse implements ICourse, Serializable {
 	@Override
 	public List<IExercise> getExercises() throws ArtemisClientException {
 		if (this.exercises == null) {
-			this.exercises = this.client.getNormalExercisesForCourse(this);
+			this.exercises = this.client.getGradingExercisesForCourse(this);
 			this.exercises.sort((e1, e2) -> e1.getShortName().compareTo(e2.getShortName()));
 		}
 		return this.exercises;

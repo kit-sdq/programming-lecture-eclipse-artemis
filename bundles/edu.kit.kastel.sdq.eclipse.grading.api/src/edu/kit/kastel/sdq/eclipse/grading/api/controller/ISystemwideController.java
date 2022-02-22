@@ -9,7 +9,7 @@ public interface ISystemwideController extends IController {
 	 *
 	 * @return the one artemis gui controller.
 	 */
-	IArtemisController getArtemisGUIController();
+	IArtemisController getArtemisController();
 
 	/**
 	 * 

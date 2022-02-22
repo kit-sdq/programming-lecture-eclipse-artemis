@@ -75,7 +75,7 @@ public class StudentArtemisController extends ArtemisController implements IStud
 	}
 
 	@Override
-	public Map<ResultsDTO, List<Feedback>> getFeedbackExercise(ICourse course, IExercise exercise) {
+	public Map<ResultsDTO, List<Feedback>> getFeedbackForExercise(ICourse course, IExercise exercise) {
 		Optional<ParticipationDTO> participationOpt = getParticipationForExercise(course, exercise);
 		if (participationOpt.isEmpty()) {
 			return new HashMap<>();

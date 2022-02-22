@@ -174,7 +174,7 @@ public class AssessmentController extends AbstractController implements IAssessm
 
 	private void initializeWithDeserializedAnnotations() throws IOException {
 		final AnnotationDeserializer annotationDeserializer = new AnnotationDeserializer(this.getMistakes());
-		final List<Feedback> allFeedbacksGottenFromLocking = this.systemWideController.getArtemisGUIController()
+		final List<Feedback> allFeedbacksGottenFromLocking = this.systemWideController.getArtemisController()
 				.getAllFeedbacksGottenFromLocking(this.submission);
 		if (allFeedbacksGottenFromLocking == null) {
 			throw new IOException("No feedbacks gotten from locking could be acquired.");
@@ -200,7 +200,7 @@ public class AssessmentController extends AbstractController implements IAssessm
 	@Override
 	public void resetAndRestartAssessment(IProjectFileNamingStrategy projectNaming) {
 		this.deleteEclipseProject(projectNaming);
-		this.systemWideController.getArtemisGUIController().startAssessment(this.submission);
+		this.systemWideController.getArtemisController().startAssessment(this.submission);
 		this.systemWideController.downloadExerciseAndSubmission(this.course, this.exercise, this.submission, projectNaming);
 
 		this.annotationDao = new DefaultAnnotationDao();

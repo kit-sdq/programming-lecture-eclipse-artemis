@@ -121,7 +121,7 @@ public class MappingLoaderArtemisClient extends AbstractArtemisClient implements
 	}
 
 	@Override
-	public List<IExercise> getNormalExercisesForCourse(ICourse artemisCourse) throws ArtemisClientException {
+	public List<IExercise> getGradingExercisesForCourse(ICourse artemisCourse) throws ArtemisClientException {
 		final Response exercisesRsp = this.endpoint.path(COURSES_PATHPART).path(String.valueOf(artemisCourse.getCourseId())).path("with-exercises").request()
 				.header(AUTHORIZATION_NAME, this.token).buildGet().invoke();
 

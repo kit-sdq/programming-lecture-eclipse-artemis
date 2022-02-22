@@ -152,7 +152,7 @@ public class StudentSystemwideController extends SystemwideController implements
 			return new HashMap<>();
 		}
 
-		return this.artemisGUIController.getFeedbackExercise(this.course, this.exercise);
+		return this.artemisGUIController.getFeedbackForExercise(this.course, this.exercise);
 	}
 
 	@Override
@@ -246,7 +246,7 @@ public class StudentSystemwideController extends SystemwideController implements
 
 	@Override
 	public List<String> setCourseIdAndGetExerciseShortNames(final String courseShortName) throws ArtemisClientException {
-		for (ICourse c : this.getArtemisGUIController().getCourses()) {
+		for (ICourse c : this.getArtemisController().getCourses()) {
 			if (c.getShortName().equals(courseShortName)) {
 				this.course = c;
 				return c.getExercises().stream().map(IExercise::getShortName).collect(Collectors.toList());
@@ -262,7 +262,7 @@ public class StudentSystemwideController extends SystemwideController implements
 	}
 
 	@Override
-	public IArtemisController getArtemisGUIController() {
+	public IArtemisController getArtemisController() {
 		return artemisGUIController;
 	}
 

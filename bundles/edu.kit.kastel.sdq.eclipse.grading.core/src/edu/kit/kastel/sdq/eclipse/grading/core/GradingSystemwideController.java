@@ -87,7 +87,7 @@ public class GradingSystemwideController extends SystemwideController implements
 			return List.of();
 		}
 
-		return this.getArtemisGUIController().getBegunSubmissions(this.exercise).stream().filter(submissionFilter).collect(Collectors.toList());
+		return this.getArtemisController().getBegunSubmissions(this.exercise).stream().filter(submissionFilter).collect(Collectors.toList());
 	}
 
 	@Override
@@ -256,7 +256,7 @@ public class GradingSystemwideController extends SystemwideController implements
 			return List.of();
 		}
 
-		for (ICourse c : this.getArtemisGUIController().getCourses()) {
+		for (ICourse c : this.getArtemisController().getCourses()) {
 			if (c.getShortName().equals(courseShortName)) {
 				this.course = c;
 				return c.getExercises().stream().map(IExercise::getShortName).collect(Collectors.toList());
@@ -378,7 +378,7 @@ public class GradingSystemwideController extends SystemwideController implements
 	}
 
 	@Override
-	public IGradingArtemisController getArtemisGUIController() {
+	public IGradingArtemisController getArtemisController() {
 		return artemisGUIController;
 	}
 }
