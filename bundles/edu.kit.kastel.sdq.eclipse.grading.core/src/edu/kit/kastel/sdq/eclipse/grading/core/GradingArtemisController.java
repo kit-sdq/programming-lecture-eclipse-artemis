@@ -86,19 +86,14 @@ public class GradingArtemisController extends ArtemisController implements IGrad
 	public void startAssessment(ISubmission submissionID) {
 		try {
 			this.lockResults.put(submissionID.getSubmissionId(), this.clientManager.getAssessmentArtemisClient().startAssessment(submissionID));
-		} catch (Exception e) {
+		} catch (ArtemisClientException e) {
 			this.error(Messages.ASSESSMENT_COULD_NOT_BE_STARTED_MESSAGE + e.getMessage(), e);
 		}
 	}
 
 	@Override
 	public Optional<ISubmission> startNextAssessment(IExercise exercise) {
-		try {
-			return this.startNextAssessment(exercise, 0);
-		} catch (Exception e) {
-			this.error(Messages.ASSESSMENT_COULD_NOT_BE_STARTED_MESSAGE + e.getMessage(), e);
-			return Optional.empty();
-		}
+		return this.startNextAssessment(exercise, 0);
 	}
 
 	@Override
@@ -106,7 +101,7 @@ public class GradingArtemisController extends ArtemisController implements IGrad
 		Optional<ILockResult> lockResultOptional;
 		try {
 			lockResultOptional = this.clientManager.getAssessmentArtemisClient().startNextAssessment(exercise, correctionRound);
-		} catch (Exception e) {
+		} catch (ArtemisClientException e) {
 			this.error(Messages.ASSESSMENT_COULD_NOT_BE_STARTED_MESSAGE + e.getMessage(), e);
 			return Optional.empty();
 		}

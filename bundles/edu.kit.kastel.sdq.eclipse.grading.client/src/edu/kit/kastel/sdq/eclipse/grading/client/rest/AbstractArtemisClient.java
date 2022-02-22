@@ -76,7 +76,7 @@ public abstract class AbstractArtemisClient {
 	protected <E> String payload(E rspEntity) throws ArtemisClientException {
 		try {
 			return this.orm.writeValueAsString(rspEntity);
-		} catch (Exception e) {
+		} catch (JsonProcessingException e) {
 			throw new ArtemisClientException(e.getMessage(), e);
 		}
 	}
@@ -84,7 +84,7 @@ public abstract class AbstractArtemisClient {
 	protected <E> E read(String rspEntity, Class<E> clazz) throws ArtemisClientException {
 		try {
 			return this.orm.readValue(rspEntity, clazz);
-		} catch (Exception e) {
+		} catch (JsonProcessingException e) {
 			throw new ArtemisClientException(e.getMessage(), e);
 		}
 	}

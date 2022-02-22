@@ -58,7 +58,7 @@ public abstract class ArtemisController extends AbstractController implements IA
 	public List<ISubmission> getBegunSubmissions(IExercise exercise) {
 		try {
 			return this.clientManager.getSubmissionArtemisClient().getSubmissions(exercise);
-		} catch (Exception e) {
+		} catch (ArtemisClientException e) {
 			this.error(e.getMessage(), e);
 			return List.of();
 		}
