@@ -33,7 +33,7 @@ public class AnnotationMapper {
 	// keep this up to date with
 	// https://github.com/ls1intum/Artemis/blob/develop/src/main/java/de/tum/in/www1/artemis/config/Constants.java#L121
 	private static final int FEEDBACK_DETAIL_TEXT_MAX_CHARACTERS = 5000;
-	
+
 	// amount of space to leave in the feedback-text
 	private static final int FEEDBACK_DETAIL_SAFETY_MARGIN = 50;
 
@@ -120,7 +120,7 @@ public class AnnotationMapper {
 		this.ratingGroups.forEach(group -> {
 			manualFeedbacks.addAll(this.createNewManualUnreferencedFeedback(group));
 		});
-		
+
 		return manualFeedbacks;
 	}
 
@@ -144,7 +144,8 @@ public class AnnotationMapper {
 
 	private String calculateResultString(final List<Feedback> allFeedbacks, final double absoluteScore) {
 		final List<Feedback> autoFeedbacks = //
-				allFeedbacks.stream().filter(Objects::nonNull).filter(feedback -> feedback.getFeedbackType() == FeedbackType.AUTOMATIC).collect(Collectors.toList());
+				allFeedbacks.stream().filter(Objects::nonNull).filter(feedback -> feedback.getFeedbackType() == FeedbackType.AUTOMATIC)
+						.collect(Collectors.toList());
 
 		final List<Feedback> tests = autoFeedbacks.stream().filter(f -> f.getReference() == null).collect(Collectors.toList());
 		long positiveTests = tests.stream().filter(feedback -> feedback.getPositive() != null && feedback.getPositive()).count();
@@ -219,9 +220,9 @@ public class AnnotationMapper {
 		final double calculatedPenalty = this.calculatePenaltyForRatingGroup(ratingGroup);
 
 		List<String> lines = new ArrayList<>();
-		
+
 		String annotationHeadline = "";
-		
+
 		annotationHeadline = ratingGroup.getDisplayName() + " [" + nf.format(calculatedPenalty);
 
 		if (ratingGroup.hasPenaltyLimit()) {
@@ -229,7 +230,7 @@ public class AnnotationMapper {
 		}
 
 		annotationHeadline += " points]";
-		
+
 		for (var mistakeType : this.mistakeTypes) {
 			if (!mistakeType.getRatingGroup().equals(ratingGroup)) {
 				continue;
@@ -260,15 +261,14 @@ public class AnnotationMapper {
 			lines.add("\n    * Note: The sum of penalties hit the penalty limit for this rating group.");
 		}
 
-		
 		List<String> feedbackTexts = new LinkedList<>();
-		
+
 		if (lines.isEmpty()) {
 			return List.of();
 		}
-		
+
 		String text = annotationHeadline + " (annotation " + 1 + ")";
-		
+
 		for (int i = 0; i < lines.size(); i++) {
 			if (text.length() + lines.get(i).length() >= FEEDBACK_DETAIL_TEXT_MAX_CHARACTERS - annotationHeadline.length() - FEEDBACK_DETAIL_SAFETY_MARGIN) {
 				feedbackTexts.add(text);
@@ -277,15 +277,15 @@ public class AnnotationMapper {
 			text += lines.get(i);
 		}
 		feedbackTexts.add(text);
-		
+
 		List<Feedback> feedbacks = new LinkedList<>();
-		
+
 		feedbacks.add(new Feedback(FeedbackType.MANUAL_UNREFERENCED.name(), calculatedPenalty, null, null, null, null, null, feedbackTexts.get(0)));
-		
+
 		for (int i = 1; i < feedbackTexts.size(); i++) {
 			feedbacks.add(new Feedback(FeedbackType.MANUAL_UNREFERENCED.name(), 0d, null, null, null, null, null, feedbackTexts.get(i)));
 		}
-		
+
 		return feedbacks;
 	}
 

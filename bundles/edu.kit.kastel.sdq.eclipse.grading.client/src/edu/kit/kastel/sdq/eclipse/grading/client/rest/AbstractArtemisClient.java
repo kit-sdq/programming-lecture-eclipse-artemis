@@ -57,22 +57,22 @@ public abstract class AbstractArtemisClient {
 
 		return endpoint;
 	}
-	
+
 	protected final String getApiRootURL() {
 		return getRootURL() + "/api";
 	}
-	
+
 	protected WebTarget getEndpoint(String url) {
 		return ClientBuilder.newBuilder().build().target(url);
 	}
-	
+
 	protected void throwIfStatusUnsuccessful(final Response response) throws ArtemisClientException {
 		if (!this.isStatusSuccessful(response)) {
 			throw new ArtemisClientException("Communication with \"" + this.getApiRootURL() + "\" failed with status \"" + response.getStatus() + ": "
 					+ response.getStatusInfo().getReasonPhrase() + "\".");
 		}
 	}
-	
+
 	protected <E> String payload(E rspEntity) throws ArtemisClientException {
 		try {
 			return this.orm.writeValueAsString(rspEntity);
@@ -80,7 +80,7 @@ public abstract class AbstractArtemisClient {
 			throw new ArtemisClientException(e.getMessage(), e);
 		}
 	}
-	
+
 	protected <E> E read(String rspEntity, Class<E> clazz) throws ArtemisClientException {
 		try {
 			return this.orm.readValue(rspEntity, clazz);
@@ -96,11 +96,11 @@ public abstract class AbstractArtemisClient {
 			throw new ArtemisClientException(e.getMessage(), e);
 		}
 	}
-	
+
 	protected boolean isStatusSuccessful(final Response response) {
 		return Family.SUCCESSFUL.equals(response.getStatusInfo().getFamily());
 	}
-	
+
 	private ObjectMapper createObjectMapper() {
 		return new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false).setSerializationInclusion(Include.NON_NULL);
 	}

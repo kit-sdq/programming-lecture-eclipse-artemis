@@ -48,8 +48,7 @@ public class ExamTab implements ArtemisStudentTab {
 		this.examContainerComposite = new Composite(this.scrolledCompositeExam, SWT.NONE);
 		this.scrolledCompositeExam.setContent(this.examContainerComposite);
 		examContainerComposite.setSize(scrolledCompositeExam.getSize());
-		this.scrolledCompositeExam
-				.setMinSize(this.examContainerComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+		this.scrolledCompositeExam.setMinSize(this.examContainerComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		examContainerComposite.setLayout(new GridLayout(1, true));
 		examContainerComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
@@ -72,19 +71,18 @@ public class ExamTab implements ArtemisStudentTab {
 		btnStart.setLayoutData(gd_btnReload);
 		btnStart.setText("Start");
 		addSelectionListenerForStartButton(btnStart);
-		
+
 		composite_1 = new Composite(examContainerComposite, SWT.NONE);
 		composite_1.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
 		composite_1.setLayout(new GridLayout(1, false));
-		
-				Label labelResult = new Label(composite_1, SWT.NONE);
-				labelResult.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-				labelResult.setText(Messages.ExamTab_REMEMBER);
-				
-				lblLink = new Label(composite_1, SWT.NONE);
-				lblLink.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-				lblLink.setText(getLink());
-				
+
+		Label labelResult = new Label(composite_1, SWT.NONE);
+		labelResult.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		labelResult.setText(Messages.ExamTab_REMEMBER);
+
+		lblLink = new Label(composite_1, SWT.NONE);
+		lblLink.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		lblLink.setText(getLink());
 
 		this.examContentComposite = new Composite(examContainerComposite, SWT.NONE);
 		examContentComposite.setTouchEnabled(true);
@@ -148,7 +146,6 @@ public class ExamTab implements ArtemisStudentTab {
 		setExam();
 	}
 
-
 	/**
 	 * @wbp.parser.entryPoint
 	 */
@@ -161,7 +158,7 @@ public class ExamTab implements ArtemisStudentTab {
 	public void callExercisesEvent() {
 		setExam();
 	}
-	
+
 	private String getLink() {
 		return this.viewController.getExamUrlForCurrentExam();
 	}

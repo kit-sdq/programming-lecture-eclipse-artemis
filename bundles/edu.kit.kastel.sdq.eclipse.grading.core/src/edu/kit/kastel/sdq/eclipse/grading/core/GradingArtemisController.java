@@ -1,6 +1,7 @@
 package edu.kit.kastel.sdq.eclipse.grading.core;
 
 import java.io.IOException;
+import java.net.UnknownHostException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -40,15 +41,15 @@ public class GradingArtemisController extends ArtemisController implements IGrad
 		}
 		try {
 			return this.clientManager.getCourseArtemisClient().getCoursesForAssessment();
-		} catch (final Exception e) {
+		} catch (ArtemisClientException e) {
 			this.error(e.getMessage(), e);
 			return List.of();
 		}
 	}
 
 	@Override
-	public boolean saveAssessment(IAssessmentController assessmentController, IExercise exercise,
-			ISubmission submission, boolean submit, boolean invalidSubmission) {
+	public boolean saveAssessment(IAssessmentController assessmentController, IExercise exercise, ISubmission submission, boolean submit,
+			boolean invalidSubmission) {
 		if (!this.lockResults.containsKey(submission.getSubmissionId())) {
 			throw new IllegalStateException("Assessment not started, yet!");
 		}
@@ -66,14 +67,12 @@ public class GradingArtemisController extends ArtemisController implements IGrad
 			AnnotationMapper mapper = //
 					new AnnotationMapper(exercise, submission, annotations, mistakeTypes, ratingGroups,
 							this.clientManager.getAuthenticationClient().getAssessor(), calculator, lock);
-			this.clientManager.getAssessmentArtemisClient().saveAssessment(participation, submit,
-					mapper.createAssessmentResult());
+			this.clientManager.getAssessmentArtemisClient().saveAssessment(participation, submit, mapper.createAssessmentResult());
 		} catch (IOException e) {
 			this.error("Local backend failed to format the annotations: " + e.getMessage(), e);
 			return false;
 		} catch (ArtemisClientException e) {
-			this.error("Assessor could not be retrieved from Artemis or Authentication to Artemis failed:"
-					+ e.getMessage(), e);
+			this.error("Assessor could not be retrieved from Artemis or Authentication to Artemis failed:" + e.getMessage(), e);
 			return false;
 		}
 
@@ -86,8 +85,7 @@ public class GradingArtemisController extends ArtemisController implements IGrad
 	@Override
 	public void startAssessment(ISubmission submissionID) {
 		try {
-			this.lockResults.put(submissionID.getSubmissionId(),
-					this.clientManager.getAssessmentArtemisClient().startAssessment(submissionID));
+			this.lockResults.put(submissionID.getSubmissionId(), this.clientManager.getAssessmentArtemisClient().startAssessment(submissionID));
 		} catch (Exception e) {
 			this.error(Messages.ASSESSMENT_COULD_NOT_BE_STARTED_MESSAGE + e.getMessage(), e);
 		}
@@ -107,8 +105,7 @@ public class GradingArtemisController extends ArtemisController implements IGrad
 	public Optional<ISubmission> startNextAssessment(IExercise exercise, int correctionRound) {
 		Optional<ILockResult> lockResultOptional;
 		try {
-			lockResultOptional = this.clientManager.getAssessmentArtemisClient().startNextAssessment(exercise,
-					correctionRound);
+			lockResultOptional = this.clientManager.getAssessmentArtemisClient().startNextAssessment(exercise, correctionRound);
 		} catch (Exception e) {
 			this.error(Messages.ASSESSMENT_COULD_NOT_BE_STARTED_MESSAGE + e.getMessage(), e);
 			return Optional.empty();

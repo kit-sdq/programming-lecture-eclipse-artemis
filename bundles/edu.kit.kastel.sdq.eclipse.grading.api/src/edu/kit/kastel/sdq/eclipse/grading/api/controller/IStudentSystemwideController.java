@@ -12,27 +12,27 @@ import edu.kit.kastel.sdq.eclipse.grading.api.client.websocket.WebsocketCallback
 
 public interface IStudentSystemwideController extends ISystemwideController {
 	boolean submitSolution();
-	
+
 	boolean cleanWorkspace();
-	
+
 	Map<ResultsDTO, List<Feedback>> getFeedbackExcerise();
-	
+
 	boolean isSelectedExerciseExpired();
-	
+
 	IExercise getCurrentSelectedExercise();
 
 	IExam setExam(String examName);
 
 	void setExerciseIdWithSelectedExam(String exerciseShortName) throws ArtemisClientException;
-	
+
 	IExam getExam();
-	
+
 	IExam startExam();
-	
+
 	List<IExercise> getExerciseShortNamesFromExam(String examShortName);
-	
+
 	boolean loadExerciseForStudent();
-	
+
 	boolean connectToWebsocket(WebsocketCallback callback);
 
 	void setExamToNull();

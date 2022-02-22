@@ -12,14 +12,14 @@ import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.client.websocket.WebsocketCallback;
 
-public class ArtemisSockJsSessionHandler extends StompSessionHandlerAdapter  {
+public class ArtemisSockJsSessionHandler extends StompSessionHandlerAdapter {
 	private static final ILog log = Platform.getLog(ArtemisSockJsSessionHandler.class);
 
 	private static final String TOPIC_NEW_SUBMISSION = "/user/topic/newSubmissions";
 	private static final String TOPIC_NEW_RESULT = "/user/topic/newResults";
-	
+
 	private WebsocketCallback callback;
-	
+
 	public ArtemisSockJsSessionHandler(WebsocketCallback callback) {
 		this.callback = callback;
 	}
@@ -28,7 +28,7 @@ public class ArtemisSockJsSessionHandler extends StompSessionHandlerAdapter  {
 	public Type getPayloadType(StompHeaders headers) {
 		return Object.class;
 	}
-	
+
 	@Override
 	public void handleFrame(StompHeaders headers, Object payload) {
 		log.info("Websocket - received frame!");
@@ -36,25 +36,24 @@ public class ArtemisSockJsSessionHandler extends StompSessionHandlerAdapter  {
 		if (!topics.isEmpty() && topics.get(0).equals(TOPIC_NEW_RESULT)) {
 			log.info("Websocket - new result received!");
 			callback.handleResult(payload);
-		} else if(!topics.isEmpty() && topics.get(0).equals(TOPIC_NEW_SUBMISSION)) {
+		} else if (!topics.isEmpty() && topics.get(0).equals(TOPIC_NEW_SUBMISSION)) {
 			log.info("Websocket - new submission received!");
 			callback.handleSubmission(payload);
 		}
 	}
-	
+
 	@Override
 	public void afterConnected(StompSession session, StompHeaders connectedHeaders) {
 		session.subscribe(TOPIC_NEW_SUBMISSION, this);
 		session.subscribe(TOPIC_NEW_RESULT, this);
 	}
-	
+
 	@Override
-	public void handleException(StompSession session, StompCommand command, StompHeaders headers, byte[] payload,
-			Throwable exception) {
+	public void handleException(StompSession session, StompCommand command, StompHeaders headers, byte[] payload, Throwable exception) {
 		log.error("WebsocketError", exception);
 		callback.handleException(exception);
 	}
-	
+
 	@Override
 	public void handleTransportError(StompSession session, Throwable exception) {
 		log.error("WebsocketError", exception);

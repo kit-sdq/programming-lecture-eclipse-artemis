@@ -33,11 +33,10 @@ public class AssessmentArtemisClient extends AbstractArtemisClient implements IA
 	}
 
 	@Override
-	public void saveAssessment(ParticipationDTO participation, boolean submit, AssessmentResult assessment)
-			throws ArtemisClientException {
+	public void saveAssessment(ParticipationDTO participation, boolean submit, AssessmentResult assessment) throws ArtemisClientException {
 		String assessmentPayload = this.payload(assessment);
 		log.info(String.format("Saving assessment for submission %s with json: %s", assessment.getId(), assessmentPayload));
-		
+
 		final Response rsp = this.endpoint.path("participations").path(String.valueOf(participation.getParticipationID())) //
 				.path("manual-results") //
 				.queryParam("submit", submit) //
@@ -55,8 +54,7 @@ public class AssessmentArtemisClient extends AbstractArtemisClient implements IA
 	}
 
 	@Override
-	public Optional<ILockResult> startNextAssessment(IExercise exercise, int correctionRound)
-			throws ArtemisClientException {
+	public Optional<ILockResult> startNextAssessment(IExercise exercise, int correctionRound) throws ArtemisClientException {
 		final Response rsp = this.endpoint.path(EXERCISES_PATHPART).path(String.valueOf(exercise.getExerciseId()))
 				.path("programming-submission-without-assessment").queryParam("correction-round", correctionRound).queryParam("lock", true).request()
 				.header(AUTHORIZATION_NAME, this.token).buildGet().invoke();

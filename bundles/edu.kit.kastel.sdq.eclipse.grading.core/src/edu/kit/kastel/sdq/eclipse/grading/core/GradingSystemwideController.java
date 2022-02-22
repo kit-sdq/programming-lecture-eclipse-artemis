@@ -30,9 +30,9 @@ import edu.kit.kastel.sdq.eclipse.grading.core.artemis.WorkspaceUtil;
 import edu.kit.kastel.sdq.eclipse.grading.core.config.ConfigDAO;
 import edu.kit.kastel.sdq.eclipse.grading.core.config.JsonFileConfigDao;
 
-public class GradingSystemwideController extends SystemwideController implements  IGradingSystemwideController {
+public class GradingSystemwideController extends SystemwideController implements IGradingSystemwideController {
 
-	private final Map<Integer, IAssessmentController> assessmentControllers  = new HashMap<>();
+	private final Map<Integer, IAssessmentController> assessmentControllers = new HashMap<>();
 	private IGradingArtemisController artemisGUIController;
 	private ConfigDAO configDao;
 
@@ -42,7 +42,7 @@ public class GradingSystemwideController extends SystemwideController implements
 
 	public GradingSystemwideController(final IPreferenceStore preferenceStore) {
 		super(preferenceStore.getString(PreferenceConstants.ARTEMIS_USER), //
-				preferenceStore.getString(PreferenceConstants.ARTEMIS_PASSWORD) );
+				preferenceStore.getString(PreferenceConstants.ARTEMIS_PASSWORD));
 		createController(preferenceStore.getString(PreferenceConstants.ARTEMIS_URL), //
 				preferenceStore.getString(PreferenceConstants.ARTEMIS_USER), //
 				preferenceStore.getString(PreferenceConstants.ARTEMIS_PASSWORD) //
@@ -51,7 +51,7 @@ public class GradingSystemwideController extends SystemwideController implements
 
 		// initialize config
 		this.updateConfigFile();
-		
+
 		this.initPreferenceStoreCallback(preferenceStore);
 	}
 
@@ -59,7 +59,7 @@ public class GradingSystemwideController extends SystemwideController implements
 		super(username, password);
 		createController(artemisHost, username, password);
 	}
-	
+
 	private void createController(final String artemisHost, final String username, final String password) {
 		this.artemisGUIController = new GradingArtemisController(artemisHost, username, password);
 		this.backendStateMachine = new BackendStateMachine();
@@ -87,24 +87,20 @@ public class GradingSystemwideController extends SystemwideController implements
 			return List.of();
 		}
 
-		return this.getArtemisGUIController().getBegunSubmissions(this.exercise).stream().filter(submissionFilter)
-				.collect(Collectors.toList());
+		return this.getArtemisGUIController().getBegunSubmissions(this.exercise).stream().filter(submissionFilter).collect(Collectors.toList());
 	}
 
 	@Override
 	public List<String> getBegunSubmissionsProjectNames(SubmissionFilter submissionFilter) {
 		// sondercase: refresh
 		if (this.course == null || this.exercise == null) {
-			this.info("You need to choose a" + (this.course == null ? "course" : "")
-					+ (this.course == null && this.exercise == null ? " and an " : "")
+			this.info("You need to choose a" + (this.course == null ? "course" : "") + (this.course == null && this.exercise == null ? " and an " : "")
 					+ (this.exercise == null ? "exercise" : "."));
 			return List.of();
 		}
 
-		return this.getBegunSubmissions(submissionFilter).stream()
-				.map(sub -> this.projectFileNamingStrategy
-						.getProjectFileInWorkspace(WorkspaceUtil.getWorkspaceFile(), this.getCurrentExercise(), sub)
-						.getName())
+		return this.getBegunSubmissions(submissionFilter).stream().map(
+				sub -> this.projectFileNamingStrategy.getProjectFileInWorkspace(WorkspaceUtil.getWorkspaceFile(), this.getCurrentExercise(), sub).getName())
 				.sorted().collect(Collectors.toList());
 	}
 
@@ -135,9 +131,8 @@ public class GradingSystemwideController extends SystemwideController implements
 	public Set<Transition> getCurrentlyPossibleTransitions() {
 		boolean secondCorrectionRoundEnabled = this.exercise != null && this.exercise.isSecondCorrectionEnabled();
 
-		return this.backendStateMachine.getCurrentlyPossibleTransitions().stream().filter(
-				transition -> !Transition.START_CORRECTION_ROUND_2.equals(transition) || secondCorrectionRoundEnabled)
-				.collect(Collectors.toSet());
+		return this.backendStateMachine.getCurrentlyPossibleTransitions().stream()
+				.filter(transition -> !Transition.START_CORRECTION_ROUND_2.equals(transition) || secondCorrectionRoundEnabled).collect(Collectors.toSet());
 	}
 
 	@Override
@@ -146,8 +141,8 @@ public class GradingSystemwideController extends SystemwideController implements
 			return null;
 		}
 
-		return this.projectFileNamingStrategy.getProjectFileInWorkspace(WorkspaceUtil.getWorkspaceFile(),
-				this.getCurrentExercise(), this.getCurrentSubmission()).getName();
+		return this.projectFileNamingStrategy
+				.getProjectFileInWorkspace(WorkspaceUtil.getWorkspaceFile(), this.getCurrentExercise(), this.getCurrentSubmission()).getName();
 	}
 
 	private ISubmission getCurrentSubmission() {
@@ -167,8 +162,7 @@ public class GradingSystemwideController extends SystemwideController implements
 		}
 
 		this.artemisGUIController.startAssessment(this.submission);
-		this.downloadExerciseAndSubmission(this.course, this.exercise, this.submission,
-				this.projectFileNamingStrategy);
+		this.downloadExerciseAndSubmission(this.course, this.exercise, this.submission, this.projectFileNamingStrategy);
 	}
 
 	@Override
@@ -182,7 +176,7 @@ public class GradingSystemwideController extends SystemwideController implements
 			this.submission = null;
 		}
 	}
-	
+
 	@Override
 	public void setExerciseId(final String exerciseShortName) throws ArtemisClientException {
 		if (this.applyTransitionAndNotifyIfNotAllowed(Transition.SET_EXERCISE_ID)) {
@@ -238,8 +232,7 @@ public class GradingSystemwideController extends SystemwideController implements
 		boolean[] found = { false };
 		this.getBegunSubmissions(SubmissionFilter.ALL).forEach(sub -> {
 			String currentProjectName = this.projectFileNamingStrategy
-					.getProjectFileInWorkspace(WorkspaceUtil.getWorkspaceFile(), this.getCurrentExercise(), sub)
-					.getName();
+					.getProjectFileInWorkspace(WorkspaceUtil.getWorkspaceFile(), this.getCurrentExercise(), sub).getName();
 
 			if (currentProjectName.equals(projectName)) {
 				this.submission = sub;
@@ -258,8 +251,7 @@ public class GradingSystemwideController extends SystemwideController implements
 	}
 
 	@Override
-	public List<String> setCourseIdAndGetExerciseShortNames(final String courseShortName)
-			throws ArtemisClientException {
+	public List<String> setCourseIdAndGetExerciseShortNames(final String courseShortName) throws ArtemisClientException {
 		if (this.applyTransitionAndNotifyIfNotAllowed(Transition.SET_COURSE_ID_AND_GET_EXERCISE_SHORT_NAMES)) {
 			return List.of();
 		}
@@ -273,7 +265,6 @@ public class GradingSystemwideController extends SystemwideController implements
 		this.error("No Course with the given shortName \"" + courseShortName + "\" found.", null);
 		return List.of();
 	}
-
 
 	@Override
 	public boolean startAssessment() {
@@ -290,8 +281,7 @@ public class GradingSystemwideController extends SystemwideController implements
 		}
 		this.updateConfigFile();
 
-		Optional<ISubmission> optionalSubmissionID = this.artemisGUIController.startNextAssessment(this.exercise,
-				correctionRound);
+		Optional<ISubmission> optionalSubmissionID = this.artemisGUIController.startNextAssessment(this.exercise, correctionRound);
 		if (optionalSubmissionID.isEmpty()) {
 			// revert!
 			this.backendStateMachine.revertLatestTransition();
@@ -301,8 +291,7 @@ public class GradingSystemwideController extends SystemwideController implements
 		this.submission = optionalSubmissionID.get();
 
 		// perform download. Revert state if that fails.
-		if (!this.downloadExerciseAndSubmission(this.course, this.exercise, this.submission,
-				this.projectFileNamingStrategy)) {
+		if (!this.downloadExerciseAndSubmission(this.course, this.exercise, this.submission, this.projectFileNamingStrategy)) {
 			this.backendStateMachine.revertLatestTransition();
 			return false;
 		}
@@ -347,18 +336,15 @@ public class GradingSystemwideController extends SystemwideController implements
 		if (this.preferenceStore.getBoolean(PreferenceConstants.IS_RELATIVE_CONFIG_PATH)) {
 			if (this.course != null && this.exercise != null && this.submission != null) {
 				// not the case at startup with rel config path chosen!
-				this.setConfigFile(
-						new File(
-								ResourcesPlugin.getWorkspace().getRoot().getProject(this.getCurrentProjectName())
-										.getLocation().toFile(),
-								this.preferenceStore.getString(PreferenceConstants.RELATIVE_CONFIG_PATH)));
+				this.setConfigFile(new File(ResourcesPlugin.getWorkspace().getRoot().getProject(this.getCurrentProjectName()).getLocation().toFile(),
+						this.preferenceStore.getString(PreferenceConstants.RELATIVE_CONFIG_PATH)));
 			}
 		} else {
 			this.setConfigFile(new File(this.preferenceStore.getString(PreferenceConstants.ABSOLUTE_CONFIG_PATH)));
 
 		}
 	}
-	
+
 	private boolean nullCheckMembersAndNotify(boolean checkCourseID, boolean checkExerciseID, boolean checkSubmissionID) {
 		boolean somethingNull = this.nullCheckMembersAndNotify(checkCourseID, checkExerciseID);
 		if (checkSubmissionID && this.submission == null) {
@@ -372,26 +358,24 @@ public class GradingSystemwideController extends SystemwideController implements
 	protected void refreshArtemisController(String url, String user, String pass) {
 		this.createController(url, user, pass);
 	}
-	
-    @Override
-    public boolean downloadExerciseAndSubmission(ICourse course, IExercise exercise, ISubmission submission,
-            IProjectFileNamingStrategy projectNaming) {
-        final File eclipseWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile();
 
-        try {
-            this.exerciseController.downloadExerciseAndSubmission(exercise, submission, eclipseWorkspaceRoot, projectNaming);
-        } catch (ArtemisClientException e) {
-            this.error(e.getMessage(), e);
-            return false;
-        }
-        try {
-            WorkspaceUtil.createEclipseProject(
-                    projectNaming.getProjectFileInWorkspace(eclipseWorkspaceRoot, exercise, submission));
-        } catch (CoreException e) {
-            this.error("Project could not be created: " + e.getMessage(), null);
-        }
-        return true;
-    }
+	@Override
+	public boolean downloadExerciseAndSubmission(ICourse course, IExercise exercise, ISubmission submission, IProjectFileNamingStrategy projectNaming) {
+		final File eclipseWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile();
+
+		try {
+			this.exerciseController.downloadExerciseAndSubmission(exercise, submission, eclipseWorkspaceRoot, projectNaming);
+		} catch (ArtemisClientException e) {
+			this.error(e.getMessage(), e);
+			return false;
+		}
+		try {
+			WorkspaceUtil.createEclipseProject(projectNaming.getProjectFileInWorkspace(eclipseWorkspaceRoot, exercise, submission));
+		} catch (CoreException e) {
+			this.error("Project could not be created: " + e.getMessage(), null);
+		}
+		return true;
+	}
 
 	@Override
 	public IGradingArtemisController getArtemisGUIController() {

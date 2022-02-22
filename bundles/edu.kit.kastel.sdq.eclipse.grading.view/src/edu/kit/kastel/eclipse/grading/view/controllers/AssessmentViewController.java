@@ -47,8 +47,7 @@ public class AssessmentViewController extends AArtemisViewController {
 	 * @param customPenalty   (for custom mistake, else null)
 	 * @param ratingGroupName (the name of the rating group of the new annotation)
 	 */
-	public void addAssessmentAnnotation(IMistakeType mistake, String customMessage, Double customPenalty,
-			String ratingGroupName) {
+	public void addAssessmentAnnotation(IMistakeType mistake, String customMessage, Double customPenalty, String ratingGroupName) {
 		final ITextSelection textSelection = AssessmentUtilities.getTextSelection();
 		if (textSelection == null) {
 			this.getAlertObserver().error("Text selection needed to add a new annotation", null);
@@ -67,15 +66,12 @@ public class AssessmentViewController extends AArtemisViewController {
 			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_ANNOTATION_ID, uuid);
 			marker.setAttribute(IMarker.CHAR_START, charStart);
 			marker.setAttribute(IMarker.CHAR_END, charEnd);
-			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_ERROR_DESCRIPTION,
-					mistake.isCustomPenalty() ? "" : mistake.getMessage());
+			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_ERROR_DESCRIPTION, mistake.isCustomPenalty() ? "" : mistake.getMessage());
 			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_ERROR, mistake.getButtonText());
 			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_START, startLine);
 			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_END, endLine);
-			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_CLASS_NAME,
-					AssessmentUtilities.getClassNameForAnnotation());
-			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_RATING_GROUP,
-					mistake.getRatingGroup().getDisplayName());
+			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_CLASS_NAME, AssessmentUtilities.getClassNameForAnnotation());
+			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_RATING_GROUP, mistake.getRatingGroup().getDisplayName());
 			if (customMessage != null) {
 				marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_CUSTOM_MESSAGE, customMessage);
 			}
@@ -83,16 +79,13 @@ public class AssessmentViewController extends AArtemisViewController {
 				marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_CUSTOM_PENALTY, customPenalty.toString());
 			}
 			if (!mistake.isCustomPenalty()) {
-				marker.setAttribute(IMarker.MESSAGE,
-						AssessmentUtilities.createMarkerTooltip(startLine, endLine, mistake.getButtonText(),
-								mistake.getRatingGroup().getDisplayName(),
-								formatCustomPenaltyMessage(mistake, customMessage), null));
+				marker.setAttribute(IMarker.MESSAGE, AssessmentUtilities.createMarkerTooltip(startLine, endLine, mistake.getButtonText(),
+						mistake.getRatingGroup().getDisplayName(), formatCustomPenaltyMessage(mistake, customMessage), null));
 			} else {
-				marker.setAttribute(IMarker.MESSAGE, AssessmentUtilities.createMarkerTooltipForCustomButton(startLine,
-						endLine, customMessage, customPenalty));
+				marker.setAttribute(IMarker.MESSAGE, AssessmentUtilities.createMarkerTooltipForCustomButton(startLine, endLine, customMessage, customPenalty));
 			}
-			this.assessmentController.addAnnotation(uuid, mistake, startLine, endLine,
-					AssessmentUtilities.getPathForAnnotation(), customMessage, customPenalty, charStart, charEnd);
+			this.assessmentController.addAnnotation(uuid, mistake, startLine, endLine, AssessmentUtilities.getPathForAnnotation(), customMessage, customPenalty,
+					charStart, charEnd);
 		} catch (Exception e) {
 
 			/*
@@ -109,8 +102,7 @@ public class AssessmentViewController extends AArtemisViewController {
 	 * creates markers for current annotations in the backend
 	 */
 	public void createAnnotationsMarkers() {
-		this.getAnnotations().stream().filter(annotation -> !isAnnotationPresent(annotation))
-				.forEach(this::createMarkerForAnnotation);
+		this.getAnnotations().stream().filter(annotation -> !isAnnotationPresent(annotation)).forEach(this::createMarkerForAnnotation);
 	}
 
 	/**
@@ -122,12 +114,10 @@ public class AssessmentViewController extends AArtemisViewController {
 	 */
 	private boolean isAnnotationPresent(IAnnotation annotation) {
 		try {
-			IMarker[] markers = AssessmentUtilities
-					.getFile(annotation.getClassFilePath(), this.systemwideController.getCurrentProjectName())
-					.findMarkers(null, false, 100);
+			IMarker[] markers = AssessmentUtilities.getFile(annotation.getClassFilePath(), this.systemwideController.getCurrentProjectName()).findMarkers(null,
+					false, 100);
 			for (IMarker marker : markers) {
-				if (annotation.getUUID()
-						.equals(marker.getAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_ANNOTATION_ID))) {
+				if (annotation.getUUID().equals(marker.getAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_ANNOTATION_ID))) {
 					return true;
 				}
 			}
@@ -147,8 +137,7 @@ public class AssessmentViewController extends AArtemisViewController {
 		String customMessage = annotation.getCustomMessage().orElse(null);
 		String customPenalty = annotation.getCustomPenalty().map(String::valueOf).orElse(null);
 		try {
-			IMarker marker = AssessmentUtilities
-					.getFile(annotation.getClassFilePath(), this.systemwideController.getCurrentProjectName())
+			IMarker marker = AssessmentUtilities.getFile(annotation.getClassFilePath(), this.systemwideController.getCurrentProjectName())
 					.createMarker(AssessmentUtilities.MARKER_NAME);
 			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_ANNOTATION_ID, annotation.getUUID());
 			marker.setAttribute(IMarker.CHAR_START, annotation.getMarkerCharStart());
@@ -166,16 +155,13 @@ public class AssessmentViewController extends AArtemisViewController {
 			if (mistake != null) {
 				marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_ERROR_DESCRIPTION, mistake.getMessage());
 				marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_ERROR, mistake.getButtonText());
-				marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_RATING_GROUP,
-						mistake.getRatingGroup().getDisplayName());
+				marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_RATING_GROUP, mistake.getRatingGroup().getDisplayName());
 				if (!mistake.isCustomPenalty()) {
-					marker.setAttribute(IMarker.MESSAGE,
-							AssessmentUtilities.createMarkerTooltip(startLine, endLine, mistake.getButtonText(),
-									mistake.getRatingGroup().getDisplayName(), mistake.getMessage(),
-									annotation.getClassFilePath()));
+					marker.setAttribute(IMarker.MESSAGE, AssessmentUtilities.createMarkerTooltip(startLine, endLine, mistake.getButtonText(),
+							mistake.getRatingGroup().getDisplayName(), mistake.getMessage(), annotation.getClassFilePath()));
 				} else {
-					marker.setAttribute(IMarker.MESSAGE, AssessmentUtilities.createMarkerTooltipForCustomButton(
-							startLine, endLine, customMessage, Double.parseDouble(customPenalty)));
+					marker.setAttribute(IMarker.MESSAGE,
+							AssessmentUtilities.createMarkerTooltipForCustomButton(startLine, endLine, customMessage, Double.parseDouble(customPenalty)));
 				}
 			}
 

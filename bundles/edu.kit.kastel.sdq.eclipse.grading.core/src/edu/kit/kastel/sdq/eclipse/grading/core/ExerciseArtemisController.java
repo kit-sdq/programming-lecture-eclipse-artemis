@@ -28,8 +28,8 @@ public class ExerciseArtemisController extends AbstractController implements IEx
 	}
 
 	@Override
-	public void loadExerciseInWorkspaceForStudent(ICourse course, IExercise exercise,
-			IProjectFileNamingStrategy projectNaming, String repoUrl) throws ArtemisClientException {
+	public void loadExerciseInWorkspaceForStudent(ICourse course, IExercise exercise, IProjectFileNamingStrategy projectNaming, String repoUrl)
+			throws ArtemisClientException {
 		final File eclipseWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile();
 
 		// abort if directory already exists.
@@ -41,22 +41,20 @@ public class ExerciseArtemisController extends AbstractController implements IEx
 			throw new ArtemisClientException("Error, can not download exercise.", e);
 		}
 		try {
-			WorkspaceUtil.createEclipseProject(
-					projectNaming.getProjectFileInWorkspace(eclipseWorkspaceRoot, exercise, null));
+			WorkspaceUtil.createEclipseProject(projectNaming.getProjectFileInWorkspace(eclipseWorkspaceRoot, exercise, null));
 		} catch (CoreException e) {
 			throw new ArtemisClientException("Error, can not create project.", e);
 		}
 	}
 
 	@Override
-	public void downloadExerciseAndSubmission(IExercise exercise, ISubmission submission, File dir,
-			IProjectFileNamingStrategy namingStrategy) throws ArtemisClientException {
+	public void downloadExerciseAndSubmission(IExercise exercise, ISubmission submission, File dir, IProjectFileNamingStrategy namingStrategy)
+			throws ArtemisClientException {
 		final File projectDirectory = namingStrategy.getProjectFileInWorkspace(dir, exercise, submission);
 		this.existsAndThrow(projectDirectory);
 		try {
 			if (projectDirectory.exists()) {
-				throw new ArtemisClientException(
-						"Could not clone project " + projectDirectory.getName() + ", " + "directory already exists!");
+				throw new ArtemisClientException("Could not clone project " + projectDirectory.getName() + ", " + "directory already exists!");
 			}
 
 			// Download test repository
@@ -70,13 +68,11 @@ public class ExerciseArtemisController extends AbstractController implements IEx
 
 	}
 
-	public void downloadExercise(IExercise exercise, File dir, String repoUrl,
-			IProjectFileNamingStrategy namingStrategy) throws ArtemisClientException {
+	public void downloadExercise(IExercise exercise, File dir, String repoUrl, IProjectFileNamingStrategy namingStrategy) throws ArtemisClientException {
 		final File projectDirectory = namingStrategy.getProjectFileInWorkspace(dir, exercise, null);
 		try {
 			if (projectDirectory.exists()) {
-				throw new ArtemisClientException(
-						"Could not clone project " + projectDirectory.getName() + ", " + "directory already exists!");
+				throw new ArtemisClientException("Could not clone project " + projectDirectory.getName() + ", " + "directory already exists!");
 			}
 
 			// Download test repository
@@ -87,8 +83,7 @@ public class ExerciseArtemisController extends AbstractController implements IEx
 	}
 
 	@Override
-	public Optional<Set<String>> cleanWorkspace(ICourse course, IExercise exercise,
-			IProjectFileNamingStrategy projectNaming) {
+	public Optional<Set<String>> cleanWorkspace(ICourse course, IExercise exercise, IProjectFileNamingStrategy projectNaming) {
 		final File eclipseWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile();
 		File exeriseRepo = projectNaming.getProjectFileInWorkspace(eclipseWorkspaceRoot, exercise, null);
 		File gitFileInRepo = projectNaming.getGitFileInProjectDirectory(exeriseRepo);
@@ -100,8 +95,7 @@ public class ExerciseArtemisController extends AbstractController implements IEx
 	}
 
 	@Override
-	public boolean commitAndPushExercise(ICourse course, IExercise exercise, IProjectFileNamingStrategy projectNaming)
-			throws ArtemisClientException {
+	public boolean commitAndPushExercise(ICourse course, IExercise exercise, IProjectFileNamingStrategy projectNaming) throws ArtemisClientException {
 		final File eclipseWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile();
 		File exeriseRepo = projectNaming.getProjectFileInWorkspace(eclipseWorkspaceRoot, exercise, null);
 		File gitFileInRepo = projectNaming.getGitFileInProjectDirectory(exeriseRepo);
@@ -116,22 +110,20 @@ public class ExerciseArtemisController extends AbstractController implements IEx
 		try {
 			GitHandler.pushExercise(username, password, gitFileInRepo);
 		} catch (GitException e) {
-			throw new ArtemisClientException("Can't upload solution. Please check if submissions are still possible.",
-					e);
+			throw new ArtemisClientException("Can't upload solution. Please check if submissions are still possible.", e);
 		}
 		return true;
 	}
-	
+
 	private void existsAndThrow(File file) throws ArtemisClientException {
 		if (file.exists()) {
 			throw new ArtemisClientException("Project " + file.getName() + " could not be cloned since the workspace "
 					+ "already contains a project with that name. " + System.lineSeparator()
 					+ "Trying to load and merge previously created annotations. Please double-check them before submitting the assessment! "
-					+ System.lineSeparator()
-					+ "If you want to start again from skretch, please delete the project and retry.");
+					+ System.lineSeparator() + "If you want to start again from skretch, please delete the project and retry.");
 		}
 	}
-	
+
 	private String createCommitMsg(ICourse course, IExercise exercise) {
 		return String.format("[ECLIPSE-STUDENT] - uploaded new solution for exercise %s of course %s.", exercise.getShortName(), course.getShortName());
 	}

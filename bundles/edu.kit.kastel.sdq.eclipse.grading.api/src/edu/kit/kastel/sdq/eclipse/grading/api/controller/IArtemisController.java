@@ -90,6 +90,6 @@ public interface IArtemisController extends IController {
 	 *         results).
 	 */
 	List<Feedback> getPrecalculatedAutoFeedbacks(ISubmission submission);
-	
+
 	Date getCurrentDate();
 }

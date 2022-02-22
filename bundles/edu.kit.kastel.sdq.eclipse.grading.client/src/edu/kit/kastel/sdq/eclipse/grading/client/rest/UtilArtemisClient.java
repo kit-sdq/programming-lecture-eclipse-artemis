@@ -31,7 +31,7 @@ public class UtilArtemisClient extends AbstractArtemisClient implements IUtilArt
 		final Response exercisesRsp = this.endpoint.path("time").request().buildGet().invoke();
 
 		this.throwIfStatusUnsuccessful(exercisesRsp);
-		
+
 		final JsonNode exercisesAndParticipationsJsonNode = this.readTree(exercisesRsp.readEntity(String.class));
 		return this.read(exercisesAndParticipationsJsonNode.toString(), Date.class);
 	}

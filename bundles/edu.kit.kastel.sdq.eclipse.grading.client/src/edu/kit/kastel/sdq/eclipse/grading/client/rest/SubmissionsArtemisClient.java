@@ -17,7 +17,6 @@ import edu.kit.kastel.sdq.eclipse.grading.api.client.IParticipationArtemisClient
 import edu.kit.kastel.sdq.eclipse.grading.api.client.ISubmissionsArtemisClient;
 import edu.kit.kastel.sdq.eclipse.grading.client.mappings.ArtemisSubmission;
 
-
 public class SubmissionsArtemisClient extends AbstractArtemisClient implements ISubmissionsArtemisClient {
 	private static final ILog log = Platform.getLog(SubmissionsArtemisClient.class);
 
@@ -53,7 +52,7 @@ public class SubmissionsArtemisClient extends AbstractArtemisClient implements I
 
 		return Arrays.asList(submissionsArray);
 	}
-	
+
 	@Override
 	public ISubmission getSubmissionById(IExercise artemisExercise, int submissionId) throws ArtemisClientException {
 		List<ISubmission> submissions = this.getSubmissions(artemisExercise);

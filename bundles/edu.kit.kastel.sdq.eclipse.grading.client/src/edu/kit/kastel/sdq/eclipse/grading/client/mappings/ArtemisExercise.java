@@ -31,7 +31,7 @@ public class ArtemisExercise implements IExercise {
 	private double maxPoints;
 	@JsonProperty
 	private Date dueDate = null;
-	
+
 	private String participantUrl;
 
 	private transient IMappingLoader client;
@@ -93,7 +93,7 @@ public class ArtemisExercise implements IExercise {
 		this.course = course;
 		this.exam = exam;
 	}
-	
+
 	public void init(IMappingLoader client, ICourse course) {
 		this.init(client, course, Optional.empty());
 	}
@@ -112,12 +112,10 @@ public class ArtemisExercise implements IExercise {
 	public String getParticipantUrl() {
 		return participantUrl;
 	}
-	
+
 	@Override
-	public Date getDueDate()  {
+	public Date getDueDate() {
 		return dueDate;
 	}
-	
-	
 
 }

@@ -67,6 +67,7 @@ public class ArtemisExam implements IExam, Serializable {
 	public boolean hasSecondCorrectionRound() {
 		return this.numberOfCorrectionRounds >= 2;
 	}
+
 	@Override
 	public Date getEndDate() {
 		return endDate;
@@ -75,10 +76,12 @@ public class ArtemisExam implements IExam, Serializable {
 	public int getNumberOfCorrectionRounds() {
 		return numberOfCorrectionRounds;
 	}
+
 	@Override
 	public Date getStartDate() {
 		return startDate;
 	}
+
 	@Override
 	public boolean isStarted() {
 		return started;

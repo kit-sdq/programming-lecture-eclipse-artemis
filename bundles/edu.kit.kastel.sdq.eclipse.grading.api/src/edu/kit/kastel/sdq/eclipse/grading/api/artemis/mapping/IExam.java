@@ -15,7 +15,7 @@ public interface IExam extends Serializable {
 	List<IExerciseGroup> getExerciseGroups() throws ArtemisClientException;
 
 	String getTitle();
-	
+
 	boolean isExamExpired(Date currentDate);
 
 	Date getStartDate();

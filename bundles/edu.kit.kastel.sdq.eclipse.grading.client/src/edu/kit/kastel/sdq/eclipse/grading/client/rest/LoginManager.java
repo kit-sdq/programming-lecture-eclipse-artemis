@@ -18,52 +18,51 @@ import edu.kit.kastel.sdq.eclipse.grading.api.client.IAuthenticationArtemisClien
 
 public class LoginManager extends AbstractArtemisClient implements IAuthenticationArtemisClient {
 	private static final ILog log = Platform.getLog(LoginManager.class);
-	
+
 	private String username;
 	private String password;
 	private String token;
 	private WebTarget endpoint;
 	private Assessor assessor;
-	
+
 	public LoginManager(String hostname, String username, String password) {
 		super(hostname);
 		this.username = username;
-		this.password = password;	
+		this.password = password;
 		this.endpoint = getEndpoint(this.getApiRootURL());
 	}
-	
+
 	public void init() throws ArtemisClientException {
 		try {
 			this.token = this.login();
 			this.assessor = this.fetchAssesor();
-		} catch(ProcessingException e) {
+		} catch (ProcessingException e) {
 			throw new ArtemisClientException(e.getMessage(), e);
 		}
 	}
-	
+
 	@Override
 	public String getRawToken() {
 		return token;
 	}
-	
+
 	@Override
 	public String getBearerToken() {
 		return "Bearer " + token;
 	}
-	
+
 	@Override
 	public Assessor getAssessor() {
 		return assessor;
 	}
-	
+
 	private Assessor fetchAssesor() throws ArtemisClientException {
-		final Response rsp = this.endpoint.path(USERS_PATHPART).path(username).request().header(AUTHORIZATION_NAME, getBearerToken()).buildGet()
-				.invoke();
+		final Response rsp = this.endpoint.path(USERS_PATHPART).path(username).request().header(AUTHORIZATION_NAME, getBearerToken()).buildGet().invoke();
 		this.throwIfStatusUnsuccessful(rsp);
 		return this.read(rsp.readEntity(String.class), Assessor.class);
 	}
-	
-	private String login() throws ArtemisClientException,ProcessingException {
+
+	private String login() throws ArtemisClientException, ProcessingException {
 		String payload = this.payload(this.getAuthenticationEntity());
 		final Response authenticationResponse = this.endpoint.path("authenticate").request().buildPost(Entity.json(payload)).invoke();
 
@@ -72,7 +71,7 @@ public class LoginManager extends AbstractArtemisClient implements IAuthenticati
 		final String rawToken = this.readTree(authRspEntity).get("id_token").asText();
 		return rawToken;
 	}
-	
+
 	private final AuthenticationEntity getAuthenticationEntity() {
 		AuthenticationEntity entity = new AuthenticationEntity();
 		entity.username = this.username;
@@ -88,5 +87,5 @@ public class LoginManager extends AbstractArtemisClient implements IAuthenticati
 		private String password;
 		@JsonProperty
 		private boolean rememberMe = true;
-	}	
+	}
 }

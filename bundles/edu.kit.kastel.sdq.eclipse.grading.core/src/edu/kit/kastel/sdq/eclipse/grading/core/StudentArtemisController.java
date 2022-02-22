@@ -31,12 +31,12 @@ import edu.kit.kastel.sdq.eclipse.grading.core.messages.Messages;
 public class StudentArtemisController extends ArtemisController implements IStudentArtemisController, IWebsocketController {
 	private static final ILog log = Platform.getLog(ArtemisFeedbackWebsocket.class);
 	private final IWebsocketClient websocketClient;
-	
+
 	protected StudentArtemisController(String host, String username, String password) {
 		super(host, username, password);
 		this.websocketClient = new ArtemisFeedbackWebsocket(host);
 	}
-	
+
 	@Override
 	public IStudentExam getExercisesFromStudentExam(final String examTitle) {
 		return this.getExercisesFromExamOrStartExam(examTitle, this.getCourses());
@@ -44,19 +44,18 @@ public class StudentArtemisController extends ArtemisController implements IStud
 
 	@Override
 	public List<String> getExerciseShortNamesFromExam(final String examTitle) {
-		return this.getExercisesFromStudentExam(examTitle).getExercises().stream().map(IExercise::getShortName)
-				.collect(Collectors.toList());
+		return this.getExercisesFromStudentExam(examTitle).getExercises().stream().map(IExercise::getShortName).collect(Collectors.toList());
 	}
 
 	@Override
 	public IStudentExam startExam(ICourse course, IExam exam) {
 		try {
-			if (this.confirm(Messages.StudentArtemisController_Confirm_Start_Exam)) {  
+			if (this.confirm(Messages.StudentArtemisController_Confirm_Start_Exam)) {
 				return this.clientManager.getExamArtemisClient().conductExam(course, exam);
 			}
 
 		} catch (ArtemisClientException e) {
-			this.error("Error, can not start the exam: " + exam.getTitle(), e);  
+			this.error("Error, can not start the exam: " + exam.getTitle(), e);
 		}
 		return new ArtemisStudentExam();
 	}
@@ -67,8 +66,7 @@ public class StudentArtemisController extends ArtemisController implements IStud
 
 		if (participation.isEmpty()) {
 			try {
-				participation = Optional.of(
-						clientManager.getParticipationArtemisClient().startParticipationForExercise(course, exercise));
+				participation = Optional.of(clientManager.getParticipationArtemisClient().startParticipationForExercise(course, exercise));
 			} catch (ArtemisClientException e) {
 				return Optional.empty();
 			}
@@ -88,8 +86,8 @@ public class StudentArtemisController extends ArtemisController implements IStud
 			participationWithResults = this.clientManager.getParticipationArtemisClient()
 					.getParticipationWithLatestResultForExercise(participationOpt.get().getParticipationID());
 		} catch (ArtemisClientException e) {
-			this.error("Can't load results for selected exercise " + exercise.getShortName() //  
-					+ ".\n No results found. Please check if a solution was submitted.", e);  
+			this.error("Can't load results for selected exercise " + exercise.getShortName() //
+					+ ".\n No results found. Please check if a solution was submitted.", e);
 			return new HashMap<>();
 		}
 
@@ -103,8 +101,7 @@ public class StudentArtemisController extends ArtemisController implements IStud
 			if (result.hasFeedback) {
 				Feedback[] feedbacks = {};
 				try {
-					feedbacks = this.clientManager.getFeedbackArtemisClient()
-							.getFeedbackForResult(participationOpt.get(), result);
+					feedbacks = this.clientManager.getFeedbackArtemisClient().getFeedbackForResult(participationOpt.get(), result);
 				} catch (ArtemisClientException e) {
 					e.printStackTrace();
 					break;
@@ -114,8 +111,8 @@ public class StudentArtemisController extends ArtemisController implements IStud
 		}
 
 		if (resultFeedbackMap.isEmpty()) {
-			this.error("Can't load any feedback for selected exercise " + exercise.getShortName() //  
-					+ ".\n No feedback found. Please check if a solution was submitted.", null);  
+			this.error("Can't load any feedback for selected exercise " + exercise.getShortName() //
+					+ ".\n No feedback found. Please check if a solution was submitted.", null);
 		}
 
 		return resultFeedbackMap;
@@ -128,7 +125,7 @@ public class StudentArtemisController extends ArtemisController implements IStud
 		}
 		try {
 			return this.clientManager.getCourseArtemisClient().getCoursesForDashboard();
-		} catch (final Exception e) {
+		} catch (final ArtemisClientException e) {
 			this.error(e.getMessage(), e);
 			return List.of();
 		}
@@ -137,12 +134,11 @@ public class StudentArtemisController extends ArtemisController implements IStud
 	private IStudentExam getExercisesFromExamOrStartExam(final String examTitle, List<ICourse> courses) {
 		Entry<ICourse, IExam> foundEntry = filterGetExamObjectFromLoadedCourses(examTitle, courses);
 		if (foundEntry == null) {
-			this.error("No exam found for examTitle=" + examTitle, null);  
+			this.error("No exam found for examTitle=" + examTitle, null);
 			return new ArtemisStudentExam();
 		}
 		try {
-			return this.clientManager.getExamArtemisClient().findExamForSummary(foundEntry.getKey(),
-					foundEntry.getValue());
+			return this.clientManager.getExamArtemisClient().findExamForSummary(foundEntry.getKey(), foundEntry.getValue());
 		} catch (ArtemisClientException e) {
 			this.error(Messages.StudentArtemisController_EXAM_INFO, e);
 		}
@@ -151,13 +147,12 @@ public class StudentArtemisController extends ArtemisController implements IStud
 
 	private Optional<ParticipationDTO> getParticipationForExercise(ICourse course, IExercise exercise) {
 		try {
-			return Optional
-					.of(clientManager.getParticipationArtemisClient().getParticipationForExercise(course, exercise));
+			return Optional.of(clientManager.getParticipationArtemisClient().getParticipationForExercise(course, exercise));
 		} catch (ArtemisClientException e) {
 			return Optional.empty();
 		}
 	}
-	
+
 	@Override
 	public boolean connectToWebsocket(WebsocketCallback callback) {
 		try {

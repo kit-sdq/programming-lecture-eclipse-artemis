@@ -28,13 +28,12 @@ public class FeedbackArtemisClient extends AbstractArtemisClient implements IFee
 	}
 
 	@Override
-	public Feedback[] getFeedbackForResult(ParticipationDTO participation, ResultsDTO result)
-			throws ArtemisClientException {
-		final Response exercisesRsp = this.endpoint.path(PARTICIPATION_PATHPART).path(Integer.toString(participation.getParticipationID())).path(RESULT_PATHPART).path(Integer.toString(result.id)).path("details").request()
-				.header(AUTHORIZATION_NAME, this.token).buildGet().invoke();
+	public Feedback[] getFeedbackForResult(ParticipationDTO participation, ResultsDTO result) throws ArtemisClientException {
+		final Response exercisesRsp = this.endpoint.path(PARTICIPATION_PATHPART).path(Integer.toString(participation.getParticipationID()))
+				.path(RESULT_PATHPART).path(Integer.toString(result.id)).path("details").request().header(AUTHORIZATION_NAME, this.token).buildGet().invoke();
 
 		this.throwIfStatusUnsuccessful(exercisesRsp);
-		
+
 		// get the part of the json that we want to deserialize
 		final JsonNode exercisesAndParticipationsJsonNode = this.readTree(exercisesRsp.readEntity(String.class));
 		return this.read(exercisesAndParticipationsJsonNode.toString(), Feedback[].class);

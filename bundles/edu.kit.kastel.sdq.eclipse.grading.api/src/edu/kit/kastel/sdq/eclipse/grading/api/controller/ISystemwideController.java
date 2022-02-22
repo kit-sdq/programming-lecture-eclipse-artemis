@@ -10,13 +10,13 @@ public interface ISystemwideController extends IController {
 	 * @return the one artemis gui controller.
 	 */
 	IArtemisController getArtemisGUIController();
-	
+
 	/**
 	 * 
 	 * @return the one exercise controller to load submit and clean exercises.
 	 */
 	IExerciseArtemisController getExerciseArtemisController();
-	
+
 	/**
 	 *
 	 * <B>ASSESSMENT - STATE</B><br/>
@@ -42,5 +42,4 @@ public interface ISystemwideController extends IController {
 	 */
 	void setExerciseId(String exerciseShortName) throws ArtemisClientException;
 
-	
 }

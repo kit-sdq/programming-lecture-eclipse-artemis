@@ -54,6 +54,5 @@ public interface IGradingArtemisController extends IArtemisController {
 	 *         <li>Optional.empty(), if no assessment is left!
 	 */
 	Optional<ISubmission> startNextAssessment(IExercise exercise, int correctionRound);
-	
 
 }

@@ -11,7 +11,7 @@ public abstract class AbstractController implements IController {
 	public void addAlertObserver(IAlertObserver observer) {
 		this.observers.add(observer);
 	}
-	
+
 	@Override
 	public void addConfirmObserver(IConfirmObserver observer) {
 		this.confirmObserver = observer;
@@ -48,9 +48,9 @@ public abstract class AbstractController implements IController {
 		this.observers.forEach(observer -> observer.warn(warningMsg));
 		this.printToConsoleIfNoObserversRegistered(warningMsg, null);
 	}
-	
+
 	public boolean confirm(String msg) {
-		if(confirmObserver != null) {
+		if (confirmObserver != null) {
 			return this.confirmObserver.confirm(msg);
 		}
 		return false;

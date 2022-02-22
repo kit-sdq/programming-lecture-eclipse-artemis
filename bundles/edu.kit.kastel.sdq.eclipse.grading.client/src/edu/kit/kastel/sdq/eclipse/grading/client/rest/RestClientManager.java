@@ -1,4 +1,4 @@
-7package edu.kit.kastel.sdq.eclipse.grading.client.rest;
+package edu.kit.kastel.sdq.eclipse.grading.client.rest;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.ArtemisClientException;
 import edu.kit.kastel.sdq.eclipse.grading.api.client.IAssessmentArtemisClient;
@@ -14,7 +14,7 @@ public class RestClientManager {
 	private String username = "";
 	private String password = "";
 	private String hostname = "";
-	
+
 	private IAuthenticationArtemisClient loginManager;
 	private ISubmissionsArtemisClient submissionClient;
 	private ICourseArtemisClient courseClient;
@@ -23,69 +23,68 @@ public class RestClientManager {
 	private IParticipationArtemisClient participationClient;
 	private IUtilArtemisClient utilClient;
 	private IAssessmentArtemisClient assessmentClient;
-	
+
 	public RestClientManager(String hostname, String username, String password) {
 		this.username = username;
-		this.password = password;	
+		this.password = password;
 		this.hostname = hostname;
-		
+
 		this.loginManager = new LoginManager(hostname, username, password);
 	}
-	
+
 	public void login() throws ArtemisClientException {
-		if(!isReady()) {
+		if (!isReady()) {
 			throw new ArtemisClientException("No credentials set in the preferences tab.");
 		}
 		loginManager.init();
 	}
-	
-    public boolean isReady() {
-        return !(this.hostname.isBlank() && this.username.isBlank() && this.password.isBlank());
-    }
-	
-	public IAuthenticationArtemisClient getAuthenticationClient() {
 
+	public boolean isReady() {
+		return !(this.hostname.isBlank() || this.username.isBlank() || this.password.isBlank());
+	}
+
+	public IAuthenticationArtemisClient getAuthenticationClient() {
 		return loginManager;
 	}
-	
+
 	public ISubmissionsArtemisClient getSubmissionArtemisClient() {
-		if(submissionClient == null)
+		if (submissionClient == null)
 			submissionClient = new SubmissionsArtemisClient(hostname, loginManager.getBearerToken(), loginManager.getAssessor());
 		return submissionClient;
 	}
-	
+
 	public ICourseArtemisClient getCourseArtemisClient() {
-		if (courseClient== null)
+		if (courseClient == null)
 			courseClient = new MappingLoaderArtemisClient(getSubmissionArtemisClient(), hostname, loginManager.getBearerToken());
 		return courseClient;
 	}
-	
+
 	public IExamArtemisClient getExamArtemisClient() {
-		if (examClient== null)
+		if (examClient == null)
 			examClient = new ExamArtemisClient(hostname, loginManager.getBearerToken());
 		return examClient;
 	}
-	
+
 	public IFeedbackArtemisClient getFeedbackArtemisClient() {
-		if(feedbackClient == null)
+		if (feedbackClient == null)
 			feedbackClient = new FeedbackArtemisClient(hostname, loginManager.getBearerToken());
 		return feedbackClient;
 	}
-	
+
 	public IParticipationArtemisClient getParticipationArtemisClient() {
-		if(participationClient == null)
+		if (participationClient == null)
 			participationClient = new ParticipationArtemisClient(hostname, loginManager.getBearerToken());
 		return participationClient;
 	}
-	
+
 	public IUtilArtemisClient getUtilArtemisClient() {
-		if(utilClient == null)
-			utilClient =  new UtilArtemisClient(hostname, loginManager.getBearerToken());
+		if (utilClient == null)
+			utilClient = new UtilArtemisClient(hostname, loginManager.getBearerToken());
 		return utilClient;
 	}
-	
+
 	public IAssessmentArtemisClient getAssessmentArtemisClient() {
-		if(assessmentClient == null)
+		if (assessmentClient == null)
 			assessmentClient = new AssessmentArtemisClient(hostname, loginManager.getBearerToken());
 		return assessmentClient;
 	}

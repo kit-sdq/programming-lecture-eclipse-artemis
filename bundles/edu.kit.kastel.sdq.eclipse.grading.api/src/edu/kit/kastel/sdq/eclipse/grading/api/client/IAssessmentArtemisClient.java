@@ -26,8 +26,7 @@ public interface IAssessmentArtemisClient {
 	 *
 	 * @throws ArtemisClientException
 	 */
-	void saveAssessment(ParticipationDTO participation, boolean submit, AssessmentResult assessment)
-			throws ArtemisClientException;
+	void saveAssessment(ParticipationDTO participation, boolean submit, AssessmentResult assessment) throws ArtemisClientException;
 
 	/**
 	 * Starts an assessment for the given submission. Acquires a lock in the

@@ -14,11 +14,11 @@ import edu.kit.kastel.sdq.eclipse.grading.api.controller.IConfirmObserver;
  *
  */
 public class ViewAlertObserver implements IAlertObserver, IConfirmObserver {
-	
-	private static final ILog log = Platform.getLog(ViewAlertObserver.class); 
-	
+
+	private static final ILog log = Platform.getLog(ViewAlertObserver.class);
+
 	@Override
-	public void error(String errorMsg, Throwable cause) {	
+	public void error(String errorMsg, Throwable cause) {
 		log.error(errorMsg, cause);
 		MessageDialog.openError(AssessmentUtilities.getWindowsShell(), "Error", errorMsg);
 	}
@@ -34,9 +34,9 @@ public class ViewAlertObserver implements IAlertObserver, IConfirmObserver {
 		log.warn(warningMsg);
 		MessageDialog.openWarning(AssessmentUtilities.getWindowsShell(), "Warning", warningMsg);
 	}
-	
+
 	@Override
 	public boolean confirm(String msg) {
 		return MessageDialog.openConfirm(AssessmentUtilities.getWindowsShell(), "Confirm", msg);
 	}
-}	
+}

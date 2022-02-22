@@ -39,17 +39,17 @@ public class ArtemisFeedbackWebsocket implements IWebsocketClient {
 	private static final String TOKEN_QUERY_PATH = "access_token";
 
 	private String baseUrl;
-	private String token;
-	private String stompUrl;
 
 	public ArtemisFeedbackWebsocket(String baseUrl) {
 		this.baseUrl = baseUrl;
-		this.stompUrl = buildStompUrl();
 	}
 
 	@Override
 	public void connect(WebsocketCallback callback, String token) throws ArtemisWebsocketException {
-		stompUrl = stompUrl + token;
+		if (nullOrEmpty(baseUrl) || nullOrEmpty(token)) {
+			throw new ArtemisWebsocketException("Baseurl or token is empty.");
+		}
+		String stompUrl = buildStompUrl(token);
 		StandardWebSocketClient simpleWebSocketClient = configureStandartWebsocketClientWithSSL();
 		SockJsClient sockJsClient = configureSockJsClient(simpleWebSocketClient);
 		WebSocketStompClient stompClient = configureStompClient(sockJsClient);
@@ -90,10 +90,8 @@ public class ArtemisFeedbackWebsocket implements IWebsocketClient {
 		return simpleWebSocketClient;
 	}
 
-	private SSLContext configureSSLContext()
-			throws NoSuchAlgorithmException, KeyManagementException, KeyStoreException {
-		TrustManagerFactory trustManagerFactory = TrustManagerFactory
-				.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+	private SSLContext configureSSLContext() throws NoSuchAlgorithmException, KeyManagementException, KeyStoreException {
+		TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
 		trustManagerFactory.init((KeyStore) null);
 		TrustManager[] trustAllCerts = trustManagerFactory.getTrustManagers();
 
@@ -106,7 +104,11 @@ public class ArtemisFeedbackWebsocket implements IWebsocketClient {
 		return sc;
 	}
 
-	private String buildStompUrl() {
+	private String buildStompUrl(String token) {
 		return baseUrl + WEBSOCKET_PATH + "?" + TOKEN_QUERY_PATH + "=" + token;
+	}
+
+	private boolean nullOrEmpty(String str) {
+		return str == null || str.equals("");
 	}
 }

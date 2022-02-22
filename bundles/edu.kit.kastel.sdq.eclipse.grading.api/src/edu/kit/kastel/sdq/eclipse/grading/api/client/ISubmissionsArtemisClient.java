@@ -18,7 +18,7 @@ public interface ISubmissionsArtemisClient {
 
 		return submissions;
 	}
-	
+
 	/**
 	 *
 	 * @param exerciseID
@@ -28,7 +28,7 @@ public interface ISubmissionsArtemisClient {
 	 * @throws ArtemisClientException if some errors occur while parsing the result.
 	 */
 	List<ISubmission> getSubmissions(IExercise exercise, int correctionRound) throws ArtemisClientException;
-	
+
 	ISubmission getSubmissionById(IExercise artemisExercise, int submissionId) throws ArtemisClientException;
 
 }

@@ -32,16 +32,16 @@ public class ArtemisStudentView extends ViewPart {
 	private static final String NO_SELECTED = "*NOTHING SELECTED*";
 	private List<ArtemisStudentTab> tabs = new ArrayList<>();
 	private StudentViewController viewController;
-	
+
 	private ScrolledComposite scrolledCompositeGrading;
 	private Composite gradingComposite;
-	
+
 	private Button btnSubmitExcerise;
 	private Button btnClean;
 	private Combo examCombo;
 	private Combo exerciseCombo;
 	private Combo courseCombo;
-	
+
 	private ControlDecoration controlDecorationSubmitted;
 	private ControlDecoration controlDecorationClean;
 
@@ -52,6 +52,7 @@ public class ArtemisStudentView extends ViewPart {
 		tabs.add(new ExamTab(viewController));
 		viewController.connectToWebsocket(resultTab);
 	}
+
 	/**
 	 * This methods creates the whole view components.
 	 */
@@ -59,7 +60,7 @@ public class ArtemisStudentView extends ViewPart {
 	public void createPartControl(Composite parent) {
 		this.createView(parent);
 	}
-	
+
 	private void createView(Composite parent) {
 		TabFolder tabFolder = new TabFolder(parent, SWT.NONE);
 		createMainTab(tabFolder);
@@ -163,14 +164,13 @@ public class ArtemisStudentView extends ViewPart {
 
 		this.addSelectionListenerForSubmitButton(btnSubmitExcerise);
 
-		Image image = FieldDecorationRegistry.getDefault()
-                .getFieldDecoration(FieldDecorationRegistry.DEC_WARNING).getImage();
+		Image image = FieldDecorationRegistry.getDefault().getFieldDecoration(FieldDecorationRegistry.DEC_WARNING).getImage();
 		controlDecorationSubmitted = new ControlDecoration(btnSubmitExcerise, SWT.RIGHT | SWT.CENTER);
 		controlDecorationSubmitted.setImage(image);
 		controlDecorationSubmitted.setMarginWidth(5);
 		controlDecorationSubmitted.setDescriptionText("The exercise is expired and can therefore not be submitted!");
 		controlDecorationSubmitted.hide();
-		
+
 		Composite composite_1 = new Composite(submitArea, SWT.NONE);
 		composite_1.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		composite_1.setLayout(new GridLayout(1, false));
@@ -192,32 +192,27 @@ public class ArtemisStudentView extends ViewPart {
 		scrolledCompositeGrading.setContent(gradingComposite);
 		scrolledCompositeGrading.setMinSize(gradingComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 	}
-	
+
 	private void addSelectionListenerForSubmitButton(Button btnSubmit) {
 		btnSubmit.addListener(SWT.Selection, e -> {
 			this.viewController.onSubmitSolution();
 		});
 	}
 
-
 	private void createExamComboList(Combo courseCombo, Combo examCombo, Combo exerciseCombo) {
 		examCombo.removeAll();
 		exerciseCombo.removeAll();
-		this.viewController.getExerciseShortNames(courseCombo.getItem(courseCombo.getSelectionIndex()))
-				.forEach(exerciseCombo::add);
+		this.viewController.getExerciseShortNames(courseCombo.getItem(courseCombo.getSelectionIndex())).forEach(exerciseCombo::add);
 		examCombo.add("None");
-		this.viewController.getExamShortNames(courseCombo.getItem(courseCombo.getSelectionIndex()))
-				.forEach(examCombo::add);
+		this.viewController.getExamShortNames(courseCombo.getItem(courseCombo.getSelectionIndex())).forEach(examCombo::add);
 		examCombo.addListener(SWT.Selection, e -> {
 			exerciseCombo.removeAll();
 			String examName = examCombo.getItem(examCombo.getSelectionIndex());
 			if ("None".equals(examName)) {
 				this.viewController.setExamToNull();
-				this.viewController.getExerciseShortNames(courseCombo.getItem(courseCombo.getSelectionIndex()))
-						.forEach(exerciseCombo::add);
+				this.viewController.getExerciseShortNames(courseCombo.getItem(courseCombo.getSelectionIndex())).forEach(exerciseCombo::add);
 			} else {
-				this.viewController.getExercisesShortNamesForExam(examCombo.getItem(examCombo.getSelectionIndex()))
-						.forEach(exerciseCombo::add);
+				this.viewController.getExercisesShortNamesForExam(examCombo.getItem(examCombo.getSelectionIndex())).forEach(exerciseCombo::add);
 			}
 			callAllTabsForExamEvent();
 		});
@@ -225,19 +220,19 @@ public class ArtemisStudentView extends ViewPart {
 			handleExerciseComboListEvent(exerciseCombo);
 		});
 	}
-	
+
 	private void updateButtons(String exerciseName) {
 		setButtonText(exerciseName);
 		enableButtons();
 	}
-	
+
 	private void handleExerciseComboListEvent(Combo exerciseCombo) {
 		String exerciseShortName = exerciseCombo.getItem(exerciseCombo.getSelectionIndex());
 		this.viewController.setExerciseID(exerciseShortName);
 		callAllTabsForExerciseEvent();
 		updateButtons(exerciseShortName);
 	}
-	
+
 	private void setButtonText(String exerciseName) {
 		this.btnSubmitExcerise.setText("Submit: " + exerciseName);
 		this.btnClean.setText("Clean: " + exerciseName);
@@ -248,18 +243,18 @@ public class ArtemisStudentView extends ViewPart {
 		boolean canClean = this.viewController.canClean();
 		this.btnSubmitExcerise.setEnabled(canSubmit);
 		btnClean.setEnabled(canClean);
-		if(!canSubmit) {
+		if (!canSubmit) {
 			this.controlDecorationSubmitted.show();
 		} else {
 			this.controlDecorationSubmitted.hide();
 		}
-		if(!canClean) {
+		if (!canClean) {
 			this.controlDecorationClean.show();
 		} else {
 			this.controlDecorationClean.hide();
 		}
 	}
-	
+
 	private void cleanWorkspaceForSelectedExercise() {
 		this.viewController.cleanWorkspace();
 
@@ -294,31 +289,34 @@ public class ArtemisStudentView extends ViewPart {
 		this.exerciseCombo.removeAll();
 		this.viewController.getCourseShortNames().forEach(courseShortName -> this.courseCombo.add(courseShortName));
 	}
+
 	private void resetButtons() {
 		resetButtonText();
 		resetButtonEnable();
 	}
-	
+
 	private void resetButtonText() {
 		this.btnSubmitExcerise.setText(NO_SELECTED);
 		this.btnClean.setText(NO_SELECTED);
 	}
+
 	private void resetButtonEnable() {
 		this.btnSubmitExcerise.setEnabled(false);
 		this.btnClean.setEnabled(false);
 	}
+
 	private void resetAllTabs() {
 		this.tabs.forEach(ArtemisStudentTab::reset);
 	}
-	
+
 	private void createAllTabs(TabFolder folder) {
-		this.tabs.forEach(t ->t.create(folder));
+		this.tabs.forEach(t -> t.create(folder));
 	}
-	
+
 	private void callAllTabsForExerciseEvent() {
 		this.tabs.forEach(ArtemisStudentTab::callExercisesEvent);
 	}
-	
+
 	private void callAllTabsForExamEvent() {
 		this.tabs.forEach(ArtemisStudentTab::callExamEvent);
 	}

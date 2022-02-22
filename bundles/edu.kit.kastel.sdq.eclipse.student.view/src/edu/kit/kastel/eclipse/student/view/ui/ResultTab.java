@@ -36,11 +36,10 @@ import edu.kit.kastel.sdq.eclipse.grading.api.client.websocket.WebsocketCallback
 import org.eclipse.swt.graphics.Point;
 
 public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
-	private static final String RELOAD_BTN_TEXT = "Reload";  
-	private static final String LOAD_BTN_TEXT = "Loading...";  
+	private static final String RELOAD_BTN_TEXT = "Reload";
+	private static final String LOAD_BTN_TEXT = "Loading...";
 	private static final int ROUND_DECIMAL_PLACES = 2;
-	private static final String CHECK_MARK_IN_UTF8 = new String(new byte[] { (byte) 0xE2, (byte) 0x9C, (byte) 0x93 },
-			StandardCharsets.UTF_8);
+	private static final String CHECK_MARK_IN_UTF8 = new String(new byte[] { (byte) 0xE2, (byte) 0x9C, (byte) 0x93 }, StandardCharsets.UTF_8);
 
 	private Display display;
 	private StudentViewController viewController;
@@ -69,7 +68,7 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 		display = tabFolder.getDisplay();
 		TabItem tbtmResult = new TabItem(tabFolder, SWT.NONE);
 		tbtmResult.setText("Test Results");
-		
+
 		this.scrolledCompositeFeedback = new ScrolledComposite(tabFolder, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 		tbtmResult.setControl(this.scrolledCompositeFeedback);
 		scrolledCompositeFeedback.setLayout(new FillLayout());
@@ -79,8 +78,7 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 		this.feedbackContainerComposite = new Composite(this.scrolledCompositeFeedback, SWT.NONE);
 		this.scrolledCompositeFeedback.setContent(this.feedbackContainerComposite);
 		feedbackContainerComposite.setSize(scrolledCompositeFeedback.getSize());
-		this.scrolledCompositeFeedback
-				.setMinSize(this.feedbackContainerComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+		this.scrolledCompositeFeedback.setMinSize(this.feedbackContainerComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		feedbackContainerComposite.setLayout(new GridLayout(1, true));
 		feedbackContainerComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
@@ -201,12 +199,12 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 
 	private void createTableForFeedback(Composite parent) {
 		feedbackTabel = new Table(parent, SWT.BORDER | SWT.V_SCROLL);
-		feedbackTabel.setToolTipText("Feedbacks for Excerise");  
+		feedbackTabel.setToolTipText("Feedbacks for Excerise");
 		feedbackTabel.setLinesVisible(true);
 		feedbackTabel.setHeaderVisible(true);
 		feedbackTabel.setLayout(new GridLayout(1, true));
 		feedbackTabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		String[] colNames = { "Name", "Credits", "Success", "Detailed Text" };   //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		String[] colNames = { "Name", "Credits", "Success", "Detailed Text" }; //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		int[] width = { 200, 100, 100, 100 };
 
 		for (int loopIndex = 0; loopIndex < colNames.length; loopIndex++) {
@@ -236,15 +234,14 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 	private void addResultToTab(ResultsDTO result, IExercise exercise) {
 		Display display = Display.getDefault();
 		if (result != null) {
-			this.btnResultSuccessfull.setForeground((result.successful ? display.getSystemColor(SWT.COLOR_GREEN)
-					: display.getSystemColor(SWT.COLOR_RED)));
-			btnResultSuccessfull.setText(result.successful ? "success" : "failed");   //$NON-NLS-2$
+			this.btnResultSuccessfull.setForeground((result.successful ? display.getSystemColor(SWT.COLOR_GREEN) : display.getSystemColor(SWT.COLOR_RED)));
+			btnResultSuccessfull.setText(result.successful ? "success" : "failed"); //$NON-NLS-2$
 
 			if (exercise != null) {
 				lblResultExerciseShortName.setText(exercise.getTitle());
 				lblResultExerciseDescription.setText(result.completionDate);
 				resultScore.setText(result.resultString);
-				lblPoints.setText("Points: " + result.score + "%");   //$NON-NLS-2$
+				lblPoints.setText("Points: " + result.score + "%"); //$NON-NLS-2$
 			} else {
 				resultScore.setText(Integer.toString(result.score));
 			}
@@ -260,11 +257,10 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 				double roundedCredits = roundToDeciamlPlaces(feedback.getCredits());
 				final TableItem item = new TableItem(table, SWT.NULL);
 				item.setText(0, feedback.getText());
-				item.setText(1, "" + roundedCredits);  
-				item.setText(2, feedback.getPositive() ? "successful" : "failed");   //$NON-NLS-2$
-				item.setForeground(2, feedback.getPositive() ? display.getSystemColor(SWT.COLOR_GREEN)
-						: display.getSystemColor(SWT.COLOR_RED));
-				item.setText(3, (feedback.getDetailText() != null) ? CHECK_MARK_IN_UTF8 : "X");  
+				item.setText(1, "" + roundedCredits);
+				item.setText(2, feedback.getPositive() ? "successful" : "failed"); //$NON-NLS-2$
+				item.setForeground(2, feedback.getPositive() ? display.getSystemColor(SWT.COLOR_GREEN) : display.getSystemColor(SWT.COLOR_RED));
+				item.setText(3, (feedback.getDetailText() != null) ? CHECK_MARK_IN_UTF8 : "X");
 			}
 		}
 	}
@@ -363,7 +359,7 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 
 	private void handleWebsocketError() {
 		this.btnLoading.setVisible(true);
-		this.btnLoading.setText("ERROR");  
+		this.btnLoading.setText("ERROR");
 	}
 
 	@Override

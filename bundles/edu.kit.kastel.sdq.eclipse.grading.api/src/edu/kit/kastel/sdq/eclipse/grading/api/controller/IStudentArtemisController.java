@@ -14,11 +14,11 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ResultsDTO;
 
 public interface IStudentArtemisController extends IArtemisController {
 	IStudentExam getExercisesFromStudentExam(String examTitle);
-	
+
 	Map<ResultsDTO, List<Feedback>> getFeedbackExercise(ICourse course, IExercise excerise);
-	
-	IStudentExam startExam(ICourse course,IExam exam);
-	
+
+	IStudentExam startExam(ICourse course, IExam exam);
+
 	Optional<ParticipationDTO> getParticipation(ICourse course, IExercise exercise);
 
 }

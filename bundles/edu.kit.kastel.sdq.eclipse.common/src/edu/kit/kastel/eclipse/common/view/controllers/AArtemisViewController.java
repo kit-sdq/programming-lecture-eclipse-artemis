@@ -11,7 +11,8 @@ import edu.kit.kastel.sdq.eclipse.grading.api.controller.IGradingSystemwideContr
 import edu.kit.kastel.sdq.eclipse.grading.api.controller.ISystemwideController;
 
 /**
- * This abstract class is the base for controllers for a view for artemis. It holds all general controllers for the backend calls.
+ * This abstract class is the base for controllers for a view for artemis. It
+ * holds all general controllers for the backend calls.
  */
 public abstract class AArtemisViewController {
 	private IArtemisController artemisGUIController;
@@ -29,7 +30,7 @@ public abstract class AArtemisViewController {
 		this.artemisGUIController.addAlertObserver(this.alertObserver);
 		this.artemisGUIController.addConfirmObserver(observer);
 	}
-	
+
 	/**
 	 * @return all courses available at artemis
 	 */
@@ -43,7 +44,7 @@ public abstract class AArtemisViewController {
 	public List<String> getCourseShortNames() {
 		return this.artemisGUIController.getCourseShortNames();
 	}
-	
+
 	/**
 	 * @param courseTitle (of the selected course in the combo)
 	 * @return all exams of the given course
@@ -51,7 +52,7 @@ public abstract class AArtemisViewController {
 	public List<String> getExamShortNames(String courseTitle) {
 		return this.artemisGUIController.getExamTitles(courseTitle);
 	}
-	
+
 	/**
 	 * @param courseName (selected course in the combo)
 	 * @return all exercises from the given course
@@ -72,7 +73,7 @@ public abstract class AArtemisViewController {
 	public List<String> getExercisesShortNamesForExam(String examShortName) {
 		return this.artemisGUIController.getExerciseShortNamesFromExam(examShortName);
 	}
-	
+
 	/**
 	 * Sets the exercise ID of the selected exercise
 	 *
@@ -85,16 +86,15 @@ public abstract class AArtemisViewController {
 			this.alertObserver.error(e.getMessage(), e);
 		}
 	}
-	
+
 	protected IArtemisController getArtemisGUIController() {
 		return this.artemisGUIController;
 	}
-	
+
 	protected abstract ISystemwideController getSystemwideController();
 
 	protected IAlertObserver getAlertObserver() {
 		return alertObserver;
 	}
-	
 
 }

@@ -11,15 +11,15 @@ public interface IAuthenticationArtemisClient {
 	 * @throws ArtemisClientException
 	 */
 	String getRawToken();
-	
+
 	String getBearerToken();
-	
+
 	/**
 	 *
 	 * @return the artemis "assessor" object (needed for submitting the assessment).
 	 * @throws ArtemisClientException if some errors occur while parsing the result.
 	 */
 	Assessor getAssessor();
-	
+
 	void init() throws ArtemisClientException;
 }

@@ -28,7 +28,7 @@ import edu.kit.kastel.sdq.eclipse.grading.client.mappings.IMappingLoader;
 import edu.kit.kastel.sdq.eclipse.grading.client.mappings.exam.ArtemisExam;
 import edu.kit.kastel.sdq.eclipse.grading.client.mappings.exam.ArtemisExerciseGroup;
 
-public class MappingLoaderArtemisClient extends AbstractArtemisClient implements ICourseArtemisClient, IMappingLoader{
+public class MappingLoaderArtemisClient extends AbstractArtemisClient implements ICourseArtemisClient, IMappingLoader {
 	private static final ILog log = Platform.getLog(MappingLoaderArtemisClient.class);
 
 	private WebTarget endpoint;
@@ -42,7 +42,7 @@ public class MappingLoaderArtemisClient extends AbstractArtemisClient implements
 		this.token = token;
 		this.submissionClient = submissionClient;
 	}
-	
+
 	@Override
 	public List<ICourse> getCoursesForAssessment() throws ArtemisClientException {
 		final Response rsp = this.endpoint.path(COURSES_PATHPART).request().header(AUTHORIZATION_NAME, this.token).buildGet().invoke();
@@ -70,8 +70,7 @@ public class MappingLoaderArtemisClient extends AbstractArtemisClient implements
 	}
 
 	@Override
-	public List<IExerciseGroup> getExerciseGroupsForExam(IExam artemisExam, ICourse course)
-			throws ArtemisClientException {
+	public List<IExerciseGroup> getExerciseGroupsForExam(IExam artemisExam, ICourse course) throws ArtemisClientException {
 		final Response rsp = this.endpoint.path(COURSES_PATHPART).path(String.valueOf(course.getCourseId())).path(EXAMS_PATHPART)
 				.path(String.valueOf(artemisExam.getExamId())).path("exam-for-assessment-dashboard") // web client does it that way..
 				.request().header(AUTHORIZATION_NAME, this.token).buildGet().invoke(); // synchronous variant

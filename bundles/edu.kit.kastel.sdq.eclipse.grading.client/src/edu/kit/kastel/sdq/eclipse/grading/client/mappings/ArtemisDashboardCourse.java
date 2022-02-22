@@ -23,10 +23,10 @@ public class ArtemisDashboardCourse implements ICourse, Serializable {
 
 	@JsonProperty(value = "id")
 	private int courseId;
-	
+
 	@JsonProperty
 	private String title;
-	
+
 	@JsonProperty
 	private String shortName;
 
@@ -40,7 +40,7 @@ public class ArtemisDashboardCourse implements ICourse, Serializable {
 	private ArtemisExam[] exams = {};
 
 	private transient IMappingLoader client;
-	
+
 	@Override
 	public int getCourseId() {
 		return courseId;
@@ -48,7 +48,7 @@ public class ArtemisDashboardCourse implements ICourse, Serializable {
 
 	@Override
 	public List<IExam> getExams() throws ArtemisClientException {
-		if(exams == null) {
+		if (exams == null) {
 			this.exams = (ArtemisExam[]) this.client.getExamsForCourse(this).toArray();
 		}
 		return Arrays.asList(exams);
@@ -56,7 +56,7 @@ public class ArtemisDashboardCourse implements ICourse, Serializable {
 
 	@Override
 	public List<IExercise> getExercises() throws ArtemisClientException {
-		if(exercises == null) {
+		if (exercises == null) {
 			this.exercises = (ArtemisExercise[]) this.client.getStudentExercisesForCourse(this).toArray();
 		}
 		return Arrays.asList(exercises);
@@ -76,7 +76,7 @@ public class ArtemisDashboardCourse implements ICourse, Serializable {
 	public boolean isInstructor(Assessor assessor) {
 		return false;
 	}
-	
+
 	public void init(IMappingLoader client) {
 		this.client = client;
 	}

@@ -110,7 +110,6 @@ public interface IGradingSystemwideController extends ISystemwideController {
 	 */
 	List<String> setCourseIdAndGetExerciseShortNames(String courseShortName) throws ArtemisClientException;
 
-
 	/**
 	 * <B>ASSESSMENT</B><br/>
 	 * <li>current state (exerciseID, courseID) is used for call to artemis:
@@ -143,7 +142,6 @@ public interface IGradingSystemwideController extends ISystemwideController {
 	 *         there was a submission available.
 	 */
 	boolean startCorrectionRound2();
-	
 
 	/**
 	 * <B>ASSESSMENT</B><br/>
@@ -152,16 +150,13 @@ public interface IGradingSystemwideController extends ISystemwideController {
 	 * <li>See docs/Zustandshaltung-Automat
 	 */
 	void submitAssessment();
-	
-    /**
-     * Download submissions defined by the given submissionIds
-     *
-     * @param submissionIds
-     * @return whether download was successful or not
-     */
-    boolean downloadExerciseAndSubmission(ICourse courseID, IExercise exerciseID, ISubmission submissionID, IProjectFileNamingStrategy projectNaming);
 
-	
-
+	/**
+	 * Download submissions defined by the given submissionIds
+	 *
+	 * @param submissionIds
+	 * @return whether download was successful or not
+	 */
+	boolean downloadExerciseAndSubmission(ICourse courseID, IExercise exerciseID, ISubmission submissionID, IProjectFileNamingStrategy projectNaming);
 
 }

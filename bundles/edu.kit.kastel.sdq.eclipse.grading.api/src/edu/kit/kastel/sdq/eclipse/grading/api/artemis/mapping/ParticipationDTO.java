@@ -37,7 +37,7 @@ public class ParticipationDTO implements Serializable {
 	public String getRepositoryUrl() {
 		return this.repositoryUrl;
 	}
-	
+
 	public ResultsDTO[] getResults() {
 		return results;
 	}

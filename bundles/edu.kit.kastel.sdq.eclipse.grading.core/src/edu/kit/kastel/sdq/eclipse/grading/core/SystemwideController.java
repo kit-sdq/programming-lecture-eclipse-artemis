@@ -18,14 +18,14 @@ public abstract class SystemwideController extends AbstractController implements
 	protected IPreferenceStore preferenceStore;
 	protected IProjectFileNamingStrategy projectFileNamingStrategy;
 	protected IExerciseArtemisController exerciseController;
-	
+
 	protected SystemwideController(String username, String password) {
 		this.projectFileNamingStrategy = ProjectFileNamingStrategies.DEFAULT.get();
 		exerciseController = new ExerciseArtemisController(username, password);
 	}
-	
+
 	protected abstract void refreshArtemisController(String url, String user, String pass);
-		
+
 	protected void initPreferenceStoreCallback(final IPreferenceStore preferenceStore) {
 		// change preferences
 		this.preferenceStore.addPropertyChangeListener(event -> {
@@ -63,7 +63,7 @@ public abstract class SystemwideController extends AbstractController implements
 		}
 		return somethingNull;
 	}
-	
+
 	@Override
 	public IExerciseArtemisController getExerciseArtemisController() {
 		return exerciseController;
