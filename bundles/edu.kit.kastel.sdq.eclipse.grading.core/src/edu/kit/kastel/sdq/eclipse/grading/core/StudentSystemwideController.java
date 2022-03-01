@@ -148,7 +148,6 @@ public class StudentSystemwideController extends SystemwideController implements
 	@Override
 	public Map<ResultsDTO, List<Feedback>> getFeedbackExcerise() {
 		if (this.nullCheckMembersAndNotify(true, true)) {
-			this.warn("No excercise is selected");
 			return new HashMap<>();
 		}
 

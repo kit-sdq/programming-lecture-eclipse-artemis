@@ -59,7 +59,7 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 	private Button btnReload;
 	private Label btnLoading;
 
-	public ResultTab(StudentViewController viewController) {
+	public ResultTab(final StudentViewController viewController) {
 		this.viewController = viewController;
 	}
 
@@ -361,6 +361,11 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 	@Override
 	public void callExamEvent() {
 		reset();
+	}
+	
+	@Override
+	public void setViewController(StudentViewController viewController) {
+		this.viewController = viewController;
 	}
 
 	/**

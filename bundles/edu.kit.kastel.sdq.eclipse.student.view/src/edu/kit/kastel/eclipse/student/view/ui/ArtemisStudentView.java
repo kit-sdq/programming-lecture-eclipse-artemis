@@ -278,6 +278,7 @@ public class ArtemisStudentView extends ViewPart {
 	private void refreshArtemisState() {
 		this.viewController = new StudentViewController();
 		viewController.connectToWebsocket((ResultTab) tabs.get(0));
+		setViewControllerForAllTabs();
 		this.resetCombos();
 		this.resetButtons();
 		this.resetAllTabs();
@@ -319,5 +320,9 @@ public class ArtemisStudentView extends ViewPart {
 
 	private void callAllTabsForExamEvent() {
 		this.tabs.forEach(ArtemisStudentTab::callExamEvent);
+	}
+	
+	private void setViewControllerForAllTabs() {
+		this.tabs.forEach(tab -> tab.setViewController(viewController));
 	}
 }

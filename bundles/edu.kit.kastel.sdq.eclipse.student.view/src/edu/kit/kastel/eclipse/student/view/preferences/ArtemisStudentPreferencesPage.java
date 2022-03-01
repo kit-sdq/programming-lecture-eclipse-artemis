@@ -24,9 +24,6 @@ import edu.kit.kastel.sdq.eclipse.grading.api.PreferenceConstants;
 
 public class ArtemisStudentPreferencesPage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 
-	private BooleanFieldEditor isRelativeConfigPath;
-	private StringFieldEditor relativeConfigPath;
-	private FileFieldEditor absoluteConfigPath;
 
 	public ArtemisStudentPreferencesPage() {
 		super(FieldEditorPreferencePage.GRID);
@@ -42,13 +39,6 @@ public class ArtemisStudentPreferencesPage extends FieldEditorPreferencePage imp
 	@Override
 	public void createFieldEditors() {
 
-		this.absoluteConfigPath = new FileFieldEditor(PreferenceConstants.ABSOLUTE_CONFIG_PATH, "Absolute config path: ", this.getFieldEditorParent());
-
-		this.isRelativeConfigPath = new BooleanFieldEditor(PreferenceConstants.IS_RELATIVE_CONFIG_PATH, "Use relative config path",
-				this.getFieldEditorParent());
-
-		this.relativeConfigPath = new StringFieldEditor(PreferenceConstants.RELATIVE_CONFIG_PATH, "Relative config path: ", this.getFieldEditorParent());
-
 		StringFieldEditor artemisUrl = new StringFieldEditor(PreferenceConstants.ARTEMIS_URL, "Artemis URL: ", this.getFieldEditorParent());
 
 		StringFieldEditor artemisUser = new StringFieldEditor(PreferenceConstants.ARTEMIS_USER, "Artemis username: ", this.getFieldEditorParent());
@@ -57,9 +47,6 @@ public class ArtemisStudentPreferencesPage extends FieldEditorPreferencePage imp
 
 		artemisPassword.getTextControl(this.getFieldEditorParent()).setEchoChar('*');
 
-		this.addField(this.absoluteConfigPath);
-		this.addField(this.relativeConfigPath);
-		this.addField(this.isRelativeConfigPath);
 		this.addField(artemisUrl);
 		this.addField(artemisUser);
 		this.addField(artemisPassword);
@@ -69,31 +56,6 @@ public class ArtemisStudentPreferencesPage extends FieldEditorPreferencePage imp
 	@Override
 	public void init(IWorkbench workbench) {
 		// NOP
-	}
-
-	@Override
-	protected void initialize() {
-		super.initialize();
-		this.isRelativeConfigPath.setPropertyChangeListener(event -> {
-			final boolean isRelative = (Boolean) event.getNewValue();
-			if (isRelative) {
-				this.relativeConfigPath.setEnabled(true, this.getFieldEditorParent());
-				this.absoluteConfigPath.setEnabled(false, this.getFieldEditorParent());
-			} else {
-				this.relativeConfigPath.setEnabled(false, this.getFieldEditorParent());
-				this.absoluteConfigPath.setEnabled(true, this.getFieldEditorParent());
-			}
-		});
-
-		final boolean isRelativeSelected = this.isRelativeConfigPath.getBooleanValue();
-		if (isRelativeSelected) {
-			this.relativeConfigPath.setEnabled(true, this.getFieldEditorParent());
-			this.absoluteConfigPath.setEnabled(false, this.getFieldEditorParent());
-		} else {
-			this.relativeConfigPath.setEnabled(false, this.getFieldEditorParent());
-			this.absoluteConfigPath.setEnabled(true, this.getFieldEditorParent());
-		}
-
 	}
 
 }

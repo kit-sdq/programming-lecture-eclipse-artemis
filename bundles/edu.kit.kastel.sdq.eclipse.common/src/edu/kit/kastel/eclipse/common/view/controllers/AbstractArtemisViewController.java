@@ -23,11 +23,11 @@ public abstract class AbstractArtemisViewController {
 
 	protected void initializeControllersAndObserver() {
 		ViewAlertObserver observer = new ViewAlertObserver();
-		this.alertObserver = observer;
+		this.alertObserver = new ViewAlertObserver();
 		this.artemisGUIController = getSystemwideController().getArtemisController();
-		this.getSystemwideController().addAlertObserver(this.alertObserver);
+		this.getSystemwideController().addAlertObserver(observer);
 		this.getSystemwideController().addConfirmObserver(observer);
-		this.artemisGUIController.addAlertObserver(this.alertObserver);
+		this.artemisGUIController.addAlertObserver(observer);
 		this.artemisGUIController.addConfirmObserver(observer);
 	}
 
