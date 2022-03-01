@@ -24,7 +24,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  *
  */
 @JsonInclude(Include.NON_NULL)
-public class Feedback implements Serializable {
+public class Feedback implements Comparable<Feedback>, Serializable {
 	private static final long serialVersionUID = 4531964872375020131L;
 
 	private String type;
@@ -139,5 +139,14 @@ public class Feedback implements Serializable {
 	 */
 	public String getVisibility() {
 		return this.visibility;
+	}
+
+	@Override
+	public int compareTo(Feedback o) {
+		// TODO: maybe add different sorting
+		if (this.getText() != null) {
+			return this.getText().compareToIgnoreCase(o.getText());
+		}
+		return 1;
 	}
 }

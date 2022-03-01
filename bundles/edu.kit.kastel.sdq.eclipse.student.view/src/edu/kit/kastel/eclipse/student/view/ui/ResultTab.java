@@ -252,7 +252,7 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 		Display display = getDisplay();
 
 		if (entries != null) {
-			sortEntriesAlphabetically(entries);
+			Collections.sort(entries);
 			for (var feedback : entries) {
 				double roundedCredits = roundToDeciamlPlaces(feedback.getCredits());
 				final TableItem item = new TableItem(table, SWT.NULL);
@@ -279,16 +279,6 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 
 		BigDecimal bd = new BigDecimal(credits).setScale(ROUND_DECIMAL_PLACES, RoundingMode.HALF_UP);
 		return bd.doubleValue();
-	}
-
-	private void sortEntriesAlphabetically(final List<Feedback> feedbacks) {
-		// TODO: maybe add different sorting
-		Collections.sort(feedbacks, new Comparator<Feedback>() {
-			@Override
-			public int compare(Feedback o1, Feedback o2) {
-				return o1.getText().compareToIgnoreCase(o2.getText());
-			}
-		});
 	}
 
 	private void getFeedbackForExcerise() {
