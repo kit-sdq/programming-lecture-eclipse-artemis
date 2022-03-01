@@ -9,6 +9,7 @@ public class Messages extends NLS {
 	public static String ExamTab_START;
 	public static String ResultTab_INFO_RESULT;
 	public static String ResultTab_INFO_FEEDBACK;
+	public static String ArtemisStudentView_lblExercise_1_text;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

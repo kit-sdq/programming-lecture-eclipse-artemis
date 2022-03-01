@@ -162,4 +162,9 @@ public class ExamTab implements ArtemisStudentTab {
 	private String getLink() {
 		return this.viewController.getExamUrlForCurrentExam();
 	}
+
+	@Override
+	public void setViewController(StudentViewController viewController) {
+		this.viewController = viewController;
+	}
 }
