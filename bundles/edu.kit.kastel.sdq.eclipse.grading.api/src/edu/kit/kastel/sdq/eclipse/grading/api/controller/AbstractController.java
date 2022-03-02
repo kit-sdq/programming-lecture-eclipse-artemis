@@ -8,12 +8,12 @@ public abstract class AbstractController implements IController {
 	private IConfirmObserver confirmObserver;
 
 	@Override
-	public void addAlertObserver(IAlertObserver observer) {
+	public final void addAlertObserver(IAlertObserver observer) {
 		this.observers.add(observer);
 	}
 
 	@Override
-	public void addConfirmObserver(IConfirmObserver observer) {
+	public final void addConfirmObserver(IConfirmObserver observer) {
 		this.confirmObserver = observer;
 	}
 

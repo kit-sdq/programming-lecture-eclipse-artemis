@@ -21,4 +21,3 @@ Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: edu.kit.kastel.eclipse.grading.view.activator.Activator
 Automatic-Module-Name: edu.kit.kastel.sdq.eclipse.grading.view
-Export-Package: edu.kit.kastel.eclipse.grading.view.activator

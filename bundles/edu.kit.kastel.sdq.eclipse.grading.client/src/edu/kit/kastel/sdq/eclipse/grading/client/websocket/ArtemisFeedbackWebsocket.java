@@ -109,6 +109,6 @@ public class ArtemisFeedbackWebsocket implements IWebsocketClient {
 	}
 
 	private boolean nullOrEmpty(String str) {
-		return str == null || str.equals("");
+		return str == null || str.isBlank();
 	}
 }

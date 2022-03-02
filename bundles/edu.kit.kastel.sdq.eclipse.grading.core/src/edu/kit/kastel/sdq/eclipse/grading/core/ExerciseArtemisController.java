@@ -104,7 +104,7 @@ public class ExerciseArtemisController extends AbstractController implements IEx
 			GitHandler.commitExercise(username, username, createCommitMsg(course, exercise), gitFileInRepo);
 		} catch (GitException e) {
 			throw new ArtemisClientException("Can't save selected exercise " + exercise.getShortName() //
-					+ ".\n Exercise not found in workspace. \n Please load exercise bevor submitting it.", e);
+					+ ".\n Exercise not found in workspace. \n Please load exercise before submitting it.", e);
 		}
 
 		try {
@@ -119,8 +119,8 @@ public class ExerciseArtemisController extends AbstractController implements IEx
 		if (file.exists()) {
 			throw new ArtemisClientException("Project " + file.getName() + " could not be cloned since the workspace "
 					+ "already contains a project with that name. " + System.lineSeparator()
-					+ "Trying to load and merge previously created annotations. Please double-check them before submitting the assessment! "
-					+ System.lineSeparator() + "If you want to start again from skretch, please delete the project and retry.");
+					+ "Trying to load and merge previously created annotations. Please double-check them before submitting the assessment! \n"
+					+ "If you want to start again from skretch, please delete the project and retry.");
 		}
 	}
 

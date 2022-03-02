@@ -158,7 +158,7 @@ public class AssessmentViewController extends AbstractArtemisViewController {
 				marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_RATING_GROUP, mistake.getRatingGroup().getDisplayName());
 				if (!mistake.isCustomPenalty()) {
 					marker.setAttribute(IMarker.MESSAGE, AssessmentUtilities.createMarkerTooltip(startLine, endLine, mistake.getButtonText(),
-							mistake.getRatingGroup().getDisplayName(), mistake.getMessage(), annotation.getClassFilePath()));
+							mistake.getRatingGroup().getDisplayName(), formatCustomPenaltyMessage(mistake, customMessage), annotation.getClassFilePath()));
 				} else {
 					marker.setAttribute(IMarker.MESSAGE,
 							AssessmentUtilities.createMarkerTooltipForCustomButton(startLine, endLine, customMessage, Double.parseDouble(customPenalty)));

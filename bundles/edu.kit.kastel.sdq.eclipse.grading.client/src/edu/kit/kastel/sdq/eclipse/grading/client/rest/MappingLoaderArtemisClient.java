@@ -30,6 +30,8 @@ import edu.kit.kastel.sdq.eclipse.grading.client.mappings.exam.ArtemisExerciseGr
 
 public class MappingLoaderArtemisClient extends AbstractArtemisClient implements ICourseArtemisClient, IMappingLoader {
 	private static final ILog log = Platform.getLog(MappingLoaderArtemisClient.class);
+	
+	private static final String PROGRAMMING_IDENTIFIER = "programming";
 
 	private WebTarget endpoint;
 	private String token;
@@ -84,7 +86,7 @@ public class MappingLoaderArtemisClient extends AbstractArtemisClient implements
 			return List.of();
 		}
 		if (!exerciseGroupsJsonArray.isArray()) {
-			throw new ArtemisClientException(JSON_PARSE_ERROR_MESSAGE_CORRUPT_JSON_STRUCTURE);
+			throw new ArtemisClientException(JSON_PARSE_ERROR_MESSAGE_CORRUPTED_JSON_STRUCTURE);
 		}
 
 		ArtemisExerciseGroup[] exerciseGroupsArray = this.read(exerciseGroupsJsonArray.toString(), ArtemisExerciseGroup[].class);
@@ -135,7 +137,7 @@ public class MappingLoaderArtemisClient extends AbstractArtemisClient implements
 			return List.of();
 		}
 		if (!exercisesJsonArray.isArray()) {
-			throw new ArtemisClientException(JSON_PARSE_ERROR_MESSAGE_CORRUPT_JSON_STRUCTURE);
+			throw new ArtemisClientException(JSON_PARSE_ERROR_MESSAGE_CORRUPTED_JSON_STRUCTURE);
 		}
 
 		ArtemisExercise[] exercisesArray = this.read(exercisesJsonArray.toString(), ArtemisExercise[].class);
@@ -144,7 +146,7 @@ public class MappingLoaderArtemisClient extends AbstractArtemisClient implements
 		}
 
 		// Here we filter all programming exercises
-		return Arrays.stream(exercisesArray).filter(exercise -> "programming".equals(exercise.getType())).collect(Collectors.toList());
+		return Arrays.stream(exercisesArray).filter(exercise -> PROGRAMMING_IDENTIFIER.equals(exercise.getType())).collect(Collectors.toList());
 	}
 
 	@Override
