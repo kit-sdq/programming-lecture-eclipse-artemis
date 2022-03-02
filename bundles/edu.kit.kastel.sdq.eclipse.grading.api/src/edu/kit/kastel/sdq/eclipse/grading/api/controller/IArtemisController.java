@@ -1,21 +1,12 @@
 package edu.kit.kastel.sdq.eclipse.grading.api.controller;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IProjectFileNamingStrategy;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.Feedback;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ICourse;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExam;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IStudentExam;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ParticipationDTO;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ResultsDTO;
-import edu.kit.kastel.sdq.eclipse.grading.api.client.websocket.WebsocketCallback;
 
 /**
  * Works as an interface from backend to REST-clients
@@ -66,8 +57,23 @@ public interface IArtemisController extends IController {
 	 */
 	IExercise getExerciseFromCourses(List<ICourse> courses, int courseID, int exerciseID);
 
+	/**
+	 * 
+	 * Returns all exercises for the given course.
+	 * 
+	 * @param course
+	 * @param withExamExercises if true returns also exercises of the exams of the
+	 *                          course.
+	 * @return
+	 */
 	List<IExercise> getExercises(ICourse course, boolean withExamExercises);
 
+	/**
+	 * Returns all exercises of exasm with title examTitle.
+	 * 
+	 * @param examTitle exam title of the exam
+	 * @return a list of all exercises of the exam
+	 */
 	List<IExercise> getExercisesFromExam(String examTitle);
 
 	/**
@@ -91,5 +97,10 @@ public interface IArtemisController extends IController {
 	 */
 	List<Feedback> getPrecalculatedAutoFeedbacks(ISubmission submission);
 
-	Date getCurrentDate();
+	/**
+	 * Fetches current local time of artemis backend via REST.
+	 * 
+	 * @return current time of Artemis-Server
+	 */
+	LocalDateTime getCurrentDate();
 }

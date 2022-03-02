@@ -1,8 +1,8 @@
 package edu.kit.kastel.sdq.eclipse.grading.core;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -155,11 +155,11 @@ public abstract class ArtemisController extends AbstractController implements IA
 	}
 
 	@Override
-	public Date getCurrentDate() {
+	public LocalDateTime getCurrentDate() {
 		try {
 			return this.clientManager.getUtilArtemisClient().getTime();
 		} catch (ArtemisClientException e) {
-			return new Date();
+			return LocalDateTime.now();
 		}
 	}
 

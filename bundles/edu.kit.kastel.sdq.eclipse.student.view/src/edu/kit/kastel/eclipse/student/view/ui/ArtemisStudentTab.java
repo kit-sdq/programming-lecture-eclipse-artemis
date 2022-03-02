@@ -12,7 +12,7 @@ public interface ArtemisStudentTab {
 	void callExercisesEvent();
 
 	void callExamEvent();
-	
+
 	void setViewController(StudentViewController viewController);
 
 }

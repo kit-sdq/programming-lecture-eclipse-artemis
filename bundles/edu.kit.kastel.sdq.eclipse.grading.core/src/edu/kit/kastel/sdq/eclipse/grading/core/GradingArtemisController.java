@@ -1,7 +1,6 @@
 package edu.kit.kastel.sdq.eclipse.grading.core;
 
 import java.io.IOException;
-import java.net.UnknownHostException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;

@@ -1,5 +1,8 @@
 package edu.kit.kastel.sdq.eclipse.grading.core;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -108,7 +111,9 @@ public class StudentSystemwideController extends SystemwideController implements
 		}
 
 		if (isSelectedExerciseExpired()) {
-			this.error("Can't submit exercise. Excerise is out-of-date, it was due to: " + this.exercise.getDueDate().toGMTString(), null);
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+			LocalDateTime dueDate = convertToLocalDateTimeViaInstant(this.exercise.getDueDate());
+			this.error("Can't submit exercise. Excerise is out-of-date, it was due to: " + dueDate.format(formatter), null);
 			return false;
 		}
 
@@ -158,7 +163,8 @@ public class StudentSystemwideController extends SystemwideController implements
 	public boolean isSelectedExerciseExpired() {
 		if (exercise != null) {
 			if (exercise.getDueDate() != null) {
-				return exercise.getDueDate().before(getCurrentDate());
+				LocalDateTime dueDate = convertToLocalDateTimeViaInstant(this.exercise.getDueDate());
+				return dueDate.isBefore(getCurrentDate());
 			} else {
 				return false;
 			}
@@ -166,7 +172,7 @@ public class StudentSystemwideController extends SystemwideController implements
 		return true;
 	}
 
-	private Date getCurrentDate() {
+	private LocalDateTime getCurrentDate() {
 		return this.artemisGUIController.getCurrentDate();
 	}
 
@@ -271,5 +277,11 @@ public class StudentSystemwideController extends SystemwideController implements
 			return artemisHost;
 		}
 		return String.format(artemisHost + "/courses/%d/exams/%d", this.course.getCourseId(), this.exam.getExam().getExamId());
+	}
+	
+	private LocalDateTime convertToLocalDateTimeViaInstant(Date dateToConvert) {
+	    return dateToConvert.toInstant()
+	      .atZone(ZoneId.systemDefault())
+	      .toLocalDateTime();
 	}
 }

@@ -20,5 +20,4 @@ public interface ICourse extends Serializable {
 	String getTitle();
 
 	boolean isInstructor(Assessor assessor);
-
 }

@@ -5,13 +5,17 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.Assessor;
 
 public interface IAuthenticationArtemisClient {
 	/**
-	 * Login to Artemis.
+	 * Returns raw token as String. The token can be used to authenticate for REST-calls.
 	 * 
 	 * @return security token
-	 * @throws ArtemisClientException
 	 */
 	String getRawToken();
-
+	
+	/**
+	 * Returns raw token as String. The token can be used to authenticate for REST-calls.
+	 * 
+	 * @return security token with Bearer prefix
+	 */
 	String getBearerToken();
 
 	/**

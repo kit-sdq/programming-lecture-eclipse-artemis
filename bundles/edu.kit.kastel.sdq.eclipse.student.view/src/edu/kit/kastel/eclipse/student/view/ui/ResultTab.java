@@ -5,7 +5,6 @@ import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -362,7 +361,7 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 	public void callExamEvent() {
 		reset();
 	}
-	
+
 	@Override
 	public void setViewController(StudentViewController viewController) {
 		this.viewController = viewController;

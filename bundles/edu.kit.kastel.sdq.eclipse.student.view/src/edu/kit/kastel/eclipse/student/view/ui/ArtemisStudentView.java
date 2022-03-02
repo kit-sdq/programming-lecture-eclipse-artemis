@@ -5,7 +5,6 @@ import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -46,7 +45,7 @@ public class ArtemisStudentView extends ViewPart {
 
 	private ControlDecoration controlDecorationSubmitted;
 	private ControlDecoration controlDecorationClean;
-	
+
 	private Composite examContainerComposite;
 	private Composite examContentComposite;
 
@@ -63,7 +62,6 @@ public class ArtemisStudentView extends ViewPart {
 		this.viewController = new StudentViewController();
 		ResultTab resultTab = new ResultTab(viewController);
 		tabs.add(resultTab);
-		tabs.add(new ExamTab(viewController));
 		viewController.connectToWebsocket(resultTab);
 	}
 
@@ -101,13 +99,13 @@ public class ArtemisStudentView extends ViewPart {
 		this.scrolledCompositeGrading.setMinSize(this.gradingComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		gradingComposite.setLayout(new GridLayout(1, true));
 		gradingComposite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true, 1, 1));
-		
+
 		Composite composite_2 = new Composite(gradingComposite, SWT.NONE);
-		composite_2.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true, 1, 1));
+		composite_2.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		composite_2.setLayout(new GridLayout(1, true));
-		
+
 		Label lblExercise_1 = new Label(composite_2, SWT.NONE);
-		lblExercise_1.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, true, false, 1, 1));
+		lblExercise_1.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1));
 		lblExercise_1.setText(Messages.ArtemisStudentView_lblExercise_1_text);
 		lblExercise_1.setFont(SWTResourceManager.getFont("Segoe UI", 18, SWT.BOLD));
 
@@ -211,13 +209,13 @@ public class ArtemisStudentView extends ViewPart {
 		controlDecorationSubmitted.setImage(image);
 		controlDecorationClean.setDescriptionText("The exercise can not be cleaned!");
 		controlDecorationClean.hide();
-		
+
 		createExamPart(gradingComposite);
 
 		scrolledCompositeGrading.setContent(gradingComposite);
 		scrolledCompositeGrading.setMinSize(gradingComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 	}
-	
+
 	private void createExamPart(Composite tabFolder) {
 		this.examContainerComposite = new Composite(tabFolder, SWT.NONE);
 		examContainerComposite.setSize(tabFolder.getSize());
@@ -257,7 +255,7 @@ public class ArtemisStudentView extends ViewPart {
 		examContentComposite.setTouchEnabled(true);
 		examContentComposite.setLayout(new GridLayout(1, true));
 		examContentComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-		examContentComposite.setVisible(true);
+		examContentComposite.setVisible(false);
 		Composite resultContentComposite = new Composite(examContentComposite, SWT.BORDER);
 		resultContentComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		resultContentComposite.setLayout(new GridLayout(1, false));
@@ -399,7 +397,7 @@ public class ArtemisStudentView extends ViewPart {
 		this.resetButtons();
 		this.resetAllTabs();
 	}
-	
+
 	private void handleExamComboEvent() {
 		setExam();
 		callAllTabsForExamEvent();
@@ -443,7 +441,7 @@ public class ArtemisStudentView extends ViewPart {
 	private void callAllTabsForExamEvent() {
 		this.tabs.forEach(ArtemisStudentTab::callExamEvent);
 	}
-	
+
 	private void setViewControllerForAllTabs() {
 		this.tabs.forEach(tab -> tab.setViewController(viewController));
 	}

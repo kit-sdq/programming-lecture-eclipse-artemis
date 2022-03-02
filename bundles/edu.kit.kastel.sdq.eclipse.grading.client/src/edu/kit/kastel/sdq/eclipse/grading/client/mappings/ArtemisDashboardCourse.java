@@ -1,11 +1,8 @@
 package edu.kit.kastel.sdq.eclipse.grading.client.mappings;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import javax.swing.event.ListSelectionEvent;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -14,7 +11,6 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.Assessor;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ICourse;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExam;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
-import edu.kit.kastel.sdq.eclipse.grading.client.mappings.exam.ArtemisStudentExam;
 import edu.kit.kastel.sdq.eclipse.grading.client.mappings.exam.ArtemisExam;
 
 public class ArtemisDashboardCourse implements ICourse, Serializable {

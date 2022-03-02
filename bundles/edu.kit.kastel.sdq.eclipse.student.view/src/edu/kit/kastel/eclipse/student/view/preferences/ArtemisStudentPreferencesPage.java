@@ -1,8 +1,6 @@
 package edu.kit.kastel.eclipse.student.view.preferences;
 
-import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
-import org.eclipse.jface.preference.FileFieldEditor;
 import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
@@ -23,7 +21,6 @@ import edu.kit.kastel.sdq.eclipse.grading.api.PreferenceConstants;
  */
 
 public class ArtemisStudentPreferencesPage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
-
 
 	public ArtemisStudentPreferencesPage() {
 		super(FieldEditorPreferencePage.GRID);

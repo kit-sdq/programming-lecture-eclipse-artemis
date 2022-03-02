@@ -1,6 +1,6 @@
 package edu.kit.kastel.sdq.eclipse.grading.client.rest;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
@@ -27,13 +27,13 @@ public class UtilArtemisClient extends AbstractArtemisClient implements IUtilArt
 	}
 
 	@Override
-	public Date getTime() throws ArtemisClientException {
+	public LocalDateTime getTime() throws ArtemisClientException {
 		final Response exercisesRsp = this.endpoint.path("time").request().buildGet().invoke();
 
 		this.throwIfStatusUnsuccessful(exercisesRsp);
 
 		final JsonNode exercisesAndParticipationsJsonNode = this.readTree(exercisesRsp.readEntity(String.class));
-		return this.read(exercisesAndParticipationsJsonNode.toString(), Date.class);
+		return this.read(exercisesAndParticipationsJsonNode.toString(), LocalDateTime.class);
 	}
 
 }

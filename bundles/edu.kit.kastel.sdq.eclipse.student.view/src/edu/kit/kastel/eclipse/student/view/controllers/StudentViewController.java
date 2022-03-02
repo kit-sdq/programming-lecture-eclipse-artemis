@@ -14,7 +14,6 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ResultsDTO;
 import edu.kit.kastel.sdq.eclipse.grading.api.client.websocket.WebsocketCallback;
 import edu.kit.kastel.sdq.eclipse.grading.api.controller.IStudentSystemwideController;
 import edu.kit.kastel.sdq.eclipse.grading.api.controller.ISystemwideController;
-import edu.kit.kastel.sdq.eclipse.grading.api.controller.IWebsocketController;
 
 public class StudentViewController extends AbstractArtemisViewController {
 	private IStudentSystemwideController systemwideController;

@@ -30,7 +30,7 @@ import edu.kit.kastel.sdq.eclipse.grading.client.mappings.exam.ArtemisExerciseGr
 
 public class MappingLoaderArtemisClient extends AbstractArtemisClient implements ICourseArtemisClient, IMappingLoader {
 	private static final ILog log = Platform.getLog(MappingLoaderArtemisClient.class);
-	
+
 	private static final String PROGRAMMING_IDENTIFIER = "programming";
 
 	private WebTarget endpoint;

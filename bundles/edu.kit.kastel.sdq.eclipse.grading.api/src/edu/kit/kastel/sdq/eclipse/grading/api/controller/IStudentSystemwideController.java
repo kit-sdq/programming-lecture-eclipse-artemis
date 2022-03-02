@@ -11,6 +11,11 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ResultsDTO;
 import edu.kit.kastel.sdq.eclipse.grading.api.client.websocket.WebsocketCallback;
 
 public interface IStudentSystemwideController extends ISystemwideController {
+	
+	/**
+	 * Commits and pushed selected exercise.
+	 * @return true if successful
+	 */
 	boolean submitSolution();
 
 	boolean cleanWorkspace();

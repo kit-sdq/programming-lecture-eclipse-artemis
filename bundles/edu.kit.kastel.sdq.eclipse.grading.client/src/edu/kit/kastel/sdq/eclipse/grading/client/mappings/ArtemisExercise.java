@@ -1,6 +1,5 @@
 package edu.kit.kastel.sdq.eclipse.grading.client.mappings;
 
-import java.io.Serializable;
 import java.util.Date;
 import java.util.Optional;
 

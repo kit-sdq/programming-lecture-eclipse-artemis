@@ -20,15 +20,14 @@ import edu.kit.kastel.sdq.eclipse.grading.client.mappings.lock.LockResult;
 
 public class AssessmentArtemisClient extends AbstractArtemisClient implements IAssessmentArtemisClient {
 	private static final ILog log = Platform.getLog(AssessmentArtemisClient.class);
-	
+
 	private static final String SUBMISSION_WIHOUT_ASSESSMENT_PATH = "programming-submission-without-assessment";
 	private static final String PARTICIPATION_PATHPART = "participations";
 	private static final String MANUAL_RESULT_PATHPART = "manual-results";
 	private static final String CORRECTION_ROUND_QUERY_PARAM = "correction-round";
 	private static final String LOCK_QUERY_PARAM = "lock";
 	private static final String SUBMIT_QUERY_PARAM = "submit";
-	
-	
+
 	private WebTarget endpoint;
 	private String token;
 
@@ -54,17 +53,17 @@ public class AssessmentArtemisClient extends AbstractArtemisClient implements IA
 
 	@Override
 	public ILockResult startAssessment(ISubmission submission) throws ArtemisClientException {
-		final Response rsp = this.endpoint.path(PROGRAMMING_SUBMISSION_PATHPART).path(String.valueOf(submission.getSubmissionId())).path(LOCK_QUERY_PARAM).request()
-				.header(AUTHORIZATION_NAME, this.token).buildGet().invoke(); // synchronous variant
+		final Response rsp = this.endpoint.path(PROGRAMMING_SUBMISSION_PATHPART).path(String.valueOf(submission.getSubmissionId())).path(LOCK_QUERY_PARAM)
+				.request().header(AUTHORIZATION_NAME, this.token).buildGet().invoke(); // synchronous variant
 		this.throwIfStatusUnsuccessful(rsp);
 		return this.read(rsp.readEntity(String.class), LockResult.class);
 	}
 
 	@Override
 	public Optional<ILockResult> startNextAssessment(IExercise exercise, int correctionRound) throws ArtemisClientException {
-		final Response rsp = this.endpoint.path(EXERCISES_PATHPART).path(String.valueOf(exercise.getExerciseId()))
-				.path(SUBMISSION_WIHOUT_ASSESSMENT_PATH).queryParam(CORRECTION_ROUND_QUERY_PARAM, correctionRound).queryParam(LOCK_QUERY_PARAM, true).request()
-				.header(AUTHORIZATION_NAME, this.token).buildGet().invoke();
+		final Response rsp = this.endpoint.path(EXERCISES_PATHPART).path(String.valueOf(exercise.getExerciseId())).path(SUBMISSION_WIHOUT_ASSESSMENT_PATH)
+				.queryParam(CORRECTION_ROUND_QUERY_PARAM, correctionRound).queryParam(LOCK_QUERY_PARAM, true).request().header(AUTHORIZATION_NAME, this.token)
+				.buildGet().invoke();
 
 		if (!this.isStatusSuccessful(rsp)) {
 			// no assessment left!

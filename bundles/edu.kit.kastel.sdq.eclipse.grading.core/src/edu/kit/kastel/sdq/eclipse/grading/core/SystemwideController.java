@@ -7,7 +7,6 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IProjectFileNamingStrategy
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ICourse;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
 import edu.kit.kastel.sdq.eclipse.grading.api.controller.AbstractController;
-import edu.kit.kastel.sdq.eclipse.grading.api.controller.IArtemisController;
 import edu.kit.kastel.sdq.eclipse.grading.api.controller.IExerciseArtemisController;
 import edu.kit.kastel.sdq.eclipse.grading.api.controller.ISystemwideController;
 import edu.kit.kastel.sdq.eclipse.grading.core.artemis.naming.ProjectFileNamingStrategies;

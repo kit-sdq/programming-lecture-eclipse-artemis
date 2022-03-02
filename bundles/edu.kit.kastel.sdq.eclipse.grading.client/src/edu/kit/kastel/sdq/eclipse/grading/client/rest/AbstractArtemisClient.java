@@ -28,7 +28,7 @@ public abstract class AbstractArtemisClient {
 	protected static final String PARTICIPATION_PATHPART = "participations";
 	protected static final String RESULT_PATHPART = "results";
 	protected static final String STUDENT_EXAM_PATH = "student-exams";
-	
+
 	protected static final String JSON_PARSE_ERROR_MESSAGE_CORRUPTED_JSON_STRUCTURE = "Error parsing json: Corrupted Json Structure";
 	protected static final String AUTHORIZATION_NAME = "Authorization";
 

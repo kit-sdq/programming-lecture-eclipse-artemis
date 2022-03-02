@@ -13,7 +13,6 @@ import edu.kit.kastel.sdq.eclipse.grading.api.ArtemisClientException;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.Assessor;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
-import edu.kit.kastel.sdq.eclipse.grading.api.client.IParticipationArtemisClient;
 import edu.kit.kastel.sdq.eclipse.grading.api.client.ISubmissionsArtemisClient;
 import edu.kit.kastel.sdq.eclipse.grading.client.mappings.ArtemisSubmission;
 

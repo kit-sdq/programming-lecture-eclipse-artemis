@@ -14,7 +14,6 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.SubmissionFilter;
 import edu.kit.kastel.sdq.eclipse.grading.api.backendstate.Transition;
 import edu.kit.kastel.sdq.eclipse.grading.api.controller.IAssessmentController;
 import edu.kit.kastel.sdq.eclipse.grading.api.controller.IGradingSystemwideController;
-import edu.kit.kastel.sdq.eclipse.grading.api.controller.IStudentSystemwideController;
 import edu.kit.kastel.sdq.eclipse.grading.api.controller.ISystemwideController;
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IAnnotation;
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IMistakeType;

@@ -1,6 +1,6 @@
 package edu.kit.kastel.sdq.eclipse.grading.api.client;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import edu.kit.kastel.sdq.eclipse.grading.api.ArtemisClientException;
 
 public interface IUtilArtemisClient {
@@ -10,5 +10,5 @@ public interface IUtilArtemisClient {
 	 * @return current Date of server
 	 * @throws ArtemisClientException
 	 */
-	Date getTime() throws ArtemisClientException;
+	LocalDateTime getTime() throws ArtemisClientException;
 }
