@@ -99,4 +99,12 @@ public class StudentViewController extends AbstractArtemisViewController {
 	public String getExamUrlForCurrentExam() {
 		return systemwideController.getExamUrlForCurrentExam();
 	}
+	
+	public void resetSelectedExercise() {
+		systemwideController.resetSelectedExercise();
+	}
+	
+	public boolean canResetExercise() {
+		return systemwideController.canResetSelectedExercise();
+	}
 }

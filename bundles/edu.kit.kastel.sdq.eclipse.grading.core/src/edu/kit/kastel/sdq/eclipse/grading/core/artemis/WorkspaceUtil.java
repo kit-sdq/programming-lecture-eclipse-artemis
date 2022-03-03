@@ -51,7 +51,7 @@ public class WorkspaceUtil {
 		new UpdateMavenProjectJob(new IProject[] { project }).schedule();
 	}
 
-	private static final void deleteDirectoryRecursively(final Path directory) throws IOException {
+	public static final void deleteDirectoryRecursively(final Path directory) throws IOException {
 		Files.walkFileTree(directory, new SimpleFileVisitor<Path>() {
 			@Override
 			public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {

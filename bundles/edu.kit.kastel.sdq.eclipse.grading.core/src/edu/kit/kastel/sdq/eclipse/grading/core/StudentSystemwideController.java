@@ -278,10 +278,23 @@ public class StudentSystemwideController extends SystemwideController implements
 		}
 		return String.format(artemisHost + "/courses/%d/exams/%d", this.course.getCourseId(), this.exam.getExam().getExamId());
 	}
-	
+
 	private LocalDateTime convertToLocalDateTimeViaInstant(Date dateToConvert) {
-	    return dateToConvert.toInstant()
-	      .atZone(ZoneId.systemDefault())
-	      .toLocalDateTime();
+		return dateToConvert.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+	}
+
+	@Override
+	public void resetSelectedExercise() {
+		try {
+			this.exerciseController.deleteExercise(course, exercise, projectFileNamingStrategy);
+			this.loadExerciseForStudent();
+		} catch (ArtemisClientException e) {
+			this.error(e.getMessage(), e);
+		}
+	}
+
+	@Override
+	public boolean canResetSelectedExercise() {
+		return this.exerciseController.isExerciseInWorkspace(course, exercise, projectFileNamingStrategy);
 	}
 }

@@ -29,5 +29,10 @@ public interface IProjectFileNamingStrategy {
 	 */
 	File getProjectFileInWorkspace(File workspace, IExercise exercise, ISubmission submission);
 
+	/**
+	 * 
+	 * @param projectDirectory
+	 * @return returns the unique .git file in File
+	 */
 	File getGitFileInProjectDirectory(File projectDirectory);
 }

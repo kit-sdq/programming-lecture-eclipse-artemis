@@ -45,6 +45,7 @@ public class ArtemisStudentView extends ViewPart {
 
 	private Button btnSubmitExcerise;
 	private Button btnClean;
+	private Button btnReset;
 	private Combo examCombo;
 	private Combo exerciseCombo;
 	private Combo courseCombo;
@@ -176,14 +177,14 @@ public class ArtemisStudentView extends ViewPart {
 
 		Composite submitArea = new Composite(gradingComposite, SWT.BORDER);
 		submitArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
-		submitArea.setLayout(new GridLayout(2, true));
+		submitArea.setLayout(new GridLayout(3, true));
 
-		Label label1 = new Label(submitArea, SWT.NONE);
-		label1.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
-		boldDescriptor = FontDescriptor.createFrom(label1.getFont()).setStyle(SWT.BOLD).setHeight(9);
-		boldFont = boldDescriptor.createFont(label1.getDisplay());
-		label1.setFont(boldFont);
-		label1.setText("Submit your solution");
+		Label labelSubmit = new Label(submitArea, SWT.NONE);
+		labelSubmit.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
+		boldDescriptor = FontDescriptor.createFrom(labelSubmit.getFont()).setStyle(SWT.BOLD).setHeight(9);
+		boldFont = boldDescriptor.createFont(labelSubmit.getDisplay());
+		labelSubmit.setFont(boldFont);
+		labelSubmit.setText("Submit your solution");
 
 		Label labelClean = new Label(submitArea, SWT.NONE);
 		boldDescriptor = FontDescriptor.createFrom(labelClean.getFont()).setStyle(SWT.BOLD).setHeight(9);
@@ -192,29 +193,42 @@ public class ArtemisStudentView extends ViewPart {
 		labelClean.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
 		labelClean.setText("Clean your last changes");
 
-		Composite composite = new Composite(submitArea, SWT.NONE);
-		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
-		composite.setLayout(new GridLayout(1, false));
-
-		btnSubmitExcerise = new Button(composite, SWT.NONE);
-		btnSubmitExcerise.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
-		btnSubmitExcerise.setText(NO_SELECTED);
-		btnSubmitExcerise.setEnabled(false);
-
-		this.addSelectionListenerForSubmitButton(btnSubmitExcerise);
-
 		Image image = FieldDecorationRegistry.getDefault().getFieldDecoration(FieldDecorationRegistry.DEC_WARNING).getImage();
-		controlDecorationSubmitted = new ControlDecoration(btnSubmitExcerise, SWT.RIGHT | SWT.CENTER);
-		controlDecorationSubmitted.setImage(image);
-		controlDecorationSubmitted.setDescriptionText("The exercise is expired and can therefore not be submitted!");
-		controlDecorationSubmitted.hide();
+
+		Label labelReset = new Label(submitArea, SWT.NONE);
+		labelReset.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
+		labelReset.setText("Reset to remote state");
+		boldDescriptor = FontDescriptor.createFrom(labelReset.getFont()).setStyle(SWT.BOLD).setHeight(9);
+		boldFont = boldDescriptor.createFont(labelReset.getDisplay());
+		labelReset.setFont(boldFont);
 
 		Composite composite_1 = new Composite(submitArea, SWT.NONE);
 		composite_1.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		composite_1.setLayout(new GridLayout(1, false));
 
-		btnClean = new Button(composite_1, SWT.NONE);
-		btnClean.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1));
+		btnSubmitExcerise = new Button(composite_1, SWT.NONE);
+		btnSubmitExcerise.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		btnSubmitExcerise.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+			}
+		});
+		btnSubmitExcerise.setText(NO_SELECTED);
+		btnSubmitExcerise.setEnabled(false);
+
+		this.addSelectionListenerForSubmitButton(btnSubmitExcerise);
+		controlDecorationSubmitted = new ControlDecoration(btnSubmitExcerise, SWT.RIGHT | SWT.CENTER);
+		controlDecorationSubmitted.setImage(image);
+		controlDecorationSubmitted.setDescriptionText("The exercise is expired and can therefore not be submitted!");
+		controlDecorationSubmitted.hide();
+		controlDecorationSubmitted.setImage(image);
+
+		Composite composite_3 = new Composite(submitArea, SWT.NONE);
+		composite_3.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
+		composite_3.setLayout(new GridLayout(1, false));
+
+		btnClean = new Button(composite_3, SWT.NONE);
+		btnClean.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		btnClean.setText(NO_SELECTED);
 		btnClean.addListener(SWT.Selection, e -> {
 			cleanWorkspaceForSelectedExercise();
@@ -223,9 +237,20 @@ public class ArtemisStudentView extends ViewPart {
 
 		controlDecorationClean = new ControlDecoration(btnClean, SWT.RIGHT | SWT.CENTER);
 		controlDecorationClean.setMarginWidth(5);
-		controlDecorationSubmitted.setImage(image);
 		controlDecorationClean.setDescriptionText("The exercise can not be cleaned!");
 		controlDecorationClean.hide();
+
+		Composite composite_1_1 = new Composite(submitArea, SWT.NONE);
+		composite_1_1.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		composite_1_1.setLayout(new GridLayout(1, false));
+
+		btnReset = new Button(composite_1_1, SWT.NONE);
+		btnReset.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1));
+		btnReset.setText("*NOTHING SELECTED*");
+		btnReset.setEnabled(false);
+		btnReset.addListener(SWT.Selection, e -> {
+			resetWorkspaceForSelectedExercise();
+		});
 
 		createExamPart(gradingComposite);
 
@@ -341,6 +366,10 @@ public class ArtemisStudentView extends ViewPart {
 		});
 	}
 
+	private void resetWorkspaceForSelectedExercise() {
+		viewController.resetSelectedExercise();
+	}
+
 	private void createExamComboList(Combo courseCombo, Combo examCombo, Combo exerciseCombo) {
 		examCombo.removeAll();
 		exerciseCombo.removeAll();
@@ -383,13 +412,15 @@ public class ArtemisStudentView extends ViewPart {
 	private void setButtonText(String exerciseName) {
 		this.btnSubmitExcerise.setText("Submit: " + exerciseName);
 		this.btnClean.setText("Clean: " + exerciseName);
+		this.btnReset.setText("Reset: " + exerciseName);
 	}
 
 	private void enableButtons() {
 		boolean canSubmit = this.viewController.canSubmit();
 		boolean canClean = this.viewController.canClean();
 		this.btnSubmitExcerise.setEnabled(canSubmit);
-		btnClean.setEnabled(canClean);
+		this.btnClean.setEnabled(canClean);
+		this.btnReset.setEnabled(this.viewController.canResetExercise());
 		if (!canSubmit) {
 			this.controlDecorationSubmitted.show();
 		} else {
@@ -452,11 +483,13 @@ public class ArtemisStudentView extends ViewPart {
 	private void resetButtonText() {
 		this.btnSubmitExcerise.setText(NO_SELECTED);
 		this.btnClean.setText(NO_SELECTED);
+		this.btnReset.setText(NO_SELECTED);
 	}
 
 	private void resetButtonEnable() {
 		this.btnSubmitExcerise.setEnabled(false);
 		this.btnClean.setEnabled(false);
+		this.btnReset.setEnabled(false);
 	}
 
 	private void resetAllTabs() {

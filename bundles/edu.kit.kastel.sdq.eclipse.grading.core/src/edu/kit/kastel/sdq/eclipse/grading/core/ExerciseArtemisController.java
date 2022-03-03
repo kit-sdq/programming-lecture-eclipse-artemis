@@ -1,10 +1,10 @@
 package edu.kit.kastel.sdq.eclipse.grading.core;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Optional;
 import java.util.Set;
 
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import edu.kit.kastel.sdq.eclipse.grading.api.ArtemisClientException;
 import edu.kit.kastel.sdq.eclipse.grading.api.Constants;
@@ -30,7 +30,7 @@ public class ExerciseArtemisController extends AbstractController implements IEx
 	@Override
 	public void loadExerciseInWorkspaceForStudent(ICourse course, IExercise exercise, IProjectFileNamingStrategy projectNaming, String repoUrl)
 			throws ArtemisClientException {
-		final File eclipseWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile();
+		final File eclipseWorkspaceRoot = WorkspaceUtil.getWorkspaceFile();
 
 		// abort if directory already exists.
 		this.existsAndThrow(projectNaming.getProjectFileInWorkspace(eclipseWorkspaceRoot, exercise, null));
@@ -68,7 +68,7 @@ public class ExerciseArtemisController extends AbstractController implements IEx
 
 	}
 
-	public void downloadExercise(IExercise exercise, File dir, String repoUrl, IProjectFileNamingStrategy namingStrategy) throws ArtemisClientException {
+	private void downloadExercise(IExercise exercise, File dir, String repoUrl, IProjectFileNamingStrategy namingStrategy) throws ArtemisClientException {
 		final File projectDirectory = namingStrategy.getProjectFileInWorkspace(dir, exercise, null);
 		try {
 			if (projectDirectory.exists()) {
@@ -84,9 +84,9 @@ public class ExerciseArtemisController extends AbstractController implements IEx
 
 	@Override
 	public Optional<Set<String>> cleanWorkspace(ICourse course, IExercise exercise, IProjectFileNamingStrategy projectNaming) {
-		final File eclipseWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile();
-		File exeriseRepo = projectNaming.getProjectFileInWorkspace(eclipseWorkspaceRoot, exercise, null);
-		File gitFileInRepo = projectNaming.getGitFileInProjectDirectory(exeriseRepo);
+		final File eclipseWorkspaceRoot = WorkspaceUtil.getWorkspaceFile();
+		File exerciseRepo = projectNaming.getProjectFileInWorkspace(eclipseWorkspaceRoot, exercise, null);
+		File gitFileInRepo = projectNaming.getGitFileInProjectDirectory(exerciseRepo);
 		try {
 			return Optional.of(GitHandler.cleanRepo(gitFileInRepo));
 		} catch (GitException e) {
@@ -96,11 +96,11 @@ public class ExerciseArtemisController extends AbstractController implements IEx
 
 	@Override
 	public boolean commitAndPushExercise(ICourse course, IExercise exercise, IProjectFileNamingStrategy projectNaming) throws ArtemisClientException {
-		final File eclipseWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile();
-		File exeriseRepo = projectNaming.getProjectFileInWorkspace(eclipseWorkspaceRoot, exercise, null);
-		File gitFileInRepo = projectNaming.getGitFileInProjectDirectory(exeriseRepo);
+		final File eclipseWorkspaceRoot = WorkspaceUtil.getWorkspaceFile();
+		File exerciseRepo = projectNaming.getProjectFileInWorkspace(eclipseWorkspaceRoot, exercise, null);
+		File gitFileInRepo = projectNaming.getGitFileInProjectDirectory(exerciseRepo);
 		try {
-			GitHandler.pullExercise(username, password, exeriseRepo);
+			GitHandler.pullExercise(username, password, exerciseRepo);
 			GitHandler.commitExercise(username, username, createCommitMsg(course, exercise), gitFileInRepo);
 		} catch (GitException e) {
 			throw new ArtemisClientException("Can't save selected exercise " + exercise.getShortName() //
@@ -115,12 +115,54 @@ public class ExerciseArtemisController extends AbstractController implements IEx
 		return true;
 	}
 
+	@Override
+	public void deleteExercise(ICourse course, IExercise exercise, IProjectFileNamingStrategy projectNaming) throws ArtemisClientException {
+		final File eclipseWorkspaceRoot = WorkspaceUtil.getWorkspaceFile();
+		File exerciseRepo = projectNaming.getProjectFileInWorkspace(eclipseWorkspaceRoot, exercise, null);
+		if (!exerciseRepo.exists()) {
+			throw new ArtemisClientException("Could not delete folder " + exerciseRepo.getName() + ", " + "directory does not exist!");
+		}
+
+		if(!deleteDirectory(exerciseRepo)) {
+			throw new ArtemisClientException("ERROR, can not delete directory: " + exerciseRepo.getAbsolutePath() + "\n Please close all files in the folder.");
+		}
+		try {
+			WorkspaceUtil.deleteEclipseProject(exerciseRepo.getName());
+		} catch (IOException | CoreException e) {
+			throw new ArtemisClientException("ERROR, can not delete eclipse project: " + exerciseRepo.getAbsolutePath());
+		}
+	}
+
+	@Override
+	public boolean isExerciseInWorkspace(ICourse course, IExercise exercise, IProjectFileNamingStrategy projectNaming) {
+		final File eclipseWorkspaceRoot = WorkspaceUtil.getWorkspaceFile();
+		File exerciseRepo = projectNaming.getProjectFileInWorkspace(eclipseWorkspaceRoot, exercise, null);
+		return exerciseRepo.exists();
+	}
+	
+	public static boolean deleteDirectory(File directory) {
+	    if(directory.exists()){
+	        File[] files = directory.listFiles();
+	        if(null!=files){
+	            for(int i=0; i<files.length; i++) {
+	                if(files[i].isDirectory()) {
+	                    deleteDirectory(files[i]);
+	                }
+	                else {
+	                    files[i].delete();
+	                }
+	            }
+	        }
+	    }
+	    return(directory.delete());
+	}
+
 	private void existsAndThrow(File file) throws ArtemisClientException {
 		if (file.exists()) {
-			throw new ArtemisClientException("Project " + file.getName() + " could not be cloned since the workspace "
-					+ "already contains a project with that name. \n"
-					+ "Trying to load and merge previously created annotations. Please double-check them before submitting the assessment! \n"
-					+ "If you want to start again from skretch, please delete the project and retry.");
+			throw new ArtemisClientException(
+					"Project " + file.getName() + " could not be cloned since the workspace " + "already contains a project with that name. \n"
+							+ "Trying to load and merge previously created annotations. Please double-check them before submitting the assessment! \n"
+							+ "If you want to start again from skretch, please delete the project and retry.");
 		}
 	}
 

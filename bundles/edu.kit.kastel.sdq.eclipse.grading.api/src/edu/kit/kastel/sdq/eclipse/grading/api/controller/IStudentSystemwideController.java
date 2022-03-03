@@ -111,4 +111,15 @@ public interface IStudentSystemwideController extends ISystemwideController {
 	 * @return url to artemis.
 	 */
 	String getExamUrlForCurrentExam();
+	
+	/**
+	 * Deletes the currently selected exercise from workspace and clones it again from origin.
+	 */
+	void resetSelectedExercise();
+	
+	/**
+	 * True if exercise is in local workspace.
+	 * @return
+	 */
+	boolean canResetSelectedExercise();
 }

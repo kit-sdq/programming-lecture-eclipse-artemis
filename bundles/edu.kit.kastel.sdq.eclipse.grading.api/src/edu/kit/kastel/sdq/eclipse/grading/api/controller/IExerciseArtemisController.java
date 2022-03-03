@@ -59,5 +59,24 @@ public interface IExerciseArtemisController extends IController {
 	 * @throws ArtemisClientException
 	 */
 	boolean commitAndPushExercise(ICourse course, IExercise exercise, IProjectFileNamingStrategy projectNaming) throws ArtemisClientException;
+	
+	/**
+	 * Delete folder of exercise in local workspace.
+	 * 
+	 * @param course
+	 * @param exercise
+	 * @param projectNaming
+	 * @throws ArtemisClientException if error occurred.
+	 */
+	void deleteExercise(ICourse course, IExercise exercise, IProjectFileNamingStrategy projectNaming) throws ArtemisClientException;
+	
+	/**
+	 * 
+	 * @param course
+	 * @param exercise
+	 * @param projectNaming
+	 * @return true if exercise is in local workspace.
+	 */
+	boolean isExerciseInWorkspace(ICourse course, IExercise exercise, IProjectFileNamingStrategy projectNaming);
 
 }
