@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.resource.FontDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.layout.FillLayout;
@@ -29,13 +30,14 @@ import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.wb.swt.SWTResourceManager;
 
 import edu.kit.kastel.eclipse.student.view.controllers.StudentViewController;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.Feedback;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ResultsDTO;
 import edu.kit.kastel.sdq.eclipse.grading.api.client.websocket.WebsocketCallback;
+
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Point;
 
 public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
@@ -91,7 +93,9 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
 
 		Label labelFeedback = new Label(composite, SWT.NONE);
-		labelFeedback.setFont(SWTResourceManager.getFont("Segoe UI", 18, SWT.BOLD));
+		FontDescriptor boldDescriptor = FontDescriptor.createFrom(labelFeedback.getFont()).setStyle(SWT.BOLD).setHeight(18);
+		Font boldFont = boldDescriptor.createFont(labelFeedback.getDisplay());
+		labelFeedback.setFont(boldFont);
 		labelFeedback.setText("Results");
 
 		Composite composite_1 = new Composite(composite, SWT.NONE);
@@ -141,12 +145,16 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 		lblResultExerciseShortName.setLayoutData(gd_lblResultExerciseShortName);
 		lblResultExerciseShortName.setText("Name");
 		lblResultExerciseShortName.setTouchEnabled(true);
-		lblResultExerciseShortName.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.BOLD));
+		boldDescriptor = FontDescriptor.createFrom(lblResultExerciseShortName.getFont()).setStyle(SWT.BOLD).setHeight(12);
+		boldFont = boldDescriptor.createFont(lblResultExerciseShortName.getDisplay());
+		lblResultExerciseShortName.setFont(boldFont);
 
 		btnResultSuccessfull = new Label(composite_2, SWT.RIGHT);
-		btnResultSuccessfull.setForeground(SWTResourceManager.getColor(SWT.COLOR_GREEN));
+		btnResultSuccessfull.setForeground(display.getSystemColor(SWT.COLOR_GREEN));
 		btnResultSuccessfull.setBounds(360, 9, 123, 28);
-		btnResultSuccessfull.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.BOLD));
+		boldDescriptor = FontDescriptor.createFrom(btnResultSuccessfull.getFont()).setStyle(SWT.BOLD).setHeight(12);
+		boldFont = boldDescriptor.createFont(btnResultSuccessfull.getDisplay());
+		btnResultSuccessfull.setFont(boldFont);
 		btnResultSuccessfull.setText("Successful");
 
 		lblResultExerciseDescription = new Label(resultContentComposite, SWT.NONE);
@@ -167,7 +175,9 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 		GridData gd_lblPoints = new GridData(SWT.LEFT, SWT.CENTER, false, true, 1, 1);
 		gd_lblPoints.widthHint = 200;
 		lblPoints.setLayoutData(gd_lblPoints);
-		lblPoints.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.BOLD | SWT.ITALIC));
+		boldDescriptor = FontDescriptor.createFrom(lblPoints.getFont()).setStyle(SWT.BOLD | SWT.ITALIC).setHeight(12);
+		boldFont = boldDescriptor.createFont(lblPoints.getDisplay());
+		lblPoints.setFont(boldFont);
 		lblPoints.setBounds(22, 78, 186, 30);
 		lblPoints.setText("70%");
 
@@ -175,11 +185,15 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 		GridData gd_resultScore = new GridData(SWT.RIGHT, SWT.CENTER, true, true, 1, 1);
 		gd_resultScore.widthHint = 195;
 		resultScore.setLayoutData(gd_resultScore);
-		resultScore.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.BOLD | SWT.ITALIC));
+		boldDescriptor = FontDescriptor.createFrom(resultScore.getFont()).setStyle(SWT.BOLD | SWT.ITALIC).setHeight(12);
+		boldFont = boldDescriptor.createFont(resultScore.getDisplay());
+		resultScore.setFont(boldFont);
 		resultScore.setText("0 / 20");
 
 		Label labelFeedback2 = new Label(feedbackContentComposite, SWT.NONE);
-		labelFeedback2.setFont(SWTResourceManager.getFont("Segoe UI", 10, SWT.BOLD));
+		boldDescriptor = FontDescriptor.createFrom(labelFeedback2.getFont()).setStyle(SWT.BOLD).setHeight(10);
+		boldFont = boldDescriptor.createFont(labelFeedback2.getDisplay());
+		labelFeedback2.setFont(boldFont);
 		labelFeedback2.setText(Messages.RESULTTAB_INFO_RESULT);
 		createTableForFeedback(feedbackContentComposite);
 

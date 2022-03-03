@@ -2,10 +2,12 @@ package edu.kit.kastel.eclipse.student.view.ui;
 
 import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
+import org.eclipse.jface.resource.FontDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -17,7 +19,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.part.ViewPart;
-import org.eclipse.wb.swt.SWTResourceManager;
 
 import edu.kit.kastel.eclipse.student.view.controllers.StudentViewController;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExam;
@@ -112,7 +113,9 @@ public class ArtemisStudentView extends ViewPart {
 		Label lblExercise_1 = new Label(composite_2, SWT.NONE);
 		lblExercise_1.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1));
 		lblExercise_1.setText(Messages.ARTEMISSTUDENTVIEW_LABEL);
-		lblExercise_1.setFont(SWTResourceManager.getFont("Segoe UI", 18, SWT.BOLD));
+		FontDescriptor boldDescriptor = FontDescriptor.createFrom(lblExercise_1.getFont()).setStyle(SWT.BOLD).setHeight(18);
+		Font boldFont = boldDescriptor.createFont(lblExercise_1.getDisplay());
+		lblExercise_1.setFont(boldFont);
 
 		Composite assessmentComposite = new Composite(gradingComposite, SWT.BORDER);
 		assessmentComposite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
@@ -120,7 +123,9 @@ public class ArtemisStudentView extends ViewPart {
 
 		Label lblCourse = new Label(assessmentComposite, SWT.NONE);
 		lblCourse.setAlignment(SWT.CENTER);
-		lblCourse.setFont(SWTResourceManager.getFont("Segoe UI", 9, SWT.BOLD));
+		boldDescriptor = FontDescriptor.createFrom(lblCourse.getFont()).setStyle(SWT.BOLD).setHeight(9);
+		boldFont = boldDescriptor.createFont(lblCourse.getDisplay());
+		lblCourse.setFont(boldFont);
 		lblCourse.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, true, 1, 1));
 		lblCourse.setText("Course");
 
@@ -129,14 +134,18 @@ public class ArtemisStudentView extends ViewPart {
 
 		Label lblExam = new Label(assessmentComposite, SWT.NONE);
 		lblExam.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
-		lblExam.setFont(SWTResourceManager.getFont("Segoe UI", 9, SWT.BOLD));
+		boldDescriptor = FontDescriptor.createFrom(lblExam.getFont()).setStyle(SWT.BOLD).setHeight(9);
+		boldFont = boldDescriptor.createFont(lblExam.getDisplay());
+		lblExam.setFont(boldFont);
 		lblExam.setText("Exam");
 
 		this.examCombo = new Combo(assessmentComposite, SWT.READ_ONLY);
 		this.examCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
 		Label lblExercise = new Label(assessmentComposite, SWT.NONE);
-		lblExercise.setFont(SWTResourceManager.getFont("Segoe UI", 9, SWT.BOLD));
+		boldDescriptor = FontDescriptor.createFrom(lblExercise.getFont()).setStyle(SWT.BOLD).setHeight(9);
+		boldFont = boldDescriptor.createFont(lblExercise.getDisplay());
+		lblExercise.setFont(boldFont);
 		lblExercise.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
 		lblExercise.setText("Exercise");
 
@@ -171,11 +180,15 @@ public class ArtemisStudentView extends ViewPart {
 
 		Label label1 = new Label(submitArea, SWT.NONE);
 		label1.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
-		label1.setFont(SWTResourceManager.getFont("Segoe UI", 9, SWT.BOLD));
+		boldDescriptor = FontDescriptor.createFrom(label1.getFont()).setStyle(SWT.BOLD).setHeight(9);
+		boldFont = boldDescriptor.createFont(label1.getDisplay());
+		label1.setFont(boldFont);
 		label1.setText("Submit your solution");
 
 		Label labelClean = new Label(submitArea, SWT.NONE);
-		labelClean.setFont(SWTResourceManager.getFont("Segoe UI", 9, SWT.BOLD));
+		boldDescriptor = FontDescriptor.createFrom(labelClean.getFont()).setStyle(SWT.BOLD).setHeight(9);
+		boldFont = boldDescriptor.createFont(labelClean.getDisplay());
+		labelClean.setFont(boldFont);
 		labelClean.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
 		labelClean.setText("Clean your last changes");
 
@@ -234,11 +247,13 @@ public class ArtemisStudentView extends ViewPart {
 
 		Label labelFeedback = new Label(composite, SWT.NONE);
 		labelFeedback.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, true, false, 1, 1));
-		labelFeedback.setFont(SWTResourceManager.getFont("Segoe UI", 18, SWT.BOLD));
+		FontDescriptor boldDescriptor = FontDescriptor.createFrom(labelFeedback.getFont()).setStyle(SWT.BOLD).setHeight(18);
+		Font boldFont = boldDescriptor.createFont(labelFeedback.getDisplay());
+		labelFeedback.setFont(boldFont);
 		labelFeedback.setText("Exam");
 
 		btnStart = new Button(composite, SWT.CENTER);
-		GridData gd_btnStart = new GridData(SWT.RIGHT, SWT.FILL, true, false, 1, 1);
+		GridData gd_btnStart = new GridData(SWT.RIGHT, SWT.CENTER, true, false, 1, 1);
 		gd_btnStart.widthHint = 59;
 		btnStart.setLayoutData(gd_btnStart);
 		btnStart.setText("Start");
@@ -254,12 +269,12 @@ public class ArtemisStudentView extends ViewPart {
 
 		Link examLink = new Link(composite_1, SWT.NONE);
 		examLink.setText(Messages.ArtemisStudentView_link_text);
-		examLink.addSelectionListener(new SelectionAdapter()  {
-	            @Override
-	            public void widgetSelected(SelectionEvent e) {
-	                Program.launch(getLink());
-	            }
-	        });
+		examLink.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				Program.launch(getLink());
+			}
+		});
 
 		this.examContentComposite = new Composite(examContainerComposite, SWT.NONE);
 		examContentComposite.setTouchEnabled(true);
@@ -275,7 +290,9 @@ public class ArtemisStudentView extends ViewPart {
 		lblExamShortName.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		lblExamShortName.setText("Name");
 		lblExamShortName.setTouchEnabled(true);
-		lblExamShortName.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.BOLD));
+		boldDescriptor = FontDescriptor.createFrom(lblExamShortName.getFont()).setStyle(SWT.BOLD).setHeight(12);
+		boldFont = boldDescriptor.createFont(lblExamShortName.getDisplay());
+		lblExamShortName.setFont(boldFont);
 
 		lblExamDescription = new Label(resultContentComposite, SWT.NONE);
 		lblExamDescription.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, true, true, 1, 1));
@@ -285,7 +302,9 @@ public class ArtemisStudentView extends ViewPart {
 
 		resultScore = new Label(resultContentComposite, SWT.RIGHT);
 		resultScore.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
-		resultScore.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.BOLD | SWT.ITALIC));
+		boldDescriptor = FontDescriptor.createFrom(resultScore.getFont()).setStyle(SWT.BOLD | SWT.ITALIC).setHeight(12);
+		boldFont = boldDescriptor.createFont(resultScore.getDisplay());
+		resultScore.setFont(boldFont);
 		resultScore.setText("Due to: 0 / 20");
 
 	}
