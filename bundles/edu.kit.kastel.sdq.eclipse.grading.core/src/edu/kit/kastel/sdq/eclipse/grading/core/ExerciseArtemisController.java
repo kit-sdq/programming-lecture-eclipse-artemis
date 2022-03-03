@@ -123,9 +123,6 @@ public class ExerciseArtemisController extends AbstractController implements IEx
 			throw new ArtemisClientException("Could not delete folder " + exerciseRepo.getName() + ", " + "directory does not exist!");
 		}
 
-		if(!deleteDirectory(exerciseRepo)) {
-			throw new ArtemisClientException("ERROR, can not delete directory: " + exerciseRepo.getAbsolutePath() + "\n Please close all files in the folder.");
-		}
 		try {
 			WorkspaceUtil.deleteEclipseProject(exerciseRepo.getName());
 		} catch (IOException | CoreException e) {

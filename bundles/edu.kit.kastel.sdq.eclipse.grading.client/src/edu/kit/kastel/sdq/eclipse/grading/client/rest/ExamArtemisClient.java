@@ -3,9 +3,6 @@ package edu.kit.kastel.sdq.eclipse.grading.client.rest;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 
-import org.eclipse.core.runtime.ILog;
-import org.eclipse.core.runtime.Platform;
-
 import com.fasterxml.jackson.databind.JsonNode;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.ArtemisClientException;
@@ -16,8 +13,6 @@ import edu.kit.kastel.sdq.eclipse.grading.api.client.IExamArtemisClient;
 import edu.kit.kastel.sdq.eclipse.grading.client.mappings.exam.ArtemisStudentExam;
 
 public class ExamArtemisClient extends AbstractArtemisClient implements IExamArtemisClient {
-	private static final ILog log = Platform.getLog(ExamArtemisClient.class);
-
 	private WebTarget endpoint;
 	private String token;
 

@@ -7,9 +7,6 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 
-import org.eclipse.core.runtime.ILog;
-import org.eclipse.core.runtime.Platform;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.ArtemisClientException;
@@ -17,8 +14,6 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.Assessor;
 import edu.kit.kastel.sdq.eclipse.grading.api.client.IAuthenticationArtemisClient;
 
 public class LoginManager extends AbstractArtemisClient implements IAuthenticationArtemisClient {
-	private static final ILog log = Platform.getLog(LoginManager.class);
-
 	private String username;
 	private String password;
 	private String token;

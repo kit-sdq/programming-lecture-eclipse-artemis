@@ -5,9 +5,6 @@ import java.net.ConnectException;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 
-import org.eclipse.core.runtime.ILog;
-import org.eclipse.core.runtime.Platform;
-
 import com.fasterxml.jackson.databind.JsonNode;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.ArtemisClientException;
@@ -17,7 +14,6 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ParticipationDTO;
 import edu.kit.kastel.sdq.eclipse.grading.api.client.IParticipationArtemisClient;
 
 public class ParticipationArtemisClient extends AbstractArtemisClient implements IParticipationArtemisClient {
-	private static final ILog log = Platform.getLog(ParticipationArtemisClient.class);
 
 	private WebTarget endpoint;
 	private String token;

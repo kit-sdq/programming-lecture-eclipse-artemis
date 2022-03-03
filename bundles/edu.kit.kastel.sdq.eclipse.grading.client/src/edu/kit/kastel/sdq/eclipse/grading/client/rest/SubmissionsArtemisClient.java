@@ -6,9 +6,6 @@ import java.util.List;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 
-import org.eclipse.core.runtime.ILog;
-import org.eclipse.core.runtime.Platform;
-
 import edu.kit.kastel.sdq.eclipse.grading.api.ArtemisClientException;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.Assessor;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
@@ -17,8 +14,6 @@ import edu.kit.kastel.sdq.eclipse.grading.api.client.ISubmissionsArtemisClient;
 import edu.kit.kastel.sdq.eclipse.grading.client.mappings.ArtemisSubmission;
 
 public class SubmissionsArtemisClient extends AbstractArtemisClient implements ISubmissionsArtemisClient {
-	private static final ILog log = Platform.getLog(SubmissionsArtemisClient.class);
-
 	private WebTarget endpoint;
 	private String token;
 	private Assessor assesor;

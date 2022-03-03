@@ -79,7 +79,7 @@ public class RestClientManager {
 
 	public IUtilArtemisClient getUtilArtemisClient() {
 		if (utilClient == null)
-			utilClient = new UtilArtemisClient(hostname, loginManager.getBearerToken());
+			utilClient = new UtilArtemisClient(hostname);
 		return utilClient;
 	}
 

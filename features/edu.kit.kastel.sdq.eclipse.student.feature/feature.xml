@@ -42,21 +42,21 @@
    </requires>
 
    <plugin
-         id="edu.kit.kastel.sdq.eclipse.grading.api"
+         id="edu.kit.kastel.sdq.eclipse.common.api"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="edu.kit.kastel.sdq.eclipse.grading.client"
+         id="edu.kit.kastel.sdq.eclipse.common.client"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="edu.kit.kastel.sdq.eclipse.grading.core"
+         id="edu.kit.kastel.sdq.eclipse.common.core"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -64,6 +64,13 @@
 
    <plugin
          id="edu.kit.kastel.sdq.eclipse.student.view"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="edu.kit.kastel.sdq.eclipse.common.view"
          download-size="0"
          install-size="0"
          version="0.0.0"

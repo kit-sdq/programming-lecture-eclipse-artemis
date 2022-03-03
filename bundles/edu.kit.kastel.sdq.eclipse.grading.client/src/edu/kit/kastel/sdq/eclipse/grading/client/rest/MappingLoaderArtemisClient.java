@@ -8,9 +8,6 @@ import java.util.stream.Collectors;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 
-import org.eclipse.core.runtime.ILog;
-import org.eclipse.core.runtime.Platform;
-
 import com.fasterxml.jackson.databind.JsonNode;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.ArtemisClientException;
@@ -29,8 +26,6 @@ import edu.kit.kastel.sdq.eclipse.grading.client.mappings.exam.ArtemisExam;
 import edu.kit.kastel.sdq.eclipse.grading.client.mappings.exam.ArtemisExerciseGroup;
 
 public class MappingLoaderArtemisClient extends AbstractArtemisClient implements ICourseArtemisClient, IMappingLoader {
-	private static final ILog log = Platform.getLog(MappingLoaderArtemisClient.class);
-
 	private static final String PROGRAMMING_IDENTIFIER = "programming";
 
 	private WebTarget endpoint;

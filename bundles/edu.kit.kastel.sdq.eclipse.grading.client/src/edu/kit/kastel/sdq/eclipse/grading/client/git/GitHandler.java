@@ -54,6 +54,7 @@ public final class GitHandler {
 			git = Git.open(exerciseRepo);
 			git.add().addFilepattern(".").call();
 			git.commit().setCommitter(authorName, email).setMessage(commitMsg).setSign(false).call();
+			git.close();
 		} catch (GitAPIException | IOException e) {
 			throw new GitException("ERROR, can not commit new changes " + exerciseRepo.getPath(), e);
 		}
@@ -74,6 +75,8 @@ public final class GitHandler {
 			pushCommand.call().iterator().next();
 		} catch (GitAPIException e) {
 			throw new GitException("ERROR, can not push to origin git repo for exercise " + exerciseRepo.getPath(), e);
+		} finally {
+			git.close();
 		}
 
 	}
@@ -96,6 +99,8 @@ public final class GitHandler {
 			}
 		} catch (GitAPIException e) {
 			throw new GitException("ERROR, can not push to origin git repo for exercise " + exerciseRepo.getPath(), e);
+		} finally {
+			git.close();
 		}
 
 	}
@@ -115,9 +120,11 @@ public final class GitHandler {
 			return untrackedChanges;
 		} catch (NoWorkTreeException | GitAPIException e) {
 			throw new GitException("ERROR, can not clean repository", e);
+		} finally {
+			git.close();
 		}
 	}
-
+	
 	private GitHandler() {
 		throw new IllegalAccessError();
 	}
