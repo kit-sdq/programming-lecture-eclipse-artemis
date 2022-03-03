@@ -3,8 +3,12 @@ package edu.kit.kastel.eclipse.student.view.ui;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -116,7 +120,7 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 
 		Label labelResult = new Label(feedbackContainerComposite, SWT.NONE);
 		labelResult.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-		labelResult.setText(Messages.ResultTab_INFO_FEEDBACK);
+		labelResult.setText(Messages.RESULTTAB_INFO_FEEDBACK);
 
 		this.feedbackContentComposite = new Composite(feedbackContainerComposite, SWT.NONE);
 		feedbackContentComposite.setTouchEnabled(true);
@@ -176,7 +180,7 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 
 		Label labelFeedback2 = new Label(feedbackContentComposite, SWT.NONE);
 		labelFeedback2.setFont(SWTResourceManager.getFont("Segoe UI", 10, SWT.BOLD));
-		labelFeedback2.setText(Messages.ResultTab_INFO_RESULT);
+		labelFeedback2.setText(Messages.RESULTTAB_INFO_RESULT);
 		createTableForFeedback(feedbackContentComposite);
 
 		scrolledCompositeFeedback.setContent(feedbackContainerComposite);
@@ -237,8 +241,10 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 			btnResultSuccessfull.setText(result.successful ? "success" : "failed"); //$NON-NLS-2$
 
 			if (exercise != null) {
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+				LocalDateTime date = convertToLocalDateTimeViaInstant(result.completionDate);
 				lblResultExerciseShortName.setText(exercise.getTitle());
-				lblResultExerciseDescription.setText(result.completionDate);
+				lblResultExerciseDescription.setText(date.format(formatter));
 				resultScore.setText(result.resultString);
 				lblPoints.setText("Points: " + result.score + "%"); //$NON-NLS-2$
 			} else {
@@ -367,11 +373,9 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 		this.viewController = viewController;
 	}
 
-	/**
-	 * @wbp.parser.entryPoint
-	 */
-	private void createView(Composite parent) {
-		TabFolder tabFolder = new TabFolder(parent, SWT.NONE);
-		create(tabFolder);
+	private LocalDateTime convertToLocalDateTimeViaInstant(Date dateToConvert) {
+	    return dateToConvert.toInstant()
+	  	      .atZone(ZoneId.systemDefault())
+	  	      .toLocalDateTime();
 	}
 }

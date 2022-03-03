@@ -1,5 +1,7 @@
 package edu.kit.kastel.sdq.eclipse.grading.client.rest;
 
+import java.net.ConnectException;
+
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 
@@ -28,7 +30,7 @@ public class ParticipationArtemisClient extends AbstractArtemisClient implements
 	}
 
 	@Override
-	public ParticipationDTO startParticipationForExercise(ICourse couse, IExercise exercise) throws ArtemisClientException {
+	public ParticipationDTO startParticipationForExercise(ICourse couse, IExercise exercise) throws ArtemisClientException, ConnectException {
 		final Response exercisesRsp = this.endpoint.path(EXERCISES_PATHPART).path(String.valueOf(exercise.getExerciseId())).path("participations").request()
 				.header(AUTHORIZATION_NAME, this.token).buildPost(null).invoke();
 

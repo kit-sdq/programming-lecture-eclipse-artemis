@@ -4,6 +4,7 @@ package edu.kit.kastel.sdq.eclipse.grading.api.client.websocket;
  * Client to connect to Artemis websocket. 
  * It uses STOMP and SockJS.
  * It subscribes to the result and submission topic.
+ * It is secured via SSL.
  */
 public interface IWebsocketClient {
 	/**

@@ -5,6 +5,9 @@ import java.util.List;
 import edu.kit.kastel.sdq.eclipse.grading.api.ArtemisClientException;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ICourse;
 
+/**
+ * REST-Client to execute calls concerning courses. 
+ */
 public interface ICourseArtemisClient {
 	/**
 	 * Returns all courses for current user.

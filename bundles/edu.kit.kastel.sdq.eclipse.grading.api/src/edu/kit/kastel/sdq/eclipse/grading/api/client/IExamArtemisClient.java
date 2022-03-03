@@ -10,7 +10,7 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IStudentExam;
  */
 public interface IExamArtemisClient {
 	/**
-	 *
+	 * If the given exam has already been started, it returns all the exercises of the exam.
 	 * 
 	 * @param course
 	 * @param exam

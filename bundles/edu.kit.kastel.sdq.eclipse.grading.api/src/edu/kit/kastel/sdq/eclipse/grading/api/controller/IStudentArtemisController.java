@@ -26,23 +26,25 @@ public interface IStudentArtemisController extends IArtemisController {
 	IStudentExam getExercisesFromStudentExam(String examTitle);
 
 	/**
+	 * Fetches the feedback of all results from the given exercise. 
 	 * 
 	 * @param course
 	 * @param excerise
-	 * @return
+	 * @return Map from result to its feedbacks.
 	 */
 	Map<ResultsDTO, List<Feedback>> getFeedbackForExercise(ICourse course, IExercise excerise);
 
 	/**
-	 * 
+	 * Starts an exam.
+	 *  
 	 * @param course
 	 * @param exam
-	 * @return
+	 * @return the exam and its exercises.
 	 */
 	IStudentExam startExam(ICourse course, IExam exam);
 
 	/**
-	 * 
+	 * Returns participation if exists of given exercise and current user. 
 	 * @param course
 	 * @param exercise
 	 * @return

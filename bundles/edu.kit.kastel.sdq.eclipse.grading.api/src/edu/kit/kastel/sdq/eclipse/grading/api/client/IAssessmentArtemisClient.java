@@ -9,6 +9,9 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ParticipationDTO;
 
+/**
+ * REST-Client to execute calls concerning assessment. 
+ */
 public interface IAssessmentArtemisClient {
 	/**
 	 * Submit the assessment to Artemis. Must have been started by

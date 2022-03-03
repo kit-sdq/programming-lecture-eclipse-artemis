@@ -1,5 +1,7 @@
 package edu.kit.kastel.sdq.eclipse.grading.api.client;
 
+import java.net.ConnectException;
+
 import edu.kit.kastel.sdq.eclipse.grading.api.ArtemisClientException;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ICourse;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
@@ -16,8 +18,9 @@ public interface IParticipationArtemisClient {
 	 * @param exercise
 	 * @return the participation
 	 * @throws ArtemisClientException
+	 * @throws ConnectException 
 	 */
-	ParticipationDTO startParticipationForExercise(ICourse course, IExercise exercise) throws ArtemisClientException;
+	ParticipationDTO startParticipationForExercise(ICourse course, IExercise exercise) throws ArtemisClientException, ConnectException;
 
 	/**
 	 * Resume the participation of the current user in the given exercise.

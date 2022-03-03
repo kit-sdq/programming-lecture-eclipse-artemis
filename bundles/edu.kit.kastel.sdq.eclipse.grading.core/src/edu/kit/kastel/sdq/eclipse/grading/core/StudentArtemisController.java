@@ -1,5 +1,6 @@
 package edu.kit.kastel.sdq.eclipse.grading.core;
 
+import java.net.ConnectException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -67,7 +68,7 @@ public class StudentArtemisController extends ArtemisController implements IStud
 		if (participation.isEmpty()) {
 			try {
 				participation = Optional.of(clientManager.getParticipationArtemisClient().startParticipationForExercise(course, exercise));
-			} catch (ArtemisClientException e) {
+			} catch (ArtemisClientException | ConnectException e) {
 				return Optional.empty();
 			}
 		}

@@ -1,6 +1,7 @@
 package edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -10,7 +11,7 @@ public class ResultsDTO implements Serializable {
 	@JsonProperty
 	public int id;
 	@JsonProperty
-	public String completionDate;
+	public Date completionDate;
 	@JsonProperty
 	public Boolean hasFeedback;
 	@JsonProperty

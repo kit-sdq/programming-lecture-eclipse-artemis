@@ -5,6 +5,9 @@ import java.util.Optional;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
 
+/**
+ * Works as an interface from backend to REST-clients. It handles specific tasks concerned with the grading product.
+ */
 public interface IGradingArtemisController extends IArtemisController {
 	/**
 	 * Submit the assessment to Artemis. Must have been started by
