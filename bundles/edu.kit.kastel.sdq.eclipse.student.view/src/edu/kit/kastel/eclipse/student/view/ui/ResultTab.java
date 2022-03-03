@@ -96,7 +96,7 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 		FontDescriptor boldDescriptor = FontDescriptor.createFrom(labelFeedback.getFont()).setStyle(SWT.BOLD).setHeight(18);
 		Font boldFont = boldDescriptor.createFont(labelFeedback.getDisplay());
 		labelFeedback.setFont(boldFont);
-		labelFeedback.setText("Results");
+		labelFeedback.setText("Latest Results");
 
 		Composite composite_1 = new Composite(composite, SWT.NONE);
 		GridLayout gl_composite_1 = new GridLayout(2, true);

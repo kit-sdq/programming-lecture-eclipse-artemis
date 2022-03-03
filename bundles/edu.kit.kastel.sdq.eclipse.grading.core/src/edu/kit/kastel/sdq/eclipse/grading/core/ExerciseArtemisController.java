@@ -118,7 +118,7 @@ public class ExerciseArtemisController extends AbstractController implements IEx
 	private void existsAndThrow(File file) throws ArtemisClientException {
 		if (file.exists()) {
 			throw new ArtemisClientException("Project " + file.getName() + " could not be cloned since the workspace "
-					+ "already contains a project with that name. " + System.lineSeparator()
+					+ "already contains a project with that name. \n"
 					+ "Trying to load and merge previously created annotations. Please double-check them before submitting the assessment! \n"
 					+ "If you want to start again from skretch, please delete the project and retry.");
 		}
