@@ -293,7 +293,7 @@ public class ArtemisStudentView extends ViewPart {
 		labelResult.setText(Messages.EXAMTAB_REMEMBER);
 
 		Link examLink = new Link(composite_1, SWT.NONE);
-		examLink.setText(Messages.ArtemisStudentView_link_text);
+		examLink.setText(Messages.ARTEMISSTUDENTVIEW_LINK);
 		examLink.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -313,7 +313,6 @@ public class ArtemisStudentView extends ViewPart {
 
 		lblExamShortName = new Label(resultContentComposite, SWT.NONE);
 		lblExamShortName.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
-		lblExamShortName.setText("Name");
 		lblExamShortName.setTouchEnabled(true);
 		boldDescriptor = FontDescriptor.createFrom(lblExamShortName.getFont()).setStyle(SWT.BOLD).setHeight(12);
 		boldFont = boldDescriptor.createFont(lblExamShortName.getDisplay());
@@ -330,8 +329,6 @@ public class ArtemisStudentView extends ViewPart {
 		boldDescriptor = FontDescriptor.createFrom(resultScore.getFont()).setStyle(SWT.BOLD | SWT.ITALIC).setHeight(12);
 		boldFont = boldDescriptor.createFont(resultScore.getDisplay());
 		resultScore.setFont(boldFont);
-		resultScore.setText("Due to: 0 / 20");
-
 	}
 
 	private void addSelectionListenerForStartButton(Button btn) {
@@ -377,7 +374,7 @@ public class ArtemisStudentView extends ViewPart {
 		examCombo.add("None");
 		this.viewController.getExamShortNames(courseCombo.getItem(courseCombo.getSelectionIndex())).forEach(examCombo::add);
 		examCombo.addListener(SWT.Selection, e -> {
-			exerciseCombo.removeAll();
+			resetBackendStateForNewExam();
 			String examName = examCombo.getItem(examCombo.getSelectionIndex());
 			if ("None".equals(examName)) {
 				this.viewController.setExamToNull();
@@ -391,6 +388,13 @@ public class ArtemisStudentView extends ViewPart {
 		exerciseCombo.addListener(SWT.Selection, e -> {
 			handleExerciseComboListEvent(exerciseCombo);
 		});
+	}
+	
+	private void resetBackendStateForNewExam() {
+		exerciseCombo.removeAll();
+		this.viewController.resetBackendState();
+		this.resetButtons();
+		this.resetAllTabs();
 	}
 
 	private void resetExamPart() {
@@ -443,7 +447,12 @@ public class ArtemisStudentView extends ViewPart {
 	}
 
 	private void addLoadExerciseListenerForButton(Button btn) {
-		btn.addListener(SWT.Selection, e -> this.viewController.startExercise());
+		btn.addListener(SWT.Selection, e -> handleStartButtonEvent());
+	}
+	
+	private void handleStartButtonEvent() {
+		this.viewController.startExercise();
+		enableButtons();
 	}
 
 	private void loadExamComboEntries(Combo examCourseCombo, Combo examCombo, Combo examExerciseCombo) {

@@ -46,7 +46,7 @@ public class StudentViewController extends AbstractArtemisViewController {
 	}
 
 	public boolean canClean() {
-		return true;
+		return systemwideController.isSelectedExerciseInWorkspace();
 	}
 
 	public boolean connectToWebsocket(WebsocketCallback callBack) {
@@ -105,6 +105,10 @@ public class StudentViewController extends AbstractArtemisViewController {
 	}
 	
 	public boolean canResetExercise() {
-		return systemwideController.canResetSelectedExercise();
+		return systemwideController.isSelectedExerciseInWorkspace();
+	}
+	
+	public void resetBackendState() {
+		systemwideController.resetBackendState();
 	}
 }

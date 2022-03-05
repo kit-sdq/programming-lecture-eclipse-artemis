@@ -100,14 +100,11 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 
 		Composite composite_1 = new Composite(composite, SWT.NONE);
 		GridLayout gl_composite_1 = new GridLayout(2, true);
-		gl_composite_1.verticalSpacing = 0;
-		gl_composite_1.marginWidth = 0;
 		composite_1.setLayout(gl_composite_1);
 		GridData gd_composite_1 = new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1);
-		gd_composite_1.widthHint = 238;
 		composite_1.setLayoutData(gd_composite_1);
 
-		btnLoading = new Label(composite_1, SWT.SHADOW_IN | SWT.CENTER);
+		btnLoading = new Label(composite_1, SWT.SHADOW_IN | SWT.CENTER | SWT.BORDER);
 		GridData gd_btnRLoading = new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1);
 		gd_btnRLoading.widthHint = 80;
 		btnLoading.setLayoutData(gd_btnRLoading);
@@ -116,8 +113,6 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 
 		btnReload = new Button(composite_1, SWT.CENTER);
 		GridData gd_btnReload = new GridData(SWT.RIGHT, SWT.FILL, true, false, 1, 1);
-		gd_btnReload.widthHint = 90;
-		gd_btnReload.horizontalIndent = 5;
 		btnReload.setLayoutData(gd_btnReload);
 		btnReload.setText(RELOAD_BTN_TEXT);
 		addSelectionListenerForReloadButton(btnReload);
@@ -141,9 +136,7 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 
 		lblResultExerciseShortName = new Label(composite_2, SWT.NONE);
 		GridData gd_lblResultExerciseShortName = new GridData(SWT.FILL, SWT.CENTER, true, true, 1, 1);
-		gd_lblResultExerciseShortName.widthHint = 288;
 		lblResultExerciseShortName.setLayoutData(gd_lblResultExerciseShortName);
-		lblResultExerciseShortName.setText("Name");
 		lblResultExerciseShortName.setTouchEnabled(true);
 		boldDescriptor = FontDescriptor.createFrom(lblResultExerciseShortName.getFont()).setStyle(SWT.BOLD).setHeight(12);
 		boldFont = boldDescriptor.createFont(lblResultExerciseShortName.getDisplay());
@@ -158,7 +151,6 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 		btnResultSuccessfull.setText("Successful");
 
 		lblResultExerciseDescription = new Label(resultContentComposite, SWT.NONE);
-		lblResultExerciseDescription.setText("22.03.2022");
 		GridData gd_lblResultExerciseDescription = new GridData(SWT.LEFT, SWT.FILL, true, true, 1, 1);
 		gd_lblResultExerciseDescription.widthHint = 398;
 		gd_lblResultExerciseDescription.horizontalIndent = 5;
@@ -173,22 +165,17 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 
 		lblPoints = new Label(composite_3, SWT.NONE);
 		GridData gd_lblPoints = new GridData(SWT.LEFT, SWT.CENTER, false, true, 1, 1);
-		gd_lblPoints.widthHint = 200;
 		lblPoints.setLayoutData(gd_lblPoints);
 		boldDescriptor = FontDescriptor.createFrom(lblPoints.getFont()).setStyle(SWT.BOLD | SWT.ITALIC).setHeight(12);
 		boldFont = boldDescriptor.createFont(lblPoints.getDisplay());
 		lblPoints.setFont(boldFont);
-		lblPoints.setBounds(22, 78, 186, 30);
-		lblPoints.setText("70%");
 
 		resultScore = new Label(composite_3, SWT.RIGHT);
 		GridData gd_resultScore = new GridData(SWT.RIGHT, SWT.CENTER, true, true, 1, 1);
-		gd_resultScore.widthHint = 195;
 		resultScore.setLayoutData(gd_resultScore);
 		boldDescriptor = FontDescriptor.createFrom(resultScore.getFont()).setStyle(SWT.BOLD | SWT.ITALIC).setHeight(12);
 		boldFont = boldDescriptor.createFont(resultScore.getDisplay());
 		resultScore.setFont(boldFont);
-		resultScore.setText("0 / 20");
 
 		Label labelFeedback2 = new Label(feedbackContentComposite, SWT.NONE);
 		boldDescriptor = FontDescriptor.createFrom(labelFeedback2.getFont()).setStyle(SWT.BOLD).setHeight(10);
@@ -367,8 +354,7 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 	}
 
 	private void handleWebsocketError() {
-		this.btnLoading.setVisible(true);
-		this.btnLoading.setText("ERROR");
+		this.btnLoading.setVisible(false);
 	}
 
 	@Override
@@ -388,8 +374,6 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 	}
 
 	private LocalDateTime convertToLocalDateTimeViaInstant(Date dateToConvert) {
-	    return dateToConvert.toInstant()
-	  	      .atZone(ZoneId.systemDefault())
-	  	      .toLocalDateTime();
+		return dateToConvert.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
 	}
 }

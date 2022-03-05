@@ -117,7 +117,7 @@ public class StudentSystemwideController extends SystemwideController implements
 			return false;
 		}
 
-		if (!this.confirm(Messages.StudentSystemwideController_SUBMITTING_SOLUTION)) {
+		if (!this.confirm(Messages.STUDENT_ARTMIS_CONTROLLER_SUBMITTING_SOLUTION)) {
 			return false;
 		}
 
@@ -135,7 +135,7 @@ public class StudentSystemwideController extends SystemwideController implements
 			this.warn("No excercise is selected");
 			return false;
 		}
-		if (!this.confirm(Messages.StudentSystemwideController_CLEAN)) {
+		if (!this.confirm(Messages.STUDENT_ARTMIS_CONTROLLER_CLEAN)) {
 			return false;
 		}
 
@@ -145,7 +145,7 @@ public class StudentSystemwideController extends SystemwideController implements
 					+ ".\n Exercise not found in workspace. \n Please load exercise first");
 			return false;
 		}
-		this.info(Messages.StudentSystemwideController_CLEAN_SUCCESSFUL + deletedFiles.get());
+		this.info(Messages.STUDENT_ARTMIS_CONTROLLER_CLEAN_SUCCESSFUL + deletedFiles.get());
 		return true;
 
 	}
@@ -204,7 +204,7 @@ public class StudentSystemwideController extends SystemwideController implements
 	@Override
 	public IExam startExam() {
 		if (exam != null) {
-			if (this.confirm(Messages.StudentArtemisController_Confirm_Start_Exam)) {
+			if (this.confirm(Messages.STUDENT_ARTMIS_CONTROLLER_CONFIRM_START_EXAM)) {
 				exam = this.artemisGUIController.startExam(course, exam.getExam());
 				return exam.getExam();
 			}
@@ -284,17 +284,33 @@ public class StudentSystemwideController extends SystemwideController implements
 	}
 
 	@Override
-	public void resetSelectedExercise() {
+	public boolean resetSelectedExercise() {
+		if (this.nullCheckMembersAndNotify(true, true)) {
+			this.warn("No excercise is selected");
+			return false;
+		}
+		if (!this.confirm(Messages.STUDENT_ARTMIS_CONTROLLER_CLEAN)) {
+			return false;
+		}
 		try {
 			this.exerciseController.deleteExercise(course, exercise, projectFileNamingStrategy);
 			this.loadExerciseForStudent();
 		} catch (ArtemisClientException e) {
 			this.error(e.getMessage(), e);
+			return false;
 		}
+		
+		this.info(Messages.STUDENT_ARTMIS_CONTROLLER_CLEAN_SUCCESSFUL);
+		return true;
 	}
 
 	@Override
-	public boolean canResetSelectedExercise() {
+	public boolean isSelectedExerciseInWorkspace() {
 		return this.exerciseController.isExerciseInWorkspace(course, exercise, projectFileNamingStrategy);
+	}
+	
+	@Override 
+	public void resetBackendState() {
+		this.exercise = null;
 	}
 }

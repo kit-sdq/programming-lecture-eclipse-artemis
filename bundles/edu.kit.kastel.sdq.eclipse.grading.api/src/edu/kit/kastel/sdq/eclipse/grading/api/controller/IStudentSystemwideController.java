@@ -114,12 +114,18 @@ public interface IStudentSystemwideController extends ISystemwideController {
 	
 	/**
 	 * Deletes the currently selected exercise from workspace and clones it again from origin.
+	 * @return 
 	 */
-	void resetSelectedExercise();
+	boolean resetSelectedExercise();
 	
 	/**
 	 * True if exercise is in local workspace.
 	 * @return
 	 */
-	boolean canResetSelectedExercise();
+	boolean isSelectedExerciseInWorkspace();
+
+	/**
+	 * Sets all attributes in backend to null.
+	 */
+	void resetBackendState();
 }

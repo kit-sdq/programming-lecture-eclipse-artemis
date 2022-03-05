@@ -51,7 +51,7 @@ public class StudentArtemisController extends ArtemisController implements IStud
 	@Override
 	public IStudentExam startExam(ICourse course, IExam exam) {
 		try {
-			if (this.confirm(Messages.StudentArtemisController_Confirm_Start_Exam)) {
+			if (this.confirm(Messages.STUDENT_ARTMIS_CONTROLLER_CONFIRM_START_EXAM)) {
 				return this.clientManager.getExamArtemisClient().conductExam(course, exam);
 			}
 
@@ -141,7 +141,7 @@ public class StudentArtemisController extends ArtemisController implements IStud
 		try {
 			return this.clientManager.getExamArtemisClient().findExamForSummary(foundEntry.getKey(), foundEntry.getValue());
 		} catch (ArtemisClientException e) {
-			this.error(Messages.StudentArtemisController_EXAM_INFO, e);
+			this.error(Messages.STUDENT_ARTMIS_CONTROLLER_EXAM_INFO, e);
 		}
 		return this.startExam(foundEntry.getKey(), foundEntry.getValue());
 	}

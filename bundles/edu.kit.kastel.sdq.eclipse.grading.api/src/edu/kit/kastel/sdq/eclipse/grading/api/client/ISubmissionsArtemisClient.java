@@ -20,14 +20,20 @@ public interface ISubmissionsArtemisClient {
 
 	/**
 	 *
-	 * @param exerciseID
-	 * @param assessedByTutor only return those submissions on which the caller has
-	 *                        (started, saved or submitted) the assessment.
-	 * @return submissions for the given exerciseID, filterable.
+	 * @param IExercise exercise to load submission.
+	 * @param correctionRound 
+	 * @return submissions for the given exercise and correction round.
 	 * @throws ArtemisClientException if some errors occur while parsing the result.
 	 */
 	List<ISubmission> getSubmissions(IExercise exercise, int correctionRound) throws ArtemisClientException;
 
+	/**
+	 *
+	 * @param IExercise exercise to load submission.
+	 * @param submissionId of submission to be returned
+	 * @return submission with submissionId.
+	 * @throws ArtemisClientException if some errors occur while parsing the result.
+	 */
 	ISubmission getSubmissionById(IExercise artemisExercise, int submissionId) throws ArtemisClientException;
 
 }
