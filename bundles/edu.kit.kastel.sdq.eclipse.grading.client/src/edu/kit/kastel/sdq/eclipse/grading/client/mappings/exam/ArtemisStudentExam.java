@@ -13,13 +13,18 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IStudentExam;
 import edu.kit.kastel.sdq.eclipse.grading.client.mappings.ArtemisExercise;
 
 public class ArtemisStudentExam implements IStudentExam, Serializable {
-
 	private static final long serialVersionUID = 1854716703208552700L;
 	@JsonProperty
 	private ArtemisExam exam;
 
 	@JsonProperty
 	private ArtemisExercise[] exercises;
+	
+	@JsonProperty
+	private boolean submitted;
+	
+	@JsonProperty
+	private boolean ended;
 
 	@Override
 	public IExam getExam() {
@@ -33,4 +38,16 @@ public class ArtemisStudentExam implements IStudentExam, Serializable {
 		}
 		return Arrays.asList(exercises);
 	}
+
+	@Override
+	public boolean isSubmitted() {
+		return submitted;
+	}
+	
+	@Override
+	public boolean isEnded() {
+		return ended;
+	}
+	
+	
 }

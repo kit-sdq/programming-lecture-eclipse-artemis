@@ -52,6 +52,9 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 	private ScrolledComposite scrolledCompositeFeedback;
 	private Composite feedbackContainerComposite;
 	private Composite feedbackContentComposite;
+	private Composite resultContentComposite;
+	private Composite compositeHeader;
+	private Composite compositeFooter;
 	private ResultsDTO lastResult;
 	private List<Feedback> feedbackOfLastResult = new ArrayList<>();
 	private Table feedbackTabel;
@@ -101,8 +104,7 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 		Composite composite_1 = new Composite(composite, SWT.NONE);
 		GridLayout gl_composite_1 = new GridLayout(2, true);
 		composite_1.setLayout(gl_composite_1);
-		GridData gd_composite_1 = new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1);
-		composite_1.setLayoutData(gd_composite_1);
+		composite_1.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
 
 		btnLoading = new Label(composite_1, SWT.SHADOW_IN | SWT.CENTER | SWT.BORDER);
 		GridData gd_btnRLoading = new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1);
@@ -112,8 +114,7 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 		btnLoading.setVisible(false);
 
 		btnReload = new Button(composite_1, SWT.CENTER);
-		GridData gd_btnReload = new GridData(SWT.RIGHT, SWT.FILL, true, false, 1, 1);
-		btnReload.setLayoutData(gd_btnReload);
+		btnReload.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, true, false, 1, 1));
 		btnReload.setText(RELOAD_BTN_TEXT);
 		addSelectionListenerForReloadButton(btnReload);
 
@@ -125,24 +126,24 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 		feedbackContentComposite.setTouchEnabled(true);
 		feedbackContentComposite.setLayout(new GridLayout(1, true));
 		feedbackContentComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-		feedbackContentComposite.setVisible(false);
-		Composite resultContentComposite = new Composite(feedbackContentComposite, SWT.BORDER);
+		feedbackContentComposite.setVisible(true);
+		resultContentComposite = new Composite(feedbackContentComposite, SWT.BORDER);
 		resultContentComposite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true, 1, 1));
 		resultContentComposite.setLayout(new GridLayout(1, false));
 
-		Composite composite_2 = new Composite(resultContentComposite, SWT.NONE);
-		composite_2.setLayout(new GridLayout(2, false));
-		composite_2.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+		compositeHeader = new Composite(resultContentComposite, SWT.NONE);
+		compositeHeader.setLayout(new GridLayout(2, false));
+		compositeHeader.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 
-		lblResultExerciseShortName = new Label(composite_2, SWT.NONE);
-		GridData gd_lblResultExerciseShortName = new GridData(SWT.FILL, SWT.CENTER, true, true, 1, 1);
-		lblResultExerciseShortName.setLayoutData(gd_lblResultExerciseShortName);
+		lblResultExerciseShortName = new Label(compositeHeader, SWT.NONE);
+		lblResultExerciseShortName.setText(Messages.ResultTab_lblResultExerciseShortName_text);
+		lblResultExerciseShortName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true, 1, 1));
 		lblResultExerciseShortName.setTouchEnabled(true);
 		boldDescriptor = FontDescriptor.createFrom(lblResultExerciseShortName.getFont()).setStyle(SWT.BOLD).setHeight(12);
 		boldFont = boldDescriptor.createFont(lblResultExerciseShortName.getDisplay());
 		lblResultExerciseShortName.setFont(boldFont);
 
-		btnResultSuccessfull = new Label(composite_2, SWT.RIGHT);
+		btnResultSuccessfull = new Label(compositeHeader, SWT.RIGHT);
 		btnResultSuccessfull.setForeground(display.getSystemColor(SWT.COLOR_GREEN));
 		btnResultSuccessfull.setBounds(360, 9, 123, 28);
 		boldDescriptor = FontDescriptor.createFrom(btnResultSuccessfull.getFont()).setStyle(SWT.BOLD).setHeight(12);
@@ -159,26 +160,26 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 		Label separator = new Label(resultContentComposite, SWT.SEPARATOR | SWT.HORIZONTAL);
 		separator.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true, 1, 1));
 
-		Composite composite_3 = new Composite(resultContentComposite, SWT.NONE);
-		composite_3.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
-		composite_3.setLayout(new GridLayout(2, false));
+		compositeFooter = new Composite(resultContentComposite, SWT.NONE);
+		compositeFooter.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
+		compositeFooter.setLayout(new GridLayout(2, true));
 
-		lblPoints = new Label(composite_3, SWT.NONE);
-		GridData gd_lblPoints = new GridData(SWT.LEFT, SWT.CENTER, false, true, 1, 1);
-		lblPoints.setLayoutData(gd_lblPoints);
+		lblPoints = new Label(compositeFooter, SWT.NONE);
+		lblPoints.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, true, 1, 1));
 		boldDescriptor = FontDescriptor.createFrom(lblPoints.getFont()).setStyle(SWT.BOLD | SWT.ITALIC).setHeight(12);
 		boldFont = boldDescriptor.createFont(lblPoints.getDisplay());
 		lblPoints.setFont(boldFont);
+		lblPoints.setText("Points: ");
 
-		resultScore = new Label(composite_3, SWT.RIGHT);
-		GridData gd_resultScore = new GridData(SWT.RIGHT, SWT.CENTER, true, true, 1, 1);
-		resultScore.setLayoutData(gd_resultScore);
+		resultScore = new Label(compositeFooter, SWT.RIGHT);
+		resultScore.setText(Messages.ResultTab_resultScore_text);
+		resultScore.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, true, true, 1, 1));
 		boldDescriptor = FontDescriptor.createFrom(resultScore.getFont()).setStyle(SWT.BOLD | SWT.ITALIC).setHeight(12);
 		boldFont = boldDescriptor.createFont(resultScore.getDisplay());
 		resultScore.setFont(boldFont);
 
 		Label labelFeedback2 = new Label(feedbackContentComposite, SWT.NONE);
-		boldDescriptor = FontDescriptor.createFrom(labelFeedback2.getFont()).setStyle(SWT.BOLD).setHeight(10);
+		boldDescriptor = FontDescriptor.createFrom(labelFeedback2.getFont()).setHeight(9);
 		boldFont = boldDescriptor.createFont(labelFeedback2.getDisplay());
 		labelFeedback2.setFont(boldFont);
 		labelFeedback2.setText(Messages.RESULTTAB_INFO_RESULT);
@@ -247,7 +248,10 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 				lblResultExerciseShortName.setText(exercise.getTitle());
 				lblResultExerciseDescription.setText(date.format(formatter));
 				resultScore.setText(result.resultString);
-				lblPoints.setText("Points: " + result.score + "%"); //$NON-NLS-2$
+				lblPoints.setText("Points: " + result.score + "%");
+				resultContentComposite.layout();
+				compositeFooter.layout();
+				compositeHeader.layout();
 			} else {
 				resultScore.setText(Integer.toString(result.score));
 			}
@@ -376,4 +380,6 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 	private LocalDateTime convertToLocalDateTimeViaInstant(Date dateToConvert) {
 		return dateToConvert.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
 	}
+	
+
 }

@@ -10,6 +10,7 @@ import edu.kit.kastel.sdq.eclipse.grading.api.ArtemisClientException;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.Feedback;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExam;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IStudentExam;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ResultsDTO;
 import edu.kit.kastel.sdq.eclipse.grading.api.client.websocket.WebsocketCallback;
 import edu.kit.kastel.sdq.eclipse.grading.api.controller.IStudentSystemwideController;
@@ -83,11 +84,11 @@ public class StudentViewController extends AbstractArtemisViewController {
 		return systemwideController.setExam(examName);
 	}
 
-	public IExam getCurrentlySelectedExam() {
+	public IStudentExam getCurrentlySelectedExam() {
 		return systemwideController.getExam();
 	}
 
-	public IExam startExam() {
+	public IStudentExam startExam() {
 		return systemwideController.startExam();
 	}
 

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 
@@ -41,8 +42,13 @@ public class MappingLoaderArtemisClient extends AbstractArtemisClient implements
 	}
 
 	@Override
-	public List<ICourse> getCoursesForAssessment() throws ArtemisClientException {
-		final Response rsp = this.endpoint.path(COURSES_PATHPART).request().header(AUTHORIZATION_NAME, this.token).buildGet().invoke();
+	public List<ICourse> getCoursesForAssessment() throws ArtemisClientException, ProcessingException {
+		Response rsp;
+		try {
+			rsp = this.endpoint.path(COURSES_PATHPART).request().header(AUTHORIZATION_NAME, this.token).buildGet().invoke();
+		} catch (ProcessingException e) {
+			throw new ArtemisClientException("Connection refused. Maybe check your VPN connection.");
+		}
 		this.throwIfStatusUnsuccessful(rsp);
 		String rspString = rsp.readEntity(String.class);
 
@@ -55,7 +61,14 @@ public class MappingLoaderArtemisClient extends AbstractArtemisClient implements
 
 	@Override
 	public List<ICourse> getCoursesForDashboard() throws ArtemisClientException {
-		final Response rsp = this.endpoint.path(COURSES_PATHPART).path("for-dashboard").request().header(AUTHORIZATION_NAME, this.token).buildGet().invoke();
+		Response rsp;
+
+		try {
+			rsp = this.endpoint.path(COURSES_PATHPART).path("for-dashboard").request().header(AUTHORIZATION_NAME, this.token).buildGet().invoke();
+		} catch (ProcessingException e) {
+			throw new ArtemisClientException("Connection refused. Maybe check your VPN connection.");
+		}
+
 		this.throwIfStatusUnsuccessful(rsp);
 		String rspString = rsp.readEntity(String.class);
 

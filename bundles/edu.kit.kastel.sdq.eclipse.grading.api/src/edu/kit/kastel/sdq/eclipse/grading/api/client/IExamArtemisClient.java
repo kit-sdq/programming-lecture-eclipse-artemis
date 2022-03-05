@@ -36,5 +36,5 @@ public interface IExamArtemisClient {
 	 * @return
 	 * @throws ArtemisClientException
 	 */
-	public IStudentExam startExam(IExam exam) throws ArtemisClientException;
+	public IStudentExam startExam(ICourse course, IExam exam) throws ArtemisClientException;
 }

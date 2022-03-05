@@ -194,20 +194,14 @@ public class StudentSystemwideController extends SystemwideController implements
 	}
 
 	@Override
-	public IExam getExam() {
-		if (exam == null) {
-			return null;
-		}
-		return exam.getExam();
+	public IStudentExam getExam() {
+		return exam;
 	}
 
 	@Override
-	public IExam startExam() {
+	public IStudentExam startExam() {
 		if (exam != null) {
-			if (this.confirm(Messages.STUDENT_ARTMIS_CONTROLLER_CONFIRM_START_EXAM)) {
-				exam = this.artemisGUIController.startExam(course, exam.getExam());
-				return exam.getExam();
-			}
+			return this.artemisGUIController.startExam(course, exam.getExam());
 		}
 		return null;
 	}
@@ -299,7 +293,7 @@ public class StudentSystemwideController extends SystemwideController implements
 			this.error(e.getMessage(), e);
 			return false;
 		}
-		
+
 		this.info(Messages.STUDENT_ARTMIS_CONTROLLER_CLEAN_SUCCESSFUL);
 		return true;
 	}
@@ -308,8 +302,8 @@ public class StudentSystemwideController extends SystemwideController implements
 	public boolean isSelectedExerciseInWorkspace() {
 		return this.exerciseController.isExerciseInWorkspace(course, exercise, projectFileNamingStrategy);
 	}
-	
-	@Override 
+
+	@Override
 	public void resetBackendState() {
 		this.exercise = null;
 	}

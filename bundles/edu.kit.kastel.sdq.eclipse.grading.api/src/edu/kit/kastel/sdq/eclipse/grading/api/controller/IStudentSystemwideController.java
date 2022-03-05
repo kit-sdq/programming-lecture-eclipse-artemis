@@ -7,6 +7,7 @@ import edu.kit.kastel.sdq.eclipse.grading.api.ArtemisClientException;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.Feedback;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExam;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IStudentExam;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ResultsDTO;
 import edu.kit.kastel.sdq.eclipse.grading.api.client.websocket.WebsocketCallback;
 
@@ -68,14 +69,14 @@ public interface IStudentSystemwideController extends ISystemwideController {
 	 * 
 	 * @return
 	 */
-	IExam getExam();
+	IStudentExam getExam();
 
 	/**
 	 * Starts the selected exam and returns it.
 	 *
 	 * @return
 	 */
-	IExam startExam();
+	IStudentExam startExam();
 	
 	/**
 	 * Returns all short names of the exercises of the exam with name "examShortName".

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.ArtemisClientException;
@@ -28,9 +29,11 @@ public class ArtemisExam implements IExam, Serializable {
 	private Date endDate;
 	@JsonProperty
 	private boolean started;
-
+	@JsonIgnore
 	private transient ICourse course;
+	@JsonIgnore
 	private transient List<IExerciseGroup> exerciseGroups;
+	@JsonIgnore
 	private transient IMappingLoader client;
 
 	/**

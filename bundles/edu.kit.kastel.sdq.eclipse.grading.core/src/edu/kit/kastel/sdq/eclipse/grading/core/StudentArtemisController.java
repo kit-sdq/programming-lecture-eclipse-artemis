@@ -52,13 +52,25 @@ public class StudentArtemisController extends ArtemisController implements IStud
 	public IStudentExam startExam(ICourse course, IExam exam) {
 		try {
 			if (this.confirm(Messages.STUDENT_ARTMIS_CONTROLLER_CONFIRM_START_EXAM)) {
-				return this.clientManager.getExamArtemisClient().conductExam(course, exam);
+				IStudentExam studentExam = this.clientManager.getExamArtemisClient().startExam(course, exam);
+				checkIfExamIsValid(studentExam);
+				return studentExam;
 			}
-
 		} catch (ArtemisClientException e) {
-			this.error("Error, can not start the exam: " + exam.getTitle(), e);
+			this.error("Error, can not start the exam: " + exam.getTitle() + Messages.STUDENT_ARTMIS_CONTROLLER_EXAM_NO_SIGN_IN, e); //$NON-NLS-1$
 		}
 		return new ArtemisStudentExam();
+	}
+
+	private void checkIfExamIsValid(IStudentExam exam) {
+		if (exam.isEnded()) {
+			String errorMsg = "";
+			errorMsg += Messages.STUDENT_ARTMIS_CONTROLLER_EXAM_OVER;
+			if (!exam.isSubmitted()) {
+				errorMsg += Messages.STUDENT_ARTMIS_CONTROLLER_EXAM_NOT_SUBMITTED;
+			}
+			this.warn(errorMsg);
+		}
 	}
 
 	@Override
@@ -87,7 +99,7 @@ public class StudentArtemisController extends ArtemisController implements IStud
 			participationWithResults = this.clientManager.getParticipationArtemisClient()
 					.getParticipationWithLatestResultForExercise(participationOpt.get().getParticipationID());
 		} catch (ArtemisClientException e) {
-			this.error("Can't load results for selected exercise " + exercise.getShortName() //
+			this.error("Can't load results for selected exercise " + exercise.getShortName()
 					+ ".\n No results found. Please check if a solution was submitted.", e);
 			return new HashMap<>();
 		}
@@ -112,7 +124,7 @@ public class StudentArtemisController extends ArtemisController implements IStud
 		}
 
 		if (resultFeedbackMap.isEmpty()) {
-			this.error("Can't load any feedback for selected exercise " + exercise.getShortName() //
+			this.error("Can't load any feedback for selected exercise " + exercise.getShortName()
 					+ ".\n No feedback found. Please check if a solution was submitted.", null);
 		}
 

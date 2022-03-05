@@ -50,8 +50,8 @@ public class ExamArtemisClient extends AbstractArtemisClient implements IExamArt
 	}
 
 	@Override
-	public IStudentExam startExam(IExam exam) throws ArtemisClientException {
-		final Response exercisesRsp = this.endpoint.path(EXAMS_PATHPART).path(String.valueOf(exam.getExamId())).path("start").request()
+	public IStudentExam startExam(ICourse course, IExam exam) throws ArtemisClientException {
+		final Response exercisesRsp = this.endpoint.path(COURSES_PATHPART).path(String.valueOf(course.getCourseId())).path(EXAMS_PATHPART).path(String.valueOf(exam.getExamId())).path("start").request()
 				.header(AUTHORIZATION_NAME, this.token).buildGet().invoke();
 
 		this.throwIfStatusUnsuccessful(exercisesRsp);

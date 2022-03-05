@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.part.ViewPart;
 
 import edu.kit.kastel.eclipse.student.view.controllers.StudentViewController;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExam;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IStudentExam;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,15 +54,18 @@ public class ArtemisStudentView extends ViewPart {
 	private ControlDecoration controlDecorationClean;
 
 	private Composite examContainerComposite;
-	private Composite examContentComposite;
 	private Composite resultContentComposite;
+	private Composite compositeFooter;
+	private Composite examHeaderComposite;
 
 	private Label resultScore;
 	private Label lblExamDescription;
 	private Label lblExamShortName;
+	private Label lblExamIsEnded;
+	private Label lblExamStart;
 	private Button btnStart;
 
-	private IExam exam;
+	private IStudentExam exam;
 	private Composite composite_1;
 
 	public ArtemisStudentView() {
@@ -208,11 +211,6 @@ public class ArtemisStudentView extends ViewPart {
 
 		btnSubmitExcerise = new Button(composite_1, SWT.NONE);
 		btnSubmitExcerise.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		btnSubmitExcerise.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-			}
-		});
 		btnSubmitExcerise.setText(NO_SELECTED);
 		btnSubmitExcerise.setEnabled(false);
 
@@ -301,32 +299,56 @@ public class ArtemisStudentView extends ViewPart {
 			}
 		});
 
-		this.examContentComposite = new Composite(examContainerComposite, SWT.NONE);
-		examContentComposite.setTouchEnabled(true);
-		examContentComposite.setLayout(new GridLayout(1, true));
-		examContentComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-		examContentComposite.setVisible(true);
-
-		resultContentComposite = new Composite(examContentComposite, SWT.BORDER);
+		resultContentComposite = new Composite(examContainerComposite, SWT.BORDER);
 		resultContentComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
 		resultContentComposite.setLayout(new GridLayout(1, false));
 
-		lblExamShortName = new Label(resultContentComposite, SWT.NONE);
-		lblExamShortName.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
-		lblExamShortName.setTouchEnabled(true);
+		examHeaderComposite = new Composite(resultContentComposite, SWT.NONE);
+		examHeaderComposite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		examHeaderComposite.setLayout(new GridLayout(2, true));
+
+		lblExamShortName = new Label(examHeaderComposite, SWT.NONE);
+		lblExamShortName.setText(Messages.ArtemisStudentView_lblExamShortName_text);
+		lblExamShortName.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
 		boldDescriptor = FontDescriptor.createFrom(lblExamShortName.getFont()).setStyle(SWT.BOLD).setHeight(12);
 		boldFont = boldDescriptor.createFont(lblExamShortName.getDisplay());
 		lblExamShortName.setFont(boldFont);
 
+		lblExamIsEnded = new Label(examHeaderComposite, SWT.NONE);
+		lblExamIsEnded.setText(Messages.ArtemisStudentView_lblExamIsEnded_text);
+		lblExamIsEnded.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, true, false, 1, 1));
+		boldDescriptor = FontDescriptor.createFrom(lblExamIsEnded.getFont()).setStyle(SWT.BOLD).setHeight(12);
+		boldFont = boldDescriptor.createFont(lblExamIsEnded.getDisplay());
+		lblExamIsEnded.setFont(boldFont);
+
 		lblExamDescription = new Label(resultContentComposite, SWT.NONE);
-		lblExamDescription.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, true, true, 1, 1));
+		lblExamDescription.setText(Messages.ArtemisStudentView_lblExamDescription_text);
+		GridData gd_lblExamDescription = new GridData(SWT.LEFT, SWT.FILL, true, true, 1, 1);
+		gd_lblExamDescription.horizontalIndent = 5;
+		lblExamDescription.setLayoutData(gd_lblExamDescription);
+		boldDescriptor = FontDescriptor.createFrom(lblExamDescription.getFont()).setStyle(SWT.ITALIC).setHeight(9);
+		boldFont = boldDescriptor.createFont(lblExamDescription.getDisplay());
+		lblExamDescription.setFont(boldFont);
 
 		Label separator = new Label(resultContentComposite, SWT.SEPARATOR | SWT.HORIZONTAL);
 		separator.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true, 1, 1));
 
-		resultScore = new Label(resultContentComposite, SWT.RIGHT);
-		resultScore.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
-		boldDescriptor = FontDescriptor.createFrom(resultScore.getFont()).setStyle(SWT.BOLD | SWT.ITALIC).setHeight(12);
+		compositeFooter = new Composite(resultContentComposite, SWT.NONE);
+		compositeFooter.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
+		compositeFooter.setLayout(new GridLayout(1, true));
+
+		lblExamStart = new Label(compositeFooter, SWT.NONE);
+		lblExamStart.setText(Messages.ArtemisStudentView_lblExamStart_text);
+		lblExamStart.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, true, true, 1, 1));
+		boldDescriptor = FontDescriptor.createFrom(lblExamStart.getFont()).setStyle(SWT.ITALIC).setHeight(9);
+		boldFont = boldDescriptor.createFont(lblExamStart.getDisplay());
+		lblExamStart.setFont(boldFont);
+		
+		resultScore = new Label(compositeFooter, SWT.RIGHT);
+		resultScore.setAlignment(SWT.LEFT);
+		resultScore.setText(Messages.ArtemisStudentView_resultScore_text);
+		resultScore.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
+		boldDescriptor = FontDescriptor.createFrom(resultScore.getFont()).setStyle(SWT.ITALIC).setHeight(9);
 		boldFont = boldDescriptor.createFont(resultScore.getDisplay());
 		resultScore.setFont(boldFont);
 	}
@@ -339,11 +361,17 @@ public class ArtemisStudentView extends ViewPart {
 	}
 
 	private void setExamDataToUI() {
-		if (exam != null) {
-			lblExamShortName.setText(exam.getTitle());
-			resultScore.setText(Messages.EXAMTAB_END + exam.getEndDate());
-			lblExamDescription.setText(Messages.EXAMTAB_START + exam.getStartDate());
-			btnStart.setEnabled(!exam.isStarted());
+		if (exam != null && exam.getExam() != null) {
+			lblExamShortName.setText(exam.getExam().getTitle());
+			resultScore.setText(Messages.EXAMTAB_END + exam.getExam().getEndDate());
+			lblExamStart.setText(Messages.EXAMTAB_START + exam.getExam().getStartDate());
+			btnStart.setEnabled(!exam.getExam().isStarted());
+			lblExamIsEnded.setText(exam.isEnded() ? "finished" : "running");
+			lblExamDescription.setText(!exam.isSubmitted() && exam.isEnded() ? Messages.ARTEMISSTUDENTVIEW_EXAM_NOT_SUBMITTED : "");
+			
+			resultContentComposite.layout();
+			compositeFooter.layout();
+			examHeaderComposite.layout();
 			examContainerComposite.setVisible(true);
 		}
 	}
@@ -389,7 +417,7 @@ public class ArtemisStudentView extends ViewPart {
 			handleExerciseComboListEvent(exerciseCombo);
 		});
 	}
-	
+
 	private void resetBackendStateForNewExam() {
 		exerciseCombo.removeAll();
 		this.viewController.resetBackendState();
@@ -449,7 +477,7 @@ public class ArtemisStudentView extends ViewPart {
 	private void addLoadExerciseListenerForButton(Button btn) {
 		btn.addListener(SWT.Selection, e -> handleStartButtonEvent());
 	}
-	
+
 	private void handleStartButtonEvent() {
 		this.viewController.startExercise();
 		enableButtons();

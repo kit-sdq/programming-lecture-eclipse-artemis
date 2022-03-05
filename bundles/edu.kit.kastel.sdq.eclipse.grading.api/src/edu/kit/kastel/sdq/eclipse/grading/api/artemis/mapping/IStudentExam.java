@@ -3,18 +3,28 @@ package edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping;
 import java.util.List;
 
 /**
- *	Represents a StudentExam Object from Artemis. It contains a regular exam object and all its exercises. 
+ * Represents a StudentExam Object from Artemis. It contains a regular exam
+ * object and all its exercises.
  */
 public interface IStudentExam {
-	
-	/*
-	 * Return the exam of the StudentExam.
+
+	/**
+	 * @return the exam of the StudentExam.
 	 */
 	IExam getExam();
-	
-	/*
-	 * Returns all the exercises of the exam.
+
+	/**
+	 * @return all the exercises of the exam.
 	 */
 	List<IExercise> getExercises();
 
+	/**
+	 * @return true if a solution was submitted.
+	 */
+	boolean isSubmitted();
+
+	/**
+	 * @return true if the submission period ended.
+	 */
+	boolean isEnded();
 }
