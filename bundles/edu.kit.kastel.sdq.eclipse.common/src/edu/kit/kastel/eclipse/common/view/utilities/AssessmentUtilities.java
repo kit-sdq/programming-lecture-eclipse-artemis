@@ -1,8 +1,10 @@
 package edu.kit.kastel.eclipse.common.view.utilities;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
@@ -16,6 +18,10 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.ITextEditor;
+
+import edu.kit.kastel.sdq.eclipse.grading.api.ArtemisClientException;
+import edu.kit.kastel.sdq.eclipse.grading.api.model.IAnnotation;
+import edu.kit.kastel.sdq.eclipse.grading.api.model.IMistakeType;
 
 /**
  *
@@ -153,6 +159,88 @@ public final class AssessmentUtilities {
 
 	private AssessmentUtilities() {
 		throw new IllegalAccessError();
+	}
+	
+	public static void createMarkerForAnnotation(IAnnotation annotation, String currentProjectName) throws ArtemisClientException {
+
+		int startLine = annotation.getStartLine();
+		int endLine = annotation.getEndLine();
+		IMistakeType mistake = annotation.getMistakeType();
+		String customMessage = annotation.getCustomMessage().orElse(null);
+		String customPenalty = annotation.getCustomPenalty().map(String::valueOf).orElse(null);
+		try {
+			IMarker marker = AssessmentUtilities.getFile(annotation.getClassFilePath(), currentProjectName)
+					.createMarker(AssessmentUtilities.MARKER_NAME);
+			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_ANNOTATION_ID, annotation.getUUID());
+			marker.setAttribute(IMarker.CHAR_START, annotation.getMarkerCharStart());
+			marker.setAttribute(IMarker.CHAR_END, annotation.getMarkerCharEnd());
+
+			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_START, startLine);
+			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_END, endLine);
+			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_CLASS_NAME, annotation.getClassFilePath());
+			if (customMessage != null) {
+				marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_CUSTOM_MESSAGE, customMessage);
+			}
+			if (customPenalty != null) {
+				marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_CUSTOM_PENALTY, customPenalty);
+			}
+			if (mistake != null) {
+				marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_ERROR_DESCRIPTION, mistake.getMessage());
+				marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_ERROR, mistake.getButtonText());
+				marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_RATING_GROUP, mistake.getRatingGroup().getDisplayName());
+				if (!mistake.isCustomPenalty()) {
+					marker.setAttribute(IMarker.MESSAGE, AssessmentUtilities.createMarkerTooltip(startLine, endLine, mistake.getButtonText(),
+							mistake.getRatingGroup().getDisplayName(), formatCustomPenaltyMessage(mistake, customMessage), annotation.getClassFilePath()));
+				} else {
+					marker.setAttribute(IMarker.MESSAGE,
+							AssessmentUtilities.createMarkerTooltipForCustomButton(startLine, endLine, customMessage, Double.parseDouble(customPenalty)));
+				}
+			}
+
+		} catch (Exception e) {
+			throw new ArtemisClientException(e.getMessage());
+		}
+	}
+	
+	/**
+	 * Checks whether the given annotation is present in the currently opened
+	 * project (An annotation is identified by its UUID)
+	 * 
+	 * @param annotation the annotation to check
+	 * @return true if the annotation is present, false if not
+	 */
+	public static boolean isAnnotationPresent(IAnnotation annotation, String currentProjectName) {
+		try {
+			IMarker[] markers = AssessmentUtilities.getFile(annotation.getClassFilePath(), currentProjectName).findMarkers(null,
+					false, 100);
+			for (IMarker marker : markers) {
+				if (annotation.getUUID().equals(marker.getAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_ANNOTATION_ID))) {
+					return true;
+				}
+			}
+			return false;
+		} catch (CoreException e) {
+			// If the project (or file) can not be loaded the annotation is definitely not
+			// present
+			return false;
+		}
+	}
+	
+	/**
+	 * Formats a custom penalty message. It will always use the message of the
+	 * mistake, however iff the provided customMessage is not null, it will append a
+	 * \n and this custom message.
+	 * 
+	 * @param mistake       the mistake to load the message from
+	 * @param customMessage the custom message to append (can be null)
+	 * @return the formatted message
+	 */
+	public static String formatCustomPenaltyMessage(IMistakeType mistake, String customMessage) {
+		if (customMessage != null) {
+			return mistake.getMessage() + "\n" + customMessage;
+		} else {
+			return mistake.getMessage();
+		}
 	}
 
 }

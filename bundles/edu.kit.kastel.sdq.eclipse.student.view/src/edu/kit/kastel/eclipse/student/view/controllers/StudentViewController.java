@@ -2,6 +2,7 @@ package edu.kit.kastel.eclipse.student.view.controllers;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import edu.kit.kastel.eclipse.common.view.controllers.AbstractArtemisViewController;
@@ -15,6 +16,7 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ResultsDTO;
 import edu.kit.kastel.sdq.eclipse.grading.api.client.websocket.WebsocketCallback;
 import edu.kit.kastel.sdq.eclipse.grading.api.controller.IStudentSystemwideController;
 import edu.kit.kastel.sdq.eclipse.grading.api.controller.ISystemwideController;
+import edu.kit.kastel.sdq.eclipse.grading.api.model.IAnnotation;
 
 public class StudentViewController extends AbstractArtemisViewController {
 	private IStudentSystemwideController systemwideController;
@@ -111,5 +113,13 @@ public class StudentViewController extends AbstractArtemisViewController {
 	
 	public void resetBackendState() {
 		systemwideController.resetBackendState();
+	}
+	
+	public Set<IAnnotation> getAnnotations() {
+		return systemwideController.getAnnotations();
+	}
+	
+	public String getCurrentProjectName() {
+		return systemwideController.getCurrentProjectName();
 	}
 }

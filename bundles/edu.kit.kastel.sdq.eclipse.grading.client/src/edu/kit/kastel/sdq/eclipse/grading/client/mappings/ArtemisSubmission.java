@@ -24,8 +24,8 @@ public class ArtemisSubmission implements ISubmission, Serializable {
 	@JsonProperty(value = "participation", required = true)
 	private ParticipationDTO participation;
 
-	private transient Boolean hasSubmittedAssessment;
-	private transient Boolean hasSavedAssessment;
+	private transient Boolean hasSubmittedAssessment = false;
+	private transient Boolean hasSavedAssessment = false;
 
 	private transient int correctionRound;
 

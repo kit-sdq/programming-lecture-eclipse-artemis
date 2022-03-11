@@ -1,5 +1,6 @@
 package edu.kit.kastel.sdq.eclipse.grading.core;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -10,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -17,6 +19,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import edu.kit.kastel.sdq.eclipse.grading.api.ArtemisClientException;
 import edu.kit.kastel.sdq.eclipse.grading.api.PreferenceConstants;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.Feedback;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.FeedbackType;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ICourse;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExam;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
@@ -28,7 +31,15 @@ import edu.kit.kastel.sdq.eclipse.grading.api.controller.IArtemisController;
 import edu.kit.kastel.sdq.eclipse.grading.api.controller.IStudentArtemisController;
 import edu.kit.kastel.sdq.eclipse.grading.api.controller.IStudentSystemwideController;
 import edu.kit.kastel.sdq.eclipse.grading.api.controller.IWebsocketController;
+import edu.kit.kastel.sdq.eclipse.grading.api.model.IAnnotation;
+import edu.kit.kastel.sdq.eclipse.grading.api.model.IMistakeType;
+import edu.kit.kastel.sdq.eclipse.grading.core.artemis.AnnotationDeserializer;
+import edu.kit.kastel.sdq.eclipse.grading.core.artemis.WorkspaceUtil;
 import edu.kit.kastel.sdq.eclipse.grading.core.messages.Messages;
+import edu.kit.kastel.sdq.eclipse.grading.core.model.annotation.Annotation;
+import edu.kit.kastel.sdq.eclipse.grading.core.model.annotation.AnnotationException;
+import edu.kit.kastel.sdq.eclipse.grading.core.model.annotation.DefaultAnnotationDao;
+import edu.kit.kastel.sdq.eclipse.grading.core.model.annotation.IAnnotationDao;
 
 public class StudentSystemwideController extends SystemwideController implements IStudentSystemwideController {
 
@@ -36,6 +47,8 @@ public class StudentSystemwideController extends SystemwideController implements
 	private IWebsocketController websocketController;
 	private IStudentArtemisController artemisGUIController;
 	private String artemisHost;
+
+	private IAnnotationDao annotationDao;
 
 	public StudentSystemwideController(final IPreferenceStore preferenceStore) {
 		super(preferenceStore.getString(PreferenceConstants.ARTEMIS_USER), //
@@ -52,6 +65,7 @@ public class StudentSystemwideController extends SystemwideController implements
 	public StudentSystemwideController(final String artemisHost, final String username, final String password) {
 		super(username, password);
 		createControllers(artemisHost, username, password);
+		this.annotationDao = new DefaultAnnotationDao();
 	}
 
 	private void createControllers(final String artemisHost, final String username, final String password) {
@@ -153,7 +167,41 @@ public class StudentSystemwideController extends SystemwideController implements
 			return new HashMap<>();
 		}
 
-		return this.artemisGUIController.getFeedbackForExercise(this.course, this.exercise);
+		Map<ResultsDTO, List<Feedback>> result = this.artemisGUIController.getFeedbackForExercise(this.course, this.exercise);
+		setAnnotations(result);
+		return result;
+	}
+	
+	@Override
+	public Set<IAnnotation> getAnnotations() {
+		return this.annotationDao.getAnnotations();
+	}
+
+	private void setAnnotations(Map<ResultsDTO, List<Feedback>> feedbackMap) {
+		final AnnotationDeserializer annotationDeserializer = new AnnotationDeserializer(new ArrayList<>());
+		Entry<ResultsDTO, List<Feedback>> entry = feedbackMap.entrySet().iterator().next();
+		List<IAnnotation> annotations = new ArrayList<>();
+		try {
+			annotations = annotationDeserializer.deserialize(entry.getValue());
+		} catch (IOException e) {
+			this.error(e.getMessage(), e);
+		}
+		for (IAnnotation annotation : annotations) {
+			this.addAnnotation(annotation.getUUID(), annotation.getMistakeType(), annotation.getStartLine(), annotation.getEndLine(),
+					annotation.getClassFilePath(), annotation.getCustomMessage().orElse(null), annotation.getCustomPenalty().orElse(null),
+					annotation.getMarkerCharStart(), annotation.getMarkerCharEnd());
+		}
+	}
+
+	private void addAnnotation(String annotationID, IMistakeType mistakeType, int startLine, int endLine, String fullyClassifiedClassName, String customMessage,
+			Double customPenalty, int markerCharStart, int markerCharEnd) {
+		try {
+			this.annotationDao.addAnnotation(annotationID, mistakeType, startLine, endLine, fullyClassifiedClassName, customMessage, customPenalty,
+					markerCharStart, markerCharEnd);
+		} catch (AnnotationException e) {
+			this.error(e.getMessage(), e);
+		}
+
 	}
 
 	@Override
@@ -302,5 +350,15 @@ public class StudentSystemwideController extends SystemwideController implements
 	@Override
 	public void resetBackendState() {
 		this.exercise = null;
+	}
+	
+	@Override
+	public String getCurrentProjectName() {
+		if (this.nullCheckMembersAndNotify(true, true)) {
+			return null;
+		}
+
+		return this.projectFileNamingStrategy
+				.getProjectFileInWorkspace(WorkspaceUtil.getWorkspaceFile(), this.exercise, null).getName();
 	}
 }

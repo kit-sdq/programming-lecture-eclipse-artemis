@@ -31,7 +31,9 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
+import edu.kit.kastel.eclipse.common.view.utilities.AssessmentUtilities;
 import edu.kit.kastel.eclipse.student.view.controllers.StudentViewController;
+import edu.kit.kastel.sdq.eclipse.grading.api.ArtemisClientException;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.Feedback;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ResultsDTO;
@@ -381,5 +383,21 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 		return dateToConvert.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
 	}
 	
-
+	/**
+	 * creates markers for current annotations in the backend
+	 */
+	public void createAnnotationsMarkers() {
+		String currentProjectName =  this.viewController.getCurrentProjectName();
+		this.viewController.getAnnotations().stream().filter(annotation -> !AssessmentUtilities.isAnnotationPresent(annotation,currentProjectName)).forEach(annatoation -> {
+			try {
+				AssessmentUtilities.createMarkerForAnnotation(annatoation, currentProjectName);
+			} catch (ArtemisClientException e) {
+				handleAnnotationError(e);
+			}
+		});
+	}
+	
+	private void handleAnnotationError(ArtemisClientException e) {
+		
+	}
 }

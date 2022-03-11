@@ -2,6 +2,7 @@ package edu.kit.kastel.sdq.eclipse.grading.api.controller;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.ArtemisClientException;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.Feedback;
@@ -10,6 +11,7 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IStudentExam;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ResultsDTO;
 import edu.kit.kastel.sdq.eclipse.grading.api.client.websocket.WebsocketCallback;
+import edu.kit.kastel.sdq.eclipse.grading.api.model.IAnnotation;
 
 public interface IStudentSystemwideController extends ISystemwideController {
 	
@@ -129,4 +131,10 @@ public interface IStudentSystemwideController extends ISystemwideController {
 	 * Sets all attributes in backend to null.
 	 */
 	void resetBackendState();
+
+	/**
+	 * 
+	 * @return Annotations of currently selected exercise.
+	 */
+	Set<IAnnotation> getAnnotations();
 }

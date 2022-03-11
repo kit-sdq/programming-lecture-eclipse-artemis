@@ -42,13 +42,6 @@ public interface IGradingSystemwideController extends ISystemwideController {
 	Set<Transition> getCurrentlyPossibleTransitions();
 
 	/**
-	 * Pre-Condition: course, exercise and submission must be set!
-	 *
-	 * @return the current project name.
-	 */
-	String getCurrentProjectName();
-
-	/**
 	 * <B>BACKLOG</B><br/>
 	 * <li>Loads an already assessed (started, saved or even submitted) submission
 	 * for re-assessment.

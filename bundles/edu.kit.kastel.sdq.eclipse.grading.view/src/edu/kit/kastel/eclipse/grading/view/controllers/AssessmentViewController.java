@@ -10,6 +10,7 @@ import org.eclipse.jface.text.ITextSelection;
 import edu.kit.kastel.eclipse.common.view.controllers.AbstractArtemisViewController;
 import edu.kit.kastel.eclipse.common.view.utilities.AssessmentUtilities;
 import edu.kit.kastel.eclipse.grading.view.activator.Activator;
+import edu.kit.kastel.sdq.eclipse.grading.api.ArtemisClientException;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.SubmissionFilter;
 import edu.kit.kastel.sdq.eclipse.grading.api.backendstate.Transition;
 import edu.kit.kastel.sdq.eclipse.grading.api.controller.IAssessmentController;
@@ -79,7 +80,7 @@ public class AssessmentViewController extends AbstractArtemisViewController {
 			}
 			if (!mistake.isCustomPenalty()) {
 				marker.setAttribute(IMarker.MESSAGE, AssessmentUtilities.createMarkerTooltip(startLine, endLine, mistake.getButtonText(),
-						mistake.getRatingGroup().getDisplayName(), formatCustomPenaltyMessage(mistake, customMessage), null));
+						mistake.getRatingGroup().getDisplayName(), AssessmentUtilities.formatCustomPenaltyMessage(mistake, customMessage), null));
 			} else {
 				marker.setAttribute(IMarker.MESSAGE, AssessmentUtilities.createMarkerTooltipForCustomButton(startLine, endLine, customMessage, customPenalty));
 			}
@@ -101,72 +102,13 @@ public class AssessmentViewController extends AbstractArtemisViewController {
 	 * creates markers for current annotations in the backend
 	 */
 	public void createAnnotationsMarkers() {
-		this.getAnnotations().stream().filter(annotation -> !isAnnotationPresent(annotation)).forEach(this::createMarkerForAnnotation);
-	}
-
-	/**
-	 * Checks whether the given annotation is present in the currently opened
-	 * project (An annotation is identified by its UUID)
-	 * 
-	 * @param annotation the annotation to check
-	 * @return true if the annotation is present, false if not
-	 */
-	private boolean isAnnotationPresent(IAnnotation annotation) {
-		try {
-			IMarker[] markers = AssessmentUtilities.getFile(annotation.getClassFilePath(), this.systemwideController.getCurrentProjectName()).findMarkers(null,
-					false, 100);
-			for (IMarker marker : markers) {
-				if (annotation.getUUID().equals(marker.getAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_ANNOTATION_ID))) {
-					return true;
-				}
+		this.getAnnotations().stream().filter(annotation -> !AssessmentUtilities.isAnnotationPresent(annotation,this.systemwideController.getCurrentProjectName())).forEach(annatoation -> {
+			try {
+				AssessmentUtilities.createMarkerForAnnotation(annatoation, this.systemwideController.getCurrentProjectName());
+			} catch (ArtemisClientException e) {
+				this.getAlertObserver().error("Unable to create marker for annotation", e);
 			}
-			return false;
-		} catch (CoreException e) {
-			// If the project (or file) can not be loaded the annotation is definitely not
-			// present
-			return false;
-		}
-	}
-
-	private void createMarkerForAnnotation(IAnnotation annotation) {
-
-		int startLine = annotation.getStartLine();
-		int endLine = annotation.getEndLine();
-		IMistakeType mistake = annotation.getMistakeType();
-		String customMessage = annotation.getCustomMessage().orElse(null);
-		String customPenalty = annotation.getCustomPenalty().map(String::valueOf).orElse(null);
-		try {
-			IMarker marker = AssessmentUtilities.getFile(annotation.getClassFilePath(), this.systemwideController.getCurrentProjectName())
-					.createMarker(AssessmentUtilities.MARKER_NAME);
-			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_ANNOTATION_ID, annotation.getUUID());
-			marker.setAttribute(IMarker.CHAR_START, annotation.getMarkerCharStart());
-			marker.setAttribute(IMarker.CHAR_END, annotation.getMarkerCharEnd());
-
-			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_START, startLine);
-			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_END, endLine);
-			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_CLASS_NAME, annotation.getClassFilePath());
-			if (customMessage != null) {
-				marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_CUSTOM_MESSAGE, customMessage);
-			}
-			if (customPenalty != null) {
-				marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_CUSTOM_PENALTY, customPenalty);
-			}
-			if (mistake != null) {
-				marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_ERROR_DESCRIPTION, mistake.getMessage());
-				marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_ERROR, mistake.getButtonText());
-				marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_RATING_GROUP, mistake.getRatingGroup().getDisplayName());
-				if (!mistake.isCustomPenalty()) {
-					marker.setAttribute(IMarker.MESSAGE, AssessmentUtilities.createMarkerTooltip(startLine, endLine, mistake.getButtonText(),
-							mistake.getRatingGroup().getDisplayName(), formatCustomPenaltyMessage(mistake, customMessage), annotation.getClassFilePath()));
-				} else {
-					marker.setAttribute(IMarker.MESSAGE,
-							AssessmentUtilities.createMarkerTooltipForCustomButton(startLine, endLine, customMessage, Double.parseDouble(customPenalty)));
-				}
-			}
-
-		} catch (Exception e) {
-			this.getAlertObserver().error("Unable to create marker for given annotation:" + annotation.toString(), e);
-		}
+		});
 	}
 
 	/**
@@ -309,20 +251,4 @@ public class AssessmentViewController extends AbstractArtemisViewController {
 		return systemwideController;
 	}
 
-	/**
-	 * Formats a custom penalty message. It will always use the message of the
-	 * mistake, however iff the provided customMessage is not null, it will append a
-	 * \n and this custom message.
-	 * 
-	 * @param mistake       the mistake to load the message from
-	 * @param customMessage the custom message to append (can be null)
-	 * @return the formatted message
-	 */
-	private String formatCustomPenaltyMessage(IMistakeType mistake, String customMessage) {
-		if (customMessage != null) {
-			return mistake.getMessage() + "\n" + customMessage;
-		} else {
-			return mistake.getMessage();
-		}
-	}
 }
