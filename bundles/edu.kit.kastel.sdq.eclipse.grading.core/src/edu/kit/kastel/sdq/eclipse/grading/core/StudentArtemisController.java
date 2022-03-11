@@ -1,6 +1,7 @@
 package edu.kit.kastel.sdq.eclipse.grading.core;
 
 import java.net.ConnectException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -120,6 +121,8 @@ public class StudentArtemisController extends ArtemisController implements IStud
 					break;
 				}
 				resultFeedbackMap.put(result, Arrays.asList(feedbacks));
+			} else {
+				resultFeedbackMap.put(result, new ArrayList<>());
 			}
 		}
 

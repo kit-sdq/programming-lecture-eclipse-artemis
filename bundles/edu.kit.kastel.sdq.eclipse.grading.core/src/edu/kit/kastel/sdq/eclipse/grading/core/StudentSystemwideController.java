@@ -178,6 +178,9 @@ public class StudentSystemwideController extends SystemwideController implements
 	}
 
 	private void setAnnotations(Map<ResultsDTO, List<Feedback>> feedbackMap) {
+		if(feedbackMap.isEmpty()) {
+			return;
+		}
 		final AnnotationDeserializer annotationDeserializer = new AnnotationDeserializer(new ArrayList<>());
 		Entry<ResultsDTO, List<Feedback>> entry = feedbackMap.entrySet().iterator().next();
 		List<IAnnotation> annotations = new ArrayList<>();
