@@ -163,7 +163,7 @@ public class ArtemisStudentView extends ViewPart {
 		buttons.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1));
 
 		Button btnRefreshArtemisState = new Button(buttons, SWT.NONE);
-		btnRefreshArtemisState.setText("Refresh Artemis State");
+		btnRefreshArtemisState.setText("Refresh Preferences");
 		GridData gd_btnRefreshArtemisState = new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1);
 		gd_btnRefreshArtemisState.widthHint = 155;
 		btnRefreshArtemisState.setLayoutData(gd_btnRefreshArtemisState);
@@ -200,7 +200,7 @@ public class ArtemisStudentView extends ViewPart {
 
 		Label labelReset = new Label(submitArea, SWT.NONE);
 		labelReset.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
-		labelReset.setText("Reset to remote state");
+		labelReset.setText("Reset exercise to remote state");
 		boldDescriptor = FontDescriptor.createFrom(labelReset.getFont()).setStyle(SWT.BOLD).setHeight(9);
 		boldFont = boldDescriptor.createFont(labelReset.getDisplay());
 		labelReset.setFont(boldFont);

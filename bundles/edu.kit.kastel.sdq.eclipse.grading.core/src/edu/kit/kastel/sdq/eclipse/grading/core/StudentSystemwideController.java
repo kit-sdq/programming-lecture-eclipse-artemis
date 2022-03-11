@@ -83,7 +83,6 @@ public class StudentSystemwideController extends SystemwideController implements
 	@Override
 	public boolean loadExerciseForStudent() {
 		if (this.nullCheckMembersAndNotify(true, true)) {
-			this.warn("No excercise is selected");
 			return false;
 		}
 
@@ -106,7 +105,6 @@ public class StudentSystemwideController extends SystemwideController implements
 	@Override
 	public boolean submitSolution() {
 		if (this.nullCheckMembersAndNotify(true, true)) {
-			this.warn("No excercise is selected");
 			return false;
 		}
 
@@ -132,7 +130,6 @@ public class StudentSystemwideController extends SystemwideController implements
 	@Override
 	public boolean cleanWorkspace() {
 		if (this.nullCheckMembersAndNotify(true, true)) {
-			this.warn("No excercise is selected");
 			return false;
 		}
 		if (!this.confirm(Messages.STUDENT_ARTMIS_CONTROLLER_CLEAN)) {
@@ -280,10 +277,9 @@ public class StudentSystemwideController extends SystemwideController implements
 	@Override
 	public boolean resetSelectedExercise() {
 		if (this.nullCheckMembersAndNotify(true, true)) {
-			this.warn("No excercise is selected");
 			return false;
 		}
-		if (!this.confirm(Messages.STUDENT_ARTMIS_CONTROLLER_CLEAN)) {
+		if (!this.confirm(Messages.STUDENT_ARTMIS_CONTROLLER_RESET)) {
 			return false;
 		}
 		try {
@@ -294,7 +290,7 @@ public class StudentSystemwideController extends SystemwideController implements
 			return false;
 		}
 
-		this.info(Messages.STUDENT_ARTMIS_CONTROLLER_CLEAN_SUCCESSFUL);
+		this.info(Messages.STUDENT_ARTMIS_CONTROLLER_RESET_SUCCESSFUL);
 		return true;
 	}
 
