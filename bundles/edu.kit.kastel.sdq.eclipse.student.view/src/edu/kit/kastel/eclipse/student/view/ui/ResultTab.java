@@ -299,6 +299,7 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 		if (!resultFeedbackMap.isEmpty()) {
 			Entry<ResultsDTO, List<Feedback>> entry = resultFeedbackMap.entrySet().iterator().next();
 			handleNewResult(entry.getKey(), entry.getValue());
+			createAnnotationsMarkers();
 		} else {
 			feedbackTabel.removeAll();
 			reset();

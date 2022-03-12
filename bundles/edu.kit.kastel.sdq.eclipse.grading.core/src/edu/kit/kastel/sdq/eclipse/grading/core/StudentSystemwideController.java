@@ -65,7 +65,6 @@ public class StudentSystemwideController extends SystemwideController implements
 	public StudentSystemwideController(final String artemisHost, final String username, final String password) {
 		super(username, password);
 		createControllers(artemisHost, username, password);
-		this.annotationDao = new DefaultAnnotationDao();
 	}
 
 	private void createControllers(final String artemisHost, final String username, final String password) {
@@ -73,6 +72,7 @@ public class StudentSystemwideController extends SystemwideController implements
 		this.artemisGUIController = controller;
 		this.websocketController = controller;
 		this.artemisHost = artemisHost;
+		this.annotationDao = new DefaultAnnotationDao();
 	}
 
 	@Override
