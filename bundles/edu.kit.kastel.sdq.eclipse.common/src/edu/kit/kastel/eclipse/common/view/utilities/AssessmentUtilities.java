@@ -24,14 +24,13 @@ import edu.kit.kastel.sdq.eclipse.grading.api.model.IAnnotation;
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IMistakeType;
 
 /**
- *
  * This class includes only static methods (or constants) for the assessment
  * process. It also contains methods (or constant) for the view controller to
  * keep the class clean.
  */
 public final class AssessmentUtilities {
 
-	public static final String MARKER_NAME = "edu.kit.kastel.eclipse.grading.view.assessment.marker";
+	public static final String MARKER_NAME = "edu.kit.kastel.eclipse.common.view.assessment.marker";
 	public static final String MARKER_ATTRIBUTE_ANNOTATION_ID = "annotationID";
 	public static final String MARKER_ATTRIBUTE_ERROR = "errorType";
 	public static final String MARKER_ATTRIBUTE_ERROR_DESCRIPTION = "errorTypeDescription";
@@ -42,13 +41,13 @@ public final class AssessmentUtilities {
 	public static final String MARKER_ATTRIBUTE_START = "start";
 	public static final String MARKER_ATTRIBUTE_END = "end";
 
-	public static final String MARKER_VIEW_ID = "edu.kit.kastel.eclipse.grading.view.annotationMarkerGenerator";
+	public static final String MARKER_VIEW_ID = "edu.kit.kastel.eclipse.common.view.annotationMarkerGenerator";
 
 	public static final int BACKLOG_COMBO_WIDTH = 300;
 
 	/**
 	 * Creates a tooltip for a marker with the given parameters
-	 *
+	 * 
 	 * @param startLine
 	 * @param endline
 	 * @param errorTypeName
@@ -64,7 +63,7 @@ public final class AssessmentUtilities {
 
 	/**
 	 * Creates a tooltip for the custom button
-	 *
+	 * 
 	 * @param startLine
 	 * @param endline
 	 * @param customMessage
@@ -94,7 +93,7 @@ public final class AssessmentUtilities {
 
 	/**
 	 * Gets the current open file
-	 *
+	 * 
 	 * @return IFile instance of the current open file in the editor
 	 */
 	public static IFile getCurrentlyOpenFile() {
@@ -160,7 +159,7 @@ public final class AssessmentUtilities {
 	private AssessmentUtilities() {
 		throw new IllegalAccessError();
 	}
-	
+
 	public static void createMarkerForAnnotation(IAnnotation annotation, String currentProjectName) throws ArtemisClientException {
 
 		int startLine = annotation.getStartLine();
@@ -169,8 +168,7 @@ public final class AssessmentUtilities {
 		String customMessage = annotation.getCustomMessage().orElse(null);
 		String customPenalty = annotation.getCustomPenalty().map(String::valueOf).orElse(null);
 		try {
-			IMarker marker = AssessmentUtilities.getFile(annotation.getClassFilePath(), currentProjectName)
-					.createMarker(AssessmentUtilities.MARKER_NAME);
+			IMarker marker = AssessmentUtilities.getFile(annotation.getClassFilePath(), currentProjectName).createMarker(AssessmentUtilities.MARKER_NAME);
 			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_ANNOTATION_ID, annotation.getUUID());
 			marker.setAttribute(IMarker.CHAR_START, annotation.getMarkerCharStart());
 			marker.setAttribute(IMarker.CHAR_END, annotation.getMarkerCharEnd());
@@ -201,7 +199,7 @@ public final class AssessmentUtilities {
 			throw new ArtemisClientException(e.getMessage());
 		}
 	}
-	
+
 	/**
 	 * Checks whether the given annotation is present in the currently opened
 	 * project (An annotation is identified by its UUID)
@@ -211,8 +209,7 @@ public final class AssessmentUtilities {
 	 */
 	public static boolean isAnnotationPresent(IAnnotation annotation, String currentProjectName) {
 		try {
-			IMarker[] markers = AssessmentUtilities.getFile(annotation.getClassFilePath(), currentProjectName).findMarkers(null,
-					false, 100);
+			IMarker[] markers = AssessmentUtilities.getFile(annotation.getClassFilePath(), currentProjectName).findMarkers(null, false, 100);
 			for (IMarker marker : markers) {
 				if (annotation.getUUID().equals(marker.getAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_ANNOTATION_ID))) {
 					return true;
@@ -225,7 +222,7 @@ public final class AssessmentUtilities {
 			return false;
 		}
 	}
-	
+
 	/**
 	 * Formats a custom penalty message. It will always use the message of the
 	 * mistake, however iff the provided customMessage is not null, it will append a
