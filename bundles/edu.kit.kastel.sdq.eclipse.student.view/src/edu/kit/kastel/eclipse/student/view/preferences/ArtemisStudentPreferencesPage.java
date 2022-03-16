@@ -25,7 +25,7 @@ public class ArtemisStudentPreferencesPage extends FieldEditorPreferencePage imp
 	public ArtemisStudentPreferencesPage() {
 		super(FieldEditorPreferencePage.GRID);
 		this.setPreferenceStore(Activator.getDefault().getPreferenceStore());
-		this.setDescription("Set preferences for the Artemis Grading");
+		this.setDescription("Set preferences for Artemis Student");
 	}
 
 	/**
