@@ -15,15 +15,16 @@ import edu.kit.kastel.sdq.eclipse.grading.api.controller.ISystemwideController;
  */
 public abstract class AbstractArtemisViewController {
 	private IArtemisController artemisGUIController;
-	private IAlertObserver alertObserver;
+	protected IAlertObserver alertObserver;
 
 	public AbstractArtemisViewController() {
+		// NOP
 	}
 
 	protected void initializeControllersAndObserver() {
 		ViewAlertObserver observer = new ViewAlertObserver();
 		this.alertObserver = new ViewAlertObserver();
-		this.artemisGUIController = getSystemwideController().getArtemisController();
+		this.artemisGUIController = this.getSystemwideController().getArtemisController();
 		this.getSystemwideController().addAlertObserver(observer);
 		this.getSystemwideController().addConfirmObserver(observer);
 		this.artemisGUIController.addAlertObserver(observer);
@@ -75,7 +76,7 @@ public abstract class AbstractArtemisViewController {
 
 	/**
 	 * Sets the exercise ID of the selected exercise
-	 *
+	 * 
 	 * @param exerciseShortName (of the selected exercise in the combo)
 	 */
 	public void setExerciseID(String exerciseShortName) {
@@ -91,9 +92,4 @@ public abstract class AbstractArtemisViewController {
 	}
 
 	protected abstract ISystemwideController getSystemwideController();
-
-	protected IAlertObserver getAlertObserver() {
-		return alertObserver;
-	}
-
 }

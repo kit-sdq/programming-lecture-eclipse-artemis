@@ -22,38 +22,37 @@ public class StudentViewController extends AbstractArtemisViewController {
 	private IStudentSystemwideController systemwideController;
 
 	public StudentViewController() {
-		super();
 		Activator.getDefault().createSystemWideController();
-		systemwideController = Activator.getDefault().getSystemwideController();
+		this.systemwideController = Activator.getDefault().getSystemwideController();
 		this.initializeControllersAndObserver();
 	}
 
 	public void startExercise() {
-		systemwideController.loadExerciseForStudent();
+		this.systemwideController.loadExerciseForStudent();
 	}
 
 	public void onSubmitSolution() {
-		systemwideController.submitSolution();
+		this.systemwideController.submitSolution();
 	}
 
 	public void cleanWorkspace() {
-		systemwideController.cleanWorkspace();
+		this.systemwideController.cleanWorkspace();
 	}
 
 	public Map<ResultsDTO, List<Feedback>> getFeedbackExcerise() {
-		return systemwideController.getFeedbackExcerise();
+		return this.systemwideController.getFeedbackExcerise();
 	}
 
 	public boolean canSubmit() {
-		return !systemwideController.isSelectedExerciseExpired();
+		return !this.systemwideController.isSelectedExerciseExpired();
 	}
 
 	public boolean canClean() {
-		return systemwideController.isSelectedExerciseInWorkspace();
+		return this.systemwideController.isSelectedExerciseInWorkspace();
 	}
 
 	public boolean connectToWebsocket(WebsocketCallback callBack) {
-		return systemwideController.connectToWebsocket(callBack);
+		return this.systemwideController.connectToWebsocket(callBack);
 	}
 
 	public boolean canFetchFeedback() {
@@ -61,37 +60,37 @@ public class StudentViewController extends AbstractArtemisViewController {
 	}
 
 	public IExercise getCurrentSelectedExercise() {
-		return systemwideController.getCurrentSelectedExercise();
+		return this.systemwideController.getCurrentSelectedExercise();
 	}
 
 	@Override
 	public void setExerciseID(final String exerciseShortName) {
 		try {
-			systemwideController.setExerciseIdWithSelectedExam(exerciseShortName);
+			this.systemwideController.setExerciseIdWithSelectedExam(exerciseShortName);
 		} catch (ArtemisClientException e) {
-			getAlertObserver().error(e.getMessage(), e);
+			this.alertObserver.error(e.getMessage(), e);
 		}
 	}
 
 	public void setExamToNull() {
-		systemwideController.setExamToNull();
+		this.systemwideController.setExamToNull();
 	}
 
 	@Override
 	public List<String> getExercisesShortNamesForExam(String examShortName) {
-		return systemwideController.getExerciseShortNamesFromExam(examShortName).stream().map(IExercise::getShortName).collect(Collectors.toList());
+		return this.systemwideController.getExerciseShortNamesFromExam(examShortName).stream().map(IExercise::getShortName).collect(Collectors.toList());
 	}
 
 	public IExam setExam(String examName) {
-		return systemwideController.setExam(examName);
+		return this.systemwideController.setExam(examName);
 	}
 
 	public IStudentExam getCurrentlySelectedExam() {
-		return systemwideController.getExam();
+		return this.systemwideController.getExam();
 	}
 
 	public IStudentExam startExam() {
-		return systemwideController.startExam();
+		return this.systemwideController.startExam();
 	}
 
 	@Override
@@ -100,26 +99,26 @@ public class StudentViewController extends AbstractArtemisViewController {
 	}
 
 	public String getExamUrlForCurrentExam() {
-		return systemwideController.getExamUrlForCurrentExam();
+		return this.systemwideController.getExamUrlForCurrentExam();
 	}
 
 	public void resetSelectedExercise() {
-		systemwideController.resetSelectedExercise();
+		this.systemwideController.resetSelectedExercise();
 	}
 
 	public boolean canResetExercise() {
-		return systemwideController.isSelectedExerciseInWorkspace();
+		return this.systemwideController.isSelectedExerciseInWorkspace();
 	}
 
 	public void resetBackendState() {
-		systemwideController.resetBackendState();
+		this.systemwideController.resetBackendState();
 	}
 
 	public Set<IAnnotation> getAnnotations() {
-		return systemwideController.getAnnotations();
+		return this.systemwideController.getAnnotations();
 	}
 
 	public String getCurrentProjectName() {
-		return systemwideController.getCurrentProjectName();
+		return this.systemwideController.getCurrentProjectName();
 	}
 }
