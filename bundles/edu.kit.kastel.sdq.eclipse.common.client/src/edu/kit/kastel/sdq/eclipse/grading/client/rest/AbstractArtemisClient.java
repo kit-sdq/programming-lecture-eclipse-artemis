@@ -69,7 +69,8 @@ public abstract class AbstractArtemisClient {
 
 	protected void throwIfStatusUnsuccessful(final Response response) throws ArtemisClientException {
 		if (!this.isStatusSuccessful(response)) {
-			throw new ArtemisClientException(String.format("Communication with \" %s \" failed with status \"%s: %s\".", this.getApiRootURL(), response.getStatus(), response.getStatusInfo().getReasonPhrase()));
+			throw new ArtemisClientException(String.format("Communication with \" %s \" failed with status \"%s: %s\".", this.getApiRootURL(),
+					response.getStatus(), response.getStatusInfo().getReasonPhrase()));
 		}
 	}
 

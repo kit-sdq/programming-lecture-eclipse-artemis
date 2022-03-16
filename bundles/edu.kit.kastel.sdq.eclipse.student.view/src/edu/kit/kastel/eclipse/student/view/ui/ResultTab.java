@@ -383,22 +383,23 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 	private LocalDateTime convertToLocalDateTimeViaInstant(Date dateToConvert) {
 		return dateToConvert.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
 	}
-	
+
 	/**
 	 * creates markers for current annotations in the backend
 	 */
 	public void createAnnotationsMarkers() {
-		String currentProjectName =  this.viewController.getCurrentProjectName();
-		this.viewController.getAnnotations().stream().filter(annotation -> !AssessmentUtilities.isAnnotationPresent(annotation,currentProjectName)).forEach(annatoation -> {
-			try {
-				AssessmentUtilities.createMarkerForAnnotation(annatoation, currentProjectName);
-			} catch (ArtemisClientException e) {
-				handleAnnotationError(e);
-			}
-		});
+		String currentProjectName = this.viewController.getCurrentProjectName();
+		this.viewController.getAnnotations().stream().filter(annotation -> !AssessmentUtilities.isAnnotationPresent(annotation, currentProjectName))
+				.forEach(annatoation -> {
+					try {
+						AssessmentUtilities.createMarkerForAnnotation(annatoation, currentProjectName);
+					} catch (ArtemisClientException e) {
+						handleAnnotationError(e);
+					}
+				});
 	}
-	
+
 	private void handleAnnotationError(ArtemisClientException e) {
-		
+
 	}
 }

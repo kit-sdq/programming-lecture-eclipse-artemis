@@ -41,7 +41,7 @@ public interface ISystemwideController extends IController {
 	 * @throws ArtemisClientException
 	 */
 	void setExerciseId(String exerciseShortName) throws ArtemisClientException;
-	
+
 	/**
 	 * Pre-Condition: course, exercise and submission must be set!
 	 *

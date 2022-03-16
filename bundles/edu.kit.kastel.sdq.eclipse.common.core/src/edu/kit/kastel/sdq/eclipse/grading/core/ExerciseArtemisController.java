@@ -136,22 +136,21 @@ public class ExerciseArtemisController extends AbstractController implements IEx
 		File exerciseRepo = projectNaming.getProjectFileInWorkspace(eclipseWorkspaceRoot, exercise, null);
 		return exerciseRepo.exists();
 	}
-	
+
 	public static boolean deleteDirectory(File directory) {
-	    if(directory.exists()){
-	        File[] files = directory.listFiles();
-	        if(null!=files){
-	            for(int i=0; i<files.length; i++) {
-	                if(files[i].isDirectory()) {
-	                    deleteDirectory(files[i]);
-	                }
-	                else {
-	                    files[i].delete();
-	                }
-	            }
-	        }
-	    }
-	    return(directory.delete());
+		if (directory.exists()) {
+			File[] files = directory.listFiles();
+			if (null != files) {
+				for (int i = 0; i < files.length; i++) {
+					if (files[i].isDirectory()) {
+						deleteDirectory(files[i]);
+					} else {
+						files[i].delete();
+					}
+				}
+			}
+		}
+		return (directory.delete());
 	}
 
 	private void existsAndThrow(File file) throws ArtemisClientException {

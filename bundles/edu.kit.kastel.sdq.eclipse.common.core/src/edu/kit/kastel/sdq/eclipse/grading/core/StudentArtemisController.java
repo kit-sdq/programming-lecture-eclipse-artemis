@@ -100,8 +100,9 @@ public class StudentArtemisController extends ArtemisController implements IStud
 			participationWithResults = this.clientManager.getParticipationArtemisClient()
 					.getParticipationWithLatestResultForExercise(participationOpt.get().getParticipationID());
 		} catch (ArtemisClientException e) {
-			this.error("Can't load results for selected exercise " + exercise.getShortName()
-					+ ".\n No results found. Please check if a solution was submitted.", e);
+			this.error(
+					"Can't load results for selected exercise " + exercise.getShortName() + ".\n No results found. Please check if a solution was submitted.",
+					e);
 			return new HashMap<>();
 		}
 

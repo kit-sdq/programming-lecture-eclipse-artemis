@@ -124,7 +124,7 @@ public final class GitHandler {
 			git.close();
 		}
 	}
-	
+
 	private GitHandler() {
 		throw new IllegalAccessError();
 	}

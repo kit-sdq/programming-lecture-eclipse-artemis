@@ -9,9 +9,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
-import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -19,7 +19,6 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import edu.kit.kastel.sdq.eclipse.grading.api.ArtemisClientException;
 import edu.kit.kastel.sdq.eclipse.grading.api.PreferenceConstants;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.Feedback;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.FeedbackType;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ICourse;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExam;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
@@ -36,7 +35,6 @@ import edu.kit.kastel.sdq.eclipse.grading.api.model.IMistakeType;
 import edu.kit.kastel.sdq.eclipse.grading.core.artemis.AnnotationDeserializer;
 import edu.kit.kastel.sdq.eclipse.grading.core.artemis.WorkspaceUtil;
 import edu.kit.kastel.sdq.eclipse.grading.core.messages.Messages;
-import edu.kit.kastel.sdq.eclipse.grading.core.model.annotation.Annotation;
 import edu.kit.kastel.sdq.eclipse.grading.core.model.annotation.AnnotationException;
 import edu.kit.kastel.sdq.eclipse.grading.core.model.annotation.DefaultAnnotationDao;
 import edu.kit.kastel.sdq.eclipse.grading.core.model.annotation.IAnnotationDao;
@@ -53,7 +51,7 @@ public class StudentSystemwideController extends SystemwideController implements
 	public StudentSystemwideController(final IPreferenceStore preferenceStore) {
 		super(preferenceStore.getString(PreferenceConstants.ARTEMIS_USER), //
 				preferenceStore.getString(PreferenceConstants.ARTEMIS_PASSWORD));
-		createControllers(preferenceStore.getString(PreferenceConstants.ARTEMIS_URL), //
+		this.createControllers(preferenceStore.getString(PreferenceConstants.ARTEMIS_URL), //
 				preferenceStore.getString(PreferenceConstants.ARTEMIS_USER), //
 				preferenceStore.getString(PreferenceConstants.ARTEMIS_PASSWORD) //
 		);
@@ -64,7 +62,7 @@ public class StudentSystemwideController extends SystemwideController implements
 
 	public StudentSystemwideController(final String artemisHost, final String username, final String password) {
 		super(username, password);
-		createControllers(artemisHost, username, password);
+		this.createControllers(artemisHost, username, password);
 	}
 
 	private void createControllers(final String artemisHost, final String username, final String password) {
@@ -81,7 +79,7 @@ public class StudentSystemwideController extends SystemwideController implements
 		// Normal exercises
 		List<IExercise> exercises = this.course.getExercises();
 
-		this.course.getExams().stream().map(e -> artemisGUIController.getExercisesFromStudentExam(e.getTitle()).getExercises())
+		this.course.getExams().stream().map(e -> this.artemisGUIController.getExercisesFromStudentExam(e.getTitle()).getExercises())
 				.forEach(e -> e.forEach(exercises::add));
 
 		for (IExercise ex : exercises) {
@@ -100,7 +98,7 @@ public class StudentSystemwideController extends SystemwideController implements
 			return false;
 		}
 
-		Optional<ParticipationDTO> participation = this.artemisGUIController.getParticipation(course, exercise);
+		Optional<ParticipationDTO> participation = this.artemisGUIController.getParticipation(this.course, this.exercise);
 		if (participation.isEmpty()) {
 			this.warn("Can not create participation for exercise.");
 			return false;
@@ -122,9 +120,9 @@ public class StudentSystemwideController extends SystemwideController implements
 			return false;
 		}
 
-		if (isSelectedExerciseExpired()) {
+		if (this.isSelectedExerciseExpired()) {
 			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-			LocalDateTime dueDate = convertToLocalDateTimeViaInstant(this.exercise.getDueDate());
+			LocalDateTime dueDate = this.convertToLocalDateTimeViaInstant(this.exercise.getDueDate());
 			this.error("Can't submit exercise. Excerise is out-of-date, it was due to: " + dueDate.format(formatter), null);
 			return false;
 		}
@@ -134,7 +132,7 @@ public class StudentSystemwideController extends SystemwideController implements
 		}
 
 		try {
-			return this.exerciseController.commitAndPushExercise(course, exercise, projectFileNamingStrategy);
+			return this.exerciseController.commitAndPushExercise(this.course, this.exercise, this.projectFileNamingStrategy);
 		} catch (ArtemisClientException e) {
 			this.error(e.getMessage(), e);
 			return false;
@@ -152,7 +150,7 @@ public class StudentSystemwideController extends SystemwideController implements
 
 		Optional<Set<String>> deletedFiles = this.exerciseController.cleanWorkspace(this.course, this.exercise, this.projectFileNamingStrategy);
 		if (deletedFiles.isEmpty()) {
-			this.warn("Can't clean selected exercise " + exercise.getShortName() //
+			this.warn("Can't clean selected exercise " + this.exercise.getShortName() //
 					+ ".\n Exercise not found in workspace. \n Please load exercise first");
 			return false;
 		}
@@ -168,17 +166,17 @@ public class StudentSystemwideController extends SystemwideController implements
 		}
 
 		Map<ResultsDTO, List<Feedback>> result = this.artemisGUIController.getFeedbackForExercise(this.course, this.exercise);
-		setAnnotations(result);
+		this.setAnnotations(result);
 		return result;
 	}
-	
+
 	@Override
 	public Set<IAnnotation> getAnnotations() {
 		return this.annotationDao.getAnnotations();
 	}
 
 	private void setAnnotations(Map<ResultsDTO, List<Feedback>> feedbackMap) {
-		if(feedbackMap.isEmpty()) {
+		if (feedbackMap.isEmpty()) {
 			return;
 		}
 		final AnnotationDeserializer annotationDeserializer = new AnnotationDeserializer(new ArrayList<>());
@@ -209,10 +207,10 @@ public class StudentSystemwideController extends SystemwideController implements
 
 	@Override
 	public boolean isSelectedExerciseExpired() {
-		if (exercise != null) {
-			if (exercise.getDueDate() != null) {
-				LocalDateTime dueDate = convertToLocalDateTimeViaInstant(this.exercise.getDueDate());
-				return dueDate.isBefore(getCurrentDate());
+		if (this.exercise != null) {
+			if (this.exercise.getDueDate() != null) {
+				LocalDateTime dueDate = this.convertToLocalDateTimeViaInstant(this.exercise.getDueDate());
+				return dueDate.isBefore(this.getCurrentDate());
 			} else {
 				return false;
 			}
@@ -226,7 +224,7 @@ public class StudentSystemwideController extends SystemwideController implements
 
 	@Override
 	public IExercise getCurrentSelectedExercise() {
-		return exercise;
+		return this.exercise;
 	}
 
 	@Override
@@ -243,35 +241,36 @@ public class StudentSystemwideController extends SystemwideController implements
 
 	@Override
 	public IStudentExam getExam() {
-		return exam;
+		return this.exam;
 	}
 
 	@Override
 	public IStudentExam startExam() {
-		if (exam != null) {
-			return this.artemisGUIController.startExam(course, exam.getExam());
+		if (this.exam != null) {
+			return this.artemisGUIController.startExam(this.course, this.exam.getExam());
 		}
 		return null;
 	}
 
 	@Override
 	public List<IExercise> getExerciseShortNamesFromExam(String examShortName) {
-		if (exam == null || exam.getExam() == null || !exam.getExam().getTitle().equals(examShortName))
-			exam = this.artemisGUIController.getExercisesFromStudentExam(examShortName);
-		return exam.getExercises();
+		if (this.exam == null || this.exam.getExam() == null || !this.exam.getExam().getTitle().equals(examShortName)) {
+			this.exam = this.artemisGUIController.getExercisesFromStudentExam(examShortName);
+		}
+		return this.exam.getExercises();
 	}
 
 	@Override
 	public void setExamToNull() {
-		exam = null;
+		this.exam = null;
 	}
 
 	@Override
 	public void setExerciseIdWithSelectedExam(final String exerciseShortName) throws ArtemisClientException {
 		List<IExercise> exercises = new ArrayList<>();
 		// Normal exercises
-		if (exam != null) {
-			exam.getExercises().forEach(exercises::add);
+		if (this.exam != null) {
+			this.exam.getExercises().forEach(exercises::add);
 		}
 
 		this.course.getExercises().forEach(exercises::add);
@@ -310,15 +309,15 @@ public class StudentSystemwideController extends SystemwideController implements
 
 	@Override
 	public IArtemisController getArtemisController() {
-		return artemisGUIController;
+		return this.artemisGUIController;
 	}
 
 	@Override
 	public String getExamUrlForCurrentExam() {
 		if (this.exam == null || this.exam.getExam() == null || this.course == null) {
-			return artemisHost;
+			return this.artemisHost;
 		}
-		return String.format(artemisHost + "/courses/%d/exams/%d", this.course.getCourseId(), this.exam.getExam().getExamId());
+		return String.format(this.artemisHost + "/courses/%d/exams/%d", this.course.getCourseId(), this.exam.getExam().getExamId());
 	}
 
 	private LocalDateTime convertToLocalDateTimeViaInstant(Date dateToConvert) {
@@ -334,7 +333,7 @@ public class StudentSystemwideController extends SystemwideController implements
 			return false;
 		}
 		try {
-			this.exerciseController.deleteExercise(course, exercise, projectFileNamingStrategy);
+			this.exerciseController.deleteExercise(this.course, this.exercise, this.projectFileNamingStrategy);
 			this.loadExerciseForStudent();
 		} catch (ArtemisClientException e) {
 			this.error(e.getMessage(), e);
@@ -347,21 +346,20 @@ public class StudentSystemwideController extends SystemwideController implements
 
 	@Override
 	public boolean isSelectedExerciseInWorkspace() {
-		return this.exerciseController.isExerciseInWorkspace(course, exercise, projectFileNamingStrategy);
+		return this.exerciseController.isExerciseInWorkspace(this.course, this.exercise, this.projectFileNamingStrategy);
 	}
 
 	@Override
 	public void resetBackendState() {
 		this.exercise = null;
 	}
-	
+
 	@Override
 	public String getCurrentProjectName() {
 		if (this.nullCheckMembersAndNotify(true, true)) {
 			return null;
 		}
 
-		return this.projectFileNamingStrategy
-				.getProjectFileInWorkspace(WorkspaceUtil.getWorkspaceFile(), this.exercise, null).getName();
+		return this.projectFileNamingStrategy.getProjectFileInWorkspace(WorkspaceUtil.getWorkspaceFile(), this.exercise, null).getName();
 	}
 }

@@ -13,7 +13,8 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ParticipationDTO;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ResultsDTO;
 
 /**
- * Works as an interface from backend to REST-clients. It handles specific tasks concerned with the student product.
+ * Works as an interface from backend to REST-clients. It handles specific tasks
+ * concerned with the student product.
  */
 public interface IStudentArtemisController extends IArtemisController {
 
@@ -26,7 +27,7 @@ public interface IStudentArtemisController extends IArtemisController {
 	IStudentExam getExercisesFromStudentExam(String examTitle);
 
 	/**
-	 * Fetches the feedback of all results from the given exercise. 
+	 * Fetches the feedback of all results from the given exercise.
 	 * 
 	 * @param course
 	 * @param excerise
@@ -36,7 +37,7 @@ public interface IStudentArtemisController extends IArtemisController {
 
 	/**
 	 * Starts an exam.
-	 *  
+	 * 
 	 * @param course
 	 * @param exam
 	 * @return the exam and its exercises.
@@ -44,7 +45,8 @@ public interface IStudentArtemisController extends IArtemisController {
 	IStudentExam startExam(ICourse course, IExam exam);
 
 	/**
-	 * Returns participation if exists of given exercise and current user. 
+	 * Returns participation if exists of given exercise and current user.
+	 * 
 	 * @param course
 	 * @param exercise
 	 * @return

@@ -343,7 +343,7 @@ public class ArtemisStudentView extends ViewPart {
 		boldDescriptor = FontDescriptor.createFrom(lblExamStart.getFont()).setStyle(SWT.ITALIC).setHeight(9);
 		boldFont = boldDescriptor.createFont(lblExamStart.getDisplay());
 		lblExamStart.setFont(boldFont);
-		
+
 		resultScore = new Label(compositeFooter, SWT.RIGHT);
 		resultScore.setAlignment(SWT.LEFT);
 		resultScore.setText(Messages.ArtemisStudentView_resultScore_text);
@@ -368,7 +368,7 @@ public class ArtemisStudentView extends ViewPart {
 			btnStart.setEnabled(!exam.getExam().isStarted());
 			lblExamIsEnded.setText(exam.isEnded() ? "finished" : "running");
 			lblExamDescription.setText(!exam.isSubmitted() && exam.isEnded() ? Messages.ARTEMISSTUDENTVIEW_EXAM_NOT_SUBMITTED : "");
-			
+
 			resultContentComposite.layout();
 			compositeFooter.layout();
 			examHeaderComposite.layout();

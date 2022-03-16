@@ -6,11 +6,12 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExam;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IStudentExam;
 
 /**
- * REST-Client to execute calls concerning exams. 
+ * REST-Client to execute calls concerning exams.
  */
 public interface IExamArtemisClient {
 	/**
-	 * If the given exam has already been started, it returns all the exercises of the exam.
+	 * If the given exam has already been started, it returns all the exercises of
+	 * the exam.
 	 * 
 	 * @param course
 	 * @param exam
@@ -20,7 +21,8 @@ public interface IExamArtemisClient {
 	public IStudentExam findExamForSummary(ICourse course, IExam exam) throws ArtemisClientException;
 
 	/**
-	 * Conducts the exam of the given course. Returns the exam object and all its exercises.
+	 * Conducts the exam of the given course. Returns the exam object and all its
+	 * exercises.
 	 * 
 	 * @param course
 	 * @param exam

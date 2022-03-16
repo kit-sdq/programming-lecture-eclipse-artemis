@@ -20,8 +20,8 @@ public interface ISubmissionsArtemisClient {
 
 	/**
 	 *
-	 * @param IExercise exercise to load submission.
-	 * @param correctionRound 
+	 * @param IExercise       exercise to load submission.
+	 * @param correctionRound
 	 * @return submissions for the given exercise and correction round.
 	 * @throws ArtemisClientException if some errors occur while parsing the result.
 	 */
@@ -29,7 +29,7 @@ public interface ISubmissionsArtemisClient {
 
 	/**
 	 *
-	 * @param IExercise exercise to load submission.
+	 * @param IExercise    exercise to load submission.
 	 * @param submissionId of submission to be returned
 	 * @return submission with submissionId.
 	 * @throws ArtemisClientException if some errors occur while parsing the result.

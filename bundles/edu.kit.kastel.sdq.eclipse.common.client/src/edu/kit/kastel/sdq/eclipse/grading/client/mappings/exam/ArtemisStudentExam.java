@@ -19,10 +19,10 @@ public class ArtemisStudentExam implements IStudentExam, Serializable {
 
 	@JsonProperty
 	private ArtemisExercise[] exercises;
-	
+
 	@JsonProperty
 	private boolean submitted;
-	
+
 	@JsonProperty
 	private boolean ended;
 
@@ -43,11 +43,10 @@ public class ArtemisStudentExam implements IStudentExam, Serializable {
 	public boolean isSubmitted() {
 		return submitted;
 	}
-	
+
 	@Override
 	public boolean isEnded() {
 		return ended;
 	}
-	
-	
+
 }

@@ -38,7 +38,7 @@ public interface IExerciseArtemisController extends IController {
 	 */
 	void loadExerciseInWorkspaceForStudent(ICourse course, IExercise exercise, IProjectFileNamingStrategy projectNaming, String repoUrl)
 			throws ArtemisClientException;
-	
+
 	/**
 	 * Cleans state of local exercise.
 	 * 
@@ -59,7 +59,7 @@ public interface IExerciseArtemisController extends IController {
 	 * @throws ArtemisClientException
 	 */
 	boolean commitAndPushExercise(ICourse course, IExercise exercise, IProjectFileNamingStrategy projectNaming) throws ArtemisClientException;
-	
+
 	/**
 	 * Delete folder of exercise in local workspace.
 	 * 
@@ -69,7 +69,7 @@ public interface IExerciseArtemisController extends IController {
 	 * @throws ArtemisClientException if error occurred.
 	 */
 	void deleteExercise(ICourse course, IExercise exercise, IProjectFileNamingStrategy projectNaming) throws ArtemisClientException;
-	
+
 	/**
 	 * 
 	 * @param course

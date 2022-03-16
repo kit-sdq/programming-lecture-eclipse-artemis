@@ -14,7 +14,7 @@ import edu.kit.kastel.sdq.eclipse.grading.api.client.websocket.WebsocketCallback
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IAnnotation;
 
 public interface IStudentSystemwideController extends ISystemwideController {
-	
+
 	/**
 	 * Commits and pushed selected exercise.
 	 * 
@@ -42,11 +42,11 @@ public interface IStudentSystemwideController extends ISystemwideController {
 	 * @return
 	 */
 	boolean isSelectedExerciseExpired();
-	
+
 	/**
 	 * Returns the selected exercise.
 	 * 
-	 * @return 
+	 * @return
 	 */
 	IExercise getCurrentSelectedExercise();
 
@@ -79,9 +79,10 @@ public interface IStudentSystemwideController extends ISystemwideController {
 	 * @return
 	 */
 	IStudentExam startExam();
-	
+
 	/**
-	 * Returns all short names of the exercises of the exam with name "examShortName".
+	 * Returns all short names of the exercises of the exam with name
+	 * "examShortName".
 	 * 
 	 * @param examShortName
 	 * @return
@@ -89,14 +90,14 @@ public interface IStudentSystemwideController extends ISystemwideController {
 	List<IExercise> getExerciseShortNamesFromExam(String examShortName);
 
 	/**
-	 * Loads selected exercise into local workspace. 
+	 * Loads selected exercise into local workspace.
 	 * 
-	 * @return true if successful, false if exercise already loaded. 
+	 * @return true if successful, false if exercise already loaded.
 	 */
 	boolean loadExerciseForStudent();
 
 	/**
-	 * Connect to Artemis websocket. 
+	 * Connect to Artemis websocket.
 	 * 
 	 * @param callback defines how to handle websocket events and errors.
 	 * @return
@@ -104,7 +105,7 @@ public interface IStudentSystemwideController extends ISystemwideController {
 	boolean connectToWebsocket(WebsocketCallback callback);
 
 	/**
-	 * Set the selected exam to null. 
+	 * Set the selected exam to null.
 	 */
 	void setExamToNull();
 
@@ -114,15 +115,18 @@ public interface IStudentSystemwideController extends ISystemwideController {
 	 * @return url to artemis.
 	 */
 	String getExamUrlForCurrentExam();
-	
+
 	/**
-	 * Deletes the currently selected exercise from workspace and clones it again from origin.
-	 * @return 
+	 * Deletes the currently selected exercise from workspace and clones it again
+	 * from origin.
+	 * 
+	 * @return
 	 */
 	boolean resetSelectedExercise();
-	
+
 	/**
 	 * True if exercise is in local workspace.
+	 * 
 	 * @return
 	 */
 	boolean isSelectedExerciseInWorkspace();

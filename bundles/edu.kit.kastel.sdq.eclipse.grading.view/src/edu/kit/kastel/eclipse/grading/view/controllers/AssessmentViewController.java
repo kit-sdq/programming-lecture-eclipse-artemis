@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.ITextSelection;
 
 import edu.kit.kastel.eclipse.common.view.controllers.AbstractArtemisViewController;
@@ -102,13 +101,15 @@ public class AssessmentViewController extends AbstractArtemisViewController {
 	 * creates markers for current annotations in the backend
 	 */
 	public void createAnnotationsMarkers() {
-		this.getAnnotations().stream().filter(annotation -> !AssessmentUtilities.isAnnotationPresent(annotation,this.systemwideController.getCurrentProjectName())).forEach(annatoation -> {
-			try {
-				AssessmentUtilities.createMarkerForAnnotation(annatoation, this.systemwideController.getCurrentProjectName());
-			} catch (ArtemisClientException e) {
-				this.getAlertObserver().error("Unable to create marker for annotation", e);
-			}
-		});
+		this.getAnnotations().stream()
+				.filter(annotation -> !AssessmentUtilities.isAnnotationPresent(annotation, this.systemwideController.getCurrentProjectName()))
+				.forEach(annatoation -> {
+					try {
+						AssessmentUtilities.createMarkerForAnnotation(annatoation, this.systemwideController.getCurrentProjectName());
+					} catch (ArtemisClientException e) {
+						this.getAlertObserver().error("Unable to create marker for annotation", e);
+					}
+				});
 	}
 
 	/**

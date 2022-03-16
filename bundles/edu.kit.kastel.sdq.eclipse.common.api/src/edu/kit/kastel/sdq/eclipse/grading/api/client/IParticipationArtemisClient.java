@@ -8,7 +8,7 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ParticipationDTO;
 
 /**
- * REST-Client to execute calls concerning participations of exercises. 
+ * REST-Client to execute calls concerning participations of exercises.
  */
 public interface IParticipationArtemisClient {
 	/**
@@ -18,7 +18,7 @@ public interface IParticipationArtemisClient {
 	 * @param exercise
 	 * @return the participation
 	 * @throws ArtemisClientException
-	 * @throws ConnectException 
+	 * @throws ConnectException
 	 */
 	ParticipationDTO startParticipationForExercise(ICourse course, IExercise exercise) throws ArtemisClientException, ConnectException;
 
@@ -31,7 +31,7 @@ public interface IParticipationArtemisClient {
 	 * @throws ArtemisClientException
 	 */
 	ParticipationDTO resumeParticipationForExercise(ICourse course, IExercise exercise) throws ArtemisClientException;
-	
+
 	/**
 	 * Returns the participation for the given "participationId" and current user.
 	 * 
@@ -43,7 +43,8 @@ public interface IParticipationArtemisClient {
 	ParticipationDTO getParticipationForExercise(ICourse course, IExercise exercise) throws ArtemisClientException;
 
 	/**
-	 *  Returns the participation for the given participationId including its latest result.
+	 * Returns the participation for the given participationId including its latest
+	 * result.
 	 * 
 	 * @param participationId
 	 * @return the participation with its latest result.
