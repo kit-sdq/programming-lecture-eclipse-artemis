@@ -6,8 +6,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.eclipse.core.runtime.ILog;
@@ -36,7 +36,7 @@ public class StudentArtemisController extends ArtemisController implements IStud
 
 	protected StudentArtemisController(String host, String username, String password) {
 		super(host, username, password);
-		this.websocketClient = new ArtemisFeedbackWebsocket(host);
+		this.websocketClient = new ArtemisFeedbackWebsocket(this.clientManager.getArtemisUrl());
 	}
 
 	@Override
@@ -54,7 +54,7 @@ public class StudentArtemisController extends ArtemisController implements IStud
 		try {
 			if (this.confirm(Messages.STUDENT_ARTMIS_CONTROLLER_CONFIRM_START_EXAM)) {
 				IStudentExam studentExam = this.clientManager.getExamArtemisClient().startExam(course, exam);
-				checkIfExamIsValid(studentExam);
+				this.checkIfExamIsValid(studentExam);
 				return studentExam;
 			}
 		} catch (ArtemisClientException e) {
@@ -76,11 +76,11 @@ public class StudentArtemisController extends ArtemisController implements IStud
 
 	@Override
 	public Optional<ParticipationDTO> getParticipation(ICourse course, IExercise exercise) {
-		Optional<ParticipationDTO> participation = getParticipationForExercise(course, exercise);
+		Optional<ParticipationDTO> participation = this.getParticipationForExercise(course, exercise);
 
 		if (participation.isEmpty()) {
 			try {
-				participation = Optional.of(clientManager.getParticipationArtemisClient().startParticipationForExercise(course, exercise));
+				participation = Optional.of(this.clientManager.getParticipationArtemisClient().startParticipationForExercise(course, exercise));
 			} catch (ArtemisClientException | ConnectException e) {
 				return Optional.empty();
 			}
@@ -90,7 +90,7 @@ public class StudentArtemisController extends ArtemisController implements IStud
 
 	@Override
 	public Map<ResultsDTO, List<Feedback>> getFeedbackForExercise(ICourse course, IExercise exercise) {
-		Optional<ParticipationDTO> participationOpt = getParticipationForExercise(course, exercise);
+		Optional<ParticipationDTO> participationOpt = this.getParticipationForExercise(course, exercise);
 		if (participationOpt.isEmpty()) {
 			return new HashMap<>();
 		}
@@ -149,7 +149,7 @@ public class StudentArtemisController extends ArtemisController implements IStud
 	}
 
 	private IStudentExam getExercisesFromExamOrStartExam(final String examTitle, List<ICourse> courses) {
-		Entry<ICourse, IExam> foundEntry = filterGetExamObjectFromLoadedCourses(examTitle, courses);
+		Entry<ICourse, IExam> foundEntry = this.filterGetExamObjectFromLoadedCourses(examTitle, courses);
 		if (foundEntry == null) {
 			this.error("No exam found for examTitle=" + examTitle, null);
 			return new ArtemisStudentExam();
@@ -164,7 +164,7 @@ public class StudentArtemisController extends ArtemisController implements IStud
 
 	private Optional<ParticipationDTO> getParticipationForExercise(ICourse course, IExercise exercise) {
 		try {
-			return Optional.of(clientManager.getParticipationArtemisClient().getParticipationForExercise(course, exercise));
+			return Optional.of(this.clientManager.getParticipationArtemisClient().getParticipationForExercise(course, exercise));
 		} catch (ArtemisClientException e) {
 			return Optional.empty();
 		}

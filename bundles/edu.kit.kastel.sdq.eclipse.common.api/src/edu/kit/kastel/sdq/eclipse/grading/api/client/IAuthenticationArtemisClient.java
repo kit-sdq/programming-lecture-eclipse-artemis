@@ -24,11 +24,12 @@ public interface IAuthenticationArtemisClient {
 	String getBearerToken();
 
 	/**
-	 *
 	 * @return the artemis "assessor" object (needed for submitting the assessment).
 	 * @throws ArtemisClientException if some errors occur while parsing the result.
 	 */
 	Assessor getAssessor();
 
 	void init() throws ArtemisClientException;
+
+	String getArtemisUrl();
 }

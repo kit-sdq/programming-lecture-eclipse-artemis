@@ -12,10 +12,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map.Entry;
 
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.FontDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -38,9 +39,6 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.Feedback;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ResultsDTO;
 import edu.kit.kastel.sdq.eclipse.grading.api.client.websocket.WebsocketCallback;
-
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.Point;
 
 public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 	private static final String RELOAD_BTN_TEXT = "Reload";
@@ -75,24 +73,24 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 
 	@Override
 	public void create(TabFolder tabFolder) {
-		display = tabFolder.getDisplay();
+		this.display = tabFolder.getDisplay();
 		TabItem tbtmResult = new TabItem(tabFolder, SWT.NONE);
 		tbtmResult.setText("Test Results");
 
 		this.scrolledCompositeFeedback = new ScrolledComposite(tabFolder, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 		tbtmResult.setControl(this.scrolledCompositeFeedback);
-		scrolledCompositeFeedback.setLayout(new FillLayout());
+		this.scrolledCompositeFeedback.setLayout(new FillLayout());
 		this.scrolledCompositeFeedback.setExpandHorizontal(true);
 		this.scrolledCompositeFeedback.setExpandVertical(true);
 
 		this.feedbackContainerComposite = new Composite(this.scrolledCompositeFeedback, SWT.NONE);
 		this.scrolledCompositeFeedback.setContent(this.feedbackContainerComposite);
-		feedbackContainerComposite.setSize(scrolledCompositeFeedback.getSize());
+		this.feedbackContainerComposite.setSize(this.scrolledCompositeFeedback.getSize());
 		this.scrolledCompositeFeedback.setMinSize(this.feedbackContainerComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-		feedbackContainerComposite.setLayout(new GridLayout(1, true));
-		feedbackContainerComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		this.feedbackContainerComposite.setLayout(new GridLayout(1, true));
+		this.feedbackContainerComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
-		Composite composite = new Composite(feedbackContainerComposite, SWT.NONE);
+		Composite composite = new Composite(this.feedbackContainerComposite, SWT.NONE);
 		GridLayout gl_composite = new GridLayout(2, true);
 		composite.setLayout(gl_composite);
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
@@ -108,180 +106,184 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 		composite_1.setLayout(gl_composite_1);
 		composite_1.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
 
-		btnLoading = new Label(composite_1, SWT.SHADOW_IN | SWT.CENTER | SWT.BORDER);
+		this.btnLoading = new Label(composite_1, SWT.SHADOW_IN | SWT.CENTER | SWT.BORDER);
 		GridData gd_btnRLoading = new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1);
 		gd_btnRLoading.widthHint = 80;
-		btnLoading.setLayoutData(gd_btnRLoading);
-		btnLoading.setText(LOAD_BTN_TEXT);
-		btnLoading.setVisible(false);
+		this.btnLoading.setLayoutData(gd_btnRLoading);
+		this.btnLoading.setText(LOAD_BTN_TEXT);
+		this.btnLoading.setVisible(false);
 
-		btnReload = new Button(composite_1, SWT.CENTER);
-		btnReload.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, true, false, 1, 1));
-		btnReload.setText(RELOAD_BTN_TEXT);
-		addSelectionListenerForReloadButton(btnReload);
+		this.btnReload = new Button(composite_1, SWT.CENTER);
+		this.btnReload.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, true, false, 1, 1));
+		this.btnReload.setText(RELOAD_BTN_TEXT);
+		this.addSelectionListenerForReloadButton(this.btnReload);
 
-		Label labelResult = new Label(feedbackContainerComposite, SWT.NONE);
+		Label labelResult = new Label(this.feedbackContainerComposite, SWT.NONE);
 		labelResult.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		labelResult.setText(Messages.RESULTTAB_INFO_FEEDBACK);
 
-		this.feedbackContentComposite = new Composite(feedbackContainerComposite, SWT.NONE);
-		feedbackContentComposite.setTouchEnabled(true);
-		feedbackContentComposite.setLayout(new GridLayout(1, true));
-		feedbackContentComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-		feedbackContentComposite.setVisible(true);
-		resultContentComposite = new Composite(feedbackContentComposite, SWT.BORDER);
-		resultContentComposite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true, 1, 1));
-		resultContentComposite.setLayout(new GridLayout(1, false));
+		this.feedbackContentComposite = new Composite(this.feedbackContainerComposite, SWT.NONE);
+		this.feedbackContentComposite.setTouchEnabled(true);
+		this.feedbackContentComposite.setLayout(new GridLayout(1, true));
+		this.feedbackContentComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		this.feedbackContentComposite.setVisible(true);
+		this.resultContentComposite = new Composite(this.feedbackContentComposite, SWT.BORDER);
+		this.resultContentComposite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true, 1, 1));
+		this.resultContentComposite.setLayout(new GridLayout(1, false));
 
-		compositeHeader = new Composite(resultContentComposite, SWT.NONE);
-		compositeHeader.setLayout(new GridLayout(2, false));
-		compositeHeader.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+		this.compositeHeader = new Composite(this.resultContentComposite, SWT.NONE);
+		this.compositeHeader.setLayout(new GridLayout(2, false));
+		this.compositeHeader.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 
-		lblResultExerciseShortName = new Label(compositeHeader, SWT.NONE);
-		lblResultExerciseShortName.setText(Messages.ResultTab_lblResultExerciseShortName_text);
-		lblResultExerciseShortName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true, 1, 1));
-		lblResultExerciseShortName.setTouchEnabled(true);
-		boldDescriptor = FontDescriptor.createFrom(lblResultExerciseShortName.getFont()).setStyle(SWT.BOLD).setHeight(12);
-		boldFont = boldDescriptor.createFont(lblResultExerciseShortName.getDisplay());
-		lblResultExerciseShortName.setFont(boldFont);
+		this.lblResultExerciseShortName = new Label(this.compositeHeader, SWT.NONE);
+		this.lblResultExerciseShortName.setText(Messages.ResultTab_lblResultExerciseShortName_text);
+		this.lblResultExerciseShortName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true, 1, 1));
+		this.lblResultExerciseShortName.setTouchEnabled(true);
+		boldDescriptor = FontDescriptor.createFrom(this.lblResultExerciseShortName.getFont()).setStyle(SWT.BOLD).setHeight(12);
+		boldFont = boldDescriptor.createFont(this.lblResultExerciseShortName.getDisplay());
+		this.lblResultExerciseShortName.setFont(boldFont);
 
-		btnResultSuccessfull = new Label(compositeHeader, SWT.RIGHT);
-		btnResultSuccessfull.setForeground(display.getSystemColor(SWT.COLOR_GREEN));
-		btnResultSuccessfull.setBounds(360, 9, 123, 28);
-		boldDescriptor = FontDescriptor.createFrom(btnResultSuccessfull.getFont()).setStyle(SWT.BOLD).setHeight(12);
-		boldFont = boldDescriptor.createFont(btnResultSuccessfull.getDisplay());
-		btnResultSuccessfull.setFont(boldFont);
-		btnResultSuccessfull.setText("Successful");
+		this.btnResultSuccessfull = new Label(this.compositeHeader, SWT.RIGHT);
+		this.btnResultSuccessfull.setForeground(this.display.getSystemColor(SWT.COLOR_GREEN));
+		this.btnResultSuccessfull.setBounds(360, 9, 123, 28);
+		boldDescriptor = FontDescriptor.createFrom(this.btnResultSuccessfull.getFont()).setStyle(SWT.BOLD).setHeight(12);
+		boldFont = boldDescriptor.createFont(this.btnResultSuccessfull.getDisplay());
+		this.btnResultSuccessfull.setFont(boldFont);
+		this.btnResultSuccessfull.setText("Successful");
 
-		lblResultExerciseDescription = new Label(resultContentComposite, SWT.NONE);
+		this.lblResultExerciseDescription = new Label(this.resultContentComposite, SWT.NONE);
 		GridData gd_lblResultExerciseDescription = new GridData(SWT.LEFT, SWT.FILL, true, true, 1, 1);
 		gd_lblResultExerciseDescription.widthHint = 398;
 		gd_lblResultExerciseDescription.horizontalIndent = 5;
-		lblResultExerciseDescription.setLayoutData(gd_lblResultExerciseDescription);
+		this.lblResultExerciseDescription.setLayoutData(gd_lblResultExerciseDescription);
 
-		Label separator = new Label(resultContentComposite, SWT.SEPARATOR | SWT.HORIZONTAL);
+		Label separator = new Label(this.resultContentComposite, SWT.SEPARATOR | SWT.HORIZONTAL);
 		separator.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true, 1, 1));
 
-		compositeFooter = new Composite(resultContentComposite, SWT.NONE);
-		compositeFooter.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
-		compositeFooter.setLayout(new GridLayout(2, true));
+		this.compositeFooter = new Composite(this.resultContentComposite, SWT.NONE);
+		this.compositeFooter.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
+		this.compositeFooter.setLayout(new GridLayout(2, true));
 
-		lblPoints = new Label(compositeFooter, SWT.NONE);
-		lblPoints.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, true, 1, 1));
-		boldDescriptor = FontDescriptor.createFrom(lblPoints.getFont()).setStyle(SWT.BOLD | SWT.ITALIC).setHeight(12);
-		boldFont = boldDescriptor.createFont(lblPoints.getDisplay());
-		lblPoints.setFont(boldFont);
-		lblPoints.setText("Points: ");
+		this.lblPoints = new Label(this.compositeFooter, SWT.NONE);
+		this.lblPoints.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, true, 1, 1));
+		boldDescriptor = FontDescriptor.createFrom(this.lblPoints.getFont()).setStyle(SWT.BOLD | SWT.ITALIC).setHeight(12);
+		boldFont = boldDescriptor.createFont(this.lblPoints.getDisplay());
+		this.lblPoints.setFont(boldFont);
+		this.lblPoints.setText("Points: ");
 
-		resultScore = new Label(compositeFooter, SWT.RIGHT);
-		resultScore.setText(Messages.ResultTab_resultScore_text);
-		resultScore.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, true, true, 1, 1));
-		boldDescriptor = FontDescriptor.createFrom(resultScore.getFont()).setStyle(SWT.BOLD | SWT.ITALIC).setHeight(12);
-		boldFont = boldDescriptor.createFont(resultScore.getDisplay());
-		resultScore.setFont(boldFont);
+		this.resultScore = new Label(this.compositeFooter, SWT.RIGHT);
+		this.resultScore.setText(Messages.ResultTab_resultScore_text);
+		this.resultScore.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, true, true, 1, 1));
+		boldDescriptor = FontDescriptor.createFrom(this.resultScore.getFont()).setStyle(SWT.BOLD | SWT.ITALIC).setHeight(12);
+		boldFont = boldDescriptor.createFont(this.resultScore.getDisplay());
+		this.resultScore.setFont(boldFont);
 
-		Label labelFeedback2 = new Label(feedbackContentComposite, SWT.NONE);
+		Label labelFeedback2 = new Label(this.feedbackContentComposite, SWT.NONE);
 		boldDescriptor = FontDescriptor.createFrom(labelFeedback2.getFont()).setHeight(9);
 		boldFont = boldDescriptor.createFont(labelFeedback2.getDisplay());
 		labelFeedback2.setFont(boldFont);
 		labelFeedback2.setText(Messages.RESULTTAB_INFO_RESULT);
-		createTableForFeedback(feedbackContentComposite);
+		this.createTableForFeedback(this.feedbackContentComposite);
 
-		scrolledCompositeFeedback.setContent(feedbackContainerComposite);
-		scrolledCompositeFeedback.setMinSize(new Point(64, 64));
+		this.scrolledCompositeFeedback.setContent(this.feedbackContainerComposite);
+		this.scrolledCompositeFeedback.setMinSize(new Point(64, 64));
 	}
 
 	@Override
 	public void reset() {
-		feedbackContentComposite.setVisible(false);
-		btnLoading.setText(LOAD_BTN_TEXT);
-		btnLoading.setVisible(false);
+		this.feedbackContentComposite.setVisible(false);
+		this.btnLoading.setText(LOAD_BTN_TEXT);
+		this.btnLoading.setVisible(false);
 	}
 
 	private void addSelectionListenerForReloadButton(Button btn) {
 		btn.addListener(SWT.Selection, e -> {
-			getFeedbackForExcerise();
+			this.getFeedbackForExcerise();
 		});
 	}
 
 	private void createTableForFeedback(Composite parent) {
-		feedbackTabel = new Table(parent, SWT.BORDER | SWT.V_SCROLL);
-		feedbackTabel.setToolTipText("Feedbacks for Excerise");
-		feedbackTabel.setLinesVisible(true);
-		feedbackTabel.setHeaderVisible(true);
-		feedbackTabel.setLayout(new GridLayout(1, true));
-		feedbackTabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		this.feedbackTabel = new Table(parent, SWT.BORDER | SWT.V_SCROLL);
+		this.feedbackTabel.setToolTipText("Feedbacks for Excerise");
+		this.feedbackTabel.setLinesVisible(true);
+		this.feedbackTabel.setHeaderVisible(true);
+		this.feedbackTabel.setLayout(new GridLayout(1, true));
+		this.feedbackTabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		String[] colNames = { "Name", "Credits", "Success", "Detailed Text" }; //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		int[] width = { 200, 100, 100, 100 };
 
 		for (int loopIndex = 0; loopIndex < colNames.length; loopIndex++) {
-			final TableColumn column = new TableColumn(feedbackTabel, SWT.NULL);
+			final TableColumn column = new TableColumn(this.feedbackTabel, SWT.NULL);
 			column.setWidth(width[loopIndex]);
 			column.setText(colNames[loopIndex]);
 		}
 
-		feedbackTabel.addListener(SWT.Selection, e -> {
-			handleResultTableEvent(e);
+		this.feedbackTabel.addListener(SWT.Selection, e -> {
+			this.handleResultTableEvent(e);
 		});
 	}
 
 	private void handleResultTableEvent(Event e) {
 		TableItem item = (TableItem) e.item;
-		int index = feedbackTabel.indexOf(item);
-		Feedback selectedFeedback = feedbackOfLastResult.get(index);
+		int index = this.feedbackTabel.indexOf(item);
+		Feedback selectedFeedback = this.feedbackOfLastResult.get(index);
 		if (selectedFeedback == null) {
 			return;
 		}
-		Shell s = new Shell(display);
+		Shell s = new Shell(this.display);
 		s.setMinimumSize(500, 500);
-		if (selectedFeedback.getDetailText() != null)
-			MessageDialog.openInformation(s, selectedFeedback.getText(), selectedFeedback.getDetailText());
+		if (selectedFeedback.getDetailText() != null) {
+			new TestDetailsDialog(s, selectedFeedback.getText(), selectedFeedback.getDetailText()).open();
+			// MessageDialog.openInformation(null, selectedFeedback.getText(),
+			// selectedFeedback.getDetailText());
+		}
 	}
 
 	private void addResultToTab(ResultsDTO result, IExercise exercise) {
 		Display display = Display.getDefault();
 		if (result != null) {
-			this.btnResultSuccessfull.setForeground((result.successful ? display.getSystemColor(SWT.COLOR_GREEN) : display.getSystemColor(SWT.COLOR_RED)));
-			btnResultSuccessfull.setText(result.successful ? "success" : "failed"); //$NON-NLS-2$
+			this.btnResultSuccessfull
+					.setForeground(Boolean.TRUE.equals(result.successful) ? display.getSystemColor(SWT.COLOR_GREEN) : display.getSystemColor(SWT.COLOR_RED));
+			this.btnResultSuccessfull.setText(Boolean.TRUE.equals(result.successful) ? "success" : "failed"); //$NON-NLS-2$
 
 			if (exercise != null) {
 				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-				LocalDateTime date = convertToLocalDateTimeViaInstant(result.completionDate);
-				lblResultExerciseShortName.setText(exercise.getTitle());
-				lblResultExerciseDescription.setText(date.format(formatter));
-				resultScore.setText(result.resultString);
-				lblPoints.setText("Points: " + result.score + "%");
-				resultContentComposite.layout();
-				compositeFooter.layout();
-				compositeHeader.layout();
+				LocalDateTime date = this.convertToLocalDateTimeViaInstant(result.completionDate);
+				this.lblResultExerciseShortName.setText(exercise.getTitle());
+				this.lblResultExerciseDescription.setText(date.format(formatter));
+				this.resultScore.setText(result.resultString);
+				this.lblPoints.setText("Points: " + result.score + "%");
+				this.resultContentComposite.layout();
+				this.compositeFooter.layout();
+				this.compositeHeader.layout();
 			} else {
-				resultScore.setText(Integer.toString(result.score));
+				this.resultScore.setText(Integer.toString(result.score));
 			}
 		}
 	}
 
 	private void addFeedbackToTable(Table table, List<Feedback> entries) {
-		Display display = getDisplay();
+		Display display = this.getDisplay();
 
 		if (entries != null) {
 			Collections.sort(entries);
 			for (var feedback : entries) {
-				double roundedCredits = roundToDeciamlPlaces(feedback.getCredits());
+				double roundedCredits = this.roundToDeciamlPlaces(feedback.getCredits());
 				final TableItem item = new TableItem(table, SWT.NULL);
 				item.setText(0, feedback.getText());
 				item.setText(1, "" + roundedCredits);
 				item.setText(2, feedback.getPositive() ? "successful" : "failed"); //$NON-NLS-2$
 				item.setForeground(2, feedback.getPositive() ? display.getSystemColor(SWT.COLOR_GREEN) : display.getSystemColor(SWT.COLOR_RED));
-				item.setText(3, (feedback.getDetailText() != null) ? CHECK_MARK_IN_UTF8 : "X");
+				item.setText(3, feedback.getDetailText() != null ? CHECK_MARK_IN_UTF8 : "X");
 			}
 		}
 	}
 
 	private Display getDisplay() {
-		if (display == null) {
+		if (this.display == null) {
 			return Display.getDefault();
 		}
-		return display;
+		return this.display;
 	}
 
 	private double roundToDeciamlPlaces(Double credits) {
@@ -298,11 +300,11 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 
 		if (!resultFeedbackMap.isEmpty()) {
 			Entry<ResultsDTO, List<Feedback>> entry = resultFeedbackMap.entrySet().iterator().next();
-			handleNewResult(entry.getKey(), entry.getValue());
-			createAnnotationsMarkers();
+			this.handleNewResult(entry.getKey(), entry.getValue());
+			this.createAnnotationsMarkers();
 		} else {
-			feedbackTabel.removeAll();
-			reset();
+			this.feedbackTabel.removeAll();
+			this.reset();
 		}
 	}
 
@@ -312,17 +314,17 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 		this.lastResult = result;
 		this.feedbackOfLastResult = feedbacks;
 
-		feedbackTabel.removeAll();
-		addFeedbackToTable(feedbackTabel, feedbackOfLastResult);
-		addResultToTab(lastResult, exercise);
-		feedbackContainerComposite.pack();
-		feedbackContentComposite.setVisible(true);
+		this.feedbackTabel.removeAll();
+		this.addFeedbackToTable(this.feedbackTabel, this.feedbackOfLastResult);
+		this.addResultToTab(this.lastResult, exercise);
+		this.feedbackContainerComposite.pack();
+		this.feedbackContentComposite.setVisible(true);
 
 	}
 
 	@Override
 	public void handleSubmission(Object payload) {
-		if (display != null) {
+		if (this.display != null) {
 			this.display.syncExec(() -> {
 				this.btnLoading.setVisible(true);
 			});
@@ -331,7 +333,7 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 
 	@Override
 	public void handleResult(Object payload) {
-		if (display != null) {
+		if (this.display != null) {
 			this.display.syncExec(() -> {
 				this.btnLoading.setVisible(false);
 				this.getFeedbackForExcerise();
@@ -341,9 +343,9 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 
 	@Override
 	public void handleException(Throwable e) {
-		if (display != null) {
+		if (this.display != null) {
 			this.display.syncExec(() -> {
-				handleWebsocketError();
+				this.handleWebsocketError();
 				e.printStackTrace();
 			});
 		}
@@ -352,9 +354,9 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 
 	@Override
 	public void handleTransportError(Throwable e) {
-		if (display != null) {
+		if (this.display != null) {
 			this.display.syncExec(() -> {
-				handleWebsocketError();
+				this.handleWebsocketError();
 				e.printStackTrace();
 			});
 		}
@@ -366,13 +368,13 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 
 	@Override
 	public void callExercisesEvent() {
-		getFeedbackForExcerise();
+		this.getFeedbackForExcerise();
 
 	}
 
 	@Override
 	public void callExamEvent() {
-		reset();
+		this.reset();
 	}
 
 	@Override
@@ -394,7 +396,7 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 					try {
 						AssessmentUtilities.createMarkerForAnnotation(annatoation, currentProjectName);
 					} catch (ArtemisClientException e) {
-						handleAnnotationError(e);
+						this.handleAnnotationError(e);
 					}
 				});
 	}

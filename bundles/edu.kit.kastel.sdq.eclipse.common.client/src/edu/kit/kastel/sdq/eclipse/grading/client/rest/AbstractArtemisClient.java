@@ -24,7 +24,6 @@ public abstract class AbstractArtemisClient {
 	protected static final String EXERCISES_PATHPART = "exercises";
 	protected static final String COURSES_PATHPART = "courses";
 	protected static final String EXAMS_PATHPART = "exams";
-	protected static final String USERS_PATHPART = "users";
 	protected static final String PARTICIPATION_PATHPART = "participations";
 	protected static final String RESULT_PATHPART = "results";
 	protected static final String STUDENT_EXAM_PATH = "student-exams";
@@ -36,14 +35,13 @@ public abstract class AbstractArtemisClient {
 	private ObjectMapper orm;
 
 	/**
-	 *
 	 * @param artemisUsername for login to artemis
 	 * @param artemisPassword for login to artemis
 	 * @param artemisHostname the hostname, only! (e.g. "test.kit.edu")
 	 */
 	protected AbstractArtemisClient(String artemisHostname) {
 		this.artemisHostname = artemisHostname;
-		this.orm = createObjectMapper();
+		this.orm = this.createObjectMapper();
 	}
 
 	protected final String getRootURL() {
@@ -60,7 +58,7 @@ public abstract class AbstractArtemisClient {
 	}
 
 	protected final String getApiRootURL() {
-		return getRootURL() + "/api";
+		return this.getRootURL() + "/api";
 	}
 
 	protected WebTarget getEndpoint(String url) {

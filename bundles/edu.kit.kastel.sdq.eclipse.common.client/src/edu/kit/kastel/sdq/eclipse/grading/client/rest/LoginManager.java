@@ -24,9 +24,15 @@ public class LoginManager extends AbstractArtemisClient implements IAuthenticati
 		super(hostname);
 		this.username = username;
 		this.password = password;
-		this.endpoint = getEndpoint(this.getApiRootURL());
+		this.endpoint = this.getEndpoint(this.getApiRootURL());
 	}
 
+	@Override
+	public String getArtemisUrl() {
+		return this.getRootURL();
+	}
+
+	@Override
 	public void init() throws ArtemisClientException {
 		try {
 			this.token = this.login();
@@ -38,21 +44,21 @@ public class LoginManager extends AbstractArtemisClient implements IAuthenticati
 
 	@Override
 	public String getRawToken() {
-		return token;
+		return this.token;
 	}
 
 	@Override
 	public String getBearerToken() {
-		return "Bearer " + token;
+		return "Bearer " + this.token;
 	}
 
 	@Override
 	public Assessor getAssessor() {
-		return assessor;
+		return this.assessor;
 	}
 
 	private Assessor fetchAssessor() throws ArtemisClientException {
-		final Response rsp = this.endpoint.path(USERS_PATHPART).path(username).request().header(AUTHORIZATION_NAME, getBearerToken()).buildGet().invoke();
+		final Response rsp = this.endpoint.path("account").request().header(AUTHORIZATION_NAME, this.getBearerToken()).buildGet().invoke();
 		this.throwIfStatusUnsuccessful(rsp);
 		return this.read(rsp.readEntity(String.class), Assessor.class);
 	}
