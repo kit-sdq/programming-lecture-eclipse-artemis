@@ -51,13 +51,11 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 	private Display display;
 	private StudentViewController viewController;
 
-	private ScrolledComposite scrolledCompositeFeedback;
 	private Composite feedbackContainerComposite;
 	private Composite feedbackContentComposite;
 	private Composite resultContentComposite;
 	private Composite compositeHeader;
 	private Composite compositeFooter;
-	private ResultsDTO lastResult;
 	private List<Feedback> feedbackOfLastResult = new ArrayList<>();
 	private Table feedbackTabel;
 
@@ -66,7 +64,6 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 	private Label lblResultExerciseDescription;
 	private Label lblResultExerciseShortName;
 	private Label lblPoints;
-	private Button btnReload;
 	private Label btnLoading;
 
 	public ResultTab(final StudentViewController viewController) {
@@ -79,16 +76,16 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 		TabItem tbtmResult = new TabItem(tabFolder, SWT.NONE);
 		tbtmResult.setText("Test Results");
 
-		this.scrolledCompositeFeedback = new ScrolledComposite(tabFolder, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
-		tbtmResult.setControl(this.scrolledCompositeFeedback);
-		this.scrolledCompositeFeedback.setLayout(new FillLayout());
+		ScrolledComposite scrolledCompositeFeedback = new ScrolledComposite(tabFolder, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+		tbtmResult.setControl(scrolledCompositeFeedback);
+		scrolledCompositeFeedback.setLayout(new FillLayout());
 		// this.scrolledCompositeFeedback.setExpandHorizontal(true);
 		// this.scrolledCompositeFeedback.setExpandVertical(true);
 
-		this.feedbackContainerComposite = new Composite(this.scrolledCompositeFeedback, SWT.NONE);
-		this.scrolledCompositeFeedback.setContent(this.feedbackContainerComposite);
-		this.feedbackContainerComposite.setSize(this.scrolledCompositeFeedback.getSize());
-		this.scrolledCompositeFeedback.setMinSize(this.feedbackContainerComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+		this.feedbackContainerComposite = new Composite(scrolledCompositeFeedback, SWT.NONE);
+		scrolledCompositeFeedback.setContent(this.feedbackContainerComposite);
+		this.feedbackContainerComposite.setSize(scrolledCompositeFeedback.getSize());
+		scrolledCompositeFeedback.setMinSize(this.feedbackContainerComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		this.feedbackContainerComposite.setLayout(new GridLayout(1, true));
 		this.feedbackContainerComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
@@ -113,10 +110,10 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 		this.btnLoading.setText(LOAD_BTN_TEXT);
 		this.btnLoading.setVisible(false);
 
-		this.btnReload = new Button(composite_1, SWT.CENTER);
-		this.btnReload.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, true, false, 1, 1));
-		this.btnReload.setText(RELOAD_BTN_TEXT);
-		this.addSelectionListenerForReloadButton(this.btnReload);
+		Button btnReload = new Button(composite_1, SWT.CENTER);
+		btnReload.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, true, false, 1, 1));
+		btnReload.setText(RELOAD_BTN_TEXT);
+		this.addSelectionListenerForReloadButton(btnReload);
 
 		Label labelResult = new Label(this.feedbackContainerComposite, SWT.NONE);
 		labelResult.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
@@ -185,7 +182,7 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 		labelFeedback2.setText(Messages.RESULTTAB_INFO_RESULT);
 		this.createTableForFeedback(this.feedbackContentComposite);
 
-		this.scrolledCompositeFeedback.setContent(this.feedbackContainerComposite);
+		scrolledCompositeFeedback.setContent(this.feedbackContainerComposite);
 	}
 
 	@Override
@@ -308,12 +305,11 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 	private void handleNewResult(ResultsDTO result, List<Feedback> feedbacks) {
 		IExercise exercise = this.viewController.getCurrentSelectedExercise();
 
-		this.lastResult = result;
 		this.feedbackOfLastResult = feedbacks;
 
 		this.feedbackTabel.removeAll();
 		this.addFeedbackToTable(this.feedbackTabel, this.feedbackOfLastResult);
-		this.addResultToTab(this.lastResult, exercise);
+		this.addResultToTab(result, exercise);
 		this.feedbackContainerComposite.pack();
 		this.feedbackContentComposite.setVisible(true);
 
