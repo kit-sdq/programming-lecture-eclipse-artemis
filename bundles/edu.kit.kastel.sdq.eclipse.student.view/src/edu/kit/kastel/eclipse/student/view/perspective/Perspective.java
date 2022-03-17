@@ -18,5 +18,9 @@ public class Perspective implements IPerspectiveFactory {
 
 		IFolderLayout rightDown = layout.createFolder("rightDown", IPageLayout.BOTTOM, 0.7F, "rightUp");
 		rightDown.addView(IPageLayout.ID_OUTLINE);
+
+		IFolderLayout bottom = layout.createFolder("bottom", IPageLayout.BOTTOM, 0.6F, editorArea);
+		bottom.addView("edu.kit.kastel.eclipse.common.view.marker.AssessmentMarkerView");
+		bottom.addView(IPageLayout.ID_PROBLEM_VIEW);
 	}
 }

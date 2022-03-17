@@ -1,11 +1,15 @@
 package edu.kit.kastel.eclipse.common.view.utilities;
 
+import java.util.Scanner;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.widgets.Shell;
@@ -79,8 +83,8 @@ public final class AssessmentUtilities {
 	 * @param projectName (of the currently downloaded project)
 	 * @return An IFile instance of the file determined by the path
 	 */
-	public static IFile getFile(String path, String projectName) {
-		return ResourcesPlugin.getWorkspace().getRoot().getProject(projectName).getFile("assignment/" + path);
+	public static IFile getFile(String path, String projectName, String srcDirectory) {
+		return ResourcesPlugin.getWorkspace().getRoot().getProject(projectName).getFile(srcDirectory + path);
 	}
 
 	/**
@@ -160,7 +164,7 @@ public final class AssessmentUtilities {
 		throw new IllegalAccessError();
 	}
 
-	public static void createMarkerForAnnotation(IAnnotation annotation, String currentProjectName) throws ArtemisClientException {
+	public static void createMarkerForAnnotation(IAnnotation annotation, String currentProjectName, String srcDirectory) throws ArtemisClientException {
 
 		int startLine = annotation.getStartLine();
 		int endLine = annotation.getEndLine();
@@ -168,10 +172,26 @@ public final class AssessmentUtilities {
 		String customMessage = annotation.getCustomMessage().orElse(null);
 		String customPenalty = annotation.getCustomPenalty().map(String::valueOf).orElse(null);
 		try {
-			IMarker marker = AssessmentUtilities.getFile(annotation.getClassFilePath(), currentProjectName).createMarker(AssessmentUtilities.MARKER_NAME);
+			IMarker marker = AssessmentUtilities.getFile(annotation.getClassFilePath(), currentProjectName, srcDirectory)
+					.createMarker(AssessmentUtilities.MARKER_NAME);
 			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_ANNOTATION_ID, annotation.getUUID());
-			marker.setAttribute(IMarker.CHAR_START, annotation.getMarkerCharStart());
-			marker.setAttribute(IMarker.CHAR_END, annotation.getMarkerCharEnd());
+
+			if (annotation.getMarkerCharStart() < 0 || annotation.getMarkerCharEnd() < 0) {
+				var contentStream = ResourcesPlugin.getWorkspace().getRoot().getProject(currentProjectName)
+						.getFile(srcDirectory + annotation.getClassFilePath()).getContents();
+				Scanner s = new Scanner(contentStream).useDelimiter("\\A");
+				String content = s.hasNext() ? s.next() : "";
+				s.close();
+				IDocument doc = new Document(content);
+				var charOffsetStart = doc.getLineOffset(annotation.getStartLine());
+				// TODO Fix Offset -2 .. \n\r ?
+				var charOffsetEnd = doc.getLineOffset(annotation.getEndLine() + 1);
+				marker.setAttribute(IMarker.CHAR_START, charOffsetStart);
+				marker.setAttribute(IMarker.CHAR_END, charOffsetEnd);
+			} else {
+				marker.setAttribute(IMarker.CHAR_START, annotation.getMarkerCharStart());
+				marker.setAttribute(IMarker.CHAR_END, annotation.getMarkerCharEnd());
+			}
 
 			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_START, startLine);
 			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_END, endLine);
@@ -193,6 +213,8 @@ public final class AssessmentUtilities {
 					marker.setAttribute(IMarker.MESSAGE,
 							AssessmentUtilities.createMarkerTooltipForCustomButton(startLine, endLine, customMessage, Double.parseDouble(customPenalty)));
 				}
+			} else if (customMessage != null) {
+				marker.setAttribute(IMarker.MESSAGE, customMessage);
 			}
 
 		} catch (Exception e) {
@@ -205,21 +227,21 @@ public final class AssessmentUtilities {
 	 * project (An annotation is identified by its UUID)
 	 * 
 	 * @param annotation the annotation to check
-	 * @return true if the annotation is present, false if not
+	 * @return annotation if the annotation is present, null if not
 	 */
-	public static boolean isAnnotationPresent(IAnnotation annotation, String currentProjectName) {
+	public static IMarker findPresentAnnotation(IAnnotation annotation, String currentProjectName, String srcDirectory) {
 		try {
-			IMarker[] markers = AssessmentUtilities.getFile(annotation.getClassFilePath(), currentProjectName).findMarkers(null, false, 100);
+			IMarker[] markers = AssessmentUtilities.getFile(annotation.getClassFilePath(), currentProjectName, srcDirectory).findMarkers(null, false, 100);
 			for (IMarker marker : markers) {
 				if (annotation.getUUID().equals(marker.getAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_ANNOTATION_ID))) {
-					return true;
+					return marker;
 				}
 			}
-			return false;
+			return null;
 		} catch (CoreException e) {
 			// If the project (or file) can not be loaded the annotation is definitely not
 			// present
-			return false;
+			return null;
 		}
 	}
 

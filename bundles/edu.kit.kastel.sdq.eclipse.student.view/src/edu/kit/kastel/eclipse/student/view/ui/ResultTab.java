@@ -1,22 +1,22 @@
 package edu.kit.kastel.eclipse.student.view.ui;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.resource.FontDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -36,14 +36,16 @@ import edu.kit.kastel.eclipse.common.view.utilities.AssessmentUtilities;
 import edu.kit.kastel.eclipse.student.view.controllers.StudentViewController;
 import edu.kit.kastel.sdq.eclipse.grading.api.ArtemisClientException;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.Feedback;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.FeedbackType;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ResultsDTO;
 import edu.kit.kastel.sdq.eclipse.grading.api.client.websocket.WebsocketCallback;
+import edu.kit.kastel.sdq.eclipse.grading.api.model.IMistakeType;
+import edu.kit.kastel.sdq.eclipse.grading.core.model.annotation.Annotation;
 
 public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 	private static final String RELOAD_BTN_TEXT = "Reload";
 	private static final String LOAD_BTN_TEXT = "Loading...";
-	private static final int ROUND_DECIMAL_PLACES = 2;
 	private static final String CHECK_MARK_IN_UTF8 = new String(new byte[] { (byte) 0xE2, (byte) 0x9C, (byte) 0x93 }, StandardCharsets.UTF_8);
 
 	private Display display;
@@ -80,8 +82,8 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 		this.scrolledCompositeFeedback = new ScrolledComposite(tabFolder, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 		tbtmResult.setControl(this.scrolledCompositeFeedback);
 		this.scrolledCompositeFeedback.setLayout(new FillLayout());
-		this.scrolledCompositeFeedback.setExpandHorizontal(true);
-		this.scrolledCompositeFeedback.setExpandVertical(true);
+		// this.scrolledCompositeFeedback.setExpandHorizontal(true);
+		// this.scrolledCompositeFeedback.setExpandVertical(true);
 
 		this.feedbackContainerComposite = new Composite(this.scrolledCompositeFeedback, SWT.NONE);
 		this.scrolledCompositeFeedback.setContent(this.feedbackContainerComposite);
@@ -91,8 +93,7 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 		this.feedbackContainerComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
 		Composite composite = new Composite(this.feedbackContainerComposite, SWT.NONE);
-		GridLayout gl_composite = new GridLayout(2, true);
-		composite.setLayout(gl_composite);
+		composite.setLayout(new GridLayout(2, true));
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
 
 		Label labelFeedback = new Label(composite, SWT.NONE);
@@ -102,8 +103,7 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 		labelFeedback.setText("Latest Results");
 
 		Composite composite_1 = new Composite(composite, SWT.NONE);
-		GridLayout gl_composite_1 = new GridLayout(2, true);
-		composite_1.setLayout(gl_composite_1);
+		composite_1.setLayout(new GridLayout(2, true));
 		composite_1.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
 
 		this.btnLoading = new Label(composite_1, SWT.SHADOW_IN | SWT.CENTER | SWT.BORDER);
@@ -125,7 +125,7 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 		this.feedbackContentComposite = new Composite(this.feedbackContainerComposite, SWT.NONE);
 		this.feedbackContentComposite.setTouchEnabled(true);
 		this.feedbackContentComposite.setLayout(new GridLayout(1, true));
-		this.feedbackContentComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		this.feedbackContentComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		this.feedbackContentComposite.setVisible(true);
 		this.resultContentComposite = new Composite(this.feedbackContentComposite, SWT.BORDER);
 		this.resultContentComposite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true, 1, 1));
@@ -186,7 +186,6 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 		this.createTableForFeedback(this.feedbackContentComposite);
 
 		this.scrolledCompositeFeedback.setContent(this.feedbackContainerComposite);
-		this.scrolledCompositeFeedback.setMinSize(new Point(64, 64));
 	}
 
 	@Override
@@ -197,9 +196,7 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 	}
 
 	private void addSelectionListenerForReloadButton(Button btn) {
-		btn.addListener(SWT.Selection, e -> {
-			this.getFeedbackForExcerise();
-		});
+		btn.addListener(SWT.Selection, e -> this.getFeedbackForExcerise());
 	}
 
 	private void createTableForFeedback(Composite parent) {
@@ -233,7 +230,8 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 		Shell s = new Shell(this.display);
 		s.setMinimumSize(500, 500);
 		if (selectedFeedback.getDetailText() != null) {
-			new TestDetailsDialog(s, selectedFeedback.getText(), selectedFeedback.getDetailText()).open();
+			var text = selectedFeedback.getFeedbackType() != FeedbackType.AUTOMATIC ? "Tutor Comment" : selectedFeedback.getText();
+			new TestDetailsDialog(s, text, selectedFeedback.getDetailText()).open();
 			// MessageDialog.openInformation(null, selectedFeedback.getText(),
 			// selectedFeedback.getDetailText());
 		}
@@ -263,17 +261,25 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 	}
 
 	private void addFeedbackToTable(Table table, List<Feedback> entries) {
-		Display display = this.getDisplay();
-
 		if (entries != null) {
-			Collections.sort(entries);
-			for (var feedback : entries) {
-				double roundedCredits = this.roundToDeciamlPlaces(feedback.getCredits());
+			// TODO Sort it ..
+			List<Pair<String, Feedback>> feedbacks = entries.stream().map(feedback -> {
+				var name = feedback.getFeedbackType() != FeedbackType.AUTOMATIC && feedback.getText() == null ? "Tutor Comment" : feedback.getText();
+				return new Pair<>(name, feedback);
+			}).collect(Collectors.toList());
+
+			for (var nameXfeedback : feedbacks) {
+				var name = nameXfeedback.a;
+				var feedback = nameXfeedback.b;
+				String roundedCredits = feedback.getCredits() == null ? "0.00" : String.format(Locale.ENGLISH, "%.2f", feedback.getCredits());
+				String success = feedback.getPositive() == null ? "" : feedback.getPositive() ? "successful" : "failed";
+				int successColor = feedback.getPositive() == null ? SWT.COLOR_BLACK : feedback.getPositive() ? SWT.COLOR_GREEN : SWT.COLOR_RED;
+
 				final TableItem item = new TableItem(table, SWT.NULL);
-				item.setText(0, feedback.getText());
+				item.setText(0, name);
 				item.setText(1, "" + roundedCredits);
-				item.setText(2, feedback.getPositive() ? "successful" : "failed"); //$NON-NLS-2$
-				item.setForeground(2, feedback.getPositive() ? display.getSystemColor(SWT.COLOR_GREEN) : display.getSystemColor(SWT.COLOR_RED));
+				item.setText(2, success);
+				item.setForeground(2, this.getDisplay().getSystemColor(successColor));
 				item.setText(3, feedback.getDetailText() != null ? CHECK_MARK_IN_UTF8 : "X");
 			}
 		}
@@ -286,22 +292,13 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 		return this.display;
 	}
 
-	private double roundToDeciamlPlaces(Double credits) {
-		if (credits == null) {
-			return 0.0;
-		}
-
-		BigDecimal bd = new BigDecimal(credits).setScale(ROUND_DECIMAL_PLACES, RoundingMode.HALF_UP);
-		return bd.doubleValue();
-	}
-
 	private void getFeedbackForExcerise() {
 		var resultFeedbackMap = this.viewController.getFeedbackExcerise();
 
 		if (!resultFeedbackMap.isEmpty()) {
 			Entry<ResultsDTO, List<Feedback>> entry = resultFeedbackMap.entrySet().iterator().next();
 			this.handleNewResult(entry.getKey(), entry.getValue());
-			this.createAnnotationsMarkers();
+			this.createAnnotationsMarkers(entry.getValue());
 		} else {
 			this.feedbackTabel.removeAll();
 			this.reset();
@@ -325,9 +322,7 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 	@Override
 	public void handleSubmission(Object payload) {
 		if (this.display != null) {
-			this.display.syncExec(() -> {
-				this.btnLoading.setVisible(true);
-			});
+			this.display.syncExec(() -> this.btnLoading.setVisible(true));
 		}
 	}
 
@@ -388,20 +383,80 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 
 	/**
 	 * creates markers for current annotations in the backend
+	 * 
+	 * @param feedbacks
 	 */
-	public void createAnnotationsMarkers() {
+	public void createAnnotationsMarkers(List<Feedback> feedbacks) {
 		String currentProjectName = this.viewController.getCurrentProjectName();
-		this.viewController.getAnnotations().stream().filter(annotation -> !AssessmentUtilities.isAnnotationPresent(annotation, currentProjectName))
-				.forEach(annatoation -> {
-					try {
-						AssessmentUtilities.createMarkerForAnnotation(annatoation, currentProjectName);
-					} catch (ArtemisClientException e) {
-						this.handleAnnotationError(e);
-					}
-				});
+
+		// Translate Feedback to annotations ..
+		var feedbackForLines = feedbacks.stream().filter(f -> f.getFeedbackType() == FeedbackType.MANUAL).collect(Collectors.toList());
+		var annotations = this.convertToAnnotation(feedbackForLines);
+		for (var annotation : annotations) {
+			IMarker present = AssessmentUtilities.findPresentAnnotation(annotation, currentProjectName, "src/");
+			if (present != null) {
+				try {
+					present.delete();
+				} catch (CoreException e) {
+					e.printStackTrace();
+				}
+			}
+			try {
+				AssessmentUtilities.createMarkerForAnnotation(annotation, currentProjectName, "src/");
+			} catch (ArtemisClientException e) {
+				this.handleAnnotationError(e);
+			}
+		}
+	}
+
+	private List<Annotation> convertToAnnotation(List<Feedback> feedbackForLines) {
+		List<Annotation> annotations = new ArrayList<>();
+		for (Feedback f : feedbackForLines) {
+			// e.g., file:src/edu/kit/informatik/Client.java.java_line:21
+			String reference = f.getReference();
+			if (reference == null || !reference.startsWith("file:")) {
+				continue;
+			}
+
+			var fileXline = reference.split(".java_line:");
+
+			String uuid = reference;
+			IMistakeType type = null;
+			int startLine = Integer.parseInt(fileXline[1]);
+			int endLine = startLine;
+			String fullyClassifiedClassName = fileXline[0].substring("file:src/".length());
+			String customMessage = f.getDetailText();
+			Double customPenalty = f.getCredits();
+			int markerCharStart = -1;
+			int markerCharEnd = -1;
+
+			Annotation annotation = new Annotation(uuid, type, startLine, endLine, fullyClassifiedClassName, customMessage, customPenalty, markerCharStart,
+					markerCharEnd);
+			annotations.add(annotation);
+		}
+		return annotations;
 	}
 
 	private void handleAnnotationError(ArtemisClientException e) {
+		// TODO Handle error
+		e.printStackTrace();
 
 	}
+
+	private static final class Pair<A extends Comparable<A>, B> implements Comparable<Pair<A, B>> {
+		public final A a;
+		public final B b;
+
+		private Pair(A a, B b) {
+			this.a = a;
+			this.b = b;
+		}
+
+		@Override
+		public int compareTo(Pair<A, B> o) {
+			return this.a.compareTo(o.a);
+		}
+
+	}
+
 }

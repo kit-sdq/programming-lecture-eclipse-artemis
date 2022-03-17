@@ -98,11 +98,11 @@ public class AssessmentViewController extends AbstractArtemisViewController {
 	 * creates markers for current annotations in the backend
 	 */
 	public void createAnnotationsMarkers() {
-		this.getAnnotations().stream()
-				.filter(annotation -> !AssessmentUtilities.isAnnotationPresent(annotation, this.systemwideController.getCurrentProjectName()))
+		this.getAnnotations().stream().filter(
+				annotation -> AssessmentUtilities.findPresentAnnotation(annotation, this.systemwideController.getCurrentProjectName(), "assignment/") == null)
 				.forEach(annatoation -> {
 					try {
-						AssessmentUtilities.createMarkerForAnnotation(annatoation, this.systemwideController.getCurrentProjectName());
+						AssessmentUtilities.createMarkerForAnnotation(annatoation, this.systemwideController.getCurrentProjectName(), "assignment/");
 					} catch (ArtemisClientException e) {
 						this.alertObserver.error("Unable to create marker for annotation", e);
 					}
