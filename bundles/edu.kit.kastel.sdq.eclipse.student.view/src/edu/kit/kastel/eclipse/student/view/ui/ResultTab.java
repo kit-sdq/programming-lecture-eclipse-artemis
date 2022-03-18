@@ -117,7 +117,7 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 
 		Label labelResult = new Label(this.feedbackContainerComposite, SWT.NONE);
 		labelResult.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-		labelResult.setText(Messages.RESULTTAB_INFO_FEEDBACK);
+		labelResult.setText("Summary of the Results for the currently selected Exercise");
 
 		this.feedbackContentComposite = new Composite(this.feedbackContainerComposite, SWT.NONE);
 		this.feedbackContentComposite.setTouchEnabled(true);
@@ -133,7 +133,7 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 		this.compositeHeader.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 
 		this.lblResultExerciseShortName = new Label(this.compositeHeader, SWT.NONE);
-		this.lblResultExerciseShortName.setText(Messages.ResultTab_lblResultExerciseShortName_text);
+		this.lblResultExerciseShortName.setText("Name");
 		this.lblResultExerciseShortName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true, 1, 1));
 		this.lblResultExerciseShortName.setTouchEnabled(true);
 		boldDescriptor = FontDescriptor.createFrom(this.lblResultExerciseShortName.getFont()).setStyle(SWT.BOLD).setHeight(12);
@@ -169,7 +169,7 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 		this.lblPoints.setText("Points: ");
 
 		this.resultScore = new Label(this.compositeFooter, SWT.RIGHT);
-		this.resultScore.setText(Messages.ResultTab_resultScore_text);
+		this.resultScore.setText("?/?");
 		this.resultScore.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, true, true, 1, 1));
 		boldDescriptor = FontDescriptor.createFrom(this.resultScore.getFont()).setStyle(SWT.BOLD | SWT.ITALIC).setHeight(12);
 		boldFont = boldDescriptor.createFont(this.resultScore.getDisplay());
@@ -179,7 +179,7 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 		boldDescriptor = FontDescriptor.createFrom(labelFeedback2.getFont()).setHeight(9);
 		boldFont = boldDescriptor.createFont(labelFeedback2.getDisplay());
 		labelFeedback2.setFont(boldFont);
-		labelFeedback2.setText(Messages.RESULTTAB_INFO_RESULT);
+		labelFeedback2.setText("Summary of all visible Tests");
 		this.createTableForFeedback(this.feedbackContentComposite);
 
 		scrolledCompositeFeedback.setContent(this.feedbackContainerComposite);
