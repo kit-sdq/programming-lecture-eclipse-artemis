@@ -42,7 +42,7 @@ public interface IStudentArtemisController extends IArtemisController {
 	 * @param exam
 	 * @return the exam and its exercises.
 	 */
-	IStudentExam startExam(ICourse course, IExam exam);
+	IStudentExam startExam(ICourse course, IExam exam, boolean alreadyStarted);
 
 	/**
 	 * Returns participation if exists of given exercise and current user.

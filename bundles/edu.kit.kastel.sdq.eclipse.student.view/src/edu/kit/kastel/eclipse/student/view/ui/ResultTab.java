@@ -183,6 +183,9 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 		this.createTableForFeedback(this.feedbackContentComposite);
 
 		scrolledCompositeFeedback.setContent(this.feedbackContainerComposite);
+
+		this.feedbackContainerComposite.pack();
+		this.feedbackContentComposite.setVisible(true);
 	}
 
 	@Override
@@ -212,9 +215,7 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 			column.setText(colNames[loopIndex]);
 		}
 
-		this.feedbackTabel.addListener(SWT.Selection, e -> {
-			this.handleResultTableEvent(e);
-		});
+		this.feedbackTabel.addListener(SWT.Selection, this::handleResultTableEvent);
 	}
 
 	private void handleResultTableEvent(Event e) {

@@ -26,27 +26,34 @@ public class ArtemisStudentExam implements IStudentExam, Serializable {
 	@JsonProperty
 	private boolean ended;
 
+	@JsonProperty
+	private Boolean started;
+
 	@Override
 	public IExam getExam() {
-		return exam;
+		return this.exam;
 	}
 
 	@Override
 	public List<IExercise> getExercises() {
-		if (exercises == null) {
+		if (this.exercises == null) {
 			return new ArrayList<>();
 		}
-		return Arrays.asList(exercises);
+		return Arrays.asList(this.exercises);
 	}
 
 	@Override
 	public boolean isSubmitted() {
-		return submitted;
+		return this.submitted;
 	}
 
 	@Override
 	public boolean isEnded() {
-		return ended;
+		return this.ended;
 	}
 
+	@Override
+	public boolean isStarted() {
+		return Boolean.TRUE.equals(this.started);
+	}
 }

@@ -27,4 +27,9 @@ public interface IStudentExam {
 	 * @return true if the submission period ended.
 	 */
 	boolean isEnded();
+
+	/**
+	 * @return true if the student has stated the student exam.
+	 */
+	boolean isStarted();
 }

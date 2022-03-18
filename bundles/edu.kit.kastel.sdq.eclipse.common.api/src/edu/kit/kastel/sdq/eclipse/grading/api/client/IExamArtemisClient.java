@@ -18,18 +18,7 @@ public interface IExamArtemisClient {
 	 * @return
 	 * @throws ArtemisClientException
 	 */
-	public IStudentExam findExamForSummary(ICourse course, IExam exam) throws ArtemisClientException;
-
-	/**
-	 * Conducts the exam of the given course. Returns the exam object and all its
-	 * exercises.
-	 * 
-	 * @param course
-	 * @param exam
-	 * @return
-	 * @throws ArtemisClientException
-	 */
-	public IStudentExam conductExam(ICourse course, IExam exam) throws ArtemisClientException;
+	IStudentExam findExamForSummary(ICourse course, IExam exam) throws ArtemisClientException;
 
 	/**
 	 * Starts the given exam. Returns the exam object and all its exercises.
@@ -38,5 +27,5 @@ public interface IExamArtemisClient {
 	 * @return
 	 * @throws ArtemisClientException
 	 */
-	public IStudentExam startExam(ICourse course, IExam exam) throws ArtemisClientException;
+	IStudentExam startExam(ICourse course, IExam exam) throws ArtemisClientException;
 }

@@ -62,8 +62,6 @@ public class ArtemisStudentView extends ViewPart {
 	private Label lblExamStart;
 	private Button btnStart;
 
-	private IStudentExam exam;
-
 	public ArtemisStudentView() {
 		this.viewController = new StudentViewController();
 		ResultTab resultTab = new ResultTab(this.viewController);
@@ -272,7 +270,7 @@ public class ArtemisStudentView extends ViewPart {
 		gd_btnStart.widthHint = 59;
 		this.btnStart.setLayoutData(gd_btnStart);
 		this.btnStart.setText("Start");
-		this.addSelectionListenerForStartButton(this.btnStart);
+		this.addSelectionListenerForExamStartButton(this.btnStart);
 
 		Composite composite_1 = new Composite(this.examContainerComposite, SWT.NONE);
 		composite_1.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
@@ -345,21 +343,22 @@ public class ArtemisStudentView extends ViewPart {
 		this.resultScore.setFont(boldFont);
 	}
 
-	private void addSelectionListenerForStartButton(Button startButton) {
+	private void addSelectionListenerForExamStartButton(Button startButton) {
 		startButton.addListener(SWT.Selection, e -> {
-			this.exam = this.viewController.startExam();
-			this.setExamDataToUI();
+			IStudentExam exam = this.viewController.startExam();
+			this.setExamDataToUI(exam);
+			this.loadTasksFromExam();
 		});
 	}
 
-	private void setExamDataToUI() {
-		if (this.exam != null && this.exam.getExam() != null) {
-			this.lblExamShortName.setText(this.exam.getExam().getTitle());
-			this.resultScore.setText("Due to: " + this.exam.getExam().getEndDate());
-			this.lblExamStart.setText("Starts at: " + this.exam.getExam().getStartDate());
-			this.btnStart.setEnabled(!this.exam.getExam().isStarted());
-			this.lblExamIsEnded.setText(this.exam.isEnded() ? "finished" : "running");
-			this.lblExamDescription.setText(!this.exam.isSubmitted() && this.exam.isEnded() ? Messages.ARTEMISSTUDENTVIEW_EXAM_NOT_SUBMITTED : "");
+	private void setExamDataToUI(IStudentExam exam) {
+		if (exam != null && exam.getExam() != null) {
+			this.lblExamShortName.setText(exam.getExam().getTitle());
+			this.resultScore.setText("Due to: " + exam.getExam().getEndDate());
+			this.lblExamStart.setText("Starts at: " + exam.getExam().getStartDate());
+			this.btnStart.setEnabled(!exam.isStarted());
+			this.lblExamIsEnded.setText(exam.isEnded() ? "ended" : "not ended");
+			this.lblExamDescription.setText(!exam.isSubmitted() && exam.isEnded() ? Messages.ARTEMISSTUDENTVIEW_EXAM_NOT_SUBMITTED : "");
 
 			this.resultContentComposite.layout();
 			this.compositeFooter.layout();
@@ -369,8 +368,7 @@ public class ArtemisStudentView extends ViewPart {
 	}
 
 	private void setExam() {
-		this.exam = this.viewController.getCurrentlySelectedExam();
-		this.setExamDataToUI();
+		this.setExamDataToUI(this.viewController.getCurrentlySelectedExam());
 	}
 
 	private String getLink() {
@@ -399,11 +397,26 @@ public class ArtemisStudentView extends ViewPart {
 				this.viewController.getExerciseShortNames(courseCombo.getItem(courseCombo.getSelectionIndex())).forEach(exerciseCombo::add);
 				this.resetExamPart();
 			} else {
-				this.viewController.getExercisesShortNamesForExam(examCombo.getItem(examCombo.getSelectionIndex())).forEach(exerciseCombo::add);
-				this.handleExamComboEvent();
+				this.loadTasksFromExam();
+
 			}
 		});
 		exerciseCombo.addListener(SWT.Selection, e -> this.handleExerciseComboListEvent(exerciseCombo));
+	}
+
+	private void loadTasksFromExam() {
+		var examName = this.examCombo.getItem(this.examCombo.getSelectionIndex());
+		var exercises = this.viewController.getExercisesShortNamesForExam(examName);
+		IStudentExam exam = this.viewController.getCurrentlySelectedExam();
+		if ((exercises == null || exercises.isEmpty()) && exam != null && exam.isStarted()) {
+			exam = this.viewController.startExam();
+			this.setExamDataToUI(exam);
+			// After start exams contains exercises; therefore no endless loop.
+			this.loadTasksFromExam();
+		} else {
+			exercises.forEach(this.exerciseCombo::add);
+			this.handleExamComboEvent();
+		}
 	}
 
 	private void resetBackendStateForNewExam() {

@@ -20,7 +20,5 @@ public interface IExam extends Serializable {
 
 	Date getStartDate();
 
-	boolean isStarted();
-
 	Date getEndDate();
 }

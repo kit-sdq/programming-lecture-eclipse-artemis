@@ -215,7 +215,7 @@ public class StudentSystemwideController extends SystemwideController implements
 				return false;
 			}
 		}
-		return true;
+		return false;
 	}
 
 	private LocalDateTime getCurrentDate() {
@@ -247,7 +247,7 @@ public class StudentSystemwideController extends SystemwideController implements
 	@Override
 	public IStudentExam startExam() {
 		if (this.exam != null) {
-			return this.artemisGUIController.startExam(this.course, this.exam.getExam());
+			return this.exam = this.artemisGUIController.startExam(this.course, this.exam.getExam(), this.getExam().isStarted());
 		}
 		return null;
 	}

@@ -27,8 +27,6 @@ public class ArtemisExam implements IExam, Serializable {
 	private Date startDate;
 	@JsonProperty
 	private Date endDate;
-	@JsonProperty
-	private boolean started;
 	@JsonIgnore
 	private transient ICourse course;
 	@JsonIgnore
@@ -73,35 +71,30 @@ public class ArtemisExam implements IExam, Serializable {
 
 	@Override
 	public Date getEndDate() {
-		return endDate;
+		return this.endDate;
 	}
 
 	public int getNumberOfCorrectionRounds() {
-		return numberOfCorrectionRounds;
+		return this.numberOfCorrectionRounds;
 	}
 
 	@Override
 	public Date getStartDate() {
-		return startDate;
-	}
-
-	@Override
-	public boolean isStarted() {
-		return started;
+		return this.startDate;
 	}
 
 	public ICourse getCourse() {
-		return course;
+		return this.course;
 	}
 
 	@Override
 	public boolean isExamExpired(Date currentDate) {
 		boolean result = false;
-		if (startDate != null) {
-			result = startDate.after(currentDate);
+		if (this.startDate != null) {
+			result = this.startDate.after(currentDate);
 		}
-		if (endDate != null) {
-			result = endDate.before(currentDate);
+		if (this.endDate != null) {
+			result = this.endDate.before(currentDate);
 		}
 		return result;
 	}

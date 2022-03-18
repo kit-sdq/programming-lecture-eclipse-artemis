@@ -50,9 +50,9 @@ public class StudentArtemisController extends ArtemisController implements IStud
 	}
 
 	@Override
-	public IStudentExam startExam(ICourse course, IExam exam) {
+	public IStudentExam startExam(ICourse course, IExam exam, boolean alreadyStarted) {
 		try {
-			if (this.confirm(Messages.STUDENT_ARTMIS_CONTROLLER_CONFIRM_START_EXAM)) {
+			if (alreadyStarted || this.confirm(Messages.STUDENT_ARTMIS_CONTROLLER_CONFIRM_START_EXAM)) {
 				IStudentExam studentExam = this.clientManager.getExamArtemisClient().startExam(course, exam);
 				this.checkIfExamIsValid(studentExam);
 				return studentExam;
@@ -159,7 +159,7 @@ public class StudentArtemisController extends ArtemisController implements IStud
 		} catch (ArtemisClientException e) {
 			this.error(Messages.STUDENT_ARTMIS_CONTROLLER_EXAM_INFO, e);
 		}
-		return this.startExam(foundEntry.getKey(), foundEntry.getValue());
+		return this.startExam(foundEntry.getKey(), foundEntry.getValue(), false);
 	}
 
 	private Optional<ParticipationDTO> getParticipationForExercise(ICourse course, IExercise exercise) {
