@@ -2,6 +2,7 @@ package edu.kit.kastel.sdq.eclipse.grading.api.controller;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.Feedback;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ICourse;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExam;
@@ -58,9 +59,9 @@ public interface IArtemisController extends IController {
 	IExercise getExerciseFromCourses(List<ICourse> courses, int courseID, int exerciseID);
 
 	/**
-	 * 
+	 *
 	 * Returns all exercises for the given course.
-	 * 
+	 *
 	 * @param course
 	 * @param withExamExercises if true returns also exercises of the exams of the
 	 *                          course.
@@ -70,7 +71,7 @@ public interface IArtemisController extends IController {
 
 	/**
 	 * Returns all exercises of exasm with title examTitle.
-	 * 
+	 *
 	 * @param examTitle exam title of the exam
 	 * @return a list of all exercises of the exam
 	 */
@@ -99,7 +100,7 @@ public interface IArtemisController extends IController {
 
 	/**
 	 * Fetches current local time of artemis backend via REST.
-	 * 
+	 *
 	 * @return current time of Artemis-Server
 	 */
 	LocalDateTime getCurrentDate();

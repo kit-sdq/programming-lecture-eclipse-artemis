@@ -413,7 +413,7 @@ public class ArtemisStudentView extends ViewPart {
 			this.setExamDataToUI(exam);
 			// After start exams contains exercises; therefore no endless loop.
 			this.loadTasksFromExam();
-		} else {
+		} else if (exercises != null) {
 			exercises.forEach(this.exerciseCombo::add);
 			this.handleExamComboEvent();
 		}

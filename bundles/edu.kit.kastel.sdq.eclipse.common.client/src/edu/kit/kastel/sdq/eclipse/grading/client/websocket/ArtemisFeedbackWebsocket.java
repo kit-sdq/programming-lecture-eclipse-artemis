@@ -62,7 +62,7 @@ public class ArtemisFeedbackWebsocket implements IWebsocketClient {
 	}
 
 	private SockJsClient configureSockJsClient(StandardWebSocketClient simpleWebSocketClient) {
-		List<Transport> transports = new ArrayList<Transport>();
+		List<Transport> transports = new ArrayList<>();
 		transports.add(new WebSocketTransport(simpleWebSocketClient));
 
 		SockJsClient sockJsClient = new SockJsClient(transports);

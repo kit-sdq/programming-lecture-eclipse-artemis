@@ -18,10 +18,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * shown below the code</li>
  * <li>{@link FeedbackType#AUTOMATIC} represents e.g. unit test results</li>
  * </ul>
- *
  * Whether a method returns null or not depends on the FeedbackType
  * {@link edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IFeedback#getFeedbackType() }!
- *
  */
 @JsonInclude(Include.NON_NULL)
 public class Feedback implements Comparable<Feedback>, Serializable {
@@ -51,12 +49,11 @@ public class Feedback implements Comparable<Feedback>, Serializable {
 	}
 
 	/**
-	 *
 	 * @return this Feedbacks contribution to the total credit sum. Can be positive
 	 *         or negative.
 	 */
 	public Double getCredits() {
-		if (Objects.equals("NEVER", visibility)) {
+		if (Objects.equals("NEVER", this.visibility)) {
 			// Bugfix for wrong Artemis points for NEVER visibility
 			return 0.0;
 		}
@@ -64,7 +61,6 @@ public class Feedback implements Comparable<Feedback>, Serializable {
 	}
 
 	/**
-	 *
 	 * @return detail text shown in the Artemis GUI on viewing the assessment: Comes
 	 *         after {@link #getText()}, if that is not <b>null</b>.<br/>
 	 *         <b>null</b> for {@link FeedbackType#AUTOMATIC}
@@ -74,7 +70,6 @@ public class Feedback implements Comparable<Feedback>, Serializable {
 	}
 
 	/**
-	 *
 	 * @return {@link #getType()} , but typed ;)
 	 */
 	public FeedbackType getFeedbackType() {
@@ -82,7 +77,6 @@ public class Feedback implements Comparable<Feedback>, Serializable {
 	}
 
 	/**
-	 *
 	 * @return <b>null</b> for {@link FeedbackType#MANUAL} and
 	 *         {@link FeedbackType#MANUAL_UNREFERENCED}
 	 */
@@ -91,7 +85,6 @@ public class Feedback implements Comparable<Feedback>, Serializable {
 	}
 
 	/**
-	 *
 	 * @return not sure what. Unimportant for now.<br/>
 	 *         <b>null</b> for {@link FeedbackType#MANUAL} and
 	 *         {@link FeedbackType#MANUAL_UNREFERENCED}
@@ -101,7 +94,6 @@ public class Feedback implements Comparable<Feedback>, Serializable {
 	}
 
 	/**
-	 *
 	 * @return
 	 *         <ul>
 	 *         <li>code reference string like so:
@@ -116,7 +108,6 @@ public class Feedback implements Comparable<Feedback>, Serializable {
 	}
 
 	/**
-	 *
 	 * @return text shown in the Artemis GUI on viewing the assessment.<br/>
 	 *         <b>null</b> for {@link FeedbackType#MANUAL_UNREFERENCED}
 	 */
@@ -126,7 +117,7 @@ public class Feedback implements Comparable<Feedback>, Serializable {
 
 	/**
 	 * This is NECESSARY! for serialization to artemis.
-	 *
+	 * 
 	 * @return
 	 */
 	public String getType() {
@@ -148,5 +139,24 @@ public class Feedback implements Comparable<Feedback>, Serializable {
 			return this.getText().compareToIgnoreCase(o.getText());
 		}
 		return 1;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(this.credits, this.detailText, this.id, this.positive, this.reference, this.text, this.type, this.visibility);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null || this.getClass() != obj.getClass()) {
+			return false;
+		}
+		Feedback other = (Feedback) obj;
+		return Objects.equals(this.credits, other.credits) && Objects.equals(this.detailText, other.detailText) && Objects.equals(this.id, other.id)
+				&& Objects.equals(this.positive, other.positive) && Objects.equals(this.reference, other.reference) && Objects.equals(this.text, other.text)
+				&& Objects.equals(this.type, other.type) && Objects.equals(this.visibility, other.visibility);
 	}
 }

@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.List;
 import java.util.Set;
 
-import edu.kit.kastel.sdq.eclipse.grading.api.ArtemisClientException;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IProjectFileNamingStrategy;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ICourse;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
@@ -19,9 +18,8 @@ public interface IGradingSystemwideController extends ISystemwideController {
 	 * <B>BACKLOG</B><br/>
 	 * Get all submissions (their project names) which were sometime started by the
 	 * calling tutor. Based on current exercise.
-	 * ISystemwideController::setExerciseId() must have been called before! TODO see
-	 * tolle Zustandsautomat-Grafik!
-	 *
+	 * ISystemwideController::setExerciseId() must have been called before!
+	 * 
 	 * @param filter determine which kinds of submissions should be filtered (= be
 	 *               in the result)
 	 * @return the respective project Names (unique).
@@ -29,14 +27,12 @@ public interface IGradingSystemwideController extends ISystemwideController {
 	List<String> getBegunSubmissionsProjectNames(SubmissionFilter filter);
 
 	/**
-	 *
 	 * Get assessment controller for current state (courseID, exerciseID,
 	 * submissionID, exerciseConfig).
 	 */
 	IAssessmentController getCurrentAssessmentController();
 
 	/**
-	 *
 	 * @return the possible transitions, based on the current {@link State}
 	 */
 	Set<Transition> getCurrentlyPossibleTransitions();
@@ -45,7 +41,6 @@ public interface IGradingSystemwideController extends ISystemwideController {
 	 * <B>BACKLOG</B><br/>
 	 * <li>Loads an already assessed (started, saved or even submitted) submission
 	 * for re-assessment.
-	 *
 	 * <li>You need to select a submission via {@link #setAssessedSubmission(int)},
 	 * first! Has the same effect as {@link #startAssessment()} otherwise.
 	 * <li>See docs/Zustandshaltung-Automat
@@ -78,30 +73,15 @@ public interface IGradingSystemwideController extends ISystemwideController {
 	 * <li>You want to have called {@link #getBegunSubmissions(ISubmission.Filter)},
 	 * first!
 	 * <li>See docs/Zustandshaltung-Automat
-	 *
 	 */
 	void setAssessedSubmissionByProjectName(String projectName);
 
 	/**
 	 * set the new annotation model config globally.
-	 *
+	 * 
 	 * @param newConfigFile
 	 */
 	void setConfigFile(File newConfigFile);
-
-	/**
-	 *
-	 * <B>ASSESSMENT - STATE</B><br/>
-	 * <li>Set the current course for further assessment-related actions, such as
-	 * {@link #setExerciseId(String)}
-	 * <li>See docs/Zustandshaltung-Automat
-	 *
-	 * @param courseShortName unique short name
-	 * @return all exercise short names. Can be used to call
-	 *         {@link #setExerciseId(String)}.
-	 * @throws ArtemisClientException
-	 */
-	List<String> setCourseIdAndGetExerciseShortNames(String courseShortName) throws ArtemisClientException;
 
 	/**
 	 * <B>ASSESSMENT</B><br/>
@@ -109,7 +89,7 @@ public interface IGradingSystemwideController extends ISystemwideController {
 	 * nextAssessement
 	 * <li>if an assessment is available, it is downloaded and locked.
 	 * <li>See docs/Zustandshaltung-Automat
-	 *
+	 * 
 	 * @return whether a new assessment was started or not, depending on whether
 	 *         there was a submission available.
 	 */
@@ -119,7 +99,7 @@ public interface IGradingSystemwideController extends ISystemwideController {
 	 * <B>ASSESSMENT</B><br/>
 	 * <li>The same as {@link #startAssessment()}.
 	 * <li>See docs/Zustandshaltung-Automat
-	 *
+	 * 
 	 * @return whether a new assessment was started or not, depending on whether
 	 *         there was a submission available.
 	 */
@@ -130,7 +110,7 @@ public interface IGradingSystemwideController extends ISystemwideController {
 	 * <li>Like {@link #startAssessment()}, but with correction round 2 as a
 	 * parameter.
 	 * <li>See docs/Zustandshaltung-Automat
-	 *
+	 * 
 	 * @return whether a new assessment was started or not, depending on whether
 	 *         there was a submission available.
 	 */
@@ -146,7 +126,7 @@ public interface IGradingSystemwideController extends ISystemwideController {
 
 	/**
 	 * Download submissions defined by the given submissionIds
-	 *
+	 * 
 	 * @param submissionIds
 	 * @return whether download was successful or not
 	 */
