@@ -51,7 +51,7 @@ public class TestDetailsDialog extends Dialog {
 		shell.setLayout(new GridLayout(1, true));
 		Text details = new Text(shell, SWT.MULTI | SWT.BORDER | SWT.WRAP | SWT.V_SCROLL);
 		details.setEditable(false);
-		details.setText(this.testDetails);
+		details.setText(this.testDetails.replace("<br />", "\n"));
 		details.setLayoutData(new GridData(GridData.FILL_BOTH));
 		Button ok = new Button(shell, SWT.PUSH);
 		ok.setText("OK");

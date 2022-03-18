@@ -214,7 +214,7 @@ public final class AssessmentUtilities {
 							AssessmentUtilities.createMarkerTooltipForCustomButton(startLine, endLine, customMessage, Double.parseDouble(customPenalty)));
 				}
 			} else if (customMessage != null) {
-				marker.setAttribute(IMarker.MESSAGE, customMessage);
+				marker.setAttribute(IMarker.MESSAGE, customMessage.replace("<br />", "\n"));
 			}
 
 		} catch (Exception e) {
