@@ -85,10 +85,11 @@ public class ArtemisGradingView extends ViewPart {
 					}
 				}));
 	}
-	
+
 	private void initializeAnnotationEditing() {
-		IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView("edu.kit.kastel.eclipse.common.view.marker.AssessmentMarkerView");
-		if (view instanceof AssessmentMarkerView) {			
+		IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+				.findView("edu.kit.kastel.eclipse.common.view.marker.AssessmentMarkerView");
+		if (view instanceof AssessmentMarkerView) {
 			((AssessmentMarkerView) view).addDoubleClickListener(new AssessmentMarkerViewDoubleClickListener(this));
 		}
 	}

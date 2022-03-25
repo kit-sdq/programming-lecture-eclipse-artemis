@@ -20,11 +20,11 @@ import edu.kit.kastel.eclipse.common.view.utilities.AssessmentUtilities;
 public class AssessmentMarkerView extends MarkerSupportView {
 
 	private static final ILog log = Platform.getLog(AssessmentMarkerView.class);
-	
+
 	public AssessmentMarkerView() {
 		super(AssessmentUtilities.MARKER_VIEW_ID);
 	}
-	
+
 	public void addDoubleClickListener(IDoubleClickListener doubleClickListener) {
 		try {
 			Field viewerField = ExtendedMarkersView.class.getDeclaredField("viewer");
@@ -35,5 +35,5 @@ public class AssessmentMarkerView extends MarkerSupportView {
 			log.error("Could not attach DoubleClickListener to AssessmentMarkerView", e);
 		}
 	}
-	
+
 }

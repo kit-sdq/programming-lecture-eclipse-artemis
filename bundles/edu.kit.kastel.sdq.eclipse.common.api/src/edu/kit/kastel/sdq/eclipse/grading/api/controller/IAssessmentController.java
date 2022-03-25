@@ -68,7 +68,7 @@ public interface IAssessmentController extends IController {
 	List<IAnnotation> getAnnotations();
 
 	Optional<IAnnotation> getAnnotationByUUID(String uuid);
-	
+
 	/**
 	 *
 	 * @param className

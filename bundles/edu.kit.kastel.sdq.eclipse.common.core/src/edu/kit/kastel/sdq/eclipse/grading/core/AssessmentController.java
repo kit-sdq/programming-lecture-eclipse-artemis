@@ -97,7 +97,7 @@ public class AssessmentController extends AbstractController implements IAssessm
 	public List<IAnnotation> getAnnotations() {
 		return this.annotationDao.getAnnotations().stream().collect(Collectors.toUnmodifiableList());
 	}
-	
+
 	@Override
 	public Optional<IAnnotation> getAnnotationByUUID(String uuid) {
 		return this.annotationDao.getAnnotations().stream().filter(annotation -> annotation.getUUID().equals(uuid)).findFirst();

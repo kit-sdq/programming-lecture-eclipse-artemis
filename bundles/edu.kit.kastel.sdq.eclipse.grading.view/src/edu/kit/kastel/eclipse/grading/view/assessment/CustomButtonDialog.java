@@ -37,15 +37,14 @@ public class CustomButtonDialog extends Dialog {
 	private boolean closedByOk;
 	private boolean forcePenaltyField;
 	private final AssessmentViewController viewController;
-	
+
 	// Data
 	private String customMessage;
 	private Double customPenalty;
 	private IMistakeType customMistake;
 	private final String ratingGroupName;
-	
-	public CustomButtonDialog(Shell parentShell, AssessmentViewController viewController, String ratingGroupName,
-			IMistakeType mistake) {
+
+	public CustomButtonDialog(Shell parentShell, AssessmentViewController viewController, String ratingGroupName, IMistakeType mistake) {
 		super(parentShell);
 		this.viewController = viewController;
 		this.ratingGroupName = ratingGroupName;
@@ -68,8 +67,7 @@ public class CustomButtonDialog extends Dialog {
 	protected Control createDialogArea(Composite parent) {
 		final Composite comp = (Composite) super.createDialogArea(parent);
 
-		boolean userWantsBigWindow = Activator.getDefault().getPreferenceStore()
-				.getBoolean(PreferenceConstants.PREFERS_LARGE_PENALTY_TEXT_PATH);
+		boolean userWantsBigWindow = Activator.getDefault().getPreferenceStore().getBoolean(PreferenceConstants.PREFERS_LARGE_PENALTY_TEXT_PATH);
 
 		final GridLayout layout = (GridLayout) comp.getLayout();
 		layout.numColumns = userWantsBigWindow ? 1 : 2;
@@ -81,19 +79,16 @@ public class CustomButtonDialog extends Dialog {
 
 		GridData customMessageInputFieldData;
 		if (userWantsBigWindow) {
-			int textWrapping = Activator.getDefault().getPreferenceStore()
-					.getBoolean(PreferenceConstants.PREFERS_TEXT_WRAPPING_IN_PENALTY_TEXT_PATH) ? SWT.WRAP : 0;
-			this.customMessageInputField = new Text(comp,
-					SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | textWrapping);
+			int textWrapping = Activator.getDefault().getPreferenceStore().getBoolean(PreferenceConstants.PREFERS_TEXT_WRAPPING_IN_PENALTY_TEXT_PATH) ? SWT.WRAP
+					: 0;
+			this.customMessageInputField = new Text(comp, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | textWrapping);
 			customMessageInputFieldData = new GridData(GridData.FILL_BOTH);
 
 			// Calculating height and width based on the lineHeight (theoretically) ensures
 			// proper scaling across screen-sizes.
 			// However lacking of a 4K-screen this has not been tested entirely.
-			customMessageInputFieldData.minimumHeight = this.customMessageInputField.getLineHeight()
-					* CUSTOM_PENALTY_FIELD_HEIGHT_MULTIPLIER;
-			customMessageInputFieldData.minimumWidth = this.customMessageInputField.getLineHeight()
-					* CUSTOM_PENALTY_FIELD_WIDTH_MULTIPLIER;
+			customMessageInputFieldData.minimumHeight = this.customMessageInputField.getLineHeight() * CUSTOM_PENALTY_FIELD_HEIGHT_MULTIPLIER;
+			customMessageInputFieldData.minimumWidth = this.customMessageInputField.getLineHeight() * CUSTOM_PENALTY_FIELD_WIDTH_MULTIPLIER;
 
 			this.customMessageInputField.addKeyListener(new MultiLineTextEditorKeyListener(this));
 		} else {
@@ -150,8 +145,7 @@ public class CustomButtonDialog extends Dialog {
 		if (this.customPenaltyInputField != null) {
 			this.customPenalty = Double.parseDouble(this.customPenaltyInputField.getText().replace(',', '.'));
 			if (this.customMistake != null) { // don't create an annotation iff the annotation is generated externally.
-				this.viewController.addAssessmentAnnotation(this.customMistake, this.customMessage, this.customPenalty,
-						this.ratingGroupName);
+				this.viewController.addAssessmentAnnotation(this.customMistake, this.customMessage, this.customPenalty, this.ratingGroupName);
 			}
 		}
 		super.okPressed();
