@@ -21,11 +21,15 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
+import edu.kit.kastel.eclipse.common.view.marker.AssessmentMarkerView;
 import edu.kit.kastel.eclipse.common.view.utilities.AssessmentUtilities;
 import edu.kit.kastel.eclipse.grading.view.activator.Activator;
 import edu.kit.kastel.eclipse.grading.view.controllers.AssessmentViewController;
+import edu.kit.kastel.eclipse.grading.view.listeners.AssessmentMarkerViewDoubleClickListener;
 import edu.kit.kastel.eclipse.grading.view.listeners.KeyboardAwareMouseListener;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.SubmissionFilter;
 import edu.kit.kastel.sdq.eclipse.grading.api.backendstate.Transition;
@@ -60,6 +64,7 @@ public class ArtemisGradingView extends ViewPart {
 		this.mistakeButtons = new HashMap<>();
 		this.possibleActions = new EnumMap<>(Transition.class);
 		this.initializePossibleActions();
+		this.initializeAnnotationEditing();
 		this.addListenerForMarkerDeletion();
 	}
 
@@ -79,6 +84,13 @@ public class ArtemisGradingView extends ViewPart {
 						this.updatePenalties();
 					}
 				}));
+	}
+	
+	private void initializeAnnotationEditing() {
+		IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView("edu.kit.kastel.eclipse.common.view.marker.AssessmentMarkerView");
+		if (view instanceof AssessmentMarkerView) {			
+			((AssessmentMarkerView) view).addDoubleClickListener(new AssessmentMarkerViewDoubleClickListener(this));
+		}
 	}
 
 	private void addSelectionListenerForLoadFromBacklogButton(Button btnLoadAgain) {
@@ -473,7 +485,7 @@ public class ArtemisGradingView extends ViewPart {
 		}
 	}
 
-	private void updatePenalties() {
+	public void updatePenalties() {
 		this.viewController.getRatingGroups().forEach(ratingGroup -> this.updatePenalty(ratingGroup.getDisplayName()));
 		this.updateAllToolTips();
 	}

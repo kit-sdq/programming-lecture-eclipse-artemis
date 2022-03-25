@@ -1,6 +1,7 @@
 package edu.kit.kastel.sdq.eclipse.grading.api.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IProjectFileNamingStrategy;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ICourse;
@@ -66,6 +67,8 @@ public interface IAssessmentController extends IController {
 	 */
 	List<IAnnotation> getAnnotations();
 
+	Optional<IAnnotation> getAnnotationByUUID(String uuid);
+	
 	/**
 	 *
 	 * @param className
