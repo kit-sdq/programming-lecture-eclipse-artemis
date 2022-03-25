@@ -58,9 +58,11 @@ public class ArtemisGradingPreferencesPage extends FieldEditorPreferencePage imp
 		StringFieldEditor artemisPassword = new StringFieldEditor(PreferenceConstants.ARTEMIS_PASSWORD, "Artemis password: ", this.getFieldEditorParent());
 
 		artemisPassword.getTextControl(this.getFieldEditorParent()).setEchoChar('*');
-		
-		this.userPrefersLargePenaltyText = new BooleanFieldEditor(PreferenceConstants.PREFERS_LARGE_PENALTY_TEXT_PATH, "Use larger multi-line-text-box for custom penaltys", this.getFieldEditorParent());
-		this.userPrefersTextWrappingInPenaltyText = new BooleanFieldEditor(PreferenceConstants.PREFERS_TEXT_WRAPPING_IN_PENALTY_TEXT_PATH, "Allow text-wrapping in multiline-text-box", this.getFieldEditorParent());
+
+		this.userPrefersLargePenaltyText = new BooleanFieldEditor(PreferenceConstants.PREFERS_LARGE_PENALTY_TEXT_PATH,
+				"Use larger multi-line-text-box for custom penaltys", this.getFieldEditorParent());
+		this.userPrefersTextWrappingInPenaltyText = new BooleanFieldEditor(PreferenceConstants.PREFERS_TEXT_WRAPPING_IN_PENALTY_TEXT_PATH,
+				"Allow text-wrapping in multiline-text-box", this.getFieldEditorParent());
 
 		this.addField(this.absoluteConfigPath);
 		this.addField(this.relativeConfigPath);

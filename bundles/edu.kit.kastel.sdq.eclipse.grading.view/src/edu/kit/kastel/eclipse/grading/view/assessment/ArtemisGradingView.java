@@ -23,13 +23,13 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.part.ViewPart;
 
+import edu.kit.kastel.eclipse.common.view.utilities.AssessmentUtilities;
 import edu.kit.kastel.eclipse.grading.view.activator.Activator;
 import edu.kit.kastel.eclipse.grading.view.controllers.AssessmentViewController;
 import edu.kit.kastel.eclipse.grading.view.listeners.KeyboardAwareMouseListener;
-import edu.kit.kastel.eclipse.grading.view.utilities.AssessmentUtilities;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.SubmissionFilter;
 import edu.kit.kastel.sdq.eclipse.grading.api.backendstate.Transition;
-import edu.kit.kastel.sdq.eclipse.grading.api.controller.ISystemwideController;
+import edu.kit.kastel.sdq.eclipse.grading.api.controller.IGradingSystemwideController;
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IMistakeType;
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IRatingGroup;
 
@@ -249,11 +249,11 @@ public class ArtemisGradingView extends ViewPart {
 		correctionCountLbl = new Label(assessmentComposite, SWT.NONE);
 		correctionCountLbl.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
 		correctionCountLbl.setText("");
-		
+
 		Label lblCourse = new Label(assessmentComposite, SWT.NONE);
 		lblCourse.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblCourse.setText("Course");
-		
+
 		this.courseCombo = new Combo(assessmentComposite, SWT.READ_ONLY);
 		this.courseCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
@@ -377,7 +377,7 @@ public class ArtemisGradingView extends ViewPart {
 
 					this.mistakeButtons.put(mistake.getId(), mistakeButton);
 					mistakeButton.setToolTipText(this.viewController.getToolTipForMistakeType(mistake));
-			
+
 					KeyboardAwareMouseListener listener = new KeyboardAwareMouseListener();
 					// Normal click
 					listener.setClickHandler(() -> {
@@ -385,7 +385,7 @@ public class ArtemisGradingView extends ViewPart {
 					}, SWT.BUTTON1);
 					// shift-click and middle-click
 					listener.setClickHandler(() -> {
-						this.createMistakePenaltyWithCustomMessageDialog(mistake);	
+						this.createMistakePenaltyWithCustomMessageDialog(mistake);
 					}, SWT.SHIFT, SWT.BUTTON2);
 					// every click
 					listener.setClickHandlerForEveryClick(() -> {
@@ -399,7 +399,7 @@ public class ArtemisGradingView extends ViewPart {
 		this.scrolledCompositeGrading.setContent(this.gradingComposite);
 		this.scrolledCompositeGrading.setMinSize(this.gradingComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 	}
-	
+
 	/**
 	 * This methods creates the whole view components.
 	 */
@@ -407,7 +407,7 @@ public class ArtemisGradingView extends ViewPart {
 	public void createPartControl(Composite parent) {
 		this.createView(parent);
 	}
-	
+
 	private void createMistakePenaltyWithCustomMessageDialog(IMistakeType mistake) {
 		CustomButtonDialog buttonDialog = new CustomButtonDialog(AssessmentUtilities.getWindowsShell(), this.viewController,
 				mistake.getRatingGroup().getDisplayName(), null);
@@ -507,19 +507,20 @@ public class ArtemisGradingView extends ViewPart {
 		this.viewController.getPossiblyTransitions().forEach(transition -> this.possibleActions.get(transition).forEach(control -> control.setEnabled(true)));
 		this.updateCorrectedSubmissionCount();
 	}
-	
+
 	/**
-	 * Updates the text above exam & exercise-selection according to the amount of assessed submissions (by the current tutor)
-	 * for the currently selected exercise (if selected; otherwise just an empty string)
-	 * Method is triggered by all invocations of updateState, hence a variety of {@link Transition}s could trigger a change.
-	 * (e.g. selecting another exercise, starting an assessment, submitting an assessment, ...)
+	 * Updates the text above exam & exercise-selection according to the amount of
+	 * assessed submissions (by the current tutor) for the currently selected
+	 * exercise (if selected; otherwise just an empty string) Method is triggered by
+	 * all invocations of updateState, hence a variety of {@link Transition}s could
+	 * trigger a change. (e.g. selecting another exercise, starting an assessment,
+	 * submitting an assessment, ...)
 	 */
 	private void updateCorrectedSubmissionCount() {
 		if (this.exerciseCombo.getSelectionIndex() != -1) {
-			ISystemwideController sc = Activator.getDefault().getSystemwideController();
-			correctionCountLbl.setText(String.format("Started submissions: %d  Submitted: %d", 
-					sc.getBegunSubmissionsProjectNames(SubmissionFilter.ALL).size(),
-					sc.getBegunSubmissionsProjectNames(SubmissionFilter.SAVED_AND_SUBMITTED).size()));		
+			IGradingSystemwideController sc = Activator.getDefault().getSystemwideController();
+			correctionCountLbl.setText(String.format("Started submissions: %d  Submitted: %d", sc.getBegunSubmissionsProjectNames(SubmissionFilter.ALL).size(),
+					sc.getBegunSubmissionsProjectNames(SubmissionFilter.SAVED_AND_SUBMITTED).size()));
 		} else {
 			correctionCountLbl.setText("");
 		}

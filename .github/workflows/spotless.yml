@@ -1,0 +1,28 @@
+name: Spotless Style Check
+
+on:
+  push: 
+  pull_request:
+    types: [opened, synchronize, reopened]
+  
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2.4.0
+
+    - name: Set up JDK
+      uses: actions/setup-java@v2
+      with:
+        distribution: 'zulu'
+        java-version: 11
+      
+    - name: Check with Spotless
+      run: mvn clean spotless:check
+      
+      
+

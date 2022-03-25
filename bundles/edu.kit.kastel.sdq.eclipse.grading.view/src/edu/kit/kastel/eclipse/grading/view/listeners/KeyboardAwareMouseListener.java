@@ -9,8 +9,8 @@ import org.eclipse.swt.events.MouseListener;
 
 /**
  * This class provides a {@link MouseListener} which supports different handlers
- * if specific keys on the keyboard are pressed while clicking.
- * However, this listener will only listen to the {@link MouseListener#mouseUp(MouseEvent)}
+ * if specific keys on the keyboard are pressed while clicking. However, this
+ * listener will only listen to the {@link MouseListener#mouseUp(MouseEvent)}
  * 
  * @author Shirkanesi
  */

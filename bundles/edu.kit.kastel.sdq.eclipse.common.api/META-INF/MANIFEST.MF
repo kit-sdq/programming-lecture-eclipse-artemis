@@ -1,0 +1,20 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: edu.kit.kastel.sdq.eclipse.grading.api
+Bundle-SymbolicName: edu.kit.kastel.sdq.eclipse.common.api
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-11
+Export-Package: edu.kit.kastel.sdq.eclipse.grading.api,
+ edu.kit.kastel.sdq.eclipse.grading.api.artemis,
+ edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping,
+ edu.kit.kastel.sdq.eclipse.grading.api.backendstate,
+ edu.kit.kastel.sdq.eclipse.grading.api.client,
+ edu.kit.kastel.sdq.eclipse.grading.api.client.websocket,
+ edu.kit.kastel.sdq.eclipse.grading.api.controller,
+ edu.kit.kastel.sdq.eclipse.grading.api.model
+Require-Bundle: com.fasterxml.jackson.core.jackson-databind,
+ com.fasterxml.jackson.core.jackson-core,
+ com.fasterxml.jackson.core.jackson-annotations,
+ javax.ws.rs
+Automatic-Module-Name: edu.kit.kastel.sdq.eclipse.grading.api
+

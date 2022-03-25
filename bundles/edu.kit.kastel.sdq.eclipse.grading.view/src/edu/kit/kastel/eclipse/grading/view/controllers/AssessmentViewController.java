@@ -4,20 +4,16 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.ITextSelection;
 
+import edu.kit.kastel.eclipse.common.view.controllers.AbstractArtemisViewController;
+import edu.kit.kastel.eclipse.common.view.utilities.AssessmentUtilities;
 import edu.kit.kastel.eclipse.grading.view.activator.Activator;
-import edu.kit.kastel.eclipse.grading.view.assessment.ArtemisGradingView;
-import edu.kit.kastel.eclipse.grading.view.observers.ViewAlertObserver;
-import edu.kit.kastel.eclipse.grading.view.utilities.AssessmentUtilities;
 import edu.kit.kastel.sdq.eclipse.grading.api.ArtemisClientException;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ICourse;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.SubmissionFilter;
 import edu.kit.kastel.sdq.eclipse.grading.api.backendstate.Transition;
-import edu.kit.kastel.sdq.eclipse.grading.api.controller.IAlertObserver;
-import edu.kit.kastel.sdq.eclipse.grading.api.controller.IArtemisController;
 import edu.kit.kastel.sdq.eclipse.grading.api.controller.IAssessmentController;
+import edu.kit.kastel.sdq.eclipse.grading.api.controller.IGradingSystemwideController;
 import edu.kit.kastel.sdq.eclipse.grading.api.controller.ISystemwideController;
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IAnnotation;
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IMistakeType;
@@ -26,16 +22,12 @@ import edu.kit.kastel.sdq.eclipse.grading.api.model.IRatingGroup;
 /**
  * This class is the controller for the grading view. It creates the marker for
  * the annotations and holds all controller for the backend calls.
- *
- * @see {@link ArtemisGradingView}
- *
+ * 
+ * @see {@link ArtemisStudentView}
  */
-public class AssessmentViewController {
-
+public class AssessmentViewController extends AbstractArtemisViewController {
 	private IAssessmentController assessmentController;
-	private IArtemisController artemisGUIController;
-	private ISystemwideController systemwideController;
-	private IAlertObserver alertObserver;
+	private IGradingSystemwideController systemwideController;
 
 	public AssessmentViewController() {
 		Activator.getDefault().createSystemWideController();
@@ -43,17 +35,10 @@ public class AssessmentViewController {
 		this.initializeControllersAndObserver();
 	}
 
-	private void initializeControllersAndObserver() {
-		this.alertObserver = new ViewAlertObserver();
-		this.artemisGUIController = this.systemwideController.getArtemisGUIController();
-		this.systemwideController.addAlertObserver(this.alertObserver);
-		this.artemisGUIController.addAlertObserver(this.alertObserver);
-	}
-
 	/**
 	 * This method creates a marker for the annotation and add a new annotation to
 	 * the backlog
-	 *
+	 * 
 	 * @param mistake         (the mistake type of the new annotation)
 	 * @param customMessage   (for custom mistake type, else null)
 	 * @param customPenalty   (for custom mistake, else null)
@@ -92,7 +77,7 @@ public class AssessmentViewController {
 			}
 			if (!mistake.isCustomPenalty()) {
 				marker.setAttribute(IMarker.MESSAGE, AssessmentUtilities.createMarkerTooltip(startLine, endLine, mistake.getButtonText(),
-						mistake.getRatingGroup().getDisplayName(), formatCustomPenaltyMessage(mistake, customMessage), null));
+						mistake.getRatingGroup().getDisplayName(), AssessmentUtilities.formatCustomPenaltyMessage(mistake, customMessage), null));
 			} else {
 				marker.setAttribute(IMarker.MESSAGE, AssessmentUtilities.createMarkerTooltipForCustomButton(startLine, endLine, customMessage, customPenalty));
 			}
@@ -104,101 +89,29 @@ public class AssessmentViewController {
 			 * Future Work: the error handling should be more specific (maybe for each
 			 * setAttribute(...)) without getting a too messy code
 			 */
-			e.printStackTrace();
-			this.alertObserver.error("Unable to create marker for annotation", e);
+			this.alertObserver.error("Unable to create marker for annotation: " + e.getMessage(), e);
 		}
 
-	}
-	
-	/**
-	 * Formats a custom penalty message. It will always use the message of the mistake, however iff the provided customMessage
-	 * is not null, it will append a \n and this custom message.
-	 * @param mistake the mistake to load the message from
-	 * @param customMessage the custom message to append (can be null)
-	 * @return the formatted message
-	 */
-	private String formatCustomPenaltyMessage(IMistakeType mistake, String customMessage) {
-		if (customMessage != null) {
-			return mistake.getMessage() + "\n" + customMessage;
-		} else {
-			return mistake.getMessage();
-		}
 	}
 
 	/**
 	 * creates markers for current annotations in the backend
-	 * The method will prevent duplicated markers resulting from 
-	 * having them in the local project and on the server.
 	 */
 	public void createAnnotationsMarkers() {
-		this.getAnnotations().stream().filter(annotation -> !isAnnotationPresent(annotation)).forEach(this::createMarkerForAnnotation);
-	}
-	
-	/**
-	 * Checks whether the given annotation is present in the currently opened project 
-	 * (An annotation is identified by its UUID)
-	 * @param annotation the annotation to check
-	 * @return true if the annotation is present, false if not
-	 */
-	private boolean isAnnotationPresent(IAnnotation annotation) {
-		try {
-			IMarker[] markers = AssessmentUtilities.getFile(annotation.getClassFilePath(), this.systemwideController.getCurrentProjectName()).findMarkers(null, false, 100);
-			for (IMarker marker : markers) {
-				if (annotation.getUUID().equals(marker.getAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_ANNOTATION_ID))) {
-					return true;
-				}
-			}
-			return false;
-		} catch (CoreException e) {
-			// If the project (or file) can not be loaded the annotation is definitely not present 
-			return false;
-		}
-	}
-
-	private void createMarkerForAnnotation(IAnnotation annotation) {
-
-		int startLine = annotation.getStartLine();
-		int endLine = annotation.getEndLine();
-		IMistakeType mistake = annotation.getMistakeType();
-		String customMessage = annotation.getCustomMessage().orElse(null);
-		String customPenalty = annotation.getCustomPenalty().map(String::valueOf).orElse(null);
-		try {
-			IMarker marker = AssessmentUtilities.getFile(annotation.getClassFilePath(), this.systemwideController.getCurrentProjectName())
-					.createMarker(AssessmentUtilities.MARKER_NAME);
-			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_ANNOTATION_ID, annotation.getUUID());
-			marker.setAttribute(IMarker.CHAR_START, annotation.getMarkerCharStart());
-			marker.setAttribute(IMarker.CHAR_END, annotation.getMarkerCharEnd());
-
-			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_START, startLine);
-			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_END, endLine);
-			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_CLASS_NAME, annotation.getClassFilePath());
-			if (customMessage != null) {
-				marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_CUSTOM_MESSAGE, customMessage);
-			}
-			if (customPenalty != null) {
-				marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_CUSTOM_PENALTY, customPenalty);
-			}
-			if (mistake != null) {
-				marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_ERROR_DESCRIPTION, mistake.getMessage());
-				marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_ERROR, mistake.getButtonText());
-				marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_RATING_GROUP, mistake.getRatingGroup().getDisplayName());
-				if (!mistake.isCustomPenalty()) {
-					marker.setAttribute(IMarker.MESSAGE, AssessmentUtilities.createMarkerTooltip(startLine, endLine, mistake.getButtonText(),
-							mistake.getRatingGroup().getDisplayName(), formatCustomPenaltyMessage(mistake, customMessage), annotation.getClassFilePath()));
-				} else {
-					marker.setAttribute(IMarker.MESSAGE,
-							AssessmentUtilities.createMarkerTooltipForCustomButton(startLine, endLine, customMessage, Double.parseDouble(customPenalty)));
-				}
-			}
-
-		} catch (Exception e) {
-			this.alertObserver.error("Unable to create marker for given annotation:" + annotation.toString(), e);
-		}
+		this.getAnnotations().stream().filter(
+				annotation -> AssessmentUtilities.findPresentAnnotation(annotation, this.systemwideController.getCurrentProjectName(), "assignment/") == null)
+				.forEach(annatoation -> {
+					try {
+						AssessmentUtilities.createMarkerForAnnotation(annatoation, this.systemwideController.getCurrentProjectName(), "assignment/");
+					} catch (ArtemisClientException e) {
+						this.alertObserver.error("Unable to create marker for annotation", e);
+					}
+				});
 	}
 
 	/**
 	 * Deletes an annotation on the backend
-	 *
+	 * 
 	 * @param id (of the annotation)
 	 */
 	public void deleteAnnotation(String uuid) {
@@ -215,54 +128,11 @@ public class AssessmentViewController {
 	}
 
 	/**
-	 * @return all courses available at artemis
-	 */
-	public List<ICourse> getCourses() {
-		return this.artemisGUIController.getCourses();
-	}
-
-	/**
-	 * @return the name of all courses
-	 */
-	public List<String> getCourseShortNames() {
-		return this.artemisGUIController.getCourseShortNames();
-	}
-
-	/**
 	 * @param ratingGroup
 	 * @return the current penalty for the given rating group
 	 */
 	public double getCurrentPenaltyForRatingGroup(IRatingGroup ratingGroup) {
 		return this.assessmentController.calculateCurrentPenaltyForRatingGroup(ratingGroup);
-	}
-
-	/**
-	 * @param courseTitle (of the selected course in the combo)
-	 * @return all exams of the given course
-	 */
-	public List<String> getExamShortNames(String courseTitle) {
-		return this.artemisGUIController.getExamTitles(courseTitle);
-	}
-
-	/**
-	 * @param courseName (selected course in the combo)
-	 * @return all exercises from the given course
-	 */
-	public List<String> getExerciseShortNames(String courseName) {
-		try {
-			return this.systemwideController.setCourseIdAndGetExerciseShortNames(courseName);
-		} catch (ArtemisClientException e) {
-			this.alertObserver.error(e.getMessage(), e);
-			return List.of();
-		}
-	}
-
-	/**
-	 * @param examShortName (of the selected exam in the combo)
-	 * @return all exercises of the given exam
-	 */
-	public List<String> getExercisesShortNamesForExam(String examShortName) {
-		return this.artemisGUIController.getExerciseShortNamesFromExam(examShortName);
 	}
 
 	/**
@@ -366,25 +236,17 @@ public class AssessmentViewController {
 	}
 
 	/**
-	 * Sets the exercise ID of the selected exercise
-	 *
-	 * @param exerciseShortName (of the selected exercise in the combo)
-	 */
-	public void setExerciseID(String exerciseShortName) {
-		try {
-			this.systemwideController.setExerciseId(exerciseShortName);
-		} catch (ArtemisClientException e) {
-			this.alertObserver.error(e.getMessage(), e);
-		}
-	}
-
-	/**
 	 * Request all possible transitions of the current state
-	 *
+	 * 
 	 * @return the possible transitions
 	 */
 	public Set<Transition> getPossiblyTransitions() {
 		return this.systemwideController.getCurrentlyPossibleTransitions();
+	}
+
+	@Override
+	protected ISystemwideController getSystemwideController() {
+		return this.systemwideController;
 	}
 
 }

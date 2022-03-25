@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+   		point="org.eclipse.ui.views">
+      <view
+            class="edu.kit.kastel.eclipse.student.view.ui.ArtemisStudentView"
+            id="edu.kit.kastel.eclipse.student.view.ui.ArtemisStudentView"
+            name="Artemis Student"
+            restorable="true">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="edu.kit.kastel.eclipse.student.view.preferences.ArtemisStudentPreferencesPage"
+            id="edu.kit.kastel.eclipse.student.view.preferences.SamplePreferencePage"
+            name="Artemis Student">
+      </page>
+   </extension>
+   <extension
+         name="Artemis Student"
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="edu.kit.kastel.eclipse.student.view.preferences.PreferenceInitializer">
+      </initializer>
+   </extension>
+	<extension
+         point="org.eclipse.ui.perspectives">
+         <perspective
+            class="edu.kit.kastel.eclipse.student.view.perspective.Perspective"
+            fixed="false"
+            id="edu.kit.kastel.eclipse.student.view.perspective.Perspective"
+            name="Artemis Student">
+      </perspective>
+   </extension>
+</plugin>
