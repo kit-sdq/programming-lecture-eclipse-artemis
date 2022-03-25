@@ -60,7 +60,7 @@ jobs:
         security find-identity -p codesigning
         unzip dist/Artemis_Grading_MacOS.zip
         /usr/bin/codesign -s "kit-sdq/programming-lecture-eclipse-artemis" -fv Eclipse.app
-        rm dist/Artemis_MacOS.zip
+        rm dist/Artemis_Grading_MacOS.zip
         ditto -c -k --sequesterRsrc --keepParent Eclipse.app dist/Artemis_Grading_MacOS.zip
         
     - name: Sign MacOS Eclipse Distribution (Student)
@@ -78,7 +78,7 @@ jobs:
         security find-identity -p codesigning
         unzip dist/Artemis_Student_MacOS.zip
         /usr/bin/codesign -s "kit-sdq/programming-lecture-eclipse-artemis" -fv Eclipse.app
-        rm dist/Artemis_MacOS.zip
+        rm dist/Artemis_Student_MacOS.zip
         ditto -c -k --sequesterRsrc --keepParent Eclipse.app dist/Artemis_Student_MacOS.zip        
 
     - name: Save Eclipse Distribution (Windows)
