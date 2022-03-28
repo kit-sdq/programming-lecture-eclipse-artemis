@@ -164,6 +164,9 @@
                         </eclipse>
                         <includes>src/**/*.java</includes>
                         <removeUnusedImports></removeUnusedImports>
+                        <licenseHeader>
+                            <file>${maven.multiModuleProjectDirectory}/license-header.txt</file>
+                        </licenseHeader>
                     </java>
                     <pom>
                         <sortPom>
@@ -173,6 +176,7 @@
                             <nrOfIndentSpace>4</nrOfIndentSpace>
                         </sortPom>
                     </pom>
+                    <ratchetFrom>origin/main</ratchetFrom>
                 </configuration>
             </plugin>
         </plugins>

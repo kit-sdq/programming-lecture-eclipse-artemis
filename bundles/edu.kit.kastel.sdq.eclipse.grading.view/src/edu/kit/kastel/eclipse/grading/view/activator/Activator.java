@@ -1,3 +1,4 @@
+/* Licensed under EPL-2.0 2022. */
 package edu.kit.kastel.eclipse.grading.view.activator;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;

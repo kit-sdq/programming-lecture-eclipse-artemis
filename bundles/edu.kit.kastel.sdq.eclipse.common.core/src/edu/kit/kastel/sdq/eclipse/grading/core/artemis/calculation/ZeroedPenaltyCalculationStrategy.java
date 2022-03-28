@@ -1,3 +1,4 @@
+/* Licensed under EPL-2.0 2022. */
 package edu.kit.kastel.sdq.eclipse.grading.core.artemis.calculation;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IMistakeType;
