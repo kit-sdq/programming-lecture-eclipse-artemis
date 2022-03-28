@@ -65,9 +65,9 @@ public class BackendStateMachine {
 		this.transitions.put(State.COURSE_EXERCISE_SUBMISSION_SET,
 				new HashSet<>(List.of(Transition.LOAD_AGAIN, Transition.SET_ASSESSED_SUBMISSION_BY_PROJECT_NAME, Transition.SET_EXERCISE_ID,
 						Transition.SET_COURSE_ID_AND_GET_EXERCISE_SHORT_NAMES, Transition.ON_RESET)));
-		this.transitions.put(State.COURSE_EXERCISE_SUBMISSION_SET_SUBMISSION_STARTED, new HashSet<>(
-				List.of(Transition.RELOAD_ASSESSMENT, Transition.SAVE_ASSESSMENT, Transition.SUBMIT_ASSESSMENT, Transition.ON_ZERO_POINTS_FOR_ASSESSMENT)));
-		this.transitions.put(State.COURSE_EXERCISE_SUBMISSION_SET_SUBMISSION_SAVED, new HashSet<>(
-				List.of(Transition.SAVE_ASSESSMENT, Transition.SUBMIT_ASSESSMENT, Transition.RELOAD_ASSESSMENT, Transition.ON_ZERO_POINTS_FOR_ASSESSMENT)));
+		this.transitions.put(State.COURSE_EXERCISE_SUBMISSION_SET_SUBMISSION_STARTED,
+				new HashSet<>(List.of(Transition.RELOAD_ASSESSMENT, Transition.SAVE_ASSESSMENT, Transition.SUBMIT_ASSESSMENT)));
+		this.transitions.put(State.COURSE_EXERCISE_SUBMISSION_SET_SUBMISSION_SAVED,
+				new HashSet<>(List.of(Transition.SAVE_ASSESSMENT, Transition.SUBMIT_ASSESSMENT, Transition.RELOAD_ASSESSMENT)));
 	}
 }

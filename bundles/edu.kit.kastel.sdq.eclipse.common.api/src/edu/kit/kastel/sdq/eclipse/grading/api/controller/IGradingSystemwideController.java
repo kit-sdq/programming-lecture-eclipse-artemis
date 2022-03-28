@@ -48,11 +48,6 @@ public interface IGradingSystemwideController extends ISystemwideController {
 	void loadAgain();
 
 	/**
-	 * TODO write doc
-	 */
-	void onZeroPointsForAssessment();
-
-	/**
 	 * <B>ASSESSMENT</B><br/>
 	 * <li>Deletes local project. Renews the lock and downloads the submission
 	 * project again.

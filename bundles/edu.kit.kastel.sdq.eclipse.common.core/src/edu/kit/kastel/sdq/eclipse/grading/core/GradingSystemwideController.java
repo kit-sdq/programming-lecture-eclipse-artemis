@@ -42,7 +42,7 @@ public class GradingSystemwideController extends SystemwideController implements
 	public GradingSystemwideController(final IPreferenceStore preferenceStore) {
 		super(preferenceStore.getString(PreferenceConstants.ARTEMIS_USER), //
 				preferenceStore.getString(PreferenceConstants.ARTEMIS_PASSWORD));
-		createController(preferenceStore.getString(PreferenceConstants.ARTEMIS_URL), //
+		this.createController(preferenceStore.getString(PreferenceConstants.ARTEMIS_URL), //
 				preferenceStore.getString(PreferenceConstants.ARTEMIS_USER), //
 				preferenceStore.getString(PreferenceConstants.ARTEMIS_PASSWORD) //
 		);
@@ -56,7 +56,7 @@ public class GradingSystemwideController extends SystemwideController implements
 
 	public GradingSystemwideController(final String artemisHost, final String username, final String password) {
 		super(username, password);
-		createController(artemisHost, username, password);
+		this.createController(artemisHost, username, password);
 	}
 
 	private void createController(final String artemisHost, final String username, final String password) {
@@ -104,7 +104,6 @@ public class GradingSystemwideController extends SystemwideController implements
 	}
 
 	/**
-	 *
 	 * @return this system's configDao.
 	 */
 	public ConfigDAO getConfigDao() {
@@ -165,18 +164,6 @@ public class GradingSystemwideController extends SystemwideController implements
 	}
 
 	@Override
-	public void onZeroPointsForAssessment() {
-		if (this.applyTransitionAndNotifyIfNotAllowed(Transition.ON_ZERO_POINTS_FOR_ASSESSMENT)) {
-			return;
-		}
-
-		if (this.artemisGUIController.saveAssessment(getCurrentAssessmentController(), exercise, this.submission, true, true)) {
-			this.getCurrentAssessmentController().deleteEclipseProject(this.projectFileNamingStrategy);
-			this.submission = null;
-		}
-	}
-
-	@Override
 	public void setExerciseId(final String exerciseShortName) throws ArtemisClientException {
 		if (this.applyTransitionAndNotifyIfNotAllowed(Transition.SET_EXERCISE_ID)) {
 			return;
@@ -219,7 +206,7 @@ public class GradingSystemwideController extends SystemwideController implements
 			return;
 		}
 
-		this.artemisGUIController.saveAssessment(getCurrentAssessmentController(), this.exercise, this.submission, false, false);
+		this.artemisGUIController.saveAssessment(this.getCurrentAssessmentController(), this.exercise, this.submission, false);
 	}
 
 	@Override
@@ -324,7 +311,7 @@ public class GradingSystemwideController extends SystemwideController implements
 			return;
 		}
 
-		if (this.artemisGUIController.saveAssessment(getCurrentAssessmentController(), this.exercise, this.submission, true, false)) {
+		if (this.artemisGUIController.saveAssessment(this.getCurrentAssessmentController(), this.exercise, this.submission, true)) {
 			this.getCurrentAssessmentController().deleteEclipseProject(this.projectFileNamingStrategy);
 			this.assessmentControllers.remove(this.submission.getSubmissionId());
 			this.submission = null;
@@ -378,6 +365,6 @@ public class GradingSystemwideController extends SystemwideController implements
 
 	@Override
 	public IGradingArtemisController getArtemisController() {
-		return artemisGUIController;
+		return this.artemisGUIController;
 	}
 }
