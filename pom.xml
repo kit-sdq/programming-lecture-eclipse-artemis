@@ -17,8 +17,8 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>11</java.version>
-        <java.api.doc>https://docs.oracle.com/en/java/javase/11/docs/api/</java.api.doc>
+        <java.version>17</java.version>
+        <java.api.doc>https://docs.oracle.com/en/java/javase/17/docs/api/</java.api.doc>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <xtext.version>2.19.0</xtext.version>
@@ -29,7 +29,7 @@
     <repositories>
         <repository>
             <id>Eclipse</id>
-            <url>http://download.eclipse.org/releases/2021-09</url>
+            <url>http://download.eclipse.org/releases/2021-12</url>
             <layout>p2</layout>
         </repository>
         <repository>
@@ -69,7 +69,6 @@
                 <version>${tycho.version}</version>
                 <extensions>true</extensions>
             </plugin>
-
             <!-- Creates source versions of bundles -->
             <plugin>
                 <groupId>org.eclipse.tycho</groupId>
@@ -134,7 +133,7 @@
                 <version>${tycho.version}</version>
                 <configuration>
                     <pomDependencies>consider</pomDependencies>
-                    <executionEnvironment>JavaSE-11</executionEnvironment>
+                    <executionEnvironment>JavaSE-17</executionEnvironment>
                     <environments>
                         <environment>
                             <os>linux</os>

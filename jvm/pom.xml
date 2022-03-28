@@ -12,14 +12,14 @@
 	</parent>
 	
 	<artifactId>edu.kit.kastel.sdq.eclipse.jvm</artifactId>
-	<version>11.0.13</version>
+	<version>17.0.2</version>
 	<packaging>pom</packaging>
 
 	<properties>
-		<download.url>https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.13%2B8/</download.url>
-		<download.file>OpenJDK11U-jdk_x64_</download.file>
+		<download.url>https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.2%2B8/</download.url>
+		<download.file>OpenJDK17U-jdk_x64_</download.file>
 		<download.filePostfix>os_arch.zip</download.filePostfix>
-		<download.unzippedFolder>jdk-11.0.13+8</download.unzippedFolder>
+		<download.unzippedFolder>jdk-17.0.2+8</download.unzippedFolder>
 		<download.type>zip</download.type>
 		<jre.folder>jre</jre.folder>
 	</properties>
