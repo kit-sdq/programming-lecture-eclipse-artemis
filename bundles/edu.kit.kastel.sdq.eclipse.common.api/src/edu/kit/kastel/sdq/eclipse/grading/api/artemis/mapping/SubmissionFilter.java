@@ -1,3 +1,4 @@
+/* Licensed under EPL-2.0 2022. */
 package edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping;
 
 import java.util.function.Predicate;
