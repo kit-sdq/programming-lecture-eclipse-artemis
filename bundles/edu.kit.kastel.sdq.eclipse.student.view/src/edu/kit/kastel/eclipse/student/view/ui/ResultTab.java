@@ -1,3 +1,4 @@
+/* Licensed under EPL-2.0 2022. */
 package edu.kit.kastel.eclipse.student.view.ui;
 
 import java.nio.charset.StandardCharsets;
