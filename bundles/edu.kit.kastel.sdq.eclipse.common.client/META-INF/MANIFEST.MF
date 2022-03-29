@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: edu.kit.kastel.sdq.eclipse.grading.client
 Bundle-SymbolicName: edu.kit.kastel.sdq.eclipse.common.client;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Require-Bundle: org.eclipse.core.commands,
  com.fasterxml.jackson.core.jackson-annotations,
  com.fasterxml.jackson.core.jackson-core,

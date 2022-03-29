@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: edu.kit.kastel.sdq.eclipse.grading.api
 Bundle-SymbolicName: edu.kit.kastel.sdq.eclipse.common.api
 Bundle-Version: 1.0.0.qualifier
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Export-Package: edu.kit.kastel.sdq.eclipse.grading.api,
  edu.kit.kastel.sdq.eclipse.grading.api.artemis,
  edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping,

@@ -12,7 +12,7 @@ Require-Bundle: org.eclipse.ui,
  edu.kit.kastel.sdq.eclipse.common.api,
  edu.kit.kastel.sdq.eclipse.common.client,
  edu.kit.kastel.sdq.eclipse.common.core
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: edu.kit.kastel.eclipse.common.view.activator.Activator
 Automatic-Module-Name: edu.kit.kastel.sdq.eclipse.common
