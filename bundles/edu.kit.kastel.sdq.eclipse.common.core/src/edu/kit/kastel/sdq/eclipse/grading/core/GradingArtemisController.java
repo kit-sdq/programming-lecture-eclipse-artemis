@@ -20,7 +20,6 @@ import edu.kit.kastel.sdq.eclipse.grading.api.model.IRatingGroup;
 import edu.kit.kastel.sdq.eclipse.grading.core.artemis.AnnotationMapper;
 import edu.kit.kastel.sdq.eclipse.grading.core.artemis.calculation.DefaultPenaltyCalculationStrategy;
 import edu.kit.kastel.sdq.eclipse.grading.core.artemis.calculation.IPenaltyCalculationStrategy;
-import edu.kit.kastel.sdq.eclipse.grading.core.artemis.calculation.ZeroedPenaltyCalculationStrategy;
 import edu.kit.kastel.sdq.eclipse.grading.core.messages.Messages;
 
 public class GradingArtemisController extends ArtemisController implements IGradingArtemisController {
@@ -48,8 +47,7 @@ public class GradingArtemisController extends ArtemisController implements IGrad
 	}
 
 	@Override
-	public boolean saveAssessment(IAssessmentController assessmentController, IExercise exercise, ISubmission submission, boolean submit,
-			boolean invalidSubmission) {
+	public boolean saveAssessment(IAssessmentController assessmentController, IExercise exercise, ISubmission submission, boolean submit) {
 		if (!this.lockResults.containsKey(submission.getSubmissionId())) {
 			throw new IllegalStateException("Assessment not started, yet!");
 		}
@@ -60,9 +58,7 @@ public class GradingArtemisController extends ArtemisController implements IGrad
 		final List<IMistakeType> mistakeTypes = assessmentController.getMistakes();
 		final List<IRatingGroup> ratingGroups = assessmentController.getRatingGroups();
 
-		IPenaltyCalculationStrategy calculator = invalidSubmission //
-				? new ZeroedPenaltyCalculationStrategy()
-				: new DefaultPenaltyCalculationStrategy(annotations, mistakeTypes);
+		IPenaltyCalculationStrategy calculator = new DefaultPenaltyCalculationStrategy(annotations, mistakeTypes);
 		try {
 			AnnotationMapper mapper = //
 					new AnnotationMapper(exercise, submission, annotations, mistakeTypes, ratingGroups,
