@@ -62,10 +62,10 @@ public class ExerciseArtemisController extends AbstractController implements IEx
 
 			var credentials = new UsernamePasswordCredentialsProvider(this.username, this.password);
 			// Download test repository
-			GitHandler.cloneRepo(projectDirectory, exercise.getTestRepositoryUrl(), Constants.MASTER_BRANCH_NAME, credentials);
+			GitHandler.cloneRepo(projectDirectory, exercise.getTestRepositoryUrl(), Constants.MAIN_BRANCH_NAME, credentials);
 			// download submission inside the exercise project directory
 			GitHandler.cloneRepo(namingStrategy.getAssignmentFileInProjectDirectory(projectDirectory), submission.getRepositoryUrl(),
-					Constants.MASTER_BRANCH_NAME, credentials);
+					Constants.MAIN_BRANCH_NAME, credentials);
 		} catch (GitException e) {
 			throw new ArtemisClientException("Unable to download exercise and submission: " + e.getMessage(), e);
 		}
@@ -81,7 +81,7 @@ public class ExerciseArtemisController extends AbstractController implements IEx
 
 			// Download test repository
 			var credentials = new UsernamePasswordCredentialsProvider(this.username, this.password);
-			GitHandler.cloneRepo(projectDirectory, repoUrl, Constants.MASTER_BRANCH_NAME, credentials);
+			GitHandler.cloneRepo(projectDirectory, repoUrl, Constants.MAIN_BRANCH_NAME, credentials);
 		} catch (GitException e) {
 			throw new ArtemisClientException("Unable to download exercise: " + e.getMessage(), e);
 		}
