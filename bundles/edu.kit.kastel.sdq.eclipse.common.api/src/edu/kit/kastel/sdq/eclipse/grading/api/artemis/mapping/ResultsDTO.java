@@ -20,7 +20,7 @@ public class ResultsDTO implements Serializable {
 	@JsonProperty
 	public Boolean successful;
 	@JsonProperty
-	public int score;
+	public double score;
 	@JsonProperty
 	public Boolean rated;
 	@JsonProperty
