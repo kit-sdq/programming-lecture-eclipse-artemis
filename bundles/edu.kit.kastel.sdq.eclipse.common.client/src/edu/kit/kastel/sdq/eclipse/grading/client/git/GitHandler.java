@@ -24,11 +24,10 @@ public final class GitHandler {
 
 	private static final String REMOTE_NAME = "origin";
 
-	public static void cloneRepo(final File destination, String repoURL, final String branch, CredentialsProvider credentials) throws GitException {
+	public static void cloneRepo(final File destination, String repoURL, CredentialsProvider credentials) throws GitException {
 		Repository repository = null;
 		try {
 			CloneCommand cloneRepository = Git.cloneRepository();
-			cloneRepository.setBranch(branch);
 			cloneRepository.setDirectory(destination);
 			cloneRepository.setRemote(REMOTE_NAME);
 			cloneRepository.setURI(String.valueOf(new URIish(repoURL)));
