@@ -1,7 +1,6 @@
 /* Licensed under EPL-2.0 2022. */
 package edu.kit.kastel.eclipse.student.view.ui;
 
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -26,6 +25,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
@@ -46,8 +46,8 @@ import edu.kit.kastel.sdq.eclipse.grading.core.model.annotation.Annotation;
 
 public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 	private static final String RELOAD_BTN_TEXT = "Reload";
-	private static final String LOAD_BTN_TEXT = "Loading...";
-	private static final String CHECK_MARK_IN_UTF8 = new String(new byte[] { (byte) 0xE2, (byte) 0x9C, (byte) 0x93 }, StandardCharsets.UTF_8);
+	private static final String CHECK_MARK_IN_UTF8 = "\u2713";
+	private static final String X_MARK_IN_UTF8 = "\u2717";
 
 	private StudentViewController viewController;
 
@@ -64,7 +64,7 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 	private Label lblResultExerciseDescription;
 	private Label lblResultExerciseShortName;
 	private Label lblPoints;
-	private Label btnLoading;
+	private ProgressBar loadingIndicator;
 
 	public ResultTab(final StudentViewController viewController) {
 		this.viewController = viewController;
@@ -98,24 +98,23 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 		labelFeedback.setFont(boldFont);
 		labelFeedback.setText("Latest Results");
 
-		Composite composite_1 = new Composite(composite, SWT.NONE);
-		composite_1.setLayout(new GridLayout(2, true));
-		composite_1.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
+		Composite headerComposite = new Composite(composite, SWT.NONE);
+		headerComposite.setLayout(new GridLayout(2, true));
+		headerComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
 
-		this.btnLoading = new Label(composite_1, SWT.SHADOW_IN | SWT.CENTER | SWT.BORDER);
-		GridData gd_btnRLoading = new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1);
-		gd_btnRLoading.widthHint = 80;
-		this.btnLoading.setLayoutData(gd_btnRLoading);
-		this.btnLoading.setText(LOAD_BTN_TEXT);
-		this.btnLoading.setVisible(false);
+		this.loadingIndicator = new ProgressBar(headerComposite, SWT.INDETERMINATE);
+		GridData gd_loadingIndicator = new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1);
+		gd_loadingIndicator.widthHint = 80;
+		this.loadingIndicator.setLayoutData(gd_loadingIndicator);
+		this.loadingIndicator.setVisible(false);
 
-		Button btnReload = new Button(composite_1, SWT.CENTER);
+		Button btnReload = new Button(headerComposite, SWT.CENTER);
 		btnReload.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, true, false, 1, 1));
 		btnReload.setText(RELOAD_BTN_TEXT);
 		this.addSelectionListenerForReloadButton(btnReload);
 
 		Label labelResult = new Label(this.feedbackContainerComposite, SWT.NONE);
-		labelResult.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		labelResult.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		labelResult.setText("Summary of the Results for the currently selected Exercise");
 
 		this.feedbackContentComposite = new Composite(this.feedbackContainerComposite, SWT.NONE);
@@ -174,11 +173,11 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 		boldFont = boldDescriptor.createFont(this.resultScore.getDisplay());
 		this.resultScore.setFont(boldFont);
 
-		Label labelFeedback2 = new Label(this.feedbackContentComposite, SWT.NONE);
-		boldDescriptor = FontDescriptor.createFrom(labelFeedback2.getFont()).setHeight(9);
-		boldFont = boldDescriptor.createFont(labelFeedback2.getDisplay());
-		labelFeedback2.setFont(boldFont);
-		labelFeedback2.setText("Summary of all visible Tests");
+		Label labelFeedbackSummary = new Label(this.feedbackContentComposite, SWT.NONE);
+		boldDescriptor = FontDescriptor.createFrom(labelFeedbackSummary.getFont()).setHeight(9);
+		boldFont = boldDescriptor.createFont(labelFeedbackSummary.getDisplay());
+		labelFeedbackSummary.setFont(boldFont);
+		labelFeedbackSummary.setText("Summary of all visible Tests");
 		this.createTableForFeedback(this.feedbackContentComposite);
 
 		scrolledCompositeFeedback.setContent(this.feedbackContainerComposite);
@@ -190,8 +189,7 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 	@Override
 	public void reset() {
 		this.feedbackContentComposite.setVisible(false);
-		this.btnLoading.setText(LOAD_BTN_TEXT);
-		this.btnLoading.setVisible(false);
+		this.loadingIndicator.setVisible(false);
 	}
 
 	private void addSelectionListenerForReloadButton(Button btn) {
@@ -279,7 +277,7 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 				item.setText(1, "" + roundedCredits);
 				item.setText(2, success);
 				item.setForeground(2, Display.getDefault().getSystemColor(successColor));
-				item.setText(3, feedback.getDetailText() != null ? CHECK_MARK_IN_UTF8 : "X");
+				item.setText(3, feedback.getDetailText() != null ? CHECK_MARK_IN_UTF8 : X_MARK_IN_UTF8);
 			}
 		}
 	}
@@ -312,14 +310,14 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 
 	@Override
 	public void handleSubmission(Object payload) {
-		Display.getDefault().syncExec(() -> this.btnLoading.setVisible(true));
+		Display.getDefault().syncExec(() -> this.loadingIndicator.setVisible(true));
 
 	}
 
 	@Override
 	public void handleResult(Object payload) {
 		Display.getDefault().syncExec(() -> {
-			this.btnLoading.setVisible(false);
+			this.loadingIndicator.setVisible(false);
 			this.getFeedbackForExcerise();
 		});
 
@@ -343,7 +341,7 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 	}
 
 	private void handleWebsocketError() {
-		this.btnLoading.setVisible(false);
+		this.loadingIndicator.setVisible(false);
 	}
 
 	@Override
