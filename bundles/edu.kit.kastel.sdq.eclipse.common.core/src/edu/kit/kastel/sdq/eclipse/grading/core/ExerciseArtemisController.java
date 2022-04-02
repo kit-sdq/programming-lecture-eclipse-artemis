@@ -10,7 +10,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.ArtemisClientException;
-import edu.kit.kastel.sdq.eclipse.grading.api.Constants;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IProjectFileNamingStrategy;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ICourse;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
@@ -62,10 +61,9 @@ public class ExerciseArtemisController extends AbstractController implements IEx
 
 			var credentials = new UsernamePasswordCredentialsProvider(this.username, this.password);
 			// Download test repository
-			GitHandler.cloneRepo(projectDirectory, exercise.getTestRepositoryUrl(), Constants.MASTER_BRANCH_NAME, credentials);
+			GitHandler.cloneRepo(projectDirectory, exercise.getTestRepositoryUrl(), credentials);
 			// download submission inside the exercise project directory
-			GitHandler.cloneRepo(namingStrategy.getAssignmentFileInProjectDirectory(projectDirectory), submission.getRepositoryUrl(),
-					Constants.MASTER_BRANCH_NAME, credentials);
+			GitHandler.cloneRepo(namingStrategy.getAssignmentFileInProjectDirectory(projectDirectory), submission.getRepositoryUrl(), credentials);
 		} catch (GitException e) {
 			throw new ArtemisClientException("Unable to download exercise and submission: " + e.getMessage(), e);
 		}
@@ -81,7 +79,7 @@ public class ExerciseArtemisController extends AbstractController implements IEx
 
 			// Download test repository
 			var credentials = new UsernamePasswordCredentialsProvider(this.username, this.password);
-			GitHandler.cloneRepo(projectDirectory, repoUrl, Constants.MASTER_BRANCH_NAME, credentials);
+			GitHandler.cloneRepo(projectDirectory, repoUrl, credentials);
 		} catch (GitException e) {
 			throw new ArtemisClientException("Unable to download exercise: " + e.getMessage(), e);
 		}
