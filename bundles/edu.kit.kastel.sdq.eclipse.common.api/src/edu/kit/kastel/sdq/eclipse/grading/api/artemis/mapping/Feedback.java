@@ -144,8 +144,8 @@ public class Feedback implements Comparable<Feedback>, Serializable {
 			return this.getFeedbackType() == FeedbackType.AUTOMATIC ? -1 : 1;
 		}
 
-		if (this.isMandatoryTest() != o.isMandatoryTest()) {
-			return this.isMandatoryTest() ? -1 : 1;
+		if (this.mandatoryTest() != o.mandatoryTest()) {
+			return this.mandatoryTest() ? -1 : 1;
 		}
 
 		String thisName = this.getText() == null ? "" : this.getText();
@@ -153,7 +153,7 @@ public class Feedback implements Comparable<Feedback>, Serializable {
 		return thisName.compareToIgnoreCase(otherName);
 	}
 
-	private boolean isMandatoryTest() {
+	private boolean mandatoryTest() {
 		// Only by naming convention so far, since Artemis has no "mandatory" tests.
 		return this.text != null && this.text.toLowerCase().contains("mandatory");
 	}
