@@ -56,6 +56,8 @@ public final class GitHandler {
 		try {
 			git = Git.open(exerciseRepo);
 			git.add().addFilepattern(".").call();
+			git.add().setUpdate(true).addFilepattern(".").call();
+			git.rm().addFilepattern(".").call();
 			git.commit().setCommitter(authorName, email).setMessage(commitMsg).setSign(false).call();
 			git.close();
 		} catch (GitAPIException | IOException e) {
@@ -116,7 +118,7 @@ public final class GitHandler {
 			throw new GitException("ERROR, can not open git repo for exercise " + exerciseRepo.getPath(), e);
 		}
 		try {
-			git.add().addFilepattern(".");
+			git.add().addFilepattern(".").call();
 			Status status = git.status().call();
 			Set<String> untrackedChanges = status.getUncommittedChanges();
 			git.reset().setMode(ResetType.HARD).call();
