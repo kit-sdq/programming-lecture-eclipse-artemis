@@ -110,7 +110,7 @@ public class CustomButtonDialog extends Dialog {
 
 			// Multiply by 10 because the selection internally stores the selection as an
 			// integer ignoring the decimal point. (0.5 ==> 5, 1 ==> 10)
-			this.customPenaltyInputField.setSelection((int) Objects.requireNonNullElse(customPenalty, 0d).doubleValue() * 10);
+			this.customPenaltyInputField.setSelection((int) (Objects.requireNonNullElse(customPenalty, 0d).doubleValue() * 10));
 		}
 
 		return comp;
