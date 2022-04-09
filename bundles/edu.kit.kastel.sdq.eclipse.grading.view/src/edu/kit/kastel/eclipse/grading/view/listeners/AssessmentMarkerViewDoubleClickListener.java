@@ -30,11 +30,8 @@ public class AssessmentMarkerViewDoubleClickListener implements IDoubleClickList
 		}
 
 		// instanceof is required... :(
-		if (event.getSelection() instanceof TreeSelection) {
-			TreeSelection selection = (TreeSelection) event.getSelection();
-			if (selection.getFirstElement() instanceof MarkerItem) {
-				MarkerItem item = (MarkerItem) selection.getFirstElement();
-
+		if (event.getSelection() instanceof TreeSelection selection) {
+			if (selection.getFirstElement() instanceof MarkerItem item) {
 				try {
 					IAnnotation annotation = Activator.getDefault().getSystemwideController().getCurrentAssessmentController()
 							.getAnnotationByUUID(item.getMarker().getAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_ANNOTATION_ID).toString())

@@ -88,9 +88,9 @@ public class ArtemisGradingView extends ViewPart {
 
 	private void initializeAnnotationEditing() {
 		IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-				.findView("edu.kit.kastel.eclipse.common.view.marker.AssessmentMarkerView");
-		if (view instanceof AssessmentMarkerView) {
-			((AssessmentMarkerView) view).addDoubleClickListener(new AssessmentMarkerViewDoubleClickListener(this));
+				.findView(AssessmentMarkerView.class.getName());
+		if (view instanceof AssessmentMarkerView markerView) {
+			markerView.addDoubleClickListener(new AssessmentMarkerViewDoubleClickListener(this));
 		}
 	}
 
