@@ -1,3 +1,4 @@
+/* Licensed under EPL-2.0 2022. */
 package edu.kit.kastel.sdq.eclipse.grading.api.backendstate;
 
 public enum Transition {
@@ -11,7 +12,6 @@ public enum Transition {
 	RELOAD_ASSESSMENT(State.COURSE_EXERCISE_SUBMISSION_SET_SUBMISSION_STARTED), //
 	SAVE_ASSESSMENT(State.COURSE_EXERCISE_SUBMISSION_SET_SUBMISSION_SAVED), //
 	SUBMIT_ASSESSMENT(State.COURSE_EXERCISE_SET), //
-	ON_ZERO_POINTS_FOR_ASSESSMENT(State.COURSE_EXERCISE_SET), //
 	ON_RESET(State.NO_STATE); //
 
 	private State to;

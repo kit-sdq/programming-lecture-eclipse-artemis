@@ -1,3 +1,4 @@
+/* Licensed under EPL-2.0 2022. */
 package edu.kit.kastel.eclipse.student.view.preferences;
 
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
@@ -35,13 +36,9 @@ public class ArtemisStudentPreferencesPage extends FieldEditorPreferencePage imp
 	 */
 	@Override
 	public void createFieldEditors() {
-
 		StringFieldEditor artemisUrl = new StringFieldEditor(PreferenceConstants.ARTEMIS_URL, "Artemis URL: ", this.getFieldEditorParent());
-
 		StringFieldEditor artemisUser = new StringFieldEditor(PreferenceConstants.ARTEMIS_USER, "Artemis username: ", this.getFieldEditorParent());
-
 		StringFieldEditor artemisPassword = new StringFieldEditor(PreferenceConstants.ARTEMIS_PASSWORD, "Artemis password: ", this.getFieldEditorParent());
-
 		artemisPassword.getTextControl(this.getFieldEditorParent()).setEchoChar('*');
 
 		this.addField(artemisUrl);

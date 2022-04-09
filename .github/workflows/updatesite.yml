@@ -5,9 +5,7 @@ name: Update Site
 
 on:
   push:
-    branches: [ main ]
-    paths-ignore:
-      - '**.md'
+    tags: "v**"
   workflow_dispatch:
 
 jobs:
@@ -20,8 +18,8 @@ jobs:
     - name: Set up JDK
       uses: actions/setup-java@v2
       with:
-        distribution: 'zulu'
-        java-version: 11
+        distribution: 'temurin'
+        java-version: 17
 
     - name: Cache Maven packages
       uses: actions/cache@v3
@@ -34,7 +32,7 @@ jobs:
       run: mvn -U -B package
 
     - name: Deploy GH Pages
-      uses: JamesIves/github-pages-deploy-action@v4.2.5
+      uses: JamesIves/github-pages-deploy-action@v4.3.0
       with:
         BRANCH: gh-pages 
         FOLDER: releng/edu.kit.kastel.sdq.eclipse.updatesite/target/repository

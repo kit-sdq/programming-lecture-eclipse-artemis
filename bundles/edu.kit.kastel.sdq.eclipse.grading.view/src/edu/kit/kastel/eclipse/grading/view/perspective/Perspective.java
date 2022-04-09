@@ -1,3 +1,4 @@
+/* Licensed under EPL-2.0 2022. */
 package edu.kit.kastel.eclipse.grading.view.perspective;
 
 import org.eclipse.ui.IFolderLayout;

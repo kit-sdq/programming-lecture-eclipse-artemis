@@ -1,4 +1,4 @@
-
+/* Licensed under EPL-2.0 2022. */
 package edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping;
 
 import java.io.Serializable;
@@ -134,11 +134,28 @@ public class Feedback implements Comparable<Feedback>, Serializable {
 
 	@Override
 	public int compareTo(Feedback o) {
-		// TODO: maybe add different sorting
-		if (this.getText() != null) {
-			return this.getText().compareToIgnoreCase(o.getText());
+		// Sort (1): Automatic before Manual
+		// Sort (2): Tests with name containing "Mandatory" before any other test
+
+		boolean similarType = this.getFeedbackType() == o.getFeedbackType()
+				|| this.getFeedbackType() != FeedbackType.AUTOMATIC && o.getFeedbackType() != FeedbackType.AUTOMATIC;
+
+		if (!similarType) {
+			return this.getFeedbackType() == FeedbackType.AUTOMATIC ? -1 : 1;
 		}
-		return 1;
+
+		if (this.mandatoryTest() != o.mandatoryTest()) {
+			return this.mandatoryTest() ? -1 : 1;
+		}
+
+		String thisName = this.getText() == null ? "" : this.getText();
+		String otherName = o.getText() == null ? "" : o.getText();
+		return thisName.compareToIgnoreCase(otherName);
+	}
+
+	private boolean mandatoryTest() {
+		// Only by naming convention so far, since Artemis has no "mandatory" tests.
+		return this.text != null && this.text.toLowerCase().contains("mandatory");
 	}
 
 	@Override

@@ -1,3 +1,4 @@
+/* Licensed under EPL-2.0 2022. */
 package edu.kit.kastel.sdq.eclipse.grading.client.rest;
 
 import javax.ws.rs.client.ClientBuilder;
@@ -12,12 +13,13 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.ArtemisClientException;
-import edu.kit.kastel.sdq.eclipse.grading.api.Constants;
 
 /**
  * Encapsulates methods to get data from and send data to Artemis
  */
 public abstract class AbstractArtemisClient {
+
+	private static final String PROTOCOL_PREFIX = "https://";
 
 	// paths
 	protected static final String PROGRAMMING_SUBMISSION_PATHPART = "programming-submissions";
@@ -46,8 +48,8 @@ public abstract class AbstractArtemisClient {
 
 	protected final String getRootURL() {
 		String endpoint = this.artemisHostname;
-		if (!endpoint.startsWith(Constants.HTTPS_PREFIX)) {
-			endpoint = Constants.HTTPS_PREFIX + endpoint;
+		if (!endpoint.startsWith(PROTOCOL_PREFIX)) {
+			endpoint = PROTOCOL_PREFIX + endpoint;
 		}
 
 		if (endpoint.endsWith("/")) {

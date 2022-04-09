@@ -1,3 +1,4 @@
+/* Licensed under EPL-2.0 2022. */
 package edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping;
 
 import java.io.Serializable;
@@ -19,7 +20,7 @@ public class ResultsDTO implements Serializable {
 	@JsonProperty
 	public Boolean successful;
 	@JsonProperty
-	public int score;
+	public double score;
 	@JsonProperty
 	public Boolean rated;
 	@JsonProperty

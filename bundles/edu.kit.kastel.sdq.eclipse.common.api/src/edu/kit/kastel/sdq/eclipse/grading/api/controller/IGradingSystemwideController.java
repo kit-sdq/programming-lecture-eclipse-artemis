@@ -1,3 +1,4 @@
+/* Licensed under EPL-2.0 2022. */
 package edu.kit.kastel.sdq.eclipse.grading.api.controller;
 
 import java.io.File;
@@ -46,11 +47,6 @@ public interface IGradingSystemwideController extends ISystemwideController {
 	 * <li>See docs/Zustandshaltung-Automat
 	 */
 	void loadAgain();
-
-	/**
-	 * TODO write doc
-	 */
-	void onZeroPointsForAssessment();
 
 	/**
 	 * <B>ASSESSMENT</B><br/>

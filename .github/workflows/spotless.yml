@@ -14,12 +14,14 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2.4.0
+      with:
+        fetch-depth: 0
 
     - name: Set up JDK
       uses: actions/setup-java@v2
       with:
-        distribution: 'zulu'
-        java-version: 11
+        distribution: 'temurin'
+        java-version: 17
       
     - name: Check with Spotless
       run: mvn clean spotless:check

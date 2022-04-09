@@ -5,7 +5,7 @@
   <parent>
 	<groupId>edu.kit.kastel.sdq.grading</groupId>
 	<artifactId>edu.kit.kastel.sdq.eclipse.jvm</artifactId>
-	<version>11.0.13</version>
+	<version>17.0.2</version>
     <relativePath>..</relativePath>
   </parent>
 
@@ -13,7 +13,7 @@
 	<packaging>eclipse-plugin</packaging>
 
 	<properties>
-		<download.filePostfix>linux_hotspot_11.0.13_8.tar.gz</download.filePostfix>
+		<download.filePostfix>linux_hotspot_17.0.2_8.tar.gz</download.filePostfix>
 		<download.type>gzip</download.type>
 	</properties>
 

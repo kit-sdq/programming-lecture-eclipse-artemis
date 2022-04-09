@@ -1,3 +1,4 @@
+/* Licensed under EPL-2.0 2022. */
 package edu.kit.kastel.eclipse.common.view.marker;
 
 import java.lang.reflect.Field;
