@@ -107,8 +107,9 @@ public class CustomButtonDialog extends Dialog {
 			this.customPenaltyInputField.setDigits(1);
 			this.customPenaltyInputField.setIncrement(5);
 			this.customPenaltyInputField.setLayoutData(data);
-			
-			// Multiply by 10 because the selection internally stores the selection as an integer ignoring the decimal point. (0.5 ==> 5, 1 ==> 10)
+
+			// Multiply by 10 because the selection internally stores the selection as an
+			// integer ignoring the decimal point. (0.5 ==> 5, 1 ==> 10)
 			this.customPenaltyInputField.setSelection((int) Objects.requireNonNullElse(customPenalty * 10, 0d).doubleValue());
 		}
 

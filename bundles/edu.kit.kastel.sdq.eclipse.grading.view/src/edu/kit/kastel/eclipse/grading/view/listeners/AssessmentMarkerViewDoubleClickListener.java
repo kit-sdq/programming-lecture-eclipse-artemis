@@ -1,3 +1,4 @@
+/* Licensed under EPL-2.0 2022. */
 package edu.kit.kastel.eclipse.grading.view.listeners;
 
 import java.util.NoSuchElementException;
@@ -30,8 +31,8 @@ public class AssessmentMarkerViewDoubleClickListener implements IDoubleClickList
 		}
 
 		// instanceof is required... :(
-		if (event.getSelection() instanceof TreeSelection selection) {
-			if (selection.getFirstElement() instanceof MarkerItem item) {
+		if (event.getSelection()instanceof TreeSelection selection) {
+			if (selection.getFirstElement()instanceof MarkerItem item) {
 				try {
 					IAnnotation annotation = Activator.getDefault().getSystemwideController().getCurrentAssessmentController()
 							.getAnnotationByUUID(item.getMarker().getAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_ANNOTATION_ID).toString())

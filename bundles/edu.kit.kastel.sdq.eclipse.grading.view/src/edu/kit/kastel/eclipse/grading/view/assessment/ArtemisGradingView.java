@@ -88,8 +88,7 @@ public class ArtemisGradingView extends ViewPart {
 	}
 
 	private void initializeAnnotationEditing() {
-		IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-				.findView(AssessmentMarkerView.class.getName());
+		IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(AssessmentMarkerView.class.getName());
 		if (view instanceof AssessmentMarkerView markerView) {
 			markerView.addDoubleClickListener(new AssessmentMarkerViewDoubleClickListener(this));
 		}
