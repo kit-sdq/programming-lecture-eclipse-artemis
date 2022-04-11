@@ -395,7 +395,7 @@ public class ArtemisStudentView extends ViewPart {
 			String examName = examCombo.getItem(examCombo.getSelectionIndex());
 			if ("None".equals(examName)) {
 				this.viewController.setExamToNull();
-				this.viewController.getExerciseShortNames(courseCombo.getItem(courseCombo.getSelectionIndex())).forEach(exerciseCombo::add);
+				this.addExerciseShortNamesToExerciseCombo(this.viewController.getExerciseShortNames(courseCombo.getItem(courseCombo.getSelectionIndex())));
 				this.resetExamPart();
 			} else {
 				this.loadTasksFromExam();
@@ -415,7 +415,7 @@ public class ArtemisStudentView extends ViewPart {
 			// After start exams contains exercises; therefore no endless loop.
 			this.loadTasksFromExam();
 		} else if (exercises != null) {
-			exercises.forEach(this.exerciseCombo::add);
+			this.addExerciseShortNamesToExerciseCombo(exercises);
 			this.handleExamComboEvent();
 		}
 	}
@@ -447,6 +447,10 @@ public class ArtemisStudentView extends ViewPart {
 		this.btnSubmitExcerise.setText("Submit: " + exerciseName);
 		this.btnClean.setText("Clean: " + exerciseName);
 		this.btnReset.setText("Reset: " + exerciseName);
+	}
+
+	private void addExerciseShortNamesToExerciseCombo(List<String> exerciseShortNames) {
+		exerciseShortNames.stream().sorted().forEachOrdered(this.exerciseCombo::add);
 	}
 
 	private void enableButtons() {
