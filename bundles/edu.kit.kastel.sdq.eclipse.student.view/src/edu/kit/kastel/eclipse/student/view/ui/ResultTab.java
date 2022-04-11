@@ -235,7 +235,7 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 	private void addResultToTab(ResultsDTO result, List<Feedback> feedbacks, IExercise exercise) {
 		Display display = Display.getDefault();
 		if (result != null) {
-			boolean success = Boolean.TRUE.equals(result.successful) || feedbacks != null //
+			boolean success = Boolean.TRUE.equals(result.successful) || feedbacks != null && !feedbacks.isEmpty() //
 					&& feedbacks.stream().filter(f -> f.getFeedbackType() == FeedbackType.AUTOMATIC).allMatch(f -> Boolean.TRUE.equals(f.getPositive()));
 
 			this.btnResultSuccessful.setForeground(success ? display.getSystemColor(SWT.COLOR_GREEN) : display.getSystemColor(SWT.COLOR_RED));
@@ -362,7 +362,7 @@ public class ResultTab implements ArtemisStudentTab, WebsocketCallback {
 
 	/**
 	 * creates markers for current annotations in the backend
-	 * 
+	 *
 	 * @param feedbacks
 	 */
 	public void createAnnotationsMarkers(List<Feedback> feedbacks) {
