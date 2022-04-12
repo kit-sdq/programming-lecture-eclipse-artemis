@@ -51,26 +51,23 @@ public final class GitHandler {
 	}
 
 	public static void commitExercise(String authorName, String email, String commitMsg, File exerciseRepo) throws GitException {
-		Git git;
+		Git git = openGit(exerciseRepo);
 		try {
-			git = Git.open(exerciseRepo);
 			git.add().addFilepattern(".").call();
 			git.add().setUpdate(true).addFilepattern(".").call();
 			git.rm().addFilepattern(".").call();
 			git.commit().setCommitter(authorName, email).setMessage(commitMsg).setSign(false).call();
 			git.close();
-		} catch (GitAPIException | IOException e) {
+		} catch (GitAPIException e) {
 			throw new GitException("ERROR, can not commit new changes " + exerciseRepo.getPath(), e);
+		} finally {
+			git.close();
 		}
+
 	}
 
 	public static void pushExercise(File exerciseRepo, CredentialsProvider credentials) throws GitException {
-		Git git;
-		try {
-			git = Git.open(exerciseRepo);
-		} catch (IOException e) {
-			throw new GitException("ERROR, can not open git repo for exercise " + exerciseRepo.getPath(), e);
-		}
+		Git git = openGit(exerciseRepo);
 
 		PushCommand pushCommand = git.push();
 		pushCommand.setCredentialsProvider(credentials);
@@ -78,7 +75,7 @@ public final class GitHandler {
 		try {
 			pushCommand.call().iterator().next();
 		} catch (GitAPIException e) {
-			throw new GitException("ERROR, can not push to origin git repo for exercise " + exerciseRepo.getPath(), e);
+			throw new GitException("Can't push to origin git repo for exercise " + exerciseRepo.getPath(), e);
 		} finally {
 			git.close();
 		}
@@ -86,12 +83,7 @@ public final class GitHandler {
 	}
 
 	public static void pullExercise(String gitUsername, String gitPassword, File exerciseRepo) throws GitException {
-		Git git;
-		try {
-			git = Git.open(exerciseRepo);
-		} catch (IOException e) {
-			throw new GitException("ERROR, can not open git repo for exercise " + exerciseRepo.getPath(), e);
-		}
+		Git git = openGit(exerciseRepo);
 
 		PullCommand pullCommand = git.pull();
 		pullCommand.setCredentialsProvider(new UsernamePasswordCredentialsProvider(gitUsername, gitPassword));
@@ -99,10 +91,10 @@ public final class GitHandler {
 		try {
 			PullResult result = pullCommand.call();
 			if (!result.isSuccessful()) {
-				throw new GitException("ERROR, can not push to origin git repo for exercise " + exerciseRepo.getPath());
+				throw new GitException("Can't pull from origin git repo for exercise " + exerciseRepo.getPath());
 			}
 		} catch (GitAPIException e) {
-			throw new GitException("ERROR, can not push to origin git repo for exercise " + exerciseRepo.getPath(), e);
+			throw new GitException("Can't pull from origin git repo for exercise " + exerciseRepo.getPath(), e);
 		} finally {
 			git.close();
 		}
@@ -110,12 +102,8 @@ public final class GitHandler {
 	}
 
 	public static Set<String> cleanRepo(File exerciseRepo) throws GitException {
-		Git git;
-		try {
-			git = Git.open(exerciseRepo);
-		} catch (IOException e) {
-			throw new GitException("ERROR, can not open git repo for exercise " + exerciseRepo.getPath(), e);
-		}
+		Git git = openGit(exerciseRepo);
+
 		try {
 			git.add().addFilepattern(".").call();
 			Status status = git.status().call();
@@ -123,9 +111,17 @@ public final class GitHandler {
 			git.reset().setMode(ResetType.HARD).call();
 			return untrackedChanges;
 		} catch (NoWorkTreeException | GitAPIException e) {
-			throw new GitException("ERROR, can not clean repository", e);
+			throw new GitException("Can't clean repository", e);
 		} finally {
 			git.close();
+		}
+	}
+
+	private static Git openGit(File repo) throws GitException {
+		try {
+			return Git.open(repo);
+		} catch (IOException e) {
+			throw new GitException("Can't open git repo for exercise " + repo.getPath(), e);
 		}
 	}
 

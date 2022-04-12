@@ -4,7 +4,6 @@ package edu.kit.kastel.sdq.eclipse.grading.core;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -95,7 +94,7 @@ public class AssessmentController extends AbstractController implements IAssessm
 
 	@Override
 	public List<IAnnotation> getAnnotations() {
-		return this.annotationDao.getAnnotations().stream().collect(Collectors.toUnmodifiableList());
+		return this.annotationDao.getAnnotations().stream().toList();
 	}
 
 	@Override

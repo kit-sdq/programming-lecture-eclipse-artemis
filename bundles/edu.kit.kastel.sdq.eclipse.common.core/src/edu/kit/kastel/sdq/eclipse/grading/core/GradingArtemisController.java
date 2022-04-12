@@ -4,7 +4,6 @@ package edu.kit.kastel.sdq.eclipse.grading.core;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.ArtemisClientException;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.ILockResult;
@@ -30,7 +29,7 @@ public class GradingArtemisController extends ArtemisController implements IGrad
 
 	@Override
 	public List<String> getExerciseShortNamesFromExam(final String examTitle) {
-		return this.getExercisesFromExam(examTitle).stream().map(IExercise::getShortName).collect(Collectors.toList());
+		return this.getExercisesFromExam(examTitle).stream().map(IExercise::getShortName).toList();
 	}
 
 	@Override

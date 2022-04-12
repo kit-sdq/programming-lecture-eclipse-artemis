@@ -38,7 +38,6 @@ class TestDetailsDialog extends Dialog {
 		shell.setLocation(newLeftPos, newTopPos);
 
 		this.createContents(shell);
-		// shell.pack();
 		shell.open();
 		Display display = this.getParent().getDisplay();
 		while (!shell.isDisposed()) {

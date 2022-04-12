@@ -87,7 +87,7 @@ public class GradingSystemwideController extends SystemwideController implements
 			return List.of();
 		}
 
-		return this.getArtemisController().getBegunSubmissions(this.exercise).stream().filter(submissionFilter).collect(Collectors.toList());
+		return this.getArtemisController().getBegunSubmissions(this.exercise).stream().filter(submissionFilter).toList();
 	}
 
 	@Override
@@ -101,7 +101,7 @@ public class GradingSystemwideController extends SystemwideController implements
 
 		return this.getBegunSubmissions(submissionFilter).stream().map(
 				sub -> this.projectFileNamingStrategy.getProjectFileInWorkspace(WorkspaceUtil.getWorkspaceFile(), this.getCurrentExercise(), sub).getName())
-				.sorted().collect(Collectors.toList());
+				.sorted().toList();
 	}
 
 	/**
@@ -246,7 +246,7 @@ public class GradingSystemwideController extends SystemwideController implements
 		for (ICourse c : this.getArtemisController().getCourses()) {
 			if (c.getShortName().equals(courseShortName)) {
 				this.course = c;
-				return c.getExercises().stream().map(IExercise::getShortName).collect(Collectors.toList());
+				return c.getExercises().stream().map(IExercise::getShortName).toList();
 			}
 		}
 		this.error("No Course with the given shortName \"" + courseShortName + "\" found.", null);

@@ -10,7 +10,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 
@@ -99,7 +98,7 @@ public class StudentSystemwideController extends SystemwideController implements
 
 		Optional<ParticipationDTO> participation = this.artemisGUIController.getParticipation(this.course, this.exercise);
 		if (participation.isEmpty()) {
-			this.warn("Can not create participation for exercise.");
+			this.warn("Can't create participation for exercise.");
 			return false;
 		}
 		// perform download. Revert state if that fails.
@@ -231,7 +230,7 @@ public class StudentSystemwideController extends SystemwideController implements
 	public IExam setExam(String examName) {
 		Optional<IExam> examOpt;
 		try {
-			examOpt = this.course.getExams().stream().filter(exam -> examName.equals(exam.getTitle())).findFirst();
+			examOpt = this.course.getExams().stream().filter(it -> examName.equals(it.getTitle())).findFirst();
 			return examOpt.orElse(null);
 		} catch (ArtemisClientException e) {
 			this.error("Can not set exam!", e);
@@ -247,7 +246,8 @@ public class StudentSystemwideController extends SystemwideController implements
 	@Override
 	public IStudentExam startExam() {
 		if (this.exam != null) {
-			return this.exam = this.artemisGUIController.startExam(this.course, this.exam.getExam(), this.getExam().isStarted());
+			this.exam = this.artemisGUIController.startExam(this.course, this.exam.getExam(), this.getExam().isStarted());
+			return this.exam;
 		}
 		return null;
 	}
@@ -295,7 +295,7 @@ public class StudentSystemwideController extends SystemwideController implements
 		for (ICourse c : this.getArtemisController().getCourses()) {
 			if (c.getShortName().equals(courseShortName)) {
 				this.course = c;
-				return c.getExercises().stream().map(IExercise::getShortName).collect(Collectors.toList());
+				return c.getExercises().stream().map(IExercise::getShortName).toList();
 			}
 		}
 		this.error("No Course with the given shortName \"" + courseShortName + "\" found.", null); //$NON-NLS-2$
@@ -317,7 +317,7 @@ public class StudentSystemwideController extends SystemwideController implements
 		if (this.exam == null || this.exam.getExam() == null || this.course == null) {
 			return this.artemisHost;
 		}
-		return String.format(this.artemisHost + "/courses/%d/exams/%d", this.course.getCourseId(), this.exam.getExam().getExamId());
+		return String.format("%s/courses/%d/exams/%d", this.artemisHost, this.course.getCourseId(), this.exam.getExam().getExamId());
 	}
 
 	private LocalDateTime convertToLocalDateTimeViaInstant(Date dateToConvert) {

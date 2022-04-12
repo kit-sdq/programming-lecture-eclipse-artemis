@@ -4,7 +4,12 @@ package edu.kit.kastel.sdq.eclipse.grading.api.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.Platform;
+
 public abstract class AbstractController implements IController {
+	private final ILog log = Platform.getLog(this.getClass());
+
 	private List<IAlertObserver> observers = new ArrayList<>();
 	private IConfirmObserver confirmObserver;
 
@@ -51,7 +56,7 @@ public abstract class AbstractController implements IController {
 	}
 
 	public boolean confirm(String msg) {
-		if (confirmObserver != null) {
+		if (this.confirmObserver != null) {
 			return this.confirmObserver.confirm(msg);
 		}
 		return false;
@@ -59,10 +64,7 @@ public abstract class AbstractController implements IController {
 
 	private void printToConsoleIfNoObserversRegistered(String msg, Throwable cause) {
 		if (this.observers.isEmpty()) {
-			System.err.println(msg);
-			if (cause != null) {
-				cause.printStackTrace(System.err);
-			}
+			this.log.error(msg, cause);
 		}
 	}
 

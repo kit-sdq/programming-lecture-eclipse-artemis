@@ -400,13 +400,11 @@ public class ArtemisGradingView extends ViewPart {
 
 					KeyboardAwareMouseListener listener = new KeyboardAwareMouseListener();
 					// Normal click
-					listener.setClickHandler(() -> {
-						this.viewController.addAssessmentAnnotation(mistake, null, null, mistake.getRatingGroup().getDisplayName());
-					}, SWT.BUTTON1);
+					listener.setClickHandler(//
+							() -> this.viewController.addAssessmentAnnotation(mistake, null, null, mistake.getRatingGroup().getDisplayName()), SWT.BUTTON1 //
+					);
 					// shift-click and middle-click
-					listener.setClickHandler(() -> {
-						this.createMistakePenaltyWithCustomMessageDialog(mistake);
-					}, SWT.SHIFT, SWT.BUTTON2);
+					listener.setClickHandler(() -> this.createMistakePenaltyWithCustomMessageDialog(mistake), SWT.SHIFT, SWT.BUTTON2);
 					// every click
 					listener.setClickHandlerForEveryClick(() -> {
 						this.updatePenalty(mistake.getRatingGroup().getDisplayName());
@@ -453,7 +451,7 @@ public class ArtemisGradingView extends ViewPart {
 		int idx = filterCombo.getSelectionIndex();
 		if (idx >= 0) {
 			String value = filterCombo.getItem(idx);
-			filter = Arrays.stream(SubmissionFilter.values()).filter(f -> f.name().equals(value)).findFirst().get();
+			filter = Arrays.stream(SubmissionFilter.values()).filter(f -> f.name().equals(value)).findFirst().orElse(SubmissionFilter.ALL);
 		}
 		this.viewController.getSubmissionsForBacklog(filter).forEach(backlogCombo::add);
 	}

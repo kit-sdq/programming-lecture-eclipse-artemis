@@ -3,7 +3,6 @@ package edu.kit.kastel.eclipse.student.view.controllers;
 
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import edu.kit.kastel.eclipse.common.view.controllers.AbstractArtemisViewController;
 import edu.kit.kastel.eclipse.student.view.activator.Activator;
@@ -79,7 +78,7 @@ public class StudentViewController extends AbstractArtemisViewController {
 
 	@Override
 	public List<String> getExercisesShortNamesForExam(String examShortName) {
-		return this.systemwideController.getExerciseShortNamesFromExam(examShortName).stream().map(IExercise::getShortName).collect(Collectors.toList());
+		return this.systemwideController.getExerciseShortNamesFromExam(examShortName).stream().map(IExercise::getShortName).toList();
 	}
 
 	public IExam setExam(String examName) {
