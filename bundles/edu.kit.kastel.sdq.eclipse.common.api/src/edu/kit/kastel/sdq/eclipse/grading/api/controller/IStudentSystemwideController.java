@@ -2,7 +2,6 @@
 package edu.kit.kastel.sdq.eclipse.grading.api.controller;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.ArtemisClientException;
@@ -13,19 +12,20 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IStudentExam;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ResultsDTO;
 import edu.kit.kastel.sdq.eclipse.grading.api.client.websocket.WebsocketCallback;
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IAnnotation;
+import edu.kit.kastel.sdq.eclipse.grading.api.util.Pair;
 
 public interface IStudentSystemwideController extends ISystemwideController {
 
 	/**
 	 * Commits and pushed selected exercise.
-	 * 
+	 *
 	 * @return true if successful
 	 */
 	boolean submitSolution();
 
 	/**
 	 * Cleans status of the selected exercise
-	 * 
+	 *
 	 * @return
 	 */
 	boolean cleanWorkspace();
@@ -33,27 +33,27 @@ public interface IStudentSystemwideController extends ISystemwideController {
 	/**
 	 * Returns map of all result and its feedbacks of the selected exercise.
 	 *
-	 * @return
+	 * @return the current result and all feedbacks
 	 */
-	Map<ResultsDTO, List<Feedback>> getFeedbackExcerise();
+	Pair<ResultsDTO, List<Feedback>> getFeedbackExcerise();
 
 	/**
 	 * True if the selected exercise is in the past.
-	 * 
+	 *
 	 * @return
 	 */
 	boolean isSelectedExerciseExpired();
 
 	/**
 	 * Returns the selected exercise.
-	 * 
+	 *
 	 * @return
 	 */
 	IExercise getCurrentSelectedExercise();
 
 	/**
 	 * Sets the exam as selected and returns it.
-	 * 
+	 *
 	 * @param examName
 	 * @return
 	 */
@@ -61,7 +61,7 @@ public interface IStudentSystemwideController extends ISystemwideController {
 
 	/**
 	 * Sets the exercise as selected. Exercise has to be an exercise of an exam.
-	 * 
+	 *
 	 * @param exerciseShortName
 	 * @throws ArtemisClientException
 	 */
@@ -69,7 +69,7 @@ public interface IStudentSystemwideController extends ISystemwideController {
 
 	/**
 	 * Returns the selected exam.
-	 * 
+	 *
 	 * @return
 	 */
 	IStudentExam getExam();
@@ -84,7 +84,7 @@ public interface IStudentSystemwideController extends ISystemwideController {
 	/**
 	 * Returns all short names of the exercises of the exam with name
 	 * "examShortName".
-	 * 
+	 *
 	 * @param examShortName
 	 * @return
 	 */
@@ -92,14 +92,14 @@ public interface IStudentSystemwideController extends ISystemwideController {
 
 	/**
 	 * Loads selected exercise into local workspace.
-	 * 
+	 *
 	 * @return true if successful, false if exercise already loaded.
 	 */
 	boolean loadExerciseForStudent();
 
 	/**
 	 * Connect to Artemis websocket.
-	 * 
+	 *
 	 * @param callback defines how to handle websocket events and errors.
 	 * @return
 	 */
@@ -112,7 +112,7 @@ public interface IStudentSystemwideController extends ISystemwideController {
 
 	/**
 	 * Calculates the link to access the selected exam in Artemis.
-	 * 
+	 *
 	 * @return url to artemis.
 	 */
 	String getExamUrlForCurrentExam();
@@ -120,14 +120,14 @@ public interface IStudentSystemwideController extends ISystemwideController {
 	/**
 	 * Deletes the currently selected exercise from workspace and clones it again
 	 * from origin.
-	 * 
+	 *
 	 * @return
 	 */
 	boolean resetSelectedExercise();
 
 	/**
 	 * True if exercise is in local workspace.
-	 * 
+	 *
 	 * @return
 	 */
 	boolean isSelectedExerciseInWorkspace();
@@ -138,7 +138,7 @@ public interface IStudentSystemwideController extends ISystemwideController {
 	void resetBackendState();
 
 	/**
-	 * 
+	 *
 	 * @return Annotations of currently selected exercise.
 	 */
 	Set<IAnnotation> getAnnotations();

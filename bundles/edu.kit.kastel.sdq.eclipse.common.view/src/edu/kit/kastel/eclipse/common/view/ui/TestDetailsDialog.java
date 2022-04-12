@@ -1,5 +1,5 @@
 /* Licensed under EPL-2.0 2022. */
-package edu.kit.kastel.eclipse.student.view.ui;
+package edu.kit.kastel.eclipse.common.view.ui;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -13,7 +13,7 @@ import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-public class TestDetailsDialog extends Dialog {
+class TestDetailsDialog extends Dialog {
 	private static final int WIDTH = 300;
 	private static final int HEIGHT = 300;
 

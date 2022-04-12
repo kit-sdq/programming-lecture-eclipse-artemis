@@ -11,7 +11,8 @@ Export-Package: edu.kit.kastel.sdq.eclipse.grading.api,
  edu.kit.kastel.sdq.eclipse.grading.api.client,
  edu.kit.kastel.sdq.eclipse.grading.api.client.websocket,
  edu.kit.kastel.sdq.eclipse.grading.api.controller,
- edu.kit.kastel.sdq.eclipse.grading.api.model
+ edu.kit.kastel.sdq.eclipse.grading.api.model,
+ edu.kit.kastel.sdq.eclipse.grading.api.util
 Require-Bundle: com.fasterxml.jackson.core.jackson-databind,
  com.fasterxml.jackson.core.jackson-core,
  com.fasterxml.jackson.core.jackson-annotations,

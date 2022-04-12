@@ -4,9 +4,7 @@ package edu.kit.kastel.sdq.eclipse.grading.core;
 import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -27,6 +25,7 @@ import edu.kit.kastel.sdq.eclipse.grading.api.client.websocket.IWebsocketClient;
 import edu.kit.kastel.sdq.eclipse.grading.api.client.websocket.WebsocketCallback;
 import edu.kit.kastel.sdq.eclipse.grading.api.controller.IStudentArtemisController;
 import edu.kit.kastel.sdq.eclipse.grading.api.controller.IWebsocketController;
+import edu.kit.kastel.sdq.eclipse.grading.api.util.Pair;
 import edu.kit.kastel.sdq.eclipse.grading.client.mappings.exam.ArtemisStudentExam;
 import edu.kit.kastel.sdq.eclipse.grading.client.websocket.ArtemisFeedbackWebsocket;
 import edu.kit.kastel.sdq.eclipse.grading.core.messages.Messages;
@@ -90,10 +89,10 @@ public class StudentArtemisController extends ArtemisController implements IStud
 	}
 
 	@Override
-	public Map<ResultsDTO, List<Feedback>> getFeedbackForExercise(ICourse course, IExercise exercise) {
+	public Pair<ResultsDTO, List<Feedback>> getFeedbackForExercise(ICourse course, IExercise exercise) {
 		Optional<ParticipationDTO> participationOpt = this.getParticipationForExercise(course, exercise);
 		if (participationOpt.isEmpty()) {
-			return new HashMap<>();
+			return Pair.empty();
 		}
 
 		ParticipationDTO participationWithResults;
@@ -104,36 +103,36 @@ public class StudentArtemisController extends ArtemisController implements IStud
 			this.error(
 					"Can't load results for selected exercise " + exercise.getShortName() + ".\n No results found. Please check if a solution was submitted.",
 					e);
-			return new HashMap<>();
+			return Pair.empty();
 		}
 
 		if (participationWithResults.getResults() == null) {
-			return new HashMap<>();
+			return Pair.empty();
 		}
 
-		Map<ResultsDTO, List<Feedback>> resultFeedbackMap = new HashMap<>();
+		var results = participationWithResults.getResults();
+		var result = results == null ? null : results[results.length - 1];
 
-		for (var result : participationWithResults.getResults()) {
-			if (result.hasFeedback) {
-				Feedback[] feedbacks = {};
-				try {
-					feedbacks = this.clientManager.getFeedbackArtemisClient().getFeedbackForResult(participationOpt.get(), result);
-				} catch (ArtemisClientException e) {
-					e.printStackTrace();
-					break;
-				}
-				resultFeedbackMap.put(result, Arrays.asList(feedbacks));
-			} else {
-				resultFeedbackMap.put(result, new ArrayList<>());
+		if (result == null) {
+			return Pair.empty();
+		}
+
+		if (Boolean.TRUE.equals(result.hasFeedback)) {
+			try {
+				Feedback[] feedbacks = this.clientManager.getFeedbackArtemisClient().getFeedbackForResult(participationOpt.get(), result);
+				return new Pair<>(result, Arrays.asList(feedbacks));
+			} catch (ArtemisClientException e) {
+				log.error(e.getMessage(), e);
 			}
+		} else {
+			return new Pair<>(result, new ArrayList<>());
 		}
 
-		if (resultFeedbackMap.isEmpty()) {
-			this.error("Can't load any feedback for selected exercise " + exercise.getShortName()
-					+ ".\n No feedback found. Please check if a solution was submitted.", null);
-		}
+		this.error(
+				"Can't load any feedback for selected exercise " + exercise.getShortName() + ".\n No feedback found. Please check if a solution was submitted.",
+				null);
 
-		return resultFeedbackMap;
+		return Pair.empty();
 	}
 
 	@Override

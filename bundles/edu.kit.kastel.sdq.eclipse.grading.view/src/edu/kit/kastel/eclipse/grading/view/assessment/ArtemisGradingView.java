@@ -58,6 +58,7 @@ public class ArtemisGradingView extends ViewPart {
 	private Combo exerciseCombo;
 	private Combo courseCombo;
 	private Label correctionCountLbl;
+	private ResultTab result;
 
 	public ArtemisGradingView() {
 		this.viewController = new AssessmentViewController();
@@ -145,6 +146,7 @@ public class ArtemisGradingView extends ViewPart {
 		btnSubmit.addListener(SWT.Selection, e -> {
 			this.viewController.onSubmitAssessment();
 			this.updateState();
+			this.result.reset();
 		});
 	}
 
@@ -203,6 +205,11 @@ public class ArtemisGradingView extends ViewPart {
 		scrolledCompositeBacklog.setMinSize(backlogComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 	}
 
+	private void createResultTab(TabFolder tabFolder) {
+		this.result = new ResultTab(Activator.getDefault().getSystemwideController());
+		this.result.create(tabFolder);
+	}
+
 	private void addSelectionListenerForFilterCombo(Combo backlogCombo, Combo filterCombo) {
 		filterCombo.addListener(SWT.Selection, e -> {
 			if (backlogCombo.getItemCount() == 0) {
@@ -259,9 +266,9 @@ public class ArtemisGradingView extends ViewPart {
 		Composite assessmentComposite = new Composite(scrolledCompositeAssessment, SWT.NONE);
 		assessmentComposite.setLayout(new GridLayout(2, false));
 
-		correctionCountLbl = new Label(assessmentComposite, SWT.NONE);
-		correctionCountLbl.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
-		correctionCountLbl.setText("");
+		this.correctionCountLbl = new Label(assessmentComposite, SWT.NONE);
+		this.correctionCountLbl.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+		this.correctionCountLbl.setText("");
 
 		Label lblCourse = new Label(assessmentComposite, SWT.NONE);
 		lblCourse.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
@@ -433,8 +440,9 @@ public class ArtemisGradingView extends ViewPart {
 
 	private void createView(Composite parent) {
 		TabFolder tabFolder = new TabFolder(parent, SWT.NONE);
-		this.createGradingTab(tabFolder);
 		this.createAssessmentTab(tabFolder);
+		this.createGradingTab(tabFolder);
+		this.createResultTab(tabFolder);
 		this.createBacklogTab(tabFolder);
 		this.updateState();
 	}
@@ -470,6 +478,7 @@ public class ArtemisGradingView extends ViewPart {
 		this.createGradingViewElements();
 		this.viewController.createAnnotationsMarkers();
 		this.viewController.getRatingGroups().forEach(ratingGroup -> this.updatePenalty(ratingGroup.getDisplayName()));
+		this.result.loadFeedbackForExcerise();
 	}
 
 	@Override
@@ -532,10 +541,11 @@ public class ArtemisGradingView extends ViewPart {
 	private void updateCorrectedSubmissionCount() {
 		if (this.exerciseCombo.getSelectionIndex() != -1) {
 			IGradingSystemwideController sc = Activator.getDefault().getSystemwideController();
-			correctionCountLbl.setText(String.format("Started submissions: %d  Submitted: %d", sc.getBegunSubmissionsProjectNames(SubmissionFilter.ALL).size(),
-					sc.getBegunSubmissionsProjectNames(SubmissionFilter.SAVED_AND_SUBMITTED).size()));
+			this.correctionCountLbl
+					.setText(String.format("Started submissions: %d  Submitted: %d", sc.getBegunSubmissionsProjectNames(SubmissionFilter.ALL).size(),
+							sc.getBegunSubmissionsProjectNames(SubmissionFilter.SAVED_AND_SUBMITTED).size()));
 		} else {
-			correctionCountLbl.setText("");
+			this.correctionCountLbl.setText("");
 		}
 	}
 
@@ -547,6 +557,8 @@ public class ArtemisGradingView extends ViewPart {
 
 	private void refreshArtemisState() {
 		this.viewController = new AssessmentViewController();
+		this.result.setController(Activator.getDefault().getSystemwideController());
+		this.result.reset();
 		this.resetCombos();
 		this.updateState();
 	}

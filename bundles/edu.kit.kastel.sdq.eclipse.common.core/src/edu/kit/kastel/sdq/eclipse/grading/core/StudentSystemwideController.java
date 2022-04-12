@@ -7,10 +7,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -33,6 +30,7 @@ import edu.kit.kastel.sdq.eclipse.grading.api.controller.IStudentSystemwideContr
 import edu.kit.kastel.sdq.eclipse.grading.api.controller.IWebsocketController;
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IAnnotation;
 import edu.kit.kastel.sdq.eclipse.grading.api.model.IMistakeType;
+import edu.kit.kastel.sdq.eclipse.grading.api.util.Pair;
 import edu.kit.kastel.sdq.eclipse.grading.core.artemis.AnnotationDeserializer;
 import edu.kit.kastel.sdq.eclipse.grading.core.artemis.WorkspaceUtil;
 import edu.kit.kastel.sdq.eclipse.grading.core.messages.Messages;
@@ -161,12 +159,12 @@ public class StudentSystemwideController extends SystemwideController implements
 	}
 
 	@Override
-	public Map<ResultsDTO, List<Feedback>> getFeedbackExcerise() {
+	public Pair<ResultsDTO, List<Feedback>> getFeedbackExcerise() {
 		if (this.nullCheckMembersAndNotify(true, true)) {
-			return new HashMap<>();
+			return Pair.empty();
 		}
 
-		Map<ResultsDTO, List<Feedback>> result = this.artemisGUIController.getFeedbackForExercise(this.course, this.exercise);
+		Pair<ResultsDTO, List<Feedback>> result = this.artemisGUIController.getFeedbackForExercise(this.course, this.exercise);
 		this.setAnnotations(result);
 		return result;
 	}
@@ -176,15 +174,16 @@ public class StudentSystemwideController extends SystemwideController implements
 		return this.annotationDao.getAnnotations();
 	}
 
-	private void setAnnotations(Map<ResultsDTO, List<Feedback>> feedbackMap) {
-		if (feedbackMap.isEmpty()) {
+	private void setAnnotations(Pair<ResultsDTO, List<Feedback>> feedbacks) {
+		// TODO Check: I think this should be deleted as not needed in Student View (and
+		// not accessible)
+		if (feedbacks.isEmpty()) {
 			return;
 		}
 		final AnnotationDeserializer annotationDeserializer = new AnnotationDeserializer(new ArrayList<>());
-		Entry<ResultsDTO, List<Feedback>> entry = feedbackMap.entrySet().iterator().next();
 		List<IAnnotation> annotations = new ArrayList<>();
 		try {
-			annotations = annotationDeserializer.deserialize(entry.getValue());
+			annotations = annotationDeserializer.deserialize(feedbacks.second());
 		} catch (IOException e) {
 			this.error(e.getMessage(), e);
 		}

@@ -33,7 +33,7 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IStudentExam;
 /**
  * This class creates the view elements for the artemis grading process. It is
  * build as a tab folder with four tabs: grading, assessment, exam and backlog.
- * 
+ *
  * @see {@link ViewPart}
  */
 public class ArtemisStudentView extends ViewPart {

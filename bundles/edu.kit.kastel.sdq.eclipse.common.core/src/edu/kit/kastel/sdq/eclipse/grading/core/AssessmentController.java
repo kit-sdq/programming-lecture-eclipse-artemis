@@ -10,7 +10,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.IProjectFileNamingStrategy;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.Feedback;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ICourse;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
@@ -106,8 +105,7 @@ public class AssessmentController extends AbstractController implements IAssessm
 
 	@Override
 	public List<IAnnotation> getAnnotations(String className) {
-		return this.annotationDao.getAnnotations().stream().filter(annotation -> annotation.getClassFilePath().equals(className))
-				.collect(Collectors.toUnmodifiableList());
+		return this.annotationDao.getAnnotations().stream().filter(annotation -> annotation.getClassFilePath().equals(className)).toList();
 	}
 
 	private ConfigDAO getConfigDao() {
@@ -173,14 +171,13 @@ public class AssessmentController extends AbstractController implements IAssessm
 
 	@Override
 	public String getTooltipForMistakeType(IMistakeType mistakeType) {
-		List<IAnnotation> annotations = //
-				this.getAnnotations().stream().filter(annotation -> annotation.getMistakeType().equals(mistakeType)).collect(Collectors.toList());
+		List<IAnnotation> annotations = this.getAnnotations().stream().filter(annotation -> annotation.getMistakeType().equals(mistakeType)).toList();
 		return mistakeType.getTooltip(annotations);
 	}
 
 	private void initializeWithDeserializedAnnotations() throws IOException {
 		final AnnotationDeserializer annotationDeserializer = new AnnotationDeserializer(this.getMistakes());
-		final List<Feedback> allFeedbacksGottenFromLocking = this.systemWideController.getArtemisController().getAllFeedbacksGottenFromLocking(this.submission);
+		var allFeedbacksGottenFromLocking = this.systemWideController.getArtemisController().getAllFeedbacksGottenFromLocking(this.submission).second();
 		if (allFeedbacksGottenFromLocking == null) {
 			throw new IOException("No feedbacks gotten from locking could be acquired.");
 		}

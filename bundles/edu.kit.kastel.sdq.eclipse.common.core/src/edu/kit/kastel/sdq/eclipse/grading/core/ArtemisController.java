@@ -19,8 +19,10 @@ import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExam;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExerciseGroup;
 import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ISubmission;
+import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ResultsDTO;
 import edu.kit.kastel.sdq.eclipse.grading.api.controller.AbstractController;
 import edu.kit.kastel.sdq.eclipse.grading.api.controller.IArtemisController;
+import edu.kit.kastel.sdq.eclipse.grading.api.util.Pair;
 import edu.kit.kastel.sdq.eclipse.grading.client.rest.RestClientManager;
 
 public abstract class ArtemisController extends AbstractController implements IArtemisController {
@@ -32,27 +34,29 @@ public abstract class ArtemisController extends AbstractController implements IA
 		this.clientManager = new RestClientManager(host, username, password);
 		this.lockResults = new HashMap<>();
 
-		loginOrNotify();
+		this.loginOrNotify();
 	}
 
 	protected abstract List<ICourse> fetchCourses();
 
 	@Override
 	public final List<ICourse> getCourses() {
-		if (courses == null) {
-			courses = fetchCourses();
+		if (this.courses == null) {
+			this.courses = this.fetchCourses();
 		}
-		return courses;
+		return this.courses;
 	}
 
 	@Override
-	public List<Feedback> getAllFeedbacksGottenFromLocking(ISubmission submission) {
+	public Pair<ResultsDTO, List<Feedback>> getAllFeedbacksGottenFromLocking(ISubmission submission) {
 		ILockResult lockResult = this.lockResults.get(submission.getSubmissionId());
 		if (lockResult == null) {
 			this.error("No Lock found for submissionID=" + submission.getSubmissionId(), null);
-			return List.of();
+			return new Pair<>(null, List.of());
 		}
-		return lockResult.getLatestFeedback();
+		var results = lockResult.getParticipation().getResults();
+		var result = results == null || results.length == 0 ? null : results[results.length - 1];
+		return new Pair<>(result, lockResult.getLatestFeedback());
 	}
 
 	@Override

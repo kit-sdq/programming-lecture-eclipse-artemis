@@ -36,10 +36,10 @@ public class ArtemisSockJsSessionHandler extends StompSessionHandlerAdapter {
 		List<String> topics = headers.get("destination");
 		if (!topics.isEmpty() && topics.get(0).equals(TOPIC_NEW_RESULT)) {
 			log.info("Websocket - new result received!");
-			callback.handleResult(payload);
+			this.callback.handleResult(payload);
 		} else if (!topics.isEmpty() && topics.get(0).equals(TOPIC_NEW_SUBMISSION)) {
 			log.info("Websocket - new submission received!");
-			callback.handleSubmission(payload);
+			this.callback.handleSubmission(payload);
 		}
 	}
 
@@ -52,12 +52,12 @@ public class ArtemisSockJsSessionHandler extends StompSessionHandlerAdapter {
 	@Override
 	public void handleException(StompSession session, StompCommand command, StompHeaders headers, byte[] payload, Throwable exception) {
 		log.error("WebsocketError", exception);
-		callback.handleException(exception);
+		this.callback.handleException(exception);
 	}
 
 	@Override
 	public void handleTransportError(StompSession session, Throwable exception) {
 		log.error("WebsocketError", exception);
-		callback.handleTransportError(exception);
+		this.callback.handleException(exception);
 	}
 }
