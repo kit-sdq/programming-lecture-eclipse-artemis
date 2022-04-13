@@ -8,16 +8,16 @@ import org.eclipse.swt.widgets.TabFolder;
 
 import edu.kit.kastel.eclipse.common.view.ui.AbstractResultTab;
 import edu.kit.kastel.eclipse.student.view.controllers.StudentViewController;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.Feedback;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ResultsDTO;
-import edu.kit.kastel.sdq.eclipse.grading.api.client.websocket.WebsocketCallback;
-import edu.kit.kastel.sdq.eclipse.grading.api.util.Pair;
+import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.Feedback;
+import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.ResultsDTO;
+import edu.kit.kastel.sdq.eclipse.common.api.client.websocket.WebsocketCallback;
+import edu.kit.kastel.sdq.eclipse.common.api.util.Pair;
 
 public class ResultTab extends AbstractResultTab implements ArtemisStudentTab, WebsocketCallback {
 	private StudentViewController viewController;
 
 	public ResultTab(StudentViewController viewController) {
+		super(true);
 		this.viewController = viewController;
 	}
 
@@ -37,8 +37,9 @@ public class ResultTab extends AbstractResultTab implements ArtemisStudentTab, W
 	}
 
 	@Override
-	protected IExercise getCurrentExercise() {
-		return this.viewController.getCurrentSelectedExercise();
+	protected String getCurrentExerciseTitle() {
+		var exercise = this.viewController.getCurrentSelectedExercise();
+		return exercise == null ? null : exercise.getTitle();
 	}
 
 	@Override
@@ -59,7 +60,7 @@ public class ResultTab extends AbstractResultTab implements ArtemisStudentTab, W
 	public void handleException(Throwable e) {
 		Display.getDefault().syncExec(() -> {
 			this.loadingFinished();
-			log.error(e.getMessage(), e);
+			this.log.error(e.getMessage(), e);
 		});
 
 	}

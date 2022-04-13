@@ -10,36 +10,33 @@ import org.eclipse.jface.text.ITextSelection;
 import edu.kit.kastel.eclipse.common.view.controllers.AbstractArtemisViewController;
 import edu.kit.kastel.eclipse.common.view.utilities.AssessmentUtilities;
 import edu.kit.kastel.eclipse.grading.view.activator.Activator;
-import edu.kit.kastel.sdq.eclipse.grading.api.ArtemisClientException;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.SubmissionFilter;
-import edu.kit.kastel.sdq.eclipse.grading.api.backendstate.Transition;
-import edu.kit.kastel.sdq.eclipse.grading.api.controller.IAssessmentController;
-import edu.kit.kastel.sdq.eclipse.grading.api.controller.IGradingSystemwideController;
-import edu.kit.kastel.sdq.eclipse.grading.api.controller.ISystemwideController;
-import edu.kit.kastel.sdq.eclipse.grading.api.model.IAnnotation;
-import edu.kit.kastel.sdq.eclipse.grading.api.model.IMistakeType;
-import edu.kit.kastel.sdq.eclipse.grading.api.model.IRatingGroup;
+import edu.kit.kastel.sdq.eclipse.common.api.ArtemisClientException;
+import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.SubmissionFilter;
+import edu.kit.kastel.sdq.eclipse.common.api.backendstate.Transition;
+import edu.kit.kastel.sdq.eclipse.common.api.controller.IAssessmentController;
+import edu.kit.kastel.sdq.eclipse.common.api.controller.IGradingSystemwideController;
+import edu.kit.kastel.sdq.eclipse.common.api.model.IAnnotation;
+import edu.kit.kastel.sdq.eclipse.common.api.model.IMistakeType;
+import edu.kit.kastel.sdq.eclipse.common.api.model.IRatingGroup;
 
 /**
  * This class is the controller for the grading view. It creates the marker for
  * the annotations and holds all controller for the backend calls.
- * 
+ *
  * @see {@link ArtemisStudentView}
  */
-public class AssessmentViewController extends AbstractArtemisViewController {
+public class AssessmentViewController extends AbstractArtemisViewController<IGradingSystemwideController> {
 	private IAssessmentController assessmentController;
-	private IGradingSystemwideController systemwideController;
 
 	public AssessmentViewController() {
-		Activator.getDefault().createSystemWideController();
-		this.systemwideController = Activator.getDefault().getSystemwideController();
+		super(Activator.getDefault().createNewSystemwideController());
 		this.initializeControllersAndObserver();
 	}
 
 	/**
 	 * This method creates a marker for the annotation and add a new annotation to
 	 * the backlog
-	 * 
+	 *
 	 * @param mistake         (the mistake type of the new annotation)
 	 * @param customMessage   (for custom mistake type, else null)
 	 * @param customPenalty   (for custom mistake, else null)
@@ -48,7 +45,7 @@ public class AssessmentViewController extends AbstractArtemisViewController {
 	public void addAssessmentAnnotation(IMistakeType mistake, String customMessage, Double customPenalty, String ratingGroupName) {
 		final ITextSelection textSelection = AssessmentUtilities.getTextSelection();
 		if (textSelection == null) {
-			this.alertObserver.error("Text selection needed to add a new annotation", null);
+			this.viewObserver.error("Text selection needed to add a new annotation", null);
 			return;
 		}
 		final int startLine = textSelection.getStartLine() + 1;
@@ -90,7 +87,7 @@ public class AssessmentViewController extends AbstractArtemisViewController {
 			 * Future Work: the error handling should be more specific (maybe for each
 			 * setAttribute(...)) without getting a too messy code
 			 */
-			this.alertObserver.error("Unable to create marker for annotation: " + e.getMessage(), e);
+			this.viewObserver.error("Unable to create marker for annotation: " + e.getMessage(), e);
 		}
 
 	}
@@ -105,14 +102,14 @@ public class AssessmentViewController extends AbstractArtemisViewController {
 					try {
 						AssessmentUtilities.createMarkerForAnnotation(annatoation, this.systemwideController.getCurrentProjectName(), "assignment/");
 					} catch (ArtemisClientException e) {
-						this.alertObserver.error("Unable to create marker for annotation", e);
+						this.viewObserver.error("Unable to create marker for annotation", e);
 					}
 				});
 	}
 
 	/**
 	 * Deletes an annotation on the backend
-	 * 
+	 *
 	 * @param id (of the annotation)
 	 */
 	public void deleteAnnotation(String uuid) {
@@ -233,21 +230,15 @@ public class AssessmentViewController extends AbstractArtemisViewController {
 	 */
 	public void setCurrentAssessmentController() {
 		this.assessmentController = this.systemwideController.getCurrentAssessmentController();
-		this.assessmentController.addAlertObserver(this.alertObserver);
+		this.assessmentController.setViewInteractionHandler(this.viewObserver);
 	}
 
 	/**
 	 * Request all possible transitions of the current state
-	 * 
+	 *
 	 * @return the possible transitions
 	 */
 	public Set<Transition> getPossiblyTransitions() {
 		return this.systemwideController.getCurrentlyPossibleTransitions();
 	}
-
-	@Override
-	protected ISystemwideController getSystemwideController() {
-		return this.systemwideController;
-	}
-
 }

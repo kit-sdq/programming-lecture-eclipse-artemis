@@ -1,15 +1,15 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: edu.kit.kastel.sdq.eclipse.grading.core
+Bundle-Name: edu.kit.kastel.sdq.eclipse.common.core
 Bundle-SymbolicName: edu.kit.kastel.sdq.eclipse.common.core
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-17
-Export-Package: edu.kit.kastel.sdq.eclipse.grading.core,
- edu.kit.kastel.sdq.eclipse.grading.core.artemis,
- edu.kit.kastel.sdq.eclipse.grading.core.artemis.calculation,
- edu.kit.kastel.sdq.eclipse.grading.core.config,
- edu.kit.kastel.sdq.eclipse.grading.core.model,
- edu.kit.kastel.sdq.eclipse.grading.core.model.annotation
+Export-Package: edu.kit.kastel.sdq.eclipse.common.core,
+ edu.kit.kastel.sdq.eclipse.common.core.artemis,
+ edu.kit.kastel.sdq.eclipse.common.core.artemis.calculation,
+ edu.kit.kastel.sdq.eclipse.common.core.config,
+ edu.kit.kastel.sdq.eclipse.common.core.model,
+ edu.kit.kastel.sdq.eclipse.common.core.model.annotation
 Require-Bundle: com.fasterxml.jackson.core.jackson-databind,
  com.fasterxml.jackson.core.jackson-core,
  com.fasterxml.jackson.core.jackson-annotations,
@@ -22,4 +22,4 @@ Require-Bundle: com.fasterxml.jackson.core.jackson-databind,
  edu.kit.kastel.sdq.eclipse.common.client,
  org.eclipse.jface,
  org.eclipse.jgit
-Automatic-Module-Name: edu.kit.kastel.sdq.eclipse.grading.core
+Automatic-Module-Name: edu.kit.kastel.sdq.eclipse.common.core

@@ -6,18 +6,18 @@ import java.util.List;
 import org.eclipse.swt.widgets.TabFolder;
 
 import edu.kit.kastel.eclipse.common.view.ui.AbstractResultTab;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.Feedback;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.FeedbackType;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ResultsDTO;
-import edu.kit.kastel.sdq.eclipse.grading.api.controller.IGradingSystemwideController;
-import edu.kit.kastel.sdq.eclipse.grading.api.util.Pair;
+import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.Feedback;
+import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.FeedbackType;
+import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.ResultsDTO;
+import edu.kit.kastel.sdq.eclipse.common.api.controller.IGradingSystemwideController;
+import edu.kit.kastel.sdq.eclipse.common.api.util.Pair;
 
 public class ResultTab extends AbstractResultTab {
 
 	private IGradingSystemwideController controller;
 
 	public ResultTab(IGradingSystemwideController controller) {
+		super(false);
 		this.controller = controller;
 	}
 
@@ -30,8 +30,9 @@ public class ResultTab extends AbstractResultTab {
 	}
 
 	@Override
-	protected IExercise getCurrentExercise() {
-		return this.controller.getCurrentAssessmentController().getExercise();
+	protected String getCurrentExerciseTitle() {
+		var exercise = this.controller.getCurrentAssessmentController().getExercise();
+		return exercise == null ? null : exercise.getTitle();
 	}
 
 	@Override

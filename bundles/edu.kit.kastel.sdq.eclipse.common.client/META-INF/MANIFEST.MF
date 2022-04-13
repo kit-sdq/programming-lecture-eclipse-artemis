@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: edu.kit.kastel.sdq.eclipse.grading.client
+Bundle-Name: edu.kit.kastel.sdq.eclipse.common.client
 Bundle-SymbolicName: edu.kit.kastel.sdq.eclipse.common.client;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-17
@@ -33,10 +33,10 @@ Require-Bundle: org.eclipse.core.commands,
  org.springframework.spring-websocket,
  org.springframework.spring-messaging,
  org.glassfish.tyrus.bundles.tyrus-standalone-client;bundle-version="[1.9.0,1.9.0]"
-Export-Package: edu.kit.kastel.sdq.eclipse.grading.client.git,
- edu.kit.kastel.sdq.eclipse.grading.client.mappings,
- edu.kit.kastel.sdq.eclipse.grading.client.mappings.exam,
- edu.kit.kastel.sdq.eclipse.grading.client.rest,
- edu.kit.kastel.sdq.eclipse.grading.client.websocket
-Automatic-Module-Name: edu.kit.kastel.sdq.eclipse.grading.client
+Export-Package: edu.kit.kastel.sdq.eclipse.common.client.git,
+ edu.kit.kastel.sdq.eclipse.common.client.mappings,
+ edu.kit.kastel.sdq.eclipse.common.client.mappings.exam,
+ edu.kit.kastel.sdq.eclipse.common.client.rest,
+ edu.kit.kastel.sdq.eclipse.common.client.websocket
+Automatic-Module-Name: edu.kit.kastel.sdq.eclipse.common.client
 Bundle-ClassPath: .

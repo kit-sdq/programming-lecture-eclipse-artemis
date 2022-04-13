@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.Feedback;
+import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.Feedback;
 
 abstract class ResultTabUI {
 	private static final String RELOAD_BTN_TEXT = "Reload";
@@ -42,8 +42,10 @@ abstract class ResultTabUI {
 	private Composite compositeFooter;
 	private ProgressBar loadingIndicator;
 
-	protected ResultTabUI() {
-		// NOP
+	private final boolean hasReloadFunctionality;
+
+	protected ResultTabUI(boolean hasReloadFunctionality) {
+		this.hasReloadFunctionality = hasReloadFunctionality;
 	}
 
 	protected void createTabFolder(TabFolder tabFolder) {
@@ -75,17 +77,18 @@ abstract class ResultTabUI {
 		headerComposite.setLayout(new GridLayout(2, true));
 		headerComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
 
-		this.loadingIndicator = new ProgressBar(headerComposite, SWT.INDETERMINATE);
-		GridData gdLoadingIndicator = new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1);
-		gdLoadingIndicator.widthHint = 80;
-		this.loadingIndicator.setLayoutData(gdLoadingIndicator);
-		this.loadingIndicator.setVisible(false);
+		if (this.hasReloadFunctionality) {
+			this.loadingIndicator = new ProgressBar(headerComposite, SWT.INDETERMINATE);
+			GridData gdLoadingIndicator = new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1);
+			gdLoadingIndicator.widthHint = 80;
+			this.loadingIndicator.setLayoutData(gdLoadingIndicator);
+			this.loadingIndicator.setVisible(false);
 
-		Button btnReload = new Button(headerComposite, SWT.CENTER);
-		btnReload.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, true, false, 1, 1));
-		btnReload.setText(RELOAD_BTN_TEXT);
-		btnReload.addListener(SWT.Selection, e -> this.reloadFeedbackForExcerise());
-
+			Button btnReload = new Button(headerComposite, SWT.CENTER);
+			btnReload.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, true, false, 1, 1));
+			btnReload.setText(RELOAD_BTN_TEXT);
+			btnReload.addListener(SWT.Selection, e -> this.reloadFeedbackForExcerise());
+		}
 		Label labelResult = new Label(this.feedbackContainerComposite, SWT.NONE);
 		labelResult.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		labelResult.setText("Summary of the Results for the currently selected Exercise");
@@ -162,16 +165,22 @@ abstract class ResultTabUI {
 	protected abstract void reloadFeedbackForExcerise();
 
 	protected final void loadingStarted() {
-		this.loadingIndicator.setVisible(true);
+		if (this.loadingIndicator != null) {
+			this.loadingIndicator.setVisible(true);
+		}
 	}
 
 	protected final void loadingFinished() {
-		this.loadingIndicator.setVisible(false);
+		if (this.loadingIndicator != null) {
+			this.loadingIndicator.setVisible(false);
+		}
 	}
 
 	protected final void resetView() {
 		this.feedbackContentComposite.setVisible(false);
-		this.loadingIndicator.setVisible(false);
+		if (this.loadingIndicator != null) {
+			this.loadingIndicator.setVisible(false);
+		}
 	}
 
 	protected final void layout() {
@@ -187,7 +196,7 @@ abstract class ResultTabUI {
 		this.feedbackTable.setHeaderVisible(true);
 		this.feedbackTable.setLayout(new GridLayout(1, true));
 		this.feedbackTable.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		String[] colNames = { "Name", "Credits", "Success", "Detailed Text" }; //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		String[] colNames = { "Name", "Credits", "Success", "Detailed Text" };
 		int[] width = { 200, 100, 100, 100 };
 
 		for (int loopIndex = 0; loopIndex < colNames.length; loopIndex++) {

@@ -15,31 +15,30 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
 import edu.kit.kastel.eclipse.common.view.utilities.AssessmentUtilities;
-import edu.kit.kastel.sdq.eclipse.grading.api.ArtemisClientException;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.Feedback;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.FeedbackType;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ResultsDTO;
-import edu.kit.kastel.sdq.eclipse.grading.api.model.IMistakeType;
-import edu.kit.kastel.sdq.eclipse.grading.api.util.Pair;
-import edu.kit.kastel.sdq.eclipse.grading.core.model.annotation.Annotation;
+import edu.kit.kastel.sdq.eclipse.common.api.ArtemisClientException;
+import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.Feedback;
+import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.FeedbackType;
+import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.ResultsDTO;
+import edu.kit.kastel.sdq.eclipse.common.api.model.IMistakeType;
+import edu.kit.kastel.sdq.eclipse.common.api.util.Pair;
+import edu.kit.kastel.sdq.eclipse.common.core.model.annotation.Annotation;
 
 public abstract class AbstractResultTab extends ResultTabUI {
 	private static final String CHECK_MARK_IN_UTF8 = "\u2713";
 	private static final String X_MARK_IN_UTF8 = "\u2717";
 
-	protected static final ILog log = Platform.getLog(AbstractResultTab.class);
+	protected final ILog log = Platform.getLog(this.getClass());
 
-	protected AbstractResultTab() {
-		// NOP
+	protected AbstractResultTab(boolean hasReloadFunctionality) {
+		super(hasReloadFunctionality);
 	}
 
 	/**
-	 * Get the exercise that is currently selected.
+	 * Get the exercise title that is currently selected.
 	 *
-	 * @return the current exercise
+	 * @return the current exercise title
 	 */
-	protected abstract IExercise getCurrentExercise();
+	protected abstract String getCurrentExerciseTitle();
 
 	/**
 	 * Get the latest result of the currently selected submission.
@@ -59,12 +58,12 @@ public abstract class AbstractResultTab extends ResultTabUI {
 
 	@Override
 	protected final void reloadFeedbackForExcerise() {
-		var currentExercise = this.getCurrentExercise();
+		var currentExerciseTitle = this.getCurrentExerciseTitle();
 		var resultFeedback = this.getCurrentResultAndFeedback();
 		var currentProjectFileForAnnotation = this.getCurrentProjectNameForAnnotations();
 
 		if (!resultFeedback.isEmpty()) {
-			this.handleNewResult(currentExercise, resultFeedback.first(), resultFeedback.second());
+			this.handleNewResult(currentExerciseTitle, resultFeedback.first(), resultFeedback.second());
 			if (currentProjectFileForAnnotation != null) {
 				this.createAnnotationsMarkers(currentProjectFileForAnnotation, resultFeedback.second());
 			}
@@ -74,7 +73,7 @@ public abstract class AbstractResultTab extends ResultTabUI {
 		}
 	}
 
-	private void addResultToTab(ResultsDTO result, List<Feedback> feedbacks, IExercise exercise) {
+	private void addResultToTab(String exerciseTitle, ResultsDTO result, List<Feedback> feedbacks) {
 		Display display = Display.getDefault();
 		if (result != null) {
 			boolean successOfAutomaticTests = this.calculateSuccessOfAutomaticTests(result, feedbacks);
@@ -82,8 +81,8 @@ public abstract class AbstractResultTab extends ResultTabUI {
 			this.btnResultSuccessful.setForeground(successOfAutomaticTests ? display.getSystemColor(SWT.COLOR_GREEN) : display.getSystemColor(SWT.COLOR_RED));
 			this.btnResultSuccessful.setText(successOfAutomaticTests ? "Test(s) succeeded" : "Test(s) failed");
 
-			if (exercise != null) {
-				this.lblResultExerciseShortName.setText(exercise.getTitle());
+			if (exerciseTitle != null) {
+				this.lblResultExerciseShortName.setText(exerciseTitle);
 				this.lblResultExerciseDescription.setText(result.toLocalDateTimeString());
 				this.resultScore.setText(result.resultString);
 				this.lblPoints.setText(String.format(Locale.ENGLISH, "Points: %.2f%%", result.score));
@@ -144,13 +143,12 @@ public abstract class AbstractResultTab extends ResultTabUI {
 		return Boolean.TRUE.equals(feedback.getPositive()) ? SWT.COLOR_GREEN : SWT.COLOR_RED;
 	}
 
-	private void handleNewResult(IExercise exercise, ResultsDTO result, List<Feedback> feedbacks) {
+	private void handleNewResult(String exerciseTitle, ResultsDTO result, List<Feedback> feedbacks) {
 		this.feedbackTable.removeAll();
 		this.addFeedbackToTable(this.feedbackTable, feedbacks);
-		this.addResultToTab(result, feedbacks, exercise);
+		this.addResultToTab(exerciseTitle, result, feedbacks);
 		this.feedbackContainerComposite.pack();
 		this.feedbackContentComposite.setVisible(true);
-
 	}
 
 	/**
@@ -169,13 +167,13 @@ public abstract class AbstractResultTab extends ResultTabUI {
 				try {
 					present.delete();
 				} catch (CoreException e) {
-					log.error(e.getMessage(), e);
+					this.log.error(e.getMessage(), e);
 				}
 			}
 			try {
 				AssessmentUtilities.createMarkerForAnnotation(annotation, currentProjectName, "src/");
 			} catch (ArtemisClientException e) {
-				log.error(e.getMessage(), e);
+				this.log.error(e.getMessage(), e);
 			}
 		}
 	}

@@ -9,7 +9,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import edu.kit.kastel.eclipse.grading.view.activator.Activator;
-import edu.kit.kastel.sdq.eclipse.grading.api.PreferenceConstants;
+import edu.kit.kastel.sdq.eclipse.common.api.PreferenceConstants;
 
 /**
  * This class represents a preference page that is contributed to the
