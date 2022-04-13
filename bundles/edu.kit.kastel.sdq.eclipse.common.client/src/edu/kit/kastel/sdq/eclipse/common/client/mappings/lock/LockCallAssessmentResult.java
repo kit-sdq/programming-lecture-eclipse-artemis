@@ -14,18 +14,12 @@ import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.Feedback;
  */
 public class LockCallAssessmentResult {
 
-	private String resultString;
 	private List<Feedback> feedbacks;
 
-	public LockCallAssessmentResult(@JsonProperty("resultString") String resultString, @JsonProperty("feedbacks") Feedback[] feedbacks) {
-		this.resultString = resultString;
+	public LockCallAssessmentResult(@JsonProperty("feedbacks") Feedback[] feedbacks) {
 		if (feedbacks != null) {
 			this.feedbacks = Arrays.asList(feedbacks);
 		}
-	}
-
-	public String getResultString() {
-		return this.resultString;
 	}
 
 	public List<Feedback> getFeedbacks() {
