@@ -5,7 +5,7 @@ import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
 
 import edu.kit.kastel.eclipse.grading.view.activator.Activator;
-import edu.kit.kastel.sdq.eclipse.grading.api.PreferenceConstants;
+import edu.kit.kastel.sdq.eclipse.common.api.PreferenceConstants;
 
 /**
  * Class used to initialize default preference values.

@@ -26,9 +26,9 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.part.ViewPart;
 
-import edu.kit.kastel.eclipse.student.view.Messages;
 import edu.kit.kastel.eclipse.student.view.controllers.StudentViewController;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IStudentExam;
+import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.IStudentExam;
+import edu.kit.kastel.sdq.eclipse.common.api.messages.Messages;
 
 /**
  * This class creates the view elements for the artemis grading process. It is
@@ -281,7 +281,7 @@ public class ArtemisStudentView extends ViewPart {
 
 		Label labelResult = new Label(resultComposite, SWT.NONE);
 		labelResult.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		labelResult.setText(Messages.EXAMTAB_REMEMBER);
+		labelResult.setText(Messages.STUDENT_ARTMIS_EXAMTAB_REMEMBER);
 
 		Link examLink = new Link(resultComposite, SWT.NONE);
 		examLink.setText("<a>Click Here to access Artemis to end your Exam</a>");
@@ -361,7 +361,7 @@ public class ArtemisStudentView extends ViewPart {
 			this.lblExamStart.setText("Starts at: " + exam.getExam().getStartDate());
 			this.btnStart.setEnabled(!exam.isStarted());
 			this.lblExamIsEnded.setText(exam.isEnded() ? "ended" : "not ended");
-			this.lblExamDescription.setText(!exam.isSubmitted() && exam.isEnded() ? Messages.ARTEMISSTUDENTVIEW_EXAM_NOT_SUBMITTED : "");
+			this.lblExamDescription.setText(!exam.isSubmitted() && exam.isEnded() ? Messages.STUDENT_ARTMIS_EXAM_NOT_SUBMITTED : "");
 
 			this.resultContentComposite.layout();
 			this.compositeFooter.layout();

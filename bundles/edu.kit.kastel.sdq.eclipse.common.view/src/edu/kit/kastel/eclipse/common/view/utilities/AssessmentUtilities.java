@@ -24,9 +24,9 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.ITextEditor;
 
-import edu.kit.kastel.sdq.eclipse.grading.api.ArtemisClientException;
-import edu.kit.kastel.sdq.eclipse.grading.api.model.IAnnotation;
-import edu.kit.kastel.sdq.eclipse.grading.api.model.IMistakeType;
+import edu.kit.kastel.sdq.eclipse.common.api.ArtemisClientException;
+import edu.kit.kastel.sdq.eclipse.common.api.model.IAnnotation;
+import edu.kit.kastel.sdq.eclipse.common.api.model.IMistakeType;
 
 /**
  * This class includes only static methods (or constants) for the assessment

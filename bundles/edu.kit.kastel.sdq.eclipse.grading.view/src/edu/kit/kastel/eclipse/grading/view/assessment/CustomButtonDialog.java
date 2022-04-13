@@ -18,8 +18,8 @@ import org.eclipse.swt.widgets.Text;
 
 import edu.kit.kastel.eclipse.grading.view.activator.Activator;
 import edu.kit.kastel.eclipse.grading.view.controllers.AssessmentViewController;
-import edu.kit.kastel.sdq.eclipse.grading.api.PreferenceConstants;
-import edu.kit.kastel.sdq.eclipse.grading.api.model.IMistakeType;
+import edu.kit.kastel.sdq.eclipse.common.api.PreferenceConstants;
+import edu.kit.kastel.sdq.eclipse.common.api.model.IMistakeType;
 
 /**
  * This class is the view class for the custom penalty dialog. It has two

@@ -6,24 +6,21 @@ import java.util.Set;
 
 import edu.kit.kastel.eclipse.common.view.controllers.AbstractArtemisViewController;
 import edu.kit.kastel.eclipse.student.view.activator.Activator;
-import edu.kit.kastel.sdq.eclipse.grading.api.ArtemisClientException;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.Feedback;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExam;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IExercise;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IStudentExam;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.ResultsDTO;
-import edu.kit.kastel.sdq.eclipse.grading.api.client.websocket.WebsocketCallback;
-import edu.kit.kastel.sdq.eclipse.grading.api.controller.IStudentSystemwideController;
-import edu.kit.kastel.sdq.eclipse.grading.api.controller.ISystemwideController;
-import edu.kit.kastel.sdq.eclipse.grading.api.model.IAnnotation;
-import edu.kit.kastel.sdq.eclipse.grading.api.util.Pair;
+import edu.kit.kastel.sdq.eclipse.common.api.ArtemisClientException;
+import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.Feedback;
+import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.IExam;
+import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.IExercise;
+import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.IStudentExam;
+import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.ResultsDTO;
+import edu.kit.kastel.sdq.eclipse.common.api.client.websocket.WebsocketCallback;
+import edu.kit.kastel.sdq.eclipse.common.api.controller.IStudentSystemwideController;
+import edu.kit.kastel.sdq.eclipse.common.api.model.IAnnotation;
+import edu.kit.kastel.sdq.eclipse.common.api.util.Pair;
 
-public class StudentViewController extends AbstractArtemisViewController {
-	private IStudentSystemwideController systemwideController;
+public class StudentViewController extends AbstractArtemisViewController<IStudentSystemwideController> {
 
 	public StudentViewController() {
-		Activator.getDefault().createSystemWideController();
-		this.systemwideController = Activator.getDefault().getSystemwideController();
+		super(Activator.getDefault().createSystemWideController());
 		this.initializeControllersAndObserver();
 	}
 
@@ -68,7 +65,7 @@ public class StudentViewController extends AbstractArtemisViewController {
 		try {
 			this.systemwideController.setExerciseIdWithSelectedExam(exerciseShortName);
 		} catch (ArtemisClientException e) {
-			this.alertObserver.error(e.getMessage(), e);
+			this.viewObserver.error(e.getMessage(), e);
 		}
 	}
 
@@ -91,11 +88,6 @@ public class StudentViewController extends AbstractArtemisViewController {
 
 	public IStudentExam startExam() {
 		return this.systemwideController.startExam();
-	}
-
-	@Override
-	protected ISystemwideController getSystemwideController() {
-		return this.systemwideController;
 	}
 
 	public String getExamUrlForCurrentExam() {
