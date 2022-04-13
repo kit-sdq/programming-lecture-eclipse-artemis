@@ -40,7 +40,6 @@ public class ParticipationDTO implements Serializable {
 	}
 
 	public ResultsDTO[] getResults() {
-		return results;
+		return this.results;
 	}
-
 }

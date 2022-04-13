@@ -15,7 +15,6 @@ import edu.kit.kastel.sdq.eclipse.common.api.artemis.AssessmentResult;
 import edu.kit.kastel.sdq.eclipse.common.api.artemis.ILockResult;
 import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.IExercise;
 import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.ISubmission;
-import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.ParticipationDTO;
 import edu.kit.kastel.sdq.eclipse.common.api.client.IAssessmentArtemisClient;
 import edu.kit.kastel.sdq.eclipse.common.client.mappings.lock.LockResult;
 
@@ -35,16 +34,16 @@ public class AssessmentArtemisClient extends AbstractArtemisClient implements IA
 	public AssessmentArtemisClient(final String hostName, String token) {
 		super(hostName);
 
-		this.endpoint = getEndpoint(this.getApiRootURL());
+		this.endpoint = this.getEndpoint(this.getApiRootURL());
 		this.token = token;
 	}
 
 	@Override
-	public void saveAssessment(ParticipationDTO participation, boolean submit, AssessmentResult assessment) throws ArtemisClientException {
+	public void saveAssessment(int participationId, boolean submit, AssessmentResult assessment) throws ArtemisClientException {
 		String assessmentPayload = this.payload(assessment);
 		log.info(String.format("Saving assessment for submission %s with json: %s", assessment.getId(), assessmentPayload));
 
-		final Response rsp = this.endpoint.path(PARTICIPATION_PATHPART).path(String.valueOf(participation.getParticipationID())) //
+		final Response rsp = this.endpoint.path(PARTICIPATION_PATHPART).path(String.valueOf(participationId)) //
 				.path(MANUAL_RESULT_PATHPART) //
 				.queryParam(SUBMIT_QUERY_PARAM, submit) //
 				.request().header(AUTHORIZATION_NAME, this.token).buildPut(Entity.json(assessmentPayload)).invoke();
@@ -70,7 +69,6 @@ public class AssessmentArtemisClient extends AbstractArtemisClient implements IA
 			// no assessment left!
 			return Optional.empty();
 		}
-
 		return Optional.of(this.read(rsp.readEntity(String.class), LockResult.class));
 	}
 

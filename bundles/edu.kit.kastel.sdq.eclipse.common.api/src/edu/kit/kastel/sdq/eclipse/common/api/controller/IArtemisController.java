@@ -9,8 +9,6 @@ import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.ICourse;
 import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.IExam;
 import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.IExercise;
 import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.ISubmission;
-import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.ResultsDTO;
-import edu.kit.kastel.sdq.eclipse.common.api.util.Pair;
 
 /**
  * Works as an interface from backend to REST-clients
@@ -22,7 +20,7 @@ public interface IArtemisController extends IController {
 	 * @return all IFeedbacks that were gotten in the process of locking the given
 	 *         submission.
 	 */
-	Pair<ResultsDTO, List<Feedback>> getAllFeedbacksGottenFromLocking(ISubmission submission);
+	List<Feedback> getAllFeedbacksGottenFromLocking(ISubmission submission);
 
 	/**
 	 *

@@ -18,10 +18,8 @@ import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.IExam;
 import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.IExercise;
 import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.IExerciseGroup;
 import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.ISubmission;
-import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.ResultsDTO;
 import edu.kit.kastel.sdq.eclipse.common.api.controller.AbstractController;
 import edu.kit.kastel.sdq.eclipse.common.api.controller.IArtemisController;
-import edu.kit.kastel.sdq.eclipse.common.api.util.Pair;
 import edu.kit.kastel.sdq.eclipse.common.client.rest.RestClientManager;
 
 public abstract class ArtemisController extends AbstractController implements IArtemisController {
@@ -47,15 +45,13 @@ public abstract class ArtemisController extends AbstractController implements IA
 	}
 
 	@Override
-	public Pair<ResultsDTO, List<Feedback>> getAllFeedbacksGottenFromLocking(ISubmission submission) {
+	public List<Feedback> getAllFeedbacksGottenFromLocking(ISubmission submission) {
 		ILockResult lockResult = this.lockResults.get(submission.getSubmissionId());
 		if (lockResult == null) {
 			this.error("No Lock found for submissionID=" + submission.getSubmissionId(), null);
-			return new Pair<>(null, List.of());
+			return List.of();
 		}
-		var results = lockResult.getParticipation().getResults();
-		var result = results == null || results.length == 0 ? null : results[results.length - 1];
-		return new Pair<>(result, lockResult.getLatestFeedback());
+		return lockResult.getLatestFeedback();
 	}
 
 	@Override

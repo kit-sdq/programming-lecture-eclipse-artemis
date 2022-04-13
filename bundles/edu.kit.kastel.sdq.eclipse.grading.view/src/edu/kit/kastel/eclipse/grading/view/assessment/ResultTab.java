@@ -8,9 +8,9 @@ import org.eclipse.swt.widgets.TabFolder;
 import edu.kit.kastel.eclipse.common.view.ui.AbstractResultTab;
 import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.Feedback;
 import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.FeedbackType;
-import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.ResultsDTO;
+import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.IExercise;
 import edu.kit.kastel.sdq.eclipse.common.api.controller.IGradingSystemwideController;
-import edu.kit.kastel.sdq.eclipse.common.api.util.Pair;
+import edu.kit.kastel.sdq.eclipse.common.api.util.Triple;
 
 public class ResultTab extends AbstractResultTab {
 
@@ -30,18 +30,19 @@ public class ResultTab extends AbstractResultTab {
 	}
 
 	@Override
-	protected String getCurrentExerciseTitle() {
-		var exercise = this.controller.getCurrentAssessmentController().getExercise();
-		return exercise == null ? null : exercise.getTitle();
+	protected IExercise getCurrentExercise() {
+		return this.controller.getCurrentAssessmentController().getExercise();
 	}
 
 	@Override
-	protected Pair<ResultsDTO, List<Feedback>> getCurrentResultAndFeedback() {
+	protected Triple<String, String, List<Feedback>> getCurrentResultAndFeedback() {
 		var submission = this.controller.getCurrentAssessmentController().getSubmission();
 		var feedbacks = this.controller.getArtemisController().getAllFeedbacksGottenFromLocking(submission);
+		// TODO Extract these strings from Artemis request
+		String completionTime = null;
+		String resultText = null;
 
-		return new Pair<>(feedbacks.first() == null ? new ResultsDTO() : feedbacks.first(),
-				feedbacks.second().stream().filter(f -> f.getFeedbackType() == FeedbackType.AUTOMATIC).toList());
+		return new Triple<>(completionTime, resultText, feedbacks.stream().filter(f -> f.getFeedbackType() == FeedbackType.AUTOMATIC).toList());
 	}
 
 	@Override

@@ -16,14 +16,15 @@ public class LockResult implements ILockResult {
 	private static final long serialVersionUID = -3787474578751131899L;
 
 	private int submissionId;
+	private int participationId;
+
 	private List<Feedback> latestFeedback;
-	private ParticipationDTO participation;
 
 	@JsonCreator
 	public LockResult(@JsonProperty("id") int submissionID, @JsonProperty("results") List<LockCallAssessmentResult> previousAssessmentresults,
 			@JsonProperty("participation") ParticipationDTO participation) {
 		this.submissionId = submissionID;
-		this.participation = participation;
+		this.participationId = participation.getParticipationID();
 
 		this.latestFeedback = new ArrayList<>();
 		LockCallAssessmentResult latestResult = previousAssessmentresults.isEmpty() //
@@ -36,8 +37,8 @@ public class LockResult implements ILockResult {
 	}
 
 	@Override
-	public ParticipationDTO getParticipation() {
-		return this.participation;
+	public int getParticipationId() {
+		return this.participationId;
 	}
 
 	@Override

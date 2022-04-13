@@ -18,9 +18,9 @@ import edu.kit.kastel.eclipse.common.view.utilities.AssessmentUtilities;
 import edu.kit.kastel.sdq.eclipse.common.api.ArtemisClientException;
 import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.Feedback;
 import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.FeedbackType;
-import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.ResultsDTO;
+import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.IExercise;
 import edu.kit.kastel.sdq.eclipse.common.api.model.IMistakeType;
-import edu.kit.kastel.sdq.eclipse.common.api.util.Pair;
+import edu.kit.kastel.sdq.eclipse.common.api.util.Triple;
 import edu.kit.kastel.sdq.eclipse.common.core.model.annotation.Annotation;
 
 public abstract class AbstractResultTab extends ResultTabUI {
@@ -38,14 +38,15 @@ public abstract class AbstractResultTab extends ResultTabUI {
 	 *
 	 * @return the current exercise title
 	 */
-	protected abstract String getCurrentExerciseTitle();
+	protected abstract IExercise getCurrentExercise();
 
 	/**
 	 * Get the latest result of the currently selected submission.
 	 *
-	 * @return the current feedback
+	 * @return the current feedback as
+	 *         {@code [String completionTime, String resultString, List<Feedback> feedbacks]}
 	 */
-	protected abstract Pair<ResultsDTO, List<Feedback>> getCurrentResultAndFeedback();
+	protected abstract Triple<String, String, List<Feedback>> getCurrentResultAndFeedback();
 
 	/**
 	 * Get the project name of the currently selected project in eclipse to add
@@ -58,14 +59,16 @@ public abstract class AbstractResultTab extends ResultTabUI {
 
 	@Override
 	protected final void reloadFeedbackForExcerise() {
-		var currentExerciseTitle = this.getCurrentExerciseTitle();
+		var currentExercise = this.getCurrentExercise();
 		var resultFeedback = this.getCurrentResultAndFeedback();
 		var currentProjectFileForAnnotation = this.getCurrentProjectNameForAnnotations();
 
 		if (!resultFeedback.isEmpty()) {
-			this.handleNewResult(currentExerciseTitle, resultFeedback.first(), resultFeedback.second());
+			// IExercise currentExercise, String completionTime, String resultString,
+			// List<Feedback> feedbacks
+			this.handleNewResult(currentExercise, resultFeedback.first(), resultFeedback.second(), resultFeedback.third());
 			if (currentProjectFileForAnnotation != null) {
-				this.createAnnotationsMarkers(currentProjectFileForAnnotation, resultFeedback.second());
+				this.createAnnotationsMarkers(currentProjectFileForAnnotation, resultFeedback.third());
 			}
 		} else {
 			this.feedbackTable.removeAll();
@@ -73,30 +76,44 @@ public abstract class AbstractResultTab extends ResultTabUI {
 		}
 	}
 
-	private void addResultToTab(String exerciseTitle, ResultsDTO result, List<Feedback> feedbacks) {
+	private void addResultToTab(IExercise currentExercise, String completionTime, String resultString, List<Feedback> feedbacks) {
 		Display display = Display.getDefault();
-		if (result != null) {
-			boolean successOfAutomaticTests = this.calculateSuccessOfAutomaticTests(result, feedbacks);
 
-			this.btnResultSuccessful.setForeground(successOfAutomaticTests ? display.getSystemColor(SWT.COLOR_GREEN) : display.getSystemColor(SWT.COLOR_RED));
-			this.btnResultSuccessful.setText(successOfAutomaticTests ? "Test(s) succeeded" : "Test(s) failed");
+		boolean successOfAutomaticTests = this.calculateSuccessOfAutomaticTests(feedbacks);
+		double points = this.calculatePoints(currentExercise, feedbacks);
 
-			if (exerciseTitle != null) {
-				this.lblResultExerciseShortName.setText(exerciseTitle);
-				this.lblResultExerciseDescription.setText(result.toLocalDateTimeString());
-				this.resultScore.setText(result.resultString);
-				this.lblPoints.setText(String.format(Locale.ENGLISH, "Points: %.2f%%", result.score));
-				this.layout();
-			} else {
-				this.resultScore.setText(Double.toString(result.score));
-			}
-		}
+		double score = this.calculateScore(currentExercise, points);
+
+		String title = currentExercise == null ? "Unknown Task" : currentExercise.getTitle();
+
+		this.btnResultSuccessful.setForeground(successOfAutomaticTests ? display.getSystemColor(SWT.COLOR_GREEN) : display.getSystemColor(SWT.COLOR_RED));
+		this.btnResultSuccessful.setText(successOfAutomaticTests ? "Test(s) succeeded" : "Test(s) failed");
+
+		this.lblResultExerciseShortName.setText(title);
+		this.lblResultExerciseDescription.setText(completionTime == null ? "" : completionTime);
+		this.resultScore.setText(resultString == null ? String.format(Locale.ENGLISH, "Score: %.2f%%", score) : resultString);
+		this.lblPoints.setText(String.format(Locale.ENGLISH, "Points: %.2f", points));
+		this.layout();
+
 	}
 
-	private boolean calculateSuccessOfAutomaticTests(ResultsDTO result, List<Feedback> feedbacks) {
-		if (Boolean.TRUE.equals(result.successful)) {
-			return true;
+	private double calculatePoints(IExercise exercise, List<Feedback> feedbacks) {
+		if (exercise == null || feedbacks == null) {
+			return Double.NaN;
 		}
+		return feedbacks.stream().mapToDouble(f -> f.getCredits() == null ? 0.0 : f.getCredits()).sum();
+	}
+
+	private double calculateScore(IExercise exercise, double points) {
+		if (exercise == null || Double.isNaN(points)) {
+			return Double.NaN;
+		}
+
+		points = Math.max(0, Math.min(exercise.getMaxPoints(), points));
+		return points / exercise.getMaxPoints() * 100;
+	}
+
+	private boolean calculateSuccessOfAutomaticTests(List<Feedback> feedbacks) {
 		if (feedbacks == null || feedbacks.isEmpty()) {
 			return false;
 		}
@@ -143,10 +160,10 @@ public abstract class AbstractResultTab extends ResultTabUI {
 		return Boolean.TRUE.equals(feedback.getPositive()) ? SWT.COLOR_GREEN : SWT.COLOR_RED;
 	}
 
-	private void handleNewResult(String exerciseTitle, ResultsDTO result, List<Feedback> feedbacks) {
+	private void handleNewResult(IExercise currentExercise, String completionTime, String resultString, List<Feedback> feedbacks) {
 		this.feedbackTable.removeAll();
 		this.addFeedbackToTable(this.feedbackTable, feedbacks);
-		this.addResultToTab(exerciseTitle, result, feedbacks);
+		this.addResultToTab(currentExercise, completionTime, resultString, feedbacks);
 		this.feedbackContainerComposite.pack();
 		this.feedbackContentComposite.setVisible(true);
 	}

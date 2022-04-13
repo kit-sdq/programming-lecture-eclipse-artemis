@@ -48,7 +48,7 @@ public class AnnotationDeserializer {
 			}
 			String text = feedback.getText();
 			return text != null && text.equals(FEEDBACK_TEXT);
-		}).collect(Collectors.toList());
+		}).toList();
 
 		if (matchingFeedbacks.isEmpty()) {
 			return List.of();

@@ -9,9 +9,9 @@ import org.eclipse.swt.widgets.TabFolder;
 import edu.kit.kastel.eclipse.common.view.ui.AbstractResultTab;
 import edu.kit.kastel.eclipse.student.view.controllers.StudentViewController;
 import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.Feedback;
-import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.ResultsDTO;
+import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.IExercise;
 import edu.kit.kastel.sdq.eclipse.common.api.client.websocket.WebsocketCallback;
-import edu.kit.kastel.sdq.eclipse.common.api.util.Pair;
+import edu.kit.kastel.sdq.eclipse.common.api.util.Triple;
 
 public class ResultTab extends AbstractResultTab implements ArtemisStudentTab, WebsocketCallback {
 	private StudentViewController viewController;
@@ -32,14 +32,15 @@ public class ResultTab extends AbstractResultTab implements ArtemisStudentTab, W
 	}
 
 	@Override
-	protected Pair<ResultsDTO, List<Feedback>> getCurrentResultAndFeedback() {
-		return this.viewController.getFeedbackExcerise();
+	protected Triple<String, String, List<Feedback>> getCurrentResultAndFeedback() {
+		var details = this.viewController.getFeedbackExcerise();
+
+		return new Triple<>(details.first().completionDateAsString(), details.first().resultString, details.second());
 	}
 
 	@Override
-	protected String getCurrentExerciseTitle() {
-		var exercise = this.viewController.getCurrentSelectedExercise();
-		return exercise == null ? null : exercise.getTitle();
+	protected IExercise getCurrentExercise() {
+		return this.viewController.getCurrentSelectedExercise();
 	}
 
 	@Override

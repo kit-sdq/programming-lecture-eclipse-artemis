@@ -34,7 +34,7 @@ public class ResultsDTO implements Serializable {
 		// NOP
 	}
 
-	public String toLocalDateTimeString() {
+	public String completionDateAsString() {
 		var time = this.completionDate == null ? null : this.completionDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
 		return time == null ? "" : time.format(formatter);
 	}

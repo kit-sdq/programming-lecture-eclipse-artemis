@@ -8,7 +8,6 @@ import edu.kit.kastel.sdq.eclipse.common.api.artemis.AssessmentResult;
 import edu.kit.kastel.sdq.eclipse.common.api.artemis.ILockResult;
 import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.IExercise;
 import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.ISubmission;
-import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.ParticipationDTO;
 
 /**
  * REST-Client to execute calls concerning assessment.
@@ -29,7 +28,7 @@ public interface IAssessmentArtemisClient {
 	 *
 	 * @throws ArtemisClientException
 	 */
-	void saveAssessment(ParticipationDTO participation, boolean submit, AssessmentResult assessment) throws ArtemisClientException;
+	void saveAssessment(int participationId, boolean submit, AssessmentResult assessment) throws ArtemisClientException;
 
 	/**
 	 * Starts an assessment for the given submission. Acquires a lock in the

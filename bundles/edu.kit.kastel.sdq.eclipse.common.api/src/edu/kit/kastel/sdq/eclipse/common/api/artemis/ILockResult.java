@@ -5,7 +5,6 @@ import java.io.Serializable;
 import java.util.List;
 
 import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.Feedback;
-import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.ParticipationDTO;
 
 /**
  * This is gotten from acquiring a lock (no matter if the lock is already held
@@ -19,7 +18,7 @@ public interface ILockResult extends Serializable {
 	 * @return the participationID this submissionID belongs to (one participation
 	 *         has one or many submissions).
 	 */
-	ParticipationDTO getParticipation();
+	int getParticipationId();
 
 	/**
 	 *

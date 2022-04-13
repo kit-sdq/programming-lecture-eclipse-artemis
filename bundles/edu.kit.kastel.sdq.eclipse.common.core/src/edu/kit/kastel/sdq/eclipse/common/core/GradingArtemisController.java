@@ -10,7 +10,6 @@ import edu.kit.kastel.sdq.eclipse.common.api.artemis.ILockResult;
 import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.ICourse;
 import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.IExercise;
 import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.ISubmission;
-import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.ParticipationDTO;
 import edu.kit.kastel.sdq.eclipse.common.api.controller.IAssessmentController;
 import edu.kit.kastel.sdq.eclipse.common.api.controller.IGradingArtemisController;
 import edu.kit.kastel.sdq.eclipse.common.api.messages.Messages;
@@ -51,7 +50,7 @@ public class GradingArtemisController extends ArtemisController implements IGrad
 			throw new IllegalStateException("Assessment not started, yet!");
 		}
 		final ILockResult lock = this.lockResults.get(submission.getSubmissionId());
-		final ParticipationDTO participation = lock.getParticipation();
+		final int participationId = lock.getParticipationId();
 
 		final List<IAnnotation> annotations = assessmentController.getAnnotations();
 		final List<IMistakeType> mistakeTypes = assessmentController.getMistakes();
@@ -62,7 +61,7 @@ public class GradingArtemisController extends ArtemisController implements IGrad
 			AnnotationMapper mapper = //
 					new AnnotationMapper(exercise, submission, annotations, mistakeTypes, ratingGroups, this.clientManager.getAuthenticationClient().getUser(),
 							calculator, lock);
-			this.clientManager.getAssessmentArtemisClient().saveAssessment(participation, submit, mapper.createAssessmentResult());
+			this.clientManager.getAssessmentArtemisClient().saveAssessment(participationId, submit, mapper.createAssessmentResult());
 		} catch (IOException e) {
 			this.error("Local backend failed to format the annotations: " + e.getMessage(), e);
 			return false;

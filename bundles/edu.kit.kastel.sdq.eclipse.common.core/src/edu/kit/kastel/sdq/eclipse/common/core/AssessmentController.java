@@ -176,7 +176,7 @@ public class AssessmentController extends AbstractController implements IAssessm
 
 	private void initializeWithDeserializedAnnotations() throws IOException {
 		final AnnotationDeserializer annotationDeserializer = new AnnotationDeserializer(this.getMistakes());
-		var allFeedbacksGottenFromLocking = this.systemWideController.getArtemisController().getAllFeedbacksGottenFromLocking(this.submission).second();
+		var allFeedbacksGottenFromLocking = this.systemWideController.getArtemisController().getAllFeedbacksGottenFromLocking(this.submission);
 		if (allFeedbacksGottenFromLocking == null) {
 			throw new IOException("No feedbacks gotten from locking could be acquired.");
 		}
