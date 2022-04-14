@@ -15,6 +15,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
 import edu.kit.kastel.eclipse.common.view.utilities.AssessmentUtilities;
+import edu.kit.kastel.eclipse.common.view.utilities.ResourceBundleProvider;
 import edu.kit.kastel.sdq.eclipse.common.api.ArtemisClientException;
 import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.Feedback;
 import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.FeedbackType;
@@ -87,7 +88,8 @@ public abstract class AbstractResultTab extends ResultTabUI {
 		String title = currentExercise == null ? "Unknown Task" : currentExercise.getTitle();
 
 		this.btnResultSuccessful.setForeground(successOfAutomaticTests ? display.getSystemColor(SWT.COLOR_GREEN) : display.getSystemColor(SWT.COLOR_RED));
-		this.btnResultSuccessful.setText(successOfAutomaticTests ? "Test(s) succeeded" : "Test(s) failed");
+		this.btnResultSuccessful.setText("Test(s) " + (successOfAutomaticTests ? ResourceBundleProvider.getResourceBundle().getString("tabs.results.successful")
+				: ResourceBundleProvider.getResourceBundle().getString("tabs.results.unsuccessful")));
 
 		this.lblResultExerciseShortName.setText(title);
 		this.lblResultExerciseDescription.setText(completionTime == null ? "" : completionTime);
@@ -126,7 +128,9 @@ public abstract class AbstractResultTab extends ResultTabUI {
 		}
 
 		entries.stream().sorted().forEach(feedback -> {
-			var name = feedback.getFeedbackType() != FeedbackType.AUTOMATIC && feedback.getText() == null ? "Tutor Comment" : feedback.getText();
+			var name = feedback.getFeedbackType() != FeedbackType.AUTOMATIC && feedback.getText() == null
+					? ResourceBundleProvider.getResourceBundle().getString("tabs.results.tutorComment")
+					: feedback.getText();
 			this.createTableItemsForFeedback(table, name, feedback);
 		});
 
@@ -150,7 +154,8 @@ public abstract class AbstractResultTab extends ResultTabUI {
 		if (feedback.getPositive() == null) {
 			return "";
 		}
-		return Boolean.TRUE.equals(feedback.getPositive()) ? "successful" : "failed";
+		return Boolean.TRUE.equals(feedback.getPositive()) ? ResourceBundleProvider.getResourceBundle().getString("tabs.results.successful")
+				: ResourceBundleProvider.getResourceBundle().getString("tabs.results.unsuccessful");
 	}
 
 	private int calculateSuccessColorIndicator(Feedback feedback) {

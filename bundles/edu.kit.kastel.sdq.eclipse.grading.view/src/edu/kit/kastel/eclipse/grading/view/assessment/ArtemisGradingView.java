@@ -28,6 +28,7 @@ import org.eclipse.ui.part.ViewPart;
 
 import edu.kit.kastel.eclipse.common.view.marker.AssessmentMarkerView;
 import edu.kit.kastel.eclipse.common.view.utilities.AssessmentUtilities;
+import edu.kit.kastel.eclipse.common.view.utilities.ResourceBundleProvider;
 import edu.kit.kastel.eclipse.grading.view.activator.Activator;
 import edu.kit.kastel.eclipse.grading.view.controllers.AssessmentViewController;
 import edu.kit.kastel.eclipse.grading.view.listeners.AssessmentMarkerViewDoubleClickListener;
@@ -152,7 +153,7 @@ public class ArtemisGradingView extends ViewPart {
 
 	private void createBacklogTab(TabFolder tabFolder) {
 		TabItem backlogTabItem = new TabItem(tabFolder, SWT.NONE);
-		backlogTabItem.setText("Backlog");
+		backlogTabItem.setText(ResourceBundleProvider.getResourceBundle().getString("tabs.backlog"));
 
 		ScrolledComposite scrolledCompositeBacklog = new ScrolledComposite(tabFolder, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 		backlogTabItem.setControl(scrolledCompositeBacklog);
@@ -164,7 +165,7 @@ public class ArtemisGradingView extends ViewPart {
 
 		Label lblFilter = new Label(backlogComposite, SWT.NONE);
 		lblFilter.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblFilter.setText("Filter Selection");
+		lblFilter.setText(ResourceBundleProvider.getResourceBundle().getString("tabs.backlog.filter"));
 
 		Combo filterCombo = new Combo(backlogComposite, SWT.READ_ONLY);
 		GridData gdFilterCombo = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
@@ -176,7 +177,7 @@ public class ArtemisGradingView extends ViewPart {
 
 		Label lblSubmitted = new Label(backlogComposite, SWT.NONE);
 		lblSubmitted.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblSubmitted.setText("Submissions");
+		lblSubmitted.setText(ResourceBundleProvider.getResourceBundle().getString("tabs.backlog.submissions"));
 
 		this.backlogCombo = new Combo(backlogComposite, SWT.READ_ONLY);
 		GridData gdBacklogCombo = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
@@ -192,12 +193,12 @@ public class ArtemisGradingView extends ViewPart {
 		buttons.setLayoutData(new GridData(SWT.CENTER, SWT.FILL, true, true, 2, 1));
 
 		Button refreshButton = new Button(buttons, SWT.NONE);
-		refreshButton.setText("Refresh Submissions");
+		refreshButton.setText(ResourceBundleProvider.getResourceBundle().getString("tabs.backlog.refreshSubmissions"));
 
 		this.addSelectionListenerForRefreshButton(refreshButton, this.backlogCombo, filterCombo);
 
 		Button btnLoadAgain = new Button(buttons, SWT.NONE);
-		btnLoadAgain.setText("Load again");
+		btnLoadAgain.setText(ResourceBundleProvider.getResourceBundle().getString("tabs.assessment.reload"));
 		this.addControlToPossibleActions(btnLoadAgain, Transition.LOAD_AGAIN);
 		this.addSelectionListenerForLoadFromBacklogButton(btnLoadAgain);
 
@@ -256,7 +257,7 @@ public class ArtemisGradingView extends ViewPart {
 
 	private void createAssessmentTab(TabFolder tabFolder) {
 		TabItem tbtmAssessment = new TabItem(tabFolder, SWT.NONE);
-		tbtmAssessment.setText("Assessment");
+		tbtmAssessment.setText(ResourceBundleProvider.getResourceBundle().getString("tabs.assessment"));
 
 		ScrolledComposite scrolledCompositeAssessment = new ScrolledComposite(tabFolder, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 		tbtmAssessment.setControl(scrolledCompositeAssessment);
@@ -272,7 +273,7 @@ public class ArtemisGradingView extends ViewPart {
 
 		Label lblCourse = new Label(assessmentComposite, SWT.NONE);
 		lblCourse.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblCourse.setText("Course");
+		lblCourse.setText(ResourceBundleProvider.getResourceBundle().getString("tabs.assessment.course"));
 
 		this.courseCombo = new Combo(assessmentComposite, SWT.READ_ONLY);
 		this.courseCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
@@ -281,7 +282,7 @@ public class ArtemisGradingView extends ViewPart {
 
 		Label lblExam = new Label(assessmentComposite, SWT.NONE);
 		lblExam.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblExam.setText("Exam");
+		lblExam.setText(ResourceBundleProvider.getResourceBundle().getString("tabs.assessment.exam"));
 
 		this.examCombo = new Combo(assessmentComposite, SWT.READ_ONLY);
 		this.examCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
@@ -294,7 +295,7 @@ public class ArtemisGradingView extends ViewPart {
 
 		Label lblExercise = new Label(assessmentComposite, SWT.NONE);
 		lblExercise.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblExercise.setText("Exercise");
+		lblExercise.setText(ResourceBundleProvider.getResourceBundle().getString("tabs.assessment.exercise"));
 
 		this.exerciseCombo = new Combo(assessmentComposite, SWT.READ_ONLY);
 		this.exerciseCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
@@ -307,42 +308,42 @@ public class ArtemisGradingView extends ViewPart {
 		buttons.setLayoutData(new GridData(SWT.CENTER, SWT.FILL, true, true, 2, 1));
 
 		Button btnReloadAssessment = new Button(buttons, SWT.NONE);
-		btnReloadAssessment.setText("Reload");
+		btnReloadAssessment.setText(ResourceBundleProvider.getResourceBundle().getString("tabs.assessment.reload"));
 		btnReloadAssessment.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 
 		this.addSelectionListenerForReloadButton(btnReloadAssessment);
 		this.addControlToPossibleActions(btnReloadAssessment, Transition.RELOAD_ASSESSMENT);
 
 		Button btnSaveAssessment = new Button(buttons, SWT.NONE);
-		btnSaveAssessment.setText("Save");
+		btnSaveAssessment.setText(ResourceBundleProvider.getResourceBundle().getString("tabs.assessment.save"));
 		btnSaveAssessment.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 
 		this.addSelectionListenerForSaveButton(btnSaveAssessment);
 		this.addControlToPossibleActions(btnSaveAssessment, Transition.SAVE_ASSESSMENT);
 
 		Button btnStartFirstRound = new Button(buttons, SWT.NONE);
-		btnStartFirstRound.setText("Start Correction Round 1");
+		btnStartFirstRound.setText(String.format(ResourceBundleProvider.getResourceBundle().getString("tabs.assessment.startCorrectionRound"), 1));
 		btnStartFirstRound.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 
 		this.addSelectionListenerForStartFirstRound(btnStartFirstRound);
 		this.addControlToPossibleActions(btnStartFirstRound, Transition.START_CORRECTION_ROUND_1);
 
 		Button btnStartSecondRound = new Button(buttons, SWT.NONE);
-		btnStartSecondRound.setText("Start Correction Round 2");
+		btnStartSecondRound.setText(String.format(ResourceBundleProvider.getResourceBundle().getString("tabs.assessment.startCorrectionRound"), 2));
 		btnStartSecondRound.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 
 		this.addSelectionListenerForStartSecondRound(btnStartSecondRound);
 		this.addControlToPossibleActions(btnStartSecondRound, Transition.START_CORRECTION_ROUND_2);
 
 		Button btnSubmitAssessment = new Button(buttons, SWT.NONE);
-		btnSubmitAssessment.setText("Submit");
+		btnSubmitAssessment.setText(ResourceBundleProvider.getResourceBundle().getString("tabs.assessment.submit"));
 		btnSubmitAssessment.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 
 		this.addSelectionListenerForSubmitButton(btnSubmitAssessment);
 		this.addControlToPossibleActions(btnSubmitAssessment, Transition.SUBMIT_ASSESSMENT);
 
 		Button btnRefreshArtemisState = new Button(buttons, SWT.NONE);
-		btnRefreshArtemisState.setText("Refresh Artemis State");
+		btnRefreshArtemisState.setText(ResourceBundleProvider.getResourceBundle().getString("tabs.assessment.refreshArtemis"));
 		btnRefreshArtemisState.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 
 		this.addSelectionListenerForRefreshArtemisStateButton(btnRefreshArtemisState);
@@ -358,7 +359,7 @@ public class ArtemisGradingView extends ViewPart {
 
 	private void createGradingTab(TabFolder tabFolder) {
 		TabItem gradingTabItem = new TabItem(tabFolder, SWT.NONE);
-		gradingTabItem.setText("Grading");
+		gradingTabItem.setText(ResourceBundleProvider.getResourceBundle().getString("tabs.grading"));
 
 		this.scrolledCompositeGrading = new ScrolledComposite(tabFolder, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 		gradingTabItem.setControl(this.scrolledCompositeGrading);
@@ -539,9 +540,9 @@ public class ArtemisGradingView extends ViewPart {
 	private void updateCorrectedSubmissionCount() {
 		if (this.exerciseCombo.getSelectionIndex() != -1) {
 			IGradingSystemwideController sc = Activator.getDefault().getSystemwideController();
-			this.correctionCountLbl
-					.setText(String.format("Started submissions: %d  Submitted: %d", sc.getBegunSubmissionsProjectNames(SubmissionFilter.ALL).size(),
-							sc.getBegunSubmissionsProjectNames(SubmissionFilter.SAVED_AND_SUBMITTED).size()));
+			this.correctionCountLbl.setText(String.format(ResourceBundleProvider.getResourceBundle().getString("tabs.assessment.startedSubmitted"),
+					sc.getBegunSubmissionsProjectNames(SubmissionFilter.ALL).size(),
+					sc.getBegunSubmissionsProjectNames(SubmissionFilter.SAVED_AND_SUBMITTED).size()));
 		} else {
 			this.correctionCountLbl.setText("");
 		}

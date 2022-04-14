@@ -21,10 +21,10 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
+import edu.kit.kastel.eclipse.common.view.utilities.ResourceBundleProvider;
 import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.Feedback;
 
 abstract class ResultTabUI {
-	private static final String RELOAD_BTN_TEXT = "Reload";
 
 	protected Composite feedbackContainerComposite;
 	protected Composite feedbackContentComposite;
@@ -50,7 +50,7 @@ abstract class ResultTabUI {
 
 	protected void createTabFolder(TabFolder tabFolder) {
 		TabItem tbtmResult = new TabItem(tabFolder, SWT.NONE);
-		tbtmResult.setText("Test Results");
+		tbtmResult.setText(ResourceBundleProvider.getResourceBundle().getString("tabs.results"));
 
 		ScrolledComposite scrolledCompositeFeedback = new ScrolledComposite(tabFolder, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 		tbtmResult.setControl(scrolledCompositeFeedback);
@@ -71,7 +71,7 @@ abstract class ResultTabUI {
 		FontDescriptor boldDescriptor = FontDescriptor.createFrom(labelFeedback.getFont()).setStyle(SWT.BOLD).setHeight(18);
 		Font boldFont = boldDescriptor.createFont(labelFeedback.getDisplay());
 		labelFeedback.setFont(boldFont);
-		labelFeedback.setText("Latest Results");
+		labelFeedback.setText(ResourceBundleProvider.getResourceBundle().getString("tabs.results.latest"));
 
 		Composite headerComposite = new Composite(composite, SWT.NONE);
 		headerComposite.setLayout(new GridLayout(2, true));
@@ -86,12 +86,12 @@ abstract class ResultTabUI {
 
 			Button btnReload = new Button(headerComposite, SWT.CENTER);
 			btnReload.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, true, false, 1, 1));
-			btnReload.setText(RELOAD_BTN_TEXT);
+			btnReload.setText(ResourceBundleProvider.getResourceBundle().getString("tabs.results.reload"));
 			btnReload.addListener(SWT.Selection, e -> this.reloadFeedbackForExcerise());
 		}
 		Label labelResult = new Label(this.feedbackContainerComposite, SWT.NONE);
 		labelResult.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
-		labelResult.setText("Summary of the Results for the currently selected Exercise");
+		labelResult.setText(ResourceBundleProvider.getResourceBundle().getString("tabs.results.description"));
 
 		this.feedbackContentComposite = new Composite(this.feedbackContainerComposite, SWT.NONE);
 		this.feedbackContentComposite.setTouchEnabled(true);
@@ -107,7 +107,7 @@ abstract class ResultTabUI {
 		this.compositeHeader.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 
 		this.lblResultExerciseShortName = new Label(this.compositeHeader, SWT.NONE);
-		this.lblResultExerciseShortName.setText("Name");
+		this.lblResultExerciseShortName.setText(ResourceBundleProvider.getResourceBundle().getString("tabs.results.name"));
 		this.lblResultExerciseShortName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true, 1, 1));
 		this.lblResultExerciseShortName.setTouchEnabled(true);
 		boldDescriptor = FontDescriptor.createFrom(this.lblResultExerciseShortName.getFont()).setStyle(SWT.BOLD).setHeight(12);
@@ -120,7 +120,7 @@ abstract class ResultTabUI {
 		boldDescriptor = FontDescriptor.createFrom(this.btnResultSuccessful.getFont()).setStyle(SWT.BOLD).setHeight(12);
 		boldFont = boldDescriptor.createFont(this.btnResultSuccessful.getDisplay());
 		this.btnResultSuccessful.setFont(boldFont);
-		this.btnResultSuccessful.setText("Successful");
+		this.btnResultSuccessful.setText(ResourceBundleProvider.getResourceBundle().getString("tabs.results.successful"));
 
 		this.lblResultExerciseDescription = new Label(this.resultContentComposite, SWT.NONE);
 		GridData gdLblResultExerciseDescription = new GridData(SWT.LEFT, SWT.FILL, true, true, 1, 1);
@@ -140,7 +140,7 @@ abstract class ResultTabUI {
 		boldDescriptor = FontDescriptor.createFrom(this.lblPoints.getFont()).setStyle(SWT.BOLD | SWT.ITALIC).setHeight(12);
 		boldFont = boldDescriptor.createFont(this.lblPoints.getDisplay());
 		this.lblPoints.setFont(boldFont);
-		this.lblPoints.setText("Points: ");
+		this.lblPoints.setText(ResourceBundleProvider.getResourceBundle().getString("tabs.results.points") + ": ");
 
 		this.resultScore = new Label(this.compositeFooter, SWT.RIGHT);
 		this.resultScore.setText("?/?");
@@ -153,7 +153,7 @@ abstract class ResultTabUI {
 		boldDescriptor = FontDescriptor.createFrom(labelFeedbackSummary.getFont()).setHeight(9);
 		boldFont = boldDescriptor.createFont(labelFeedbackSummary.getDisplay());
 		labelFeedbackSummary.setFont(boldFont);
-		labelFeedbackSummary.setText("Summary of all visible Tests");
+		labelFeedbackSummary.setText(ResourceBundleProvider.getResourceBundle().getString("tabs.results.summary"));
 		this.createTableForFeedback(this.feedbackContentComposite);
 
 		scrolledCompositeFeedback.setContent(this.feedbackContainerComposite);
@@ -196,7 +196,10 @@ abstract class ResultTabUI {
 		this.feedbackTable.setHeaderVisible(true);
 		this.feedbackTable.setLayout(new GridLayout(1, true));
 		this.feedbackTable.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		String[] colNames = { "Name", "Credits", "Success", "Detailed Text" };
+		String[] colNames = { ResourceBundleProvider.getResourceBundle().getString("tabs.results.name"),
+				ResourceBundleProvider.getResourceBundle().getString("tabs.results.credits"),
+				ResourceBundleProvider.getResourceBundle().getString("tabs.results.success"),
+				ResourceBundleProvider.getResourceBundle().getString("tabs.results.detailedText") };
 		int[] width = { 200, 100, 100, 100 };
 
 		for (int loopIndex = 0; loopIndex < colNames.length; loopIndex++) {
