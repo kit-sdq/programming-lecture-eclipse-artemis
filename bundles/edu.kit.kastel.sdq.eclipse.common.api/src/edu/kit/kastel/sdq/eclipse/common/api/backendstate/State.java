@@ -1,0 +1,12 @@
+/* Licensed under EPL-2.0 2022. */
+package edu.kit.kastel.sdq.eclipse.common.api.backendstate;
+
+public enum State {
+	ERROR_STATE, //
+	NO_STATE, //
+	COURSE_SET, //
+	COURSE_EXERCISE_SET, //
+	COURSE_EXERCISE_SUBMISSION_SET, //
+	COURSE_EXERCISE_SUBMISSION_SET_SUBMISSION_STARTED, //
+	COURSE_EXERCISE_SUBMISSION_SET_SUBMISSION_SAVED
+}

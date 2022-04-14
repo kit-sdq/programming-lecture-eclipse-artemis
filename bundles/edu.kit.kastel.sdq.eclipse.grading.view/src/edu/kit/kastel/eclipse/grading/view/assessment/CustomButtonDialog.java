@@ -18,8 +18,8 @@ import org.eclipse.swt.widgets.Text;
 
 import edu.kit.kastel.eclipse.grading.view.activator.Activator;
 import edu.kit.kastel.eclipse.grading.view.controllers.AssessmentViewController;
-import edu.kit.kastel.sdq.eclipse.grading.api.PreferenceConstants;
-import edu.kit.kastel.sdq.eclipse.grading.api.model.IMistakeType;
+import edu.kit.kastel.sdq.eclipse.common.api.PreferenceConstants;
+import edu.kit.kastel.sdq.eclipse.common.api.model.IMistakeType;
 
 /**
  * This class is the view class for the custom penalty dialog. It has two
@@ -110,7 +110,7 @@ public class CustomButtonDialog extends Dialog {
 
 			// Multiply by 10 because the selection internally stores the selection as an
 			// integer ignoring the decimal point. (0.5 ==> 5, 1 ==> 10)
-			this.customPenaltyInputField.setSelection((int) (Objects.requireNonNullElse(customPenalty, 0d).doubleValue() * 10));
+			this.customPenaltyInputField.setSelection((int) (Objects.requireNonNullElse(this.customPenalty, 0d).doubleValue() * 10));
 		}
 
 		return comp;
@@ -157,11 +157,11 @@ public class CustomButtonDialog extends Dialog {
 
 	/**
 	 * Check to figure out how the dialog was closed
-	 * 
+	 *
 	 * @return true iff the user clicked on ok, false if not.
 	 */
 	public boolean isClosedByOk() {
-		return closedByOk;
+		return this.closedByOk;
 	}
 
 	/**
@@ -169,10 +169,10 @@ public class CustomButtonDialog extends Dialog {
 	 * from creating a new line. Instead it'll confirm the dialog. Also pressing TAB
 	 * will jump out of the message-field in select the penalty-box. Newlines and
 	 * tabs can be created by pressing SHIFT + (RETURN | TAB)
-	 * 
+	 *
 	 * This is required to mimic the behavior of a single-line text input, hence
 	 * multi-line-text will handle those keys differently.
-	 * 
+	 *
 	 * @author Shirkanesi
 	 */
 	private static class MultiLineTextEditorKeyListener implements KeyListener {
@@ -193,28 +193,26 @@ public class CustomButtonDialog extends Dialog {
 				this.isShiftPressed = false;
 			}
 
-			if (!this.isShiftPressed) {
-				if (e.keyCode == SWT.TAB || isReturnCharacter(e.keyCode)) {
-					int insertedLength;
-					if (isReturnCharacter(e.keyCode)) {
-						insertedLength = LINE_SEPARATOR_LENGTH;
-					} else {
-						insertedLength = 1;
-					}
+			if (!this.isShiftPressed && (e.keyCode == SWT.TAB || this.isReturnCharacter(e.keyCode))) {
+				int insertedLength;
+				if (this.isReturnCharacter(e.keyCode)) {
+					insertedLength = LINE_SEPARATOR_LENGTH;
+				} else {
+					insertedLength = 1;
+				}
 
-					// Removed the inserted character(s)
-					int pos = this.customButtonDialog.customMessageInputField.getCaretPosition();
-					String text = this.customButtonDialog.customMessageInputField.getText();
-					String modified = text.substring(0, pos - insertedLength) + text.substring(pos);
-					this.customButtonDialog.customMessageInputField.setText(modified);
+				// Removed the inserted character(s)
+				int pos = this.customButtonDialog.customMessageInputField.getCaretPosition();
+				String text = this.customButtonDialog.customMessageInputField.getText();
+				String modified = text.substring(0, pos - insertedLength) + text.substring(pos);
+				this.customButtonDialog.customMessageInputField.setText(modified);
 
-					// Determine how to jump out of the text-field (either by closing the dialog or
-					// selecting the penalty-input)
-					if (isReturnCharacter(e.keyCode)) {
-						this.customButtonDialog.okPressed();
-					} else {
-						this.customButtonDialog.customPenaltyInputField.setFocus();
-					}
+				// Determine how to jump out of the text-field (either by closing the dialog or
+				// selecting the penalty-input)
+				if (this.isReturnCharacter(e.keyCode)) {
+					this.customButtonDialog.okPressed();
+				} else {
+					this.customButtonDialog.customPenaltyInputField.setFocus();
 				}
 			}
 		}

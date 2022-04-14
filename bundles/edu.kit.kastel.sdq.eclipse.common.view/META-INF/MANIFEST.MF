@@ -18,4 +18,5 @@ Bundle-Activator: edu.kit.kastel.eclipse.common.view.activator.Activator
 Automatic-Module-Name: edu.kit.kastel.sdq.eclipse.common
 Export-Package: edu.kit.kastel.eclipse.common.view.controllers,
  edu.kit.kastel.eclipse.common.view.marker,
+ edu.kit.kastel.eclipse.common.view.ui,
  edu.kit.kastel.eclipse.common.view.utilities

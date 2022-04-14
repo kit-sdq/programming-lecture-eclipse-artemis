@@ -14,10 +14,11 @@ import edu.kit.kastel.eclipse.common.view.utilities.AssessmentUtilities;
 
 /**
  * Class of the marker view
- * 
+ *
  * @See {@link MarkerSupportView}
  *
  */
+@SuppressWarnings("restriction")
 public class AssessmentMarkerView extends MarkerSupportView {
 
 	private static final ILog log = Platform.getLog(AssessmentMarkerView.class);

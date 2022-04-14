@@ -32,11 +32,11 @@ import edu.kit.kastel.eclipse.grading.view.activator.Activator;
 import edu.kit.kastel.eclipse.grading.view.controllers.AssessmentViewController;
 import edu.kit.kastel.eclipse.grading.view.listeners.AssessmentMarkerViewDoubleClickListener;
 import edu.kit.kastel.eclipse.grading.view.listeners.KeyboardAwareMouseListener;
-import edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.SubmissionFilter;
-import edu.kit.kastel.sdq.eclipse.grading.api.backendstate.Transition;
-import edu.kit.kastel.sdq.eclipse.grading.api.controller.IGradingSystemwideController;
-import edu.kit.kastel.sdq.eclipse.grading.api.model.IMistakeType;
-import edu.kit.kastel.sdq.eclipse.grading.api.model.IRatingGroup;
+import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.SubmissionFilter;
+import edu.kit.kastel.sdq.eclipse.common.api.backendstate.Transition;
+import edu.kit.kastel.sdq.eclipse.common.api.controller.IGradingSystemwideController;
+import edu.kit.kastel.sdq.eclipse.common.api.model.IMistakeType;
+import edu.kit.kastel.sdq.eclipse.common.api.model.IRatingGroup;
 
 /**
  * This class creates the view elements for the artemis grading process. It is
@@ -58,6 +58,7 @@ public class ArtemisGradingView extends ViewPart {
 	private Combo exerciseCombo;
 	private Combo courseCombo;
 	private Label correctionCountLbl;
+	private ResultTab result;
 
 	public ArtemisGradingView() {
 		this.viewController = new AssessmentViewController();
@@ -145,6 +146,7 @@ public class ArtemisGradingView extends ViewPart {
 		btnSubmit.addListener(SWT.Selection, e -> {
 			this.viewController.onSubmitAssessment();
 			this.updateState();
+			this.result.reset();
 		});
 	}
 
@@ -203,6 +205,11 @@ public class ArtemisGradingView extends ViewPart {
 		scrolledCompositeBacklog.setMinSize(backlogComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 	}
 
+	private void createResultTab(TabFolder tabFolder) {
+		this.result = new ResultTab(Activator.getDefault().getSystemwideController());
+		this.result.create(tabFolder);
+	}
+
 	private void addSelectionListenerForFilterCombo(Combo backlogCombo, Combo filterCombo) {
 		filterCombo.addListener(SWT.Selection, e -> {
 			if (backlogCombo.getItemCount() == 0) {
@@ -259,9 +266,9 @@ public class ArtemisGradingView extends ViewPart {
 		Composite assessmentComposite = new Composite(scrolledCompositeAssessment, SWT.NONE);
 		assessmentComposite.setLayout(new GridLayout(2, false));
 
-		correctionCountLbl = new Label(assessmentComposite, SWT.NONE);
-		correctionCountLbl.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
-		correctionCountLbl.setText("");
+		this.correctionCountLbl = new Label(assessmentComposite, SWT.NONE);
+		this.correctionCountLbl.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+		this.correctionCountLbl.setText("");
 
 		Label lblCourse = new Label(assessmentComposite, SWT.NONE);
 		lblCourse.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
@@ -393,13 +400,11 @@ public class ArtemisGradingView extends ViewPart {
 
 					KeyboardAwareMouseListener listener = new KeyboardAwareMouseListener();
 					// Normal click
-					listener.setClickHandler(() -> {
-						this.viewController.addAssessmentAnnotation(mistake, null, null, mistake.getRatingGroup().getDisplayName());
-					}, SWT.BUTTON1);
+					listener.setClickHandler(//
+							() -> this.viewController.addAssessmentAnnotation(mistake, null, null, mistake.getRatingGroup().getDisplayName()), SWT.BUTTON1 //
+					);
 					// shift-click and middle-click
-					listener.setClickHandler(() -> {
-						this.createMistakePenaltyWithCustomMessageDialog(mistake);
-					}, SWT.SHIFT, SWT.BUTTON2);
+					listener.setClickHandler(() -> this.createMistakePenaltyWithCustomMessageDialog(mistake), SWT.SHIFT, SWT.BUTTON2);
 					// every click
 					listener.setClickHandlerForEveryClick(() -> {
 						this.updatePenalty(mistake.getRatingGroup().getDisplayName());
@@ -433,8 +438,9 @@ public class ArtemisGradingView extends ViewPart {
 
 	private void createView(Composite parent) {
 		TabFolder tabFolder = new TabFolder(parent, SWT.NONE);
-		this.createGradingTab(tabFolder);
 		this.createAssessmentTab(tabFolder);
+		this.createGradingTab(tabFolder);
+		this.createResultTab(tabFolder);
 		this.createBacklogTab(tabFolder);
 		this.updateState();
 	}
@@ -445,7 +451,7 @@ public class ArtemisGradingView extends ViewPart {
 		int idx = filterCombo.getSelectionIndex();
 		if (idx >= 0) {
 			String value = filterCombo.getItem(idx);
-			filter = Arrays.stream(SubmissionFilter.values()).filter(f -> f.name().equals(value)).findFirst().get();
+			filter = Arrays.stream(SubmissionFilter.values()).filter(f -> f.name().equals(value)).findFirst().orElse(SubmissionFilter.ALL);
 		}
 		this.viewController.getSubmissionsForBacklog(filter).forEach(backlogCombo::add);
 	}
@@ -470,6 +476,7 @@ public class ArtemisGradingView extends ViewPart {
 		this.createGradingViewElements();
 		this.viewController.createAnnotationsMarkers();
 		this.viewController.getRatingGroups().forEach(ratingGroup -> this.updatePenalty(ratingGroup.getDisplayName()));
+		this.result.loadFeedbackForExcerise();
 	}
 
 	@Override
@@ -532,10 +539,11 @@ public class ArtemisGradingView extends ViewPart {
 	private void updateCorrectedSubmissionCount() {
 		if (this.exerciseCombo.getSelectionIndex() != -1) {
 			IGradingSystemwideController sc = Activator.getDefault().getSystemwideController();
-			correctionCountLbl.setText(String.format("Started submissions: %d  Submitted: %d", sc.getBegunSubmissionsProjectNames(SubmissionFilter.ALL).size(),
-					sc.getBegunSubmissionsProjectNames(SubmissionFilter.SAVED_AND_SUBMITTED).size()));
+			this.correctionCountLbl
+					.setText(String.format("Started submissions: %d  Submitted: %d", sc.getBegunSubmissionsProjectNames(SubmissionFilter.ALL).size(),
+							sc.getBegunSubmissionsProjectNames(SubmissionFilter.SAVED_AND_SUBMITTED).size()));
 		} else {
-			correctionCountLbl.setText("");
+			this.correctionCountLbl.setText("");
 		}
 	}
 
@@ -547,6 +555,8 @@ public class ArtemisGradingView extends ViewPart {
 
 	private void refreshArtemisState() {
 		this.viewController = new AssessmentViewController();
+		this.result.setController(Activator.getDefault().getSystemwideController());
+		this.result.reset();
 		this.resetCombos();
 		this.updateState();
 	}
