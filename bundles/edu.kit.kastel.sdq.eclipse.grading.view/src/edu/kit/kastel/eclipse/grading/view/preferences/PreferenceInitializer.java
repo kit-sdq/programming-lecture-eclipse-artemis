@@ -23,6 +23,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		store.setDefault(PreferenceConstants.ARTEMIS_PASSWORD, "");
 		store.setDefault(PreferenceConstants.PREFERS_LARGE_PENALTY_TEXT_PATH, "false");
 		store.setDefault(PreferenceConstants.PREFERS_TEXT_WRAPPING_IN_PENALTY_TEXT_PATH, "false");
+		store.setDefault(PreferenceConstants.PREFERRED_LANGUAGE_PATH, "en_US");
 	}
 
 }
