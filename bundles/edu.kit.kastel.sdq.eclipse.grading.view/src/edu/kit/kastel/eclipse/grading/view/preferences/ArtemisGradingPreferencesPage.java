@@ -28,8 +28,6 @@ public class ArtemisGradingPreferencesPage extends FieldEditorPreferencePage imp
 	private BooleanFieldEditor isRelativeConfigPath;
 	private StringFieldEditor relativeConfigPath;
 	private FileFieldEditor absoluteConfigPath;
-	private BooleanFieldEditor userPrefersLargePenaltyText;
-	private BooleanFieldEditor userPrefersTextWrappingInPenaltyText;
 
 	public ArtemisGradingPreferencesPage() {
 		super(FieldEditorPreferencePage.GRID);
@@ -44,35 +42,37 @@ public class ArtemisGradingPreferencesPage extends FieldEditorPreferencePage imp
 	 */
 	@Override
 	public void createFieldEditors() {
+		var parent = this.getFieldEditorParent();
 
-		this.absoluteConfigPath = new FileFieldEditor(PreferenceConstants.ABSOLUTE_CONFIG_PATH, "Absolute config path: ", this.getFieldEditorParent());
+		absoluteConfigPath = new FileFieldEditor(PreferenceConstants.ABSOLUTE_CONFIG_PATH, "Absolute config path: ", parent);
 
-		this.isRelativeConfigPath = new BooleanFieldEditor(PreferenceConstants.IS_RELATIVE_CONFIG_PATH, "Use relative config path",
-				this.getFieldEditorParent());
+		isRelativeConfigPath = new BooleanFieldEditor(PreferenceConstants.IS_RELATIVE_CONFIG_PATH, "Use relative config path", parent);
 
-		this.relativeConfigPath = new StringFieldEditor(PreferenceConstants.RELATIVE_CONFIG_PATH, "Relative config path: ", this.getFieldEditorParent());
+		relativeConfigPath = new StringFieldEditor(PreferenceConstants.RELATIVE_CONFIG_PATH, "Relative config path: ", parent);
 
-		StringFieldEditor artemisUrl = new StringFieldEditor(PreferenceConstants.ARTEMIS_URL, "Artemis URL: ", this.getFieldEditorParent());
+		var artemisUrl = new StringFieldEditor(PreferenceConstants.ARTEMIS_URL, "Artemis URL: ", parent);
+		var artemisUser = new StringFieldEditor(PreferenceConstants.ARTEMIS_USER, "Artemis username: ", parent);
 
-		StringFieldEditor artemisUser = new StringFieldEditor(PreferenceConstants.ARTEMIS_USER, "Artemis username: ", this.getFieldEditorParent());
-
-		StringFieldEditor artemisPassword = new StringFieldEditor(PreferenceConstants.ARTEMIS_PASSWORD, "Artemis password: ", this.getFieldEditorParent());
-
+		var artemisPassword = new StringFieldEditor(PreferenceConstants.ARTEMIS_PASSWORD, "Artemis password: ", parent);
 		artemisPassword.getTextControl(this.getFieldEditorParent()).setEchoChar('*');
 
-		this.userPrefersLargePenaltyText = new BooleanFieldEditor(PreferenceConstants.PREFERS_LARGE_PENALTY_TEXT_PATH,
-				"Use larger multi-line-text-box for custom penaltys", this.getFieldEditorParent());
-		this.userPrefersTextWrappingInPenaltyText = new BooleanFieldEditor(PreferenceConstants.PREFERS_TEXT_WRAPPING_IN_PENALTY_TEXT_PATH,
-				"Allow text-wrapping in multiline-text-box", this.getFieldEditorParent());
+		var gitToken = new StringFieldEditor(PreferenceConstants.GIT_TOKEN, "Git Token (optional): ", parent);
+		gitToken.getTextControl(this.getFieldEditorParent()).setEchoChar('*');
 
-		this.addField(this.absoluteConfigPath);
-		this.addField(this.relativeConfigPath);
-		this.addField(this.isRelativeConfigPath);
+		var userPrefersLargePenaltyText = new BooleanFieldEditor(PreferenceConstants.PREFERS_LARGE_PENALTY_TEXT_PATH,
+				"Use larger multi-line-text-box for custom penaltys", parent);
+		var userPrefersTextWrappingInPenaltyText = new BooleanFieldEditor(PreferenceConstants.PREFERS_TEXT_WRAPPING_IN_PENALTY_TEXT_PATH,
+				"Allow text-wrapping in multiline-text-box", parent);
+
+		this.addField(absoluteConfigPath);
+		this.addField(relativeConfigPath);
+		this.addField(isRelativeConfigPath);
 		this.addField(artemisUrl);
 		this.addField(artemisUser);
 		this.addField(artemisPassword);
-		this.addField(this.userPrefersLargePenaltyText);
-		this.addField(this.userPrefersTextWrappingInPenaltyText);
+		this.addField(gitToken);
+		this.addField(userPrefersLargePenaltyText);
+		this.addField(userPrefersTextWrappingInPenaltyText);
 
 	}
 
