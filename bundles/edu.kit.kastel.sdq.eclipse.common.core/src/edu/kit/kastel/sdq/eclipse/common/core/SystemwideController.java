@@ -19,9 +19,9 @@ public abstract class SystemwideController extends AbstractController implements
 	protected IProjectFileNamingStrategy projectFileNamingStrategy;
 	protected IExerciseArtemisController exerciseController;
 
-	protected SystemwideController(String username, String password) {
+	protected SystemwideController(String username, String password, String gitToken) {
 		this.projectFileNamingStrategy = ProjectFileNamingStrategies.DEFAULT.get();
-		exerciseController = new ExerciseArtemisController(username, password);
+		exerciseController = new ExerciseArtemisController(username, password, gitToken);
 	}
 
 	protected abstract void refreshArtemisController(String url, String user, String pass);

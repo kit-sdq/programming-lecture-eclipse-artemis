@@ -48,7 +48,9 @@ public class StudentSystemwideController extends SystemwideController implements
 
 	public StudentSystemwideController(final IPreferenceStore preferenceStore) {
 		super(preferenceStore.getString(PreferenceConstants.ARTEMIS_USER), //
-				preferenceStore.getString(PreferenceConstants.ARTEMIS_PASSWORD));
+				preferenceStore.getString(PreferenceConstants.ARTEMIS_PASSWORD), //
+				null //
+		);
 		this.createControllers(preferenceStore.getString(PreferenceConstants.ARTEMIS_URL), //
 				preferenceStore.getString(PreferenceConstants.ARTEMIS_USER), //
 				preferenceStore.getString(PreferenceConstants.ARTEMIS_PASSWORD) //
@@ -56,11 +58,6 @@ public class StudentSystemwideController extends SystemwideController implements
 		this.preferenceStore = preferenceStore;
 
 		this.initPreferenceStoreCallback(preferenceStore);
-	}
-
-	public StudentSystemwideController(final String artemisHost, final String username, final String password) {
-		super(username, password);
-		this.createControllers(artemisHost, username, password);
 	}
 
 	private void createControllers(final String artemisHost, final String username, final String password) {

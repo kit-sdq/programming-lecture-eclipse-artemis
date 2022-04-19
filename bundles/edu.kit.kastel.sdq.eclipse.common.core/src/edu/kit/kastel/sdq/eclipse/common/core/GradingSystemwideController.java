@@ -42,7 +42,9 @@ public class GradingSystemwideController extends SystemwideController implements
 
 	public GradingSystemwideController(final IPreferenceStore preferenceStore) {
 		super(preferenceStore.getString(PreferenceConstants.ARTEMIS_USER), //
-				preferenceStore.getString(PreferenceConstants.ARTEMIS_PASSWORD));
+				preferenceStore.getString(PreferenceConstants.ARTEMIS_PASSWORD), //
+				preferenceStore.getString(PreferenceConstants.GIT_TOKEN) //
+		);
 		this.createController(preferenceStore.getString(PreferenceConstants.ARTEMIS_URL), //
 				preferenceStore.getString(PreferenceConstants.ARTEMIS_USER), //
 				preferenceStore.getString(PreferenceConstants.ARTEMIS_PASSWORD) //
@@ -53,11 +55,6 @@ public class GradingSystemwideController extends SystemwideController implements
 		this.updateConfigFile();
 
 		this.initPreferenceStoreCallback(preferenceStore);
-	}
-
-	public GradingSystemwideController(final String artemisHost, final String username, final String password) {
-		super(username, password);
-		this.createController(artemisHost, username, password);
 	}
 
 	private void createController(final String artemisHost, final String username, final String password) {
