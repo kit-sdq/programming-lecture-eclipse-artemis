@@ -31,20 +31,6 @@ public interface IAnnotation {
 
 	/**
 	 *
-	 * @return additional encoding of the start (counts from file start, eclipse GUI
-	 *         requires this)
-	 */
-	int getMarkerCharEnd();
-
-	/**
-	 *
-	 * @return additional encoding of the start (counts from file start, eclipse GUI
-	 *         requires this)
-	 */
-	int getMarkerCharStart();
-
-	/**
-	 *
 	 * @return the type of mistake that this annotation is an occurance of.
 	 */
 	IMistakeType getMistakeType();

@@ -22,11 +22,8 @@ public class Annotation implements IAnnotation {
 	private String customMessage;
 	private Double customPenalty;
 
-	private final int markerCharStart;
-	private final int markerCharEnd;
-
 	public Annotation(String uuid, IMistakeType mistakeType, int startLine, int endLine, String fullyClassifiedClassName, String customMessage,
-			Double customPenalty, int markerCharStart, int markerCharEnd) {
+			Double customPenalty) {
 		this.uuid = uuid;
 		this.mistakeType = mistakeType;
 		this.startLine = startLine;
@@ -35,9 +32,6 @@ public class Annotation implements IAnnotation {
 
 		this.customMessage = customMessage;
 		this.customPenalty = customPenalty;
-
-		this.markerCharStart = markerCharStart;
-		this.markerCharEnd = markerCharEnd;
 	}
 
 	/**
@@ -57,8 +51,6 @@ public class Annotation implements IAnnotation {
 		this.customMessage = customMessage;
 		this.customPenalty = customPenalty;
 
-		this.markerCharStart = markerCharStart;
-		this.markerCharEnd = markerCharEnd;
 	}
 
 	@Override
@@ -94,16 +86,6 @@ public class Annotation implements IAnnotation {
 	@Override
 	public String getUUID() {
 		return this.uuid;
-	}
-
-	@Override
-	public int getMarkerCharEnd() {
-		return this.markerCharEnd;
-	}
-
-	@Override
-	public int getMarkerCharStart() {
-		return this.markerCharStart;
 	}
 
 	@Override

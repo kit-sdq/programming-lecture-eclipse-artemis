@@ -52,7 +52,7 @@ public final class AssessmentUtilities {
 
 	/**
 	 * Creates a tooltip for a marker with the given parameters
-	 * 
+	 *
 	 * @param startLine
 	 * @param endline
 	 * @param errorTypeName
@@ -68,7 +68,7 @@ public final class AssessmentUtilities {
 
 	/**
 	 * Creates a tooltip for the custom button
-	 * 
+	 *
 	 * @param startLine
 	 * @param endline
 	 * @param customMessage
@@ -98,7 +98,7 @@ public final class AssessmentUtilities {
 
 	/**
 	 * Gets the current open file
-	 * 
+	 *
 	 * @return IFile instance of the current open file in the editor
 	 */
 	public static IFile getCurrentlyOpenFile() {
@@ -124,7 +124,7 @@ public final class AssessmentUtilities {
 
 			int srcIndex = 0;
 			for (int i = 0; i < path.segments().length; i++) {
-				if (path.segments()[i].equals("src")) {
+				if ("src".equals(path.segments()[i])) {
 					srcIndex = i;
 					break;
 				}
@@ -165,6 +165,24 @@ public final class AssessmentUtilities {
 		throw new IllegalAccessError();
 	}
 
+	public static void setCharPositionsByLine(IMarker marker, String currentProjectName, String srcDirectory, String classFileInPath, int startLine,
+			int endLine) throws ArtemisClientException {
+		try {
+			var contentStream = ResourcesPlugin.getWorkspace().getRoot().getProject(currentProjectName).getFile(srcDirectory + classFileInPath).getContents();
+			Scanner s = new Scanner(contentStream).useDelimiter("\\A");
+			String content = s.hasNext() ? s.next() : "";
+			s.close();
+			IDocument doc = new Document(content);
+			var charOffsetStart = doc.getLineOffset(startLine);
+			// TODO Fix Offset -2 .. \n\r ?
+			var charOffsetEnd = doc.getLineOffset(endLine + 1);
+			marker.setAttribute(IMarker.CHAR_START, charOffsetStart);
+			marker.setAttribute(IMarker.CHAR_END, charOffsetEnd);
+		} catch (Exception e) {
+			throw new ArtemisClientException(e.getMessage());
+		}
+	}
+
 	public static void createMarkerForAnnotation(IAnnotation annotation, String currentProjectName, String srcDirectory) throws ArtemisClientException {
 
 		int startLine = annotation.getStartLine();
@@ -176,23 +194,7 @@ public final class AssessmentUtilities {
 			IMarker marker = AssessmentUtilities.getFile(annotation.getClassFilePath(), currentProjectName, srcDirectory)
 					.createMarker(AssessmentUtilities.MARKER_NAME);
 			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_ANNOTATION_ID, annotation.getUUID());
-
-			if (annotation.getMarkerCharStart() < 0 || annotation.getMarkerCharEnd() < 0) {
-				var contentStream = ResourcesPlugin.getWorkspace().getRoot().getProject(currentProjectName)
-						.getFile(srcDirectory + annotation.getClassFilePath()).getContents();
-				Scanner s = new Scanner(contentStream).useDelimiter("\\A");
-				String content = s.hasNext() ? s.next() : "";
-				s.close();
-				IDocument doc = new Document(content);
-				var charOffsetStart = doc.getLineOffset(annotation.getStartLine());
-				// TODO Fix Offset -2 .. \n\r ?
-				var charOffsetEnd = doc.getLineOffset(annotation.getEndLine() + 1);
-				marker.setAttribute(IMarker.CHAR_START, charOffsetStart);
-				marker.setAttribute(IMarker.CHAR_END, charOffsetEnd);
-			} else {
-				marker.setAttribute(IMarker.CHAR_START, annotation.getMarkerCharStart());
-				marker.setAttribute(IMarker.CHAR_END, annotation.getMarkerCharEnd());
-			}
+			setCharPositionsByLine(marker, currentProjectName, srcDirectory, annotation.getClassFilePath(), startLine, endLine);
 
 			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_START, startLine);
 			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_END, endLine);
@@ -226,7 +228,7 @@ public final class AssessmentUtilities {
 	/**
 	 * Checks whether the given annotation is present in the currently opened
 	 * project (An annotation is identified by its UUID)
-	 * 
+	 *
 	 * @param annotation the annotation to check
 	 * @return annotation if the annotation is present, null if not
 	 */
@@ -250,7 +252,7 @@ public final class AssessmentUtilities {
 	 * Formats a custom penalty message. It will always use the message of the
 	 * mistake, however iff the provided customMessage is not null, it will append a
 	 * \n and this custom message.
-	 * 
+	 *
 	 * @param mistake       the mistake to load the message from
 	 * @param customMessage the custom message to append (can be null)
 	 * @return the formatted message

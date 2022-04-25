@@ -4,6 +4,7 @@ package edu.kit.kastel.eclipse.grading.view.controllers;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.text.ITextSelection;
 
@@ -48,19 +49,19 @@ public class AssessmentViewController extends AbstractArtemisViewController<IGra
 			this.viewObserver.error("Text selection needed to add a new annotation", null);
 			return;
 		}
-		final int startLine = textSelection.getStartLine() + 1;
-		final int endLine = textSelection.getEndLine() + 1;
-		final int charOffset = textSelection.getOffset();
-		final int length = textSelection.getLength();
-		final int charStart = charOffset;
-		final int charEnd = charOffset + length;
+		final int startLine = textSelection.getStartLine();
+		final int endLine = textSelection.getEndLine();
+		final IFile file = AssessmentUtilities.getCurrentlyOpenFile();
+		final String projectName = file.getProject().getName();
+		final String srcPath = "assignment/src";
+		final String className = file.getFullPath().makeRelative().toString().split("src", 2)[1];
 
 		try {
 			String uuid = IAnnotation.createUUID();
 			IMarker marker = AssessmentUtilities.getCurrentlyOpenFile().createMarker(AssessmentUtilities.MARKER_NAME);
 			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_ANNOTATION_ID, uuid);
-			marker.setAttribute(IMarker.CHAR_START, charStart);
-			marker.setAttribute(IMarker.CHAR_END, charEnd);
+			AssessmentUtilities.setCharPositionsByLine(marker, projectName, srcPath, className, startLine, endLine);
+
 			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_ERROR_DESCRIPTION, mistake.isCustomPenalty() ? "" : mistake.getMessage());
 			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_ERROR, mistake.getButtonText());
 			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_START, startLine);
@@ -79,8 +80,8 @@ public class AssessmentViewController extends AbstractArtemisViewController<IGra
 			} else {
 				marker.setAttribute(IMarker.MESSAGE, AssessmentUtilities.createMarkerTooltipForCustomButton(startLine, endLine, customMessage, customPenalty));
 			}
-			this.assessmentController.addAnnotation(uuid, mistake, startLine, endLine, AssessmentUtilities.getPathForAnnotation(), customMessage, customPenalty,
-					charStart, charEnd);
+			this.assessmentController.addAnnotation(uuid, mistake, startLine, endLine, AssessmentUtilities.getPathForAnnotation(), customMessage,
+					customPenalty);
 		} catch (Exception e) {
 
 			/*

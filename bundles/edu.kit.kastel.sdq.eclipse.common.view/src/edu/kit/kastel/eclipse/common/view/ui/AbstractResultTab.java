@@ -213,11 +213,8 @@ public abstract class AbstractResultTab extends ResultTabUI {
 			String fullyClassifiedClassName = fileXline[0].substring("file:src/".length());
 			String customMessage = f.getDetailText();
 			Double customPenalty = f.getCredits();
-			int markerCharStart = -1;
-			int markerCharEnd = -1;
 
-			Annotation annotation = new Annotation(uuid, type, startLine, endLine, fullyClassifiedClassName, customMessage, customPenalty, markerCharStart,
-					markerCharEnd);
+			Annotation annotation = new Annotation(uuid, type, startLine, endLine, fullyClassifiedClassName, customMessage, customPenalty);
 			annotations.add(annotation);
 		}
 		return annotations;
