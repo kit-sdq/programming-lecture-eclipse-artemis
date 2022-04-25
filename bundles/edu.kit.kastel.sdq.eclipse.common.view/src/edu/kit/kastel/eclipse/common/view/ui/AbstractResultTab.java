@@ -57,18 +57,25 @@ public abstract class AbstractResultTab extends ResultTabUI {
 	 */
 	protected abstract String getCurrentProjectNameForAnnotations();
 
+	/**
+	 * Returns the current source directory relative to the project directory. For
+	 * students this should be "src/".
+	 */
+	protected abstract String getCurrentSourceDirectoryRelative();
+
 	@Override
 	protected final void reloadFeedbackForExcerise() {
 		var currentExercise = this.getCurrentExercise();
 		var resultFeedback = this.getCurrentResultAndFeedback();
 		var currentProjectFileForAnnotation = this.getCurrentProjectNameForAnnotations();
+		var currentSourceDirectory = this.getCurrentSourceDirectoryRelative();
 
 		if (!resultFeedback.isEmpty()) {
 			// IExercise currentExercise, String completionTime, String resultString,
 			// List<Feedback> feedbacks
 			this.handleNewResult(currentExercise, resultFeedback.first(), resultFeedback.second(), resultFeedback.third());
 			if (currentProjectFileForAnnotation != null) {
-				this.createAnnotationsMarkers(currentProjectFileForAnnotation, resultFeedback.third());
+				this.createAnnotationsMarkers(currentProjectFileForAnnotation, currentSourceDirectory, resultFeedback.third());
 			}
 		} else {
 			this.feedbackTable.removeAll();
@@ -172,9 +179,10 @@ public abstract class AbstractResultTab extends ResultTabUI {
 	 * Create markers for current annotations in the backend
 	 *
 	 * @param currentProjectName the current project name in eclipse
+	 * @param sourceDirectory    typically "src/" or "assignment/src/"
 	 * @param feedbacks          all feedbacks (manual and automatic)
 	 */
-	protected final void createAnnotationsMarkers(String currentProjectName, List<Feedback> feedbacks) {
+	protected final void createAnnotationsMarkers(String currentProjectName, String sourceDirectory, List<Feedback> feedbacks) {
 		// Translate Feedback to annotations ..
 		var feedbackForLines = feedbacks.stream().filter(f -> f.getFeedbackType() == FeedbackType.MANUAL).toList();
 		var annotations = this.convertToAnnotation(feedbackForLines);
@@ -188,7 +196,7 @@ public abstract class AbstractResultTab extends ResultTabUI {
 				}
 			}
 			try {
-				AssessmentUtilities.createMarkerForAnnotation(annotation, currentProjectName, "src/");
+				AssessmentUtilities.createMarkerByAnnotation(annotation, currentProjectName, sourceDirectory);
 			} catch (ArtemisClientException e) {
 				this.log.error(e.getMessage(), e);
 			}

@@ -40,10 +40,10 @@ public class AssessmentMarkerViewDoubleClickListener implements IDoubleClickList
 
 					String customMessage = annotation.getCustomMessage().orElse("");
 
-					CustomButtonDialog dialog = new CustomButtonDialog(AssessmentUtilities.getWindowsShell(), null, null, null);
+					CustomButtonDialog dialog = new CustomButtonDialog(AssessmentUtilities.getWindowsShell(), null, null);
 
 					if (annotation.getMistakeType().isCustomPenalty()) {
-						dialog.setCustomPenalty(annotation.getCustomPenalty().orElse(0d));
+						dialog.setCustomPenalty(annotation.getCustomPenalty().orElse(null));
 						dialog.setForcePenaltyField(true);
 					}
 
@@ -51,11 +51,17 @@ public class AssessmentMarkerViewDoubleClickListener implements IDoubleClickList
 					dialog.setBlockOnOpen(true);
 					dialog.open();
 
+					if (!dialog.isClosedByOk()) {
+						return;
+					}
+
 					String newMessage = dialog.getCustomMessage();
-					Double newPenalty = annotation.getMistakeType().isCustomPenalty() ? dialog.getCustomPenalty() : annotation.getCustomPenalty().orElse(0d);
+					Double newPenalty = annotation.getMistakeType().isCustomPenalty() //
+							? dialog.getCustomPenalty()
+							: annotation.getCustomPenalty().orElse(null);
 
 					item.getMarker().setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_CUSTOM_MESSAGE, newMessage);
-					item.getMarker().setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_CUSTOM_PENALTY, newPenalty.toString());
+					item.getMarker().setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_CUSTOM_PENALTY, newPenalty == null ? null : String.valueOf(newPenalty));
 
 					Activator.getDefault().getSystemwideController().getCurrentAssessmentController().modifyAnnotation(annotation.getUUID(), newMessage,
 							newPenalty);

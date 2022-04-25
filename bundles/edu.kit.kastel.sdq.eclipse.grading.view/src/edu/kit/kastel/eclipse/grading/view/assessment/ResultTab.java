@@ -51,6 +51,12 @@ public class ResultTab extends AbstractResultTab {
 		return null;
 	}
 
+	@Override
+	protected String getCurrentSourceDirectoryRelative() {
+		// null because annotations shall not be generated for the grading view.
+		return null;
+	}
+
 	public void loadFeedbackForExcerise() {
 		this.reloadFeedbackForExcerise();
 	}

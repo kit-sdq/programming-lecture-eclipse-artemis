@@ -107,4 +107,6 @@ public interface IAssessmentController extends IController {
 	 * {@link IAssessmentController#getSubmissionID()} as param.
 	 */
 	void resetAndRestartAssessment(IProjectFileNamingStrategy projectNaming);
+
+	IViewInteraction getViewInteraction();
 }

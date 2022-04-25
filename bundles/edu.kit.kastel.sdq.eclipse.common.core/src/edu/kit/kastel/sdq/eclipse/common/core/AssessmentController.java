@@ -14,6 +14,7 @@ import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.IExercise;
 import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.ISubmission;
 import edu.kit.kastel.sdq.eclipse.common.api.controller.AbstractController;
 import edu.kit.kastel.sdq.eclipse.common.api.controller.IAssessmentController;
+import edu.kit.kastel.sdq.eclipse.common.api.controller.IViewInteraction;
 import edu.kit.kastel.sdq.eclipse.common.api.model.IAnnotation;
 import edu.kit.kastel.sdq.eclipse.common.api.model.IMistakeType;
 import edu.kit.kastel.sdq.eclipse.common.api.model.IRatingGroup;
@@ -209,5 +210,10 @@ public class AssessmentController extends AbstractController implements IAssessm
 		} catch (IOException e) {
 			this.info("Deserializing Annotations from Artemis failed: " + e.getMessage());
 		}
+	}
+
+	@Override
+	public IViewInteraction getViewInteraction() {
+		return this.getViewInteractionHandler();
 	}
 }
