@@ -34,7 +34,9 @@ public class ResultTab extends AbstractResultTab implements ArtemisStudentTab, W
 	@Override
 	protected Triple<String, String, List<Feedback>> getCurrentResultAndFeedback() {
 		var details = this.viewController.getFeedbackExcerise();
-
+		if (details.isEmpty()) {
+			return new Triple<>(null, null, null);
+		}
 		return new Triple<>(details.first().completionDateAsString(), details.first().resultString, details.second());
 	}
 
