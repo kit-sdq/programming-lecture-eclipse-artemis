@@ -1,0 +1,12 @@
+name: "Other kind of issue"
+title: "`Other`"
+description: "Kind of issue not listed above"
+labels:
+  - other
+body:
+  - type: textarea
+    attributes:
+      label: Description
+      description: Description of your issue
+    validations:
+      required: true
