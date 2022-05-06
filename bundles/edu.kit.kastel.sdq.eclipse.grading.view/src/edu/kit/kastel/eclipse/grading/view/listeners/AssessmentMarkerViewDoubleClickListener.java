@@ -13,6 +13,7 @@ import edu.kit.kastel.eclipse.common.view.utilities.AssessmentUtilities;
 import edu.kit.kastel.eclipse.grading.view.activator.Activator;
 import edu.kit.kastel.eclipse.grading.view.assessment.ArtemisGradingView;
 import edu.kit.kastel.eclipse.grading.view.assessment.CustomButtonDialog;
+import edu.kit.kastel.sdq.eclipse.common.api.ArtemisClientException;
 import edu.kit.kastel.sdq.eclipse.common.api.model.IAnnotation;
 
 public class AssessmentMarkerViewDoubleClickListener implements IDoubleClickListener {
@@ -60,13 +61,11 @@ public class AssessmentMarkerViewDoubleClickListener implements IDoubleClickList
 							? dialog.getCustomPenalty()
 							: annotation.getCustomPenalty().orElse(null);
 
-					item.getMarker().setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_CUSTOM_MESSAGE, newMessage);
-					item.getMarker().setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_CUSTOM_PENALTY, newPenalty == null ? null : String.valueOf(newPenalty));
-
+					AssessmentUtilities.updateMarkerMessage(item.getMarker(), newMessage, newPenalty);
 					Activator.getDefault().getSystemwideController().getCurrentAssessmentController().modifyAnnotation(annotation.getUUID(), newMessage,
 							newPenalty);
 					this.gradingView.updatePenalties();
-				} catch (CoreException e) {
+				} catch (CoreException | ArtemisClientException e) {
 					e.printStackTrace();
 				}
 			}
