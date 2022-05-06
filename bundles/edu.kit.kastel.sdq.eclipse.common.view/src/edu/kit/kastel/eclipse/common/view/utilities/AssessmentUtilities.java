@@ -223,6 +223,19 @@ public final class AssessmentUtilities {
 		}
 	}
 
+	public static void updateMarkerMessage(IMarker marker, String newMessage, Double newPenalty) throws ArtemisClientException {
+		try {
+			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_CUSTOM_MESSAGE, newMessage);
+			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_CUSTOM_PENALTY, newPenalty.toString());
+			Integer startLine = (Integer) marker.getAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_START);
+			Integer endLine = (Integer) marker.getAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_END);
+
+			marker.setAttribute(IMarker.MESSAGE, AssessmentUtilities.createMarkerTooltipForCustomButton(startLine, endLine, newMessage, newPenalty));
+		} catch (Exception e) {
+			throw new ArtemisClientException(e.getMessage());
+		}
+	}
+
 	/**
 	 * Checks whether the given annotation is present in the currently opened
 	 * project (An annotation is identified by its UUID)
