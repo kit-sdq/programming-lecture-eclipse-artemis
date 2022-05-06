@@ -317,16 +317,7 @@ public class GradingSystemwideController extends SystemwideController implements
 	}
 
 	private void updateConfigFile() {
-		if (this.preferenceStore.getBoolean(PreferenceConstants.IS_RELATIVE_CONFIG_PATH)) {
-			if (this.course != null && this.exercise != null && this.submission != null) {
-				// not the case at startup with rel config path chosen!
-				this.setConfigFile(new File(ResourcesPlugin.getWorkspace().getRoot().getProject(this.getCurrentProjectName()).getLocation().toFile(),
-						this.preferenceStore.getString(PreferenceConstants.RELATIVE_CONFIG_PATH)));
-			}
-		} else {
-			this.setConfigFile(new File(this.preferenceStore.getString(PreferenceConstants.ABSOLUTE_CONFIG_PATH)));
-
-		}
+		this.setConfigFile(new File(this.preferenceStore.getString(PreferenceConstants.ABSOLUTE_CONFIG_PATH)));
 	}
 
 	private boolean nullCheckMembersAndNotify(boolean checkCourseID, boolean checkExerciseID, boolean checkSubmissionID) {
