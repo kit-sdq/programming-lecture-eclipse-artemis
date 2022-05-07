@@ -79,7 +79,7 @@ public class ArtemisGradingView extends ViewPart {
 
 	private void addListenerForMarkerDeletion() {
 		AssessmentUtilities.getWorkspace()
-				.addResourceChangeListener(event -> Arrays.asList(event.findMarkerDeltas(AssessmentUtilities.MARKER_NAME, true)).forEach(marker -> {
+				.addResourceChangeListener(event -> Arrays.asList(event.findMarkerDeltas(AssessmentUtilities.MARKER_CLASS_NAME, true)).forEach(marker -> {
 					// check if marker is deleted
 					if (marker.getKind() == 2) {
 						this.viewController.deleteAnnotation((String) marker.getAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_ANNOTATION_ID));
@@ -224,8 +224,7 @@ public class ArtemisGradingView extends ViewPart {
 		customButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		customButton.setText(mistake.getButtonText());
 		customButton.addListener(SWT.Selection, event -> {
-			final CustomButtonDialog customDialog = new CustomButtonDialog(AssessmentUtilities.getWindowsShell(), this.viewController,
-					ratingGroup.getDisplayName(), mistake);
+			final CustomButtonDialog customDialog = new CustomButtonDialog(AssessmentUtilities.getWindowsShell(), this.viewController, mistake);
 			customDialog.setBlockOnOpen(true);
 			customDialog.open();
 			// avoid SWT Exception
@@ -400,9 +399,9 @@ public class ArtemisGradingView extends ViewPart {
 
 					KeyboardAwareMouseListener listener = new KeyboardAwareMouseListener();
 					// Normal click
-					listener.setClickHandler(//
-							() -> this.viewController.addAssessmentAnnotation(mistake, null, null, mistake.getRatingGroup().getDisplayName()), SWT.BUTTON1 //
-					);
+					listener.setClickHandler(
+							() -> AssessmentUtilities.createAssessmentAnnotation(this.viewController.getAssessmentController(), mistake, null, null),
+							SWT.BUTTON1);
 					// shift-click and middle-click
 					listener.setClickHandler(() -> this.createMistakePenaltyWithCustomMessageDialog(mistake), SWT.SHIFT, SWT.BUTTON2);
 					// every click
@@ -427,12 +426,11 @@ public class ArtemisGradingView extends ViewPart {
 	}
 
 	private void createMistakePenaltyWithCustomMessageDialog(IMistakeType mistake) {
-		CustomButtonDialog buttonDialog = new CustomButtonDialog(AssessmentUtilities.getWindowsShell(), this.viewController,
-				mistake.getRatingGroup().getDisplayName(), null);
+		CustomButtonDialog buttonDialog = new CustomButtonDialog(AssessmentUtilities.getWindowsShell(), this.viewController, null);
 		buttonDialog.setBlockOnOpen(true);
 		buttonDialog.open();
 		if (buttonDialog.isClosedByOk()) {
-			this.viewController.addAssessmentAnnotation(mistake, buttonDialog.getCustomMessage(), null, mistake.getRatingGroup().getDisplayName());
+			AssessmentUtilities.createAssessmentAnnotation(this.viewController.getAssessmentController(), mistake, buttonDialog.getCustomMessage(), null);
 		}
 	}
 

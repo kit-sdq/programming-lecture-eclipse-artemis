@@ -25,6 +25,7 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 import edu.kit.kastel.sdq.eclipse.common.api.ArtemisClientException;
+import edu.kit.kastel.sdq.eclipse.common.api.controller.IAssessmentController;
 import edu.kit.kastel.sdq.eclipse.common.api.model.IAnnotation;
 import edu.kit.kastel.sdq.eclipse.common.api.model.IMistakeType;
 
@@ -35,7 +36,7 @@ import edu.kit.kastel.sdq.eclipse.common.api.model.IMistakeType;
  */
 public final class AssessmentUtilities {
 
-	public static final String MARKER_NAME = "edu.kit.kastel.eclipse.common.view.assessment.marker";
+	public static final String MARKER_CLASS_NAME = "edu.kit.kastel.eclipse.common.view.assessment.marker";
 	public static final String MARKER_ATTRIBUTE_ANNOTATION_ID = "annotationID";
 	public static final String MARKER_ATTRIBUTE_ERROR = "errorType";
 	public static final String MARKER_ATTRIBUTE_ERROR_DESCRIPTION = "errorTypeDescription";
@@ -50,33 +51,29 @@ public final class AssessmentUtilities {
 
 	public static final int BACKLOG_COMBO_WIDTH = 300;
 
+	private AssessmentUtilities() {
+		throw new IllegalAccessError();
+	}
+
 	/**
 	 * Creates a tooltip for a marker with the given parameters
-	 * 
-	 * @param startLine
-	 * @param endline
-	 * @param errorTypeName
-	 * @param ratingGroupName
-	 * @param message
-	 * @param classPath
+	 *
 	 * @return the tooltip for the marker as string
 	 */
 	public static String createMarkerTooltip(int startLine, int endline, String errorTypeName, String ratingGroupName, String message, String classPath) {
-		return String.format("[%s,%s], %s, %s, %s, %s", startLine, endline, classPath == null ? getClassNameForAnnotation() : classPath, ratingGroupName,
-				errorTypeName, message);
+		// Lines are indexed at 0 ..
+		return String.format("[%s,%s], %s, %s, %s, %s", startLine + 1, endline + 1, classPath == null ? getClassNameForAnnotation() : classPath,
+				ratingGroupName, errorTypeName, message);
 	}
 
 	/**
 	 * Creates a tooltip for the custom button
-	 * 
-	 * @param startLine
-	 * @param endline
-	 * @param customMessage
-	 * @param customPenalty
+	 *
 	 * @return tooltip of custom button as String
 	 */
 	public static String createMarkerTooltipForCustomButton(int startLine, int endline, String customMessage, Double customPenalty) {
-		return String.format("[%s,%s], %s, %s", startLine, endline, customMessage, customPenalty);
+		// Lines are indexed at 0 ..
+		return String.format("[%s,%s], %s, %s", startLine + 1, endline + 1, customMessage, customPenalty);
 	}
 
 	/**
@@ -98,7 +95,7 @@ public final class AssessmentUtilities {
 
 	/**
 	 * Gets the current open file
-	 * 
+	 *
 	 * @return IFile instance of the current open file in the editor
 	 */
 	public static IFile getCurrentlyOpenFile() {
@@ -119,12 +116,12 @@ public final class AssessmentUtilities {
 		final IEditorPart editor = activePage == null ? null : activePage.getActiveEditor();
 
 		final IEditorInput input = editor == null ? null : editor.getEditorInput();
-		final IPath path = input instanceof FileEditorInput ? ((FileEditorInput) input).getPath() : null;
+		final IPath path = input instanceof FileEditorInput fileEditor ? fileEditor.getPath() : null;
 		if (path != null) {
 
 			int srcIndex = 0;
 			for (int i = 0; i < path.segments().length; i++) {
-				if (path.segments()[i].equals("src")) {
+				if ("src".equals(path.segments()[i])) {
 					srcIndex = i;
 					break;
 				}
@@ -144,8 +141,7 @@ public final class AssessmentUtilities {
 	 */
 	public static ITextSelection getTextSelection() {
 		final IEditorPart part = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
-		if (part instanceof ITextEditor) {
-			final ITextEditor editor = (ITextEditor) part;
+		if (part instanceof ITextEditor editor) {
 			final ISelection selection = editor.getSelectionProvider().getSelection();
 			return (ITextSelection) selection;
 		}
@@ -161,11 +157,67 @@ public final class AssessmentUtilities {
 		return ResourcesPlugin.getWorkspace();
 	}
 
-	private AssessmentUtilities() {
-		throw new IllegalAccessError();
+	/**
+	 * This method creates a marker for the annotation and add a new annotation to
+	 * the backlog
+	 *
+	 * @param mistake         (the mistake type of the new annotation)
+	 * @param customMessage   (for custom mistake type, else null)
+	 * @param customPenalty   (for custom mistake, else null)
+	 * @param ratingGroupName (the name of the rating group of the new annotation)
+	 */
+	public static void createAssessmentAnnotation(IAssessmentController assessmentController, IMistakeType mistake, String customMessage,
+			Double customPenalty) {
+		final ITextSelection textSelection = AssessmentUtilities.getTextSelection();
+		if (textSelection == null) {
+			assessmentController.getViewInteraction().error("Text selection needed to add a new annotation", null);
+			return;
+		}
+		// Lines are indexed starting at 0.
+		final int startLine = textSelection.getStartLine();
+		final int endLine = textSelection.getEndLine();
+		final IFile file = AssessmentUtilities.getCurrentlyOpenFile();
+		final String projectName = file.getProject().getName();
+		final String srcPath = "assignment/src";
+		final String className = file.getFullPath().makeRelative().toString().split("src", 2)[1];
+
+		try {
+			String uuid = IAnnotation.createUUID();
+			IMarker marker = AssessmentUtilities.getCurrentlyOpenFile().createMarker(AssessmentUtilities.MARKER_CLASS_NAME);
+			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_ANNOTATION_ID, uuid);
+			AssessmentUtilities.setCharPositionsInMarkerByLine(marker, projectName, srcPath, className, startLine, endLine);
+
+			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_ERROR_DESCRIPTION, mistake.isCustomPenalty() ? "" : mistake.getMessage());
+			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_ERROR, mistake.getButtonText());
+			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_START, startLine);
+			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_END, endLine);
+			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_CLASS_NAME, AssessmentUtilities.getClassNameForAnnotation());
+			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_RATING_GROUP, mistake.getRatingGroup().getDisplayName());
+			if (customMessage != null) {
+				marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_CUSTOM_MESSAGE, customMessage);
+			}
+			if (customPenalty != null) {
+				marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_CUSTOM_PENALTY, customPenalty.toString());
+			}
+			if (!mistake.isCustomPenalty()) {
+				marker.setAttribute(IMarker.MESSAGE, AssessmentUtilities.createMarkerTooltip(startLine, endLine, mistake.getButtonText(),
+						mistake.getRatingGroup().getDisplayName(), AssessmentUtilities.formatCustomPenaltyMessage(mistake, customMessage), null));
+			} else {
+				marker.setAttribute(IMarker.MESSAGE, AssessmentUtilities.createMarkerTooltipForCustomButton(startLine, endLine, customMessage, customPenalty));
+			}
+			assessmentController.addAnnotation(uuid, mistake, startLine, endLine, AssessmentUtilities.getPathForAnnotation(), customMessage, customPenalty);
+		} catch (Exception e) {
+
+			/*
+			 * Future Work: the error handling should be more specific (maybe for each
+			 * setAttribute(...)) without getting a too messy code
+			 */
+			assessmentController.getViewInteraction().error("Unable to create marker for annotation: " + e.getMessage(), e);
+		}
+
 	}
 
-	public static void createMarkerForAnnotation(IAnnotation annotation, String currentProjectName, String srcDirectory) throws ArtemisClientException {
+	public static void createMarkerByAnnotation(IAnnotation annotation, String currentProjectName, String srcDirectory) throws ArtemisClientException {
 
 		int startLine = annotation.getStartLine();
 		int endLine = annotation.getEndLine();
@@ -173,26 +225,10 @@ public final class AssessmentUtilities {
 		String customMessage = annotation.getCustomMessage().orElse(null);
 		String customPenalty = annotation.getCustomPenalty().map(String::valueOf).orElse(null);
 		try {
-			IMarker marker = AssessmentUtilities.getFile(annotation.getClassFilePath(), currentProjectName, srcDirectory)
-					.createMarker(AssessmentUtilities.MARKER_NAME);
+			IFile file = AssessmentUtilities.getFile(annotation.getClassFilePath(), currentProjectName, srcDirectory);
+			IMarker marker = file.createMarker(AssessmentUtilities.MARKER_CLASS_NAME);
 			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_ANNOTATION_ID, annotation.getUUID());
-
-			if (annotation.getMarkerCharStart() < 0 || annotation.getMarkerCharEnd() < 0) {
-				var contentStream = ResourcesPlugin.getWorkspace().getRoot().getProject(currentProjectName)
-						.getFile(srcDirectory + annotation.getClassFilePath()).getContents();
-				Scanner s = new Scanner(contentStream).useDelimiter("\\A");
-				String content = s.hasNext() ? s.next() : "";
-				s.close();
-				IDocument doc = new Document(content);
-				var charOffsetStart = doc.getLineOffset(annotation.getStartLine());
-				// TODO Fix Offset -2 .. \n\r ?
-				var charOffsetEnd = doc.getLineOffset(annotation.getEndLine() + 1);
-				marker.setAttribute(IMarker.CHAR_START, charOffsetStart);
-				marker.setAttribute(IMarker.CHAR_END, charOffsetEnd);
-			} else {
-				marker.setAttribute(IMarker.CHAR_START, annotation.getMarkerCharStart());
-				marker.setAttribute(IMarker.CHAR_END, annotation.getMarkerCharEnd());
-			}
+			setCharPositionsInMarkerByLine(marker, currentProjectName, srcDirectory, annotation.getClassFilePath(), startLine, endLine);
 
 			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_START, startLine);
 			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_END, endLine);
@@ -223,10 +259,44 @@ public final class AssessmentUtilities {
 		}
 	}
 
+	public static void setCharPositionsInMarkerByLine(IMarker marker, String currentProjectName, String srcDirectory, String classFileInPath, int startLine,
+			int endLine) throws ArtemisClientException {
+		try {
+			var contentStream = ResourcesPlugin.getWorkspace().getRoot().getProject(currentProjectName).getFile(srcDirectory + classFileInPath).getContents();
+			Scanner s = new Scanner(contentStream).useDelimiter("\\A");
+			String content = s.hasNext() ? s.next() : "";
+			s.close();
+			IDocument doc = new Document(content);
+			var charOffsetStart = doc.getLineOffset(startLine);
+			int charOffsetEnd;
+			if (startLine == endLine) {
+				charOffsetEnd = charOffsetStart + doc.getLineLength(startLine);
+			} else {
+				charOffsetEnd = doc.getLineOffset(endLine) + doc.getLineLength(endLine);
+			}
+			marker.setAttribute(IMarker.CHAR_START, charOffsetStart);
+			marker.setAttribute(IMarker.CHAR_END, charOffsetEnd);
+		} catch (Exception e) {
+			throw new ArtemisClientException(e.getMessage(), e);
+		}
+	}
+
+	public static void updateMarkerMessage(IMarker marker, String newMessage, Double newPenalty) throws ArtemisClientException {
+		try {
+			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_CUSTOM_MESSAGE, newMessage);
+			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_CUSTOM_PENALTY, newPenalty == null ? null : String.valueOf(newPenalty));
+			Integer startLine = (Integer) marker.getAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_START);
+			Integer endLine = (Integer) marker.getAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_END);
+			marker.setAttribute(IMarker.MESSAGE, AssessmentUtilities.createMarkerTooltipForCustomButton(startLine, endLine, newMessage, newPenalty));
+		} catch (Exception e) {
+			throw new ArtemisClientException(e.getMessage(), e);
+		}
+	}
+
 	/**
 	 * Checks whether the given annotation is present in the currently opened
 	 * project (An annotation is identified by its UUID)
-	 * 
+	 *
 	 * @param annotation the annotation to check
 	 * @return annotation if the annotation is present, null if not
 	 */
@@ -250,7 +320,7 @@ public final class AssessmentUtilities {
 	 * Formats a custom penalty message. It will always use the message of the
 	 * mistake, however iff the provided customMessage is not null, it will append a
 	 * \n and this custom message.
-	 * 
+	 *
 	 * @param mistake       the mistake to load the message from
 	 * @param customMessage the custom message to append (can be null)
 	 * @return the formatted message

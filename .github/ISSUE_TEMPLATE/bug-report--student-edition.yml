@@ -1,0 +1,49 @@
+# This template has been inspired by https://github.com/ls1intum/Artemis/tree/develop/.github/ISSUE_TEMPLATE
+name: "🐞 Bug report (Student Edition)"
+title: "`Bug`: [Your Description Here]"
+description: Create a report for the Student Edition to help us improve
+labels:
+  - bug
+  - student-edition
+body:
+  - type: textarea
+    attributes:
+      label: Describe the bug
+      description: A clear and concise description of what the bug is.
+      placeholder: What happened? Why is it a problem?
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Describe how to reproduce
+      description: "Steps to reproduce the behavior:"
+      value: |
+        1. Go to '...'
+        2. Click on '....'
+        3. Scroll down to '....'
+        4. See error
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Expected behavior
+      description: A clear and concise description of what you expected to happen.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Screenshots
+      description: If applicable, add screenshots to help explain your problem.
+  - type: textarea
+    attributes:
+      label: Environment
+      description: What environment are you experiencing the issue on?
+      placeholder: | 
+        - OS (e.g. iOS)
+        - Eclipse Version [e.g. 2022-03]
+        - Version [e.g. 2022-03-30b]
+        - Installation Type [Update Site or Release Drop]
+  - type: textarea
+    attributes:
+      label: Additional context
+      description: Add any other context about the problem here.

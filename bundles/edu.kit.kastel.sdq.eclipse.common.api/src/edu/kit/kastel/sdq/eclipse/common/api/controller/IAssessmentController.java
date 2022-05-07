@@ -31,15 +31,11 @@ public interface IAssessmentController extends IController {
 	 * @param customMessage            custom message set by tutor
 	 * @param customPenalty            This may or may not have an effect, depending
 	 *                                 on the MistakeType's PenaltyRule!
-	 * @param markerCharStart          additional encoding of the start (counts from
-	 *                                 file start, eclipse GUI requires this)
-	 * @param markerCharEnd            additional encoding of the start (counts from
-	 *                                 file start, eclipse GUI requires this)
 	 *
 	 *
 	 */
 	void addAnnotation(String annotationUUID, IMistakeType mistakeType, int startLine, int endLine, String fullyClassifiedClassName, String customMessage,
-			Double customPenalty, int markerCharStart, int markerCharEnd);
+			Double customPenalty);
 
 	/**
 	 * Modify an existent annotation
@@ -111,4 +107,6 @@ public interface IAssessmentController extends IController {
 	 * {@link IAssessmentController#getSubmissionID()} as param.
 	 */
 	void resetAndRestartAssessment(IProjectFileNamingStrategy projectNaming);
+
+	IViewInteraction getViewInteraction();
 }
