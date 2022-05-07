@@ -21,4 +21,17 @@ public class AssessmentMarkerPositionField extends MarkerField {
 		return "[" + startLine + "," + endLine + "]";
 	}
 
+	@Override
+	public int compare(MarkerItem item1, MarkerItem item2) {
+		int startLine1 = item1.getMarker().getAttribute("start", -1) + 1;
+		int endLine1 = item1.getMarker().getAttribute("end", -1) + 1;
+		int startLine2 = item2.getMarker().getAttribute("start", -1) + 1;
+		int endLine2 = item2.getMarker().getAttribute("end", -1) + 1;
+
+		if (startLine1 == startLine2) {
+			return Integer.compare(endLine1, endLine2);
+		}
+		return Integer.compare(startLine1, startLine2);
+	}
+
 }
