@@ -46,6 +46,16 @@ public class ResultTab extends AbstractResultTab implements ArtemisStudentTab, W
 	}
 
 	@Override
+	protected String getCurrentProjectNameForAnnotations() {
+		return this.viewController.getCurrentProjectNameInEclipse();
+	}
+
+	@Override
+	protected String getCurrentSourceDirectoryRelative() {
+		return "src/";
+	}
+
+	@Override
 	public void handleSubmission(Object payload) {
 		Display.getDefault().syncExec(this::loadingStarted);
 	}
@@ -83,8 +93,4 @@ public class ResultTab extends AbstractResultTab implements ArtemisStudentTab, W
 		this.viewController = viewController;
 	}
 
-	@Override
-	protected String getCurrentProjectNameForAnnotations() {
-		return this.viewController.getCurrentProjectNameInEclipse();
-	}
 }

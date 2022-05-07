@@ -18,13 +18,12 @@ public class DefaultAnnotationDao implements IAnnotationDao {
 
 	@Override
 	public void addAnnotation(String annotationID, IMistakeType mistakeType, int startLine, int endLine, String fullyClassifiedClassName, String customMessage,
-			Double customPenalty, int markerCharStart, int markerCharEnd) throws AnnotationException {
+			Double customPenalty) throws AnnotationException {
 		if (this.idExists(annotationID)) {
 			throw new AnnotationException("ID " + annotationID + " already exists!");
 		}
 
-		this.annotations.add(new Annotation(annotationID, mistakeType, startLine, endLine, fullyClassifiedClassName, customMessage, customPenalty,
-				markerCharStart, markerCharEnd));
+		this.annotations.add(new Annotation(annotationID, mistakeType, startLine, endLine, fullyClassifiedClassName, customMessage, customPenalty));
 	}
 
 	@Override
@@ -45,8 +44,7 @@ public class DefaultAnnotationDao implements IAnnotationDao {
 	public void modifyAnnotation(String annatationId, String customMessage, Double customPenalty) {
 		final IAnnotation oldAnnotation = this.getAnnotation(annatationId);
 		final IAnnotation newAnnotation = new Annotation(oldAnnotation.getUUID(), oldAnnotation.getMistakeType(), oldAnnotation.getStartLine(),
-				oldAnnotation.getEndLine(), oldAnnotation.getClassFilePath(), customMessage, customPenalty, oldAnnotation.getMarkerCharStart(),
-				oldAnnotation.getMarkerCharEnd());
+				oldAnnotation.getEndLine(), oldAnnotation.getClassFilePath(), customMessage, customPenalty);
 
 		this.annotations.remove(oldAnnotation);
 		this.annotations.add(newAnnotation);

@@ -16,6 +16,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 
+import edu.kit.kastel.eclipse.common.view.utilities.AssessmentUtilities;
 import edu.kit.kastel.eclipse.grading.view.activator.Activator;
 import edu.kit.kastel.eclipse.grading.view.controllers.AssessmentViewController;
 import edu.kit.kastel.sdq.eclipse.common.api.PreferenceConstants;
@@ -43,12 +44,10 @@ public class CustomButtonDialog extends Dialog {
 	private String customMessage;
 	private Double customPenalty;
 	private IMistakeType customMistake;
-	private final String ratingGroupName;
 
-	public CustomButtonDialog(Shell parentShell, AssessmentViewController viewController, String ratingGroupName, IMistakeType mistake) {
+	public CustomButtonDialog(Shell parentShell, AssessmentViewController viewController, IMistakeType mistake) {
 		super(parentShell);
 		this.viewController = viewController;
-		this.ratingGroupName = ratingGroupName;
 		this.customMistake = mistake;
 	}
 
@@ -99,7 +98,8 @@ public class CustomButtonDialog extends Dialog {
 
 		this.customMessageInputField.setLayoutData(customMessageInputFieldData);
 		this.customMessageInputField.setText(Objects.requireNonNullElse(this.customMessage, ""));
-		if (this.customMistake != null || this.forcePenaltyField) { // Don't display the spinner if points are
+		if (this.customMistake != null || this.forcePenaltyField) { // Don't display the spinner if
+																	// points are
 																	// determined internally.
 			final Label customPenaltyLabel = new Label(comp, SWT.RIGHT);
 			customPenaltyLabel.setText("Custom Penalty: ");
@@ -128,7 +128,7 @@ public class CustomButtonDialog extends Dialog {
 	}
 
 	public String getCustomMessage() {
-		return this.customMessage;
+		return this.isClosedByOk() ? this.customMessage : null;
 	}
 
 	public void setCustomPenalty(Double customPenalty) {
@@ -148,8 +148,10 @@ public class CustomButtonDialog extends Dialog {
 		this.customMessage = this.customMessageInputField.getText();
 		if (this.customPenaltyInputField != null) {
 			this.customPenalty = Double.parseDouble(this.customPenaltyInputField.getText().replace(',', '.'));
-			if (this.customMistake != null) { // don't create an annotation iff the annotation is generated externally.
-				this.viewController.addAssessmentAnnotation(this.customMistake, this.customMessage, this.customPenalty, this.ratingGroupName);
+			if (this.customMistake != null) {
+				// don't create an annotation iff the annotation is generated externally.
+				AssessmentUtilities.createAssessmentAnnotation(this.viewController.getAssessmentController(), this.customMistake, this.customMessage,
+						this.customPenalty);
 			}
 		}
 		super.okPressed();

@@ -14,6 +14,7 @@ import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.IExercise;
 import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.ISubmission;
 import edu.kit.kastel.sdq.eclipse.common.api.controller.AbstractController;
 import edu.kit.kastel.sdq.eclipse.common.api.controller.IAssessmentController;
+import edu.kit.kastel.sdq.eclipse.common.api.controller.IViewInteraction;
 import edu.kit.kastel.sdq.eclipse.common.api.model.IAnnotation;
 import edu.kit.kastel.sdq.eclipse.common.api.model.IMistakeType;
 import edu.kit.kastel.sdq.eclipse.common.api.model.IRatingGroup;
@@ -60,10 +61,9 @@ public class AssessmentController extends AbstractController implements IAssessm
 
 	@Override
 	public void addAnnotation(String annotationID, IMistakeType mistakeType, int startLine, int endLine, String fullyClassifiedClassName, String customMessage,
-			Double customPenalty, int markerCharStart, int markerCharEnd) {
+			Double customPenalty) {
 		try {
-			this.annotationDao.addAnnotation(annotationID, mistakeType, startLine, endLine, fullyClassifiedClassName, customMessage, customPenalty,
-					markerCharStart, markerCharEnd);
+			this.annotationDao.addAnnotation(annotationID, mistakeType, startLine, endLine, fullyClassifiedClassName, customMessage, customPenalty);
 		} catch (AnnotationException e) {
 			this.error(e.getMessage(), e);
 		}
@@ -183,8 +183,7 @@ public class AssessmentController extends AbstractController implements IAssessm
 
 		for (IAnnotation annotation : annotationDeserializer.deserialize(allFeedbacksGottenFromLocking)) {
 			this.addAnnotation(annotation.getUUID(), annotation.getMistakeType(), annotation.getStartLine(), annotation.getEndLine(),
-					annotation.getClassFilePath(), annotation.getCustomMessage().orElse(null), annotation.getCustomPenalty().orElse(null),
-					annotation.getMarkerCharStart(), annotation.getMarkerCharEnd());
+					annotation.getClassFilePath(), annotation.getCustomMessage().orElse(null), annotation.getCustomPenalty().orElse(null));
 		}
 	}
 
@@ -211,5 +210,10 @@ public class AssessmentController extends AbstractController implements IAssessm
 		} catch (IOException e) {
 			this.info("Deserializing Annotations from Artemis failed: " + e.getMessage());
 		}
+	}
+
+	@Override
+	public IViewInteraction getViewInteraction() {
+		return this.getViewInteractionHandler();
 	}
 }
