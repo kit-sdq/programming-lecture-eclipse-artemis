@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -116,12 +117,10 @@ public class AnnotationMapper {
 	}
 
 	private List<Feedback> calculateManualFeedbacks() {
-		List<Feedback> manualFeedbacks = new ArrayList<>(this.annotations.stream().map(this::createNewManualFeedback).collect(Collectors.toList()));
+		List<Feedback> manualFeedbacks = new ArrayList<>(this.annotations.stream().collect(Collectors.groupingBy(IAnnotation::getStartLine)).entrySet().stream()
+				.map(this::createInlineFeedbackWithNoDeduction).toList());
 		// add the (rated!) rating group annotations
-		this.ratingGroups.forEach(group -> {
-			manualFeedbacks.addAll(this.createNewManualUnreferencedFeedback(group));
-		});
-
+		this.ratingGroups.forEach(group -> manualFeedbacks.addAll(this.createGlobalFeedbackWithDeduction(group)));
 		return manualFeedbacks;
 	}
 
@@ -187,7 +186,6 @@ public class AnnotationMapper {
 	public AssessmentResult createAssessmentResult() throws IOException {
 		final boolean submissionIsInvalid = this.penaltyCalculationStrategy.submissionIsInvalid();
 		// only add preexistent automatic feedback (unit tests etc) and manual feedback.
-		// arTem155
 		// this should work indepently of invalid or not. if invalid, there should just
 		// be no feedbacks.
 		final List<Feedback> allFeedbacks = this.calculateAllFeedbacks();
@@ -198,26 +196,39 @@ public class AnnotationMapper {
 				true, true, null, this.assessor, allFeedbacks);
 	}
 
-	private Feedback createNewManualFeedback(IAnnotation annotation) {
-		// manual feedbacks do not have no credits!
-		final String text = "File " + annotation.getClassFilePath() + " at line " + annotation.getStartLine();
-		final String reference = "file:" + annotation.getClassFilePath() + ".java_line:" + (annotation.getStartLine() - 1);
+	/**
+	 * Creates the inlined feedbacks within Artemis
+	 *
+	 * @param annotations an entry contains the line number (indexed by 0) and all
+	 *                    annotations starting in that line
+	 * @return one feedback object for the line
+	 */
+	private Feedback createInlineFeedbackWithNoDeduction(Map.Entry<Integer, List<IAnnotation>> annotations) {
+		int line = annotations.getKey();
+		var sampleAnnotation = annotations.getValue().get(0);
 
-		var mistakeType = annotation.getMistakeType();
-		String detailText = "[" + mistakeType.getRatingGroup().getDisplayName() + ":" + mistakeType.getButtonText() + "] ";
-		if (mistakeType.isCustomPenalty()) {
-			detailText += annotation.getCustomMessage().get() + " (" + nf.format(-annotation.getCustomPenalty().get()) + "P)";
-		} else {
-			detailText += mistakeType.getMessage();
-			if (annotation.getCustomMessage().isPresent()) {
-				detailText += "<br />Explanation: " + annotation.getCustomMessage().get();
+		// Lines are indexed at 0
+		final String text = "File " + sampleAnnotation.getClassFilePath() + " at line " + (line + 1);
+		final String reference = "file:" + sampleAnnotation.getClassFilePath() + ".java_line:" + line;
+
+		String resultText = "";
+		for (var annotation : annotations.getValue()) {
+			var mistakeType = annotation.getMistakeType();
+			String detailText = "[" + mistakeType.getRatingGroup().getDisplayName() + ":" + mistakeType.getButtonText() + "] ";
+			if (mistakeType.isCustomPenalty()) {
+				detailText += annotation.getCustomMessage().get() + " (" + nf.format(-annotation.getCustomPenalty().get()) + "P)";
+			} else {
+				detailText += mistakeType.getMessage();
+				if (annotation.getCustomMessage().isPresent()) {
+					detailText += "\nExplanation: " + annotation.getCustomMessage().get();
+				}
 			}
+			resultText += detailText + "\n\n";
 		}
-
-		return new Feedback(FeedbackType.MANUAL.name(), 0D, null, null, null, text, reference, detailText);
+		return new Feedback(FeedbackType.MANUAL.name(), 0D, null, null, null, text, reference, resultText.trim());
 	}
 
-	private List<Feedback> createNewManualUnreferencedFeedback(IRatingGroup ratingGroup) {
+	private List<Feedback> createGlobalFeedbackWithDeduction(IRatingGroup ratingGroup) {
 		final double calculatedPenalty = this.calculatePenaltyForRatingGroup(ratingGroup);
 
 		List<String> lines = new ArrayList<>();
@@ -249,11 +260,11 @@ public class AnnotationMapper {
 			if (mistakeType.isCustomPenalty()) {
 				for (var annotation : currentAnnotations) {
 					String penalty = nf.format(-annotation.getCustomPenalty().get());
-					lines.add("\n        * " + annotation.getClassFilePath() + " at line " + annotation.getStartLine() + " (" + penalty + "P)");
+					lines.add("\n        * " + annotation.getClassFilePath() + " at line " + (annotation.getStartLine() + 1) + " (" + penalty + "P)");
 				}
 			} else {
 				for (var annotation : currentAnnotations) {
-					lines.add("\n        * " + annotation.getClassFilePath() + " at line " + annotation.getStartLine());
+					lines.add("\n        * " + annotation.getClassFilePath() + " at line " + (annotation.getStartLine() + 1));
 				}
 			}
 		}

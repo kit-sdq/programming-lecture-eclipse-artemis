@@ -268,8 +268,12 @@ public final class AssessmentUtilities {
 			s.close();
 			IDocument doc = new Document(content);
 			var charOffsetStart = doc.getLineOffset(startLine);
-			// TODO Fix Offset -2 .. \n\r ?
-			var charOffsetEnd = doc.getLineOffset(endLine + 1);
+			int charOffsetEnd;
+			if (startLine == endLine) {
+				charOffsetEnd = charOffsetStart + doc.getLineLength(startLine);
+			} else {
+				charOffsetEnd = doc.getLineOffset(endLine) + doc.getLineLength(endLine);
+			}
 			marker.setAttribute(IMarker.CHAR_START, charOffsetStart);
 			marker.setAttribute(IMarker.CHAR_END, charOffsetEnd);
 		} catch (Exception e) {
@@ -280,7 +284,7 @@ public final class AssessmentUtilities {
 	public static void updateMarkerMessage(IMarker marker, String newMessage, Double newPenalty) throws ArtemisClientException {
 		try {
 			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_CUSTOM_MESSAGE, newMessage);
-			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_CUSTOM_PENALTY, newPenalty.toString());
+			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_CUSTOM_PENALTY, newPenalty == null ? null : String.valueOf(newPenalty));
 			Integer startLine = (Integer) marker.getAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_START);
 			Integer endLine = (Integer) marker.getAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_END);
 			marker.setAttribute(IMarker.MESSAGE, AssessmentUtilities.createMarkerTooltipForCustomButton(startLine, endLine, newMessage, newPenalty));
