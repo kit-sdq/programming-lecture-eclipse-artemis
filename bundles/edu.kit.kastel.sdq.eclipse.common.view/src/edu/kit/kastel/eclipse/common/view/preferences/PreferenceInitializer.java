@@ -1,10 +1,10 @@
 /* Licensed under EPL-2.0 2022. */
-package edu.kit.kastel.eclipse.student.view.preferences;
+package edu.kit.kastel.eclipse.common.view.preferences;
 
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
 
-import edu.kit.kastel.eclipse.student.view.activator.Activator;
+import edu.kit.kastel.eclipse.common.view.activator.CommonActivator;
 import edu.kit.kastel.sdq.eclipse.common.api.PreferenceConstants;
 
 /**
@@ -14,13 +14,16 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
 	@Override
 	public void initializeDefaultPreferences() {
-		IPreferenceStore store = Activator.getDefault().getPreferenceStore();
-		store.setDefault(PreferenceConstants.ABSOLUTE_CONFIG_PATH, "");
-		store.setDefault(PreferenceConstants.RELATIVE_CONFIG_PATH, "");
-		store.setDefault(PreferenceConstants.IS_RELATIVE_CONFIG_PATH, "false");
+		IPreferenceStore store = CommonActivator.getDefault().getPreferenceStore();
 		store.setDefault(PreferenceConstants.ARTEMIS_URL, "");
 		store.setDefault(PreferenceConstants.ARTEMIS_USER, "");
 		store.setDefault(PreferenceConstants.ARTEMIS_PASSWORD, "");
+		store.setDefault(PreferenceConstants.GIT_TOKEN, "");
+
+		store.setDefault(PreferenceConstants.ABSOLUTE_CONFIG_PATH, "");
+		store.setDefault(PreferenceConstants.PREFERS_LARGE_PENALTY_TEXT_PATH, "false");
+		store.setDefault(PreferenceConstants.PREFERS_TEXT_WRAPPING_IN_PENALTY_TEXT_PATH, "false");
+
 	}
 
 }

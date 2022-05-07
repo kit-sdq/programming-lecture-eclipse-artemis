@@ -4,6 +4,7 @@ package edu.kit.kastel.eclipse.student.view.activator;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
+import edu.kit.kastel.eclipse.common.view.activator.CommonActivator;
 import edu.kit.kastel.sdq.eclipse.common.api.controller.IStudentSystemwideController;
 import edu.kit.kastel.sdq.eclipse.common.core.StudentSystemwideController;
 
@@ -52,7 +53,7 @@ public class Activator extends AbstractUIPlugin {
 	 * Creates a new instance of the SystemWideController
 	 */
 	public IStudentSystemwideController createSystemWideController() {
-		this.systemwideController = new StudentSystemwideController(this.getPreferenceStore());
+		this.systemwideController = new StudentSystemwideController(CommonActivator.getDefault().getPreferenceStore());
 		return this.systemwideController;
 	}
 

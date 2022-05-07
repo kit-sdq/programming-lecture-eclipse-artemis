@@ -1,12 +1,12 @@
 /* Licensed under EPL-2.0 2022. */
-package edu.kit.kastel.eclipse.student.view.preferences;
+package edu.kit.kastel.eclipse.common.view.preferences;
 
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
-import edu.kit.kastel.eclipse.student.view.activator.Activator;
+import edu.kit.kastel.eclipse.common.view.activator.CommonActivator;
 import edu.kit.kastel.sdq.eclipse.common.api.PreferenceConstants;
 
 /**
@@ -21,12 +21,12 @@ import edu.kit.kastel.sdq.eclipse.common.api.PreferenceConstants;
  * <p>
  */
 
-public class ArtemisStudentPreferencesPage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
+public class ArtemisPreferencesPage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 
-	public ArtemisStudentPreferencesPage() {
+	public ArtemisPreferencesPage() {
 		super(FieldEditorPreferencePage.GRID);
-		this.setPreferenceStore(Activator.getDefault().getPreferenceStore());
-		this.setDescription("Set preferences for Artemis Student");
+		this.setPreferenceStore(CommonActivator.getDefault().getPreferenceStore());
+		this.setDescription("Set preferences for the Artemis");
 	}
 
 	/**
@@ -36,20 +36,21 @@ public class ArtemisStudentPreferencesPage extends FieldEditorPreferencePage imp
 	 */
 	@Override
 	public void createFieldEditors() {
-		StringFieldEditor artemisUrl = new StringFieldEditor(PreferenceConstants.ARTEMIS_URL, "Artemis URL: ", this.getFieldEditorParent());
-		StringFieldEditor artemisUser = new StringFieldEditor(PreferenceConstants.ARTEMIS_USER, "Artemis username: ", this.getFieldEditorParent());
-		StringFieldEditor artemisPassword = new StringFieldEditor(PreferenceConstants.ARTEMIS_PASSWORD, "Artemis password: ", this.getFieldEditorParent());
+		var parent = this.getFieldEditorParent();
+
+		var artemisUrl = new StringFieldEditor(PreferenceConstants.ARTEMIS_URL, "Artemis URL: ", parent);
+		var artemisUser = new StringFieldEditor(PreferenceConstants.ARTEMIS_USER, "Artemis Username: ", parent);
+
+		var artemisPassword = new StringFieldEditor(PreferenceConstants.ARTEMIS_PASSWORD, "Artemis Password: ", parent);
 		artemisPassword.getTextControl(this.getFieldEditorParent()).setEchoChar('*');
 
 		this.addField(artemisUrl);
 		this.addField(artemisUser);
 		this.addField(artemisPassword);
-
 	}
 
 	@Override
 	public void init(IWorkbench workbench) {
 		// NOP
 	}
-
 }
