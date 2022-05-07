@@ -14,9 +14,10 @@ Require-Bundle: org.eclipse.ui,
  edu.kit.kastel.sdq.eclipse.common.core
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-ActivationPolicy: lazy
-Bundle-Activator: edu.kit.kastel.eclipse.common.view.activator.Activator
+Bundle-Activator: edu.kit.kastel.eclipse.common.view.activator.CommonActivator
 Automatic-Module-Name: edu.kit.kastel.sdq.eclipse.common
-Export-Package: edu.kit.kastel.eclipse.common.view.controllers,
+Export-Package: edu.kit.kastel.eclipse.common.view.activator,
+ edu.kit.kastel.eclipse.common.view.controllers,
  edu.kit.kastel.eclipse.common.view.marker,
  edu.kit.kastel.eclipse.common.view.ui,
  edu.kit.kastel.eclipse.common.view.utilities

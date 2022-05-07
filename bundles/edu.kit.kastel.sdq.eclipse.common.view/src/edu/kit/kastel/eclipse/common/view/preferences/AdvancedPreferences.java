@@ -8,14 +8,14 @@ import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
-import edu.kit.kastel.eclipse.common.view.activator.Activator;
+import edu.kit.kastel.eclipse.common.view.activator.CommonActivator;
 import edu.kit.kastel.sdq.eclipse.common.api.PreferenceConstants;
 
 public class AdvancedPreferences extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 
 	public AdvancedPreferences() {
 		super(GRID);
-		setPreferenceStore(Activator.getDefault().getPreferenceStore());
+		setPreferenceStore(CommonActivator.getDefault().getPreferenceStore());
 	}
 
 	/**

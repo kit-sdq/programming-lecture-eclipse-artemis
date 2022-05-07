@@ -4,7 +4,7 @@ package edu.kit.kastel.eclipse.common.view.preferences;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
 
-import edu.kit.kastel.eclipse.common.view.activator.Activator;
+import edu.kit.kastel.eclipse.common.view.activator.CommonActivator;
 import edu.kit.kastel.sdq.eclipse.common.api.PreferenceConstants;
 
 /**
@@ -14,7 +14,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
 	@Override
 	public void initializeDefaultPreferences() {
-		IPreferenceStore store = Activator.getDefault().getPreferenceStore();
+		IPreferenceStore store = CommonActivator.getDefault().getPreferenceStore();
 		store.setDefault(PreferenceConstants.ARTEMIS_URL, "");
 		store.setDefault(PreferenceConstants.ARTEMIS_USER, "");
 		store.setDefault(PreferenceConstants.ARTEMIS_PASSWORD, "");

@@ -6,7 +6,7 @@ import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
-import edu.kit.kastel.eclipse.common.view.activator.Activator;
+import edu.kit.kastel.eclipse.common.view.activator.CommonActivator;
 import edu.kit.kastel.sdq.eclipse.common.api.PreferenceConstants;
 
 /**
@@ -25,8 +25,8 @@ public class ArtemisPreferencesPage extends FieldEditorPreferencePage implements
 
 	public ArtemisPreferencesPage() {
 		super(FieldEditorPreferencePage.GRID);
-		this.setPreferenceStore(Activator.getDefault().getPreferenceStore());
-		this.setDescription("Set preferences for the Artemis Grading");
+		this.setPreferenceStore(CommonActivator.getDefault().getPreferenceStore());
+		this.setDescription("Set preferences for the Artemis");
 	}
 
 	/**
