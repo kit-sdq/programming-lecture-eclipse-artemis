@@ -26,6 +26,7 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.part.ViewPart;
 
+import edu.kit.kastel.eclipse.student.view.activator.Activator;
 import edu.kit.kastel.eclipse.student.view.controllers.StudentViewController;
 import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.IStudentExam;
 import edu.kit.kastel.sdq.eclipse.common.api.messages.Messages;
@@ -92,70 +93,76 @@ public class ArtemisStudentView extends ViewPart {
 	}
 
 	public void createMainTab(TabFolder tabFolder) {
-		TabItem tbtmAssessment = new TabItem(tabFolder, SWT.NONE);
-		tbtmAssessment.setText(EXERCISE);
+		TabItem tbtmExercise = new TabItem(tabFolder, SWT.NONE);
+		tbtmExercise.setText(EXERCISE);
 
-		ScrolledComposite scrolledCompositeGrading = new ScrolledComposite(tabFolder, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
-		tbtmAssessment.setControl(scrolledCompositeGrading);
-		scrolledCompositeGrading.setLayout(new GridLayout(1, true));
-		scrolledCompositeGrading.setExpandHorizontal(true);
-		scrolledCompositeGrading.setExpandVertical(true);
+		ScrolledComposite scrolledCompositeExercise = new ScrolledComposite(tabFolder, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+		tbtmExercise.setControl(scrolledCompositeExercise);
+		scrolledCompositeExercise.setLayout(new GridLayout(1, true));
+		scrolledCompositeExercise.setExpandHorizontal(true);
+		scrolledCompositeExercise.setExpandVertical(true);
 
-		Composite gradingComposite = new Composite(scrolledCompositeGrading, SWT.NONE);
-		scrolledCompositeGrading.setContent(gradingComposite);
-		scrolledCompositeGrading.setMinSize(new Point(100, 100));
-		gradingComposite.setLayout(new GridLayout(1, true));
-		gradingComposite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true, 1, 1));
+		Composite exerciseComposite = new Composite(scrolledCompositeExercise, SWT.NONE);
+		scrolledCompositeExercise.setContent(exerciseComposite);
+		scrolledCompositeExercise.setMinSize(new Point(100, 100));
+		exerciseComposite.setLayout(new GridLayout(1, true));
+		exerciseComposite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true, 1, 1));
 
-		Composite exerciseGradingComposite = new Composite(gradingComposite, SWT.NONE);
+		Composite exerciseGradingComposite = new Composite(exerciseComposite, SWT.NONE);
 		exerciseGradingComposite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		exerciseGradingComposite.setLayout(new GridLayout(1, true));
 
-		Label labelExerciseGrading = new Label(exerciseGradingComposite, SWT.NONE);
-		labelExerciseGrading.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1));
-		labelExerciseGrading.setText(EXERCISE);
-		FontDescriptor boldDescriptor = FontDescriptor.createFrom(labelExerciseGrading.getFont()).setStyle(SWT.BOLD).setHeight(18);
-		Font boldFont = boldDescriptor.createFont(labelExerciseGrading.getDisplay());
-		labelExerciseGrading.setFont(boldFont);
+//        Label labelExercise = new Label(exerciseGradingComposite, SWT.NONE);
+//        labelExercise.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1));
+//        labelExercise.setText(EXERCISE);
+//        FontDescriptor boldDescriptor = FontDescriptor.createFrom(labelExercise.getFont()).setStyle(SWT.BOLD).setHeight(18);
+//        Font boldFont = boldDescriptor.createFont(labelExercise.getDisplay());
+//        labelExercise.setFont(boldFont);
 
-		Composite assessmentComposite = new Composite(gradingComposite, SWT.BORDER);
-		assessmentComposite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		assessmentComposite.setLayout(new GridLayout(2, true));
+		var pluginVersion = Activator.getDefault().getBundle().getVersion();
+		Label version = new Label(exerciseGradingComposite, SWT.NONE);
+		version.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, true, false, 2, 1));
+		version.setAlignment(SWT.RIGHT);
+		version.setText(String.format("Artemis Student Version: %d.%d.%d", pluginVersion.getMajor(), pluginVersion.getMinor(), pluginVersion.getMicro()));
 
-		Label lblCourse = new Label(assessmentComposite, SWT.NONE);
+		Composite choosingComposite = new Composite(exerciseComposite, SWT.BORDER);
+		choosingComposite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		choosingComposite.setLayout(new GridLayout(2, true));
+
+		Label lblCourse = new Label(choosingComposite, SWT.NONE);
 		lblCourse.setAlignment(SWT.CENTER);
-		boldDescriptor = FontDescriptor.createFrom(lblCourse.getFont()).setStyle(SWT.BOLD).setHeight(9);
-		boldFont = boldDescriptor.createFont(lblCourse.getDisplay());
+		FontDescriptor boldDescriptor = FontDescriptor.createFrom(lblCourse.getFont()).setStyle(SWT.BOLD).setHeight(9);
+		Font boldFont = boldDescriptor.createFont(lblCourse.getDisplay());
 		lblCourse.setFont(boldFont);
 		lblCourse.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, true, 1, 1));
 		lblCourse.setText("Course");
 
-		this.courseCombo = new Combo(assessmentComposite, SWT.READ_ONLY);
+		this.courseCombo = new Combo(choosingComposite, SWT.READ_ONLY);
 		this.courseCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
-		Label lblExam = new Label(assessmentComposite, SWT.NONE);
+		Label lblExam = new Label(choosingComposite, SWT.NONE);
 		lblExam.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
 		boldDescriptor = FontDescriptor.createFrom(lblExam.getFont()).setStyle(SWT.BOLD).setHeight(9);
 		boldFont = boldDescriptor.createFont(lblExam.getDisplay());
 		lblExam.setFont(boldFont);
 		lblExam.setText("Exam");
 
-		this.examCombo = new Combo(assessmentComposite, SWT.READ_ONLY);
+		this.examCombo = new Combo(choosingComposite, SWT.READ_ONLY);
 		this.examCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
-		Label lblExercise = new Label(assessmentComposite, SWT.NONE);
+		Label lblExercise = new Label(choosingComposite, SWT.NONE);
 		boldDescriptor = FontDescriptor.createFrom(lblExercise.getFont()).setStyle(SWT.BOLD).setHeight(9);
 		boldFont = boldDescriptor.createFont(lblExercise.getDisplay());
 		lblExercise.setFont(boldFont);
 		lblExercise.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
 		lblExercise.setText(EXERCISE);
 
-		this.exerciseCombo = new Combo(assessmentComposite, SWT.READ_ONLY);
+		this.exerciseCombo = new Combo(choosingComposite, SWT.READ_ONLY);
 		this.exerciseCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
 		this.loadExamComboEntries(this.courseCombo, this.examCombo, this.exerciseCombo);
 
-		Composite buttons = new Composite(gradingComposite, SWT.BORDER);
+		Composite buttons = new Composite(exerciseComposite, SWT.BORDER);
 		buttons.setLayout(new GridLayout(2, true));
 		buttons.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1));
 
@@ -175,7 +182,7 @@ public class ArtemisStudentView extends ViewPart {
 
 		// Submit
 
-		Composite submitArea = new Composite(gradingComposite, SWT.BORDER);
+		Composite submitArea = new Composite(exerciseComposite, SWT.BORDER);
 		submitArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
 		submitArea.setLayout(new GridLayout(3, true));
 
@@ -243,10 +250,10 @@ public class ArtemisStudentView extends ViewPart {
 		this.btnReset.setEnabled(false);
 		this.btnReset.addListener(SWT.Selection, e -> this.resetWorkspaceForSelectedExercise());
 
-		this.createExamPart(gradingComposite);
+		this.createExamPart(exerciseComposite);
 
-		scrolledCompositeGrading.setContent(gradingComposite);
-		scrolledCompositeGrading.setMinSize(gradingComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+		scrolledCompositeExercise.setContent(exerciseComposite);
+		scrolledCompositeExercise.setMinSize(exerciseComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 	}
 
 	private void createExamPart(Composite tabFolder) {

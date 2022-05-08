@@ -261,8 +261,10 @@ public class ArtemisGradingView extends ViewPart {
 		tbtmAssessment.setControl(scrolledCompositeAssessment);
 		scrolledCompositeAssessment.setExpandHorizontal(true);
 		scrolledCompositeAssessment.setExpandVertical(true);
+		scrolledCompositeAssessment.setLayout(new GridLayout(1, false));
 
 		Composite assessmentComposite = new Composite(scrolledCompositeAssessment, SWT.NONE);
+		assessmentComposite.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, true, true, 10, 10));
 		assessmentComposite.setLayout(new GridLayout(2, false));
 
 		this.correctionCountLbl = new Label(assessmentComposite, SWT.NONE);
@@ -346,6 +348,12 @@ public class ArtemisGradingView extends ViewPart {
 
 		this.addSelectionListenerForRefreshArtemisStateButton(btnRefreshArtemisState);
 		this.addControlToPossibleActions(btnRefreshArtemisState, Transition.ON_RESET);
+
+		var pluginVersion = Activator.getDefault().getBundle().getVersion();
+		Label version = new Label(assessmentComposite, SWT.NONE);
+		version.setLayoutData(new GridData(SWT.RIGHT, SWT.BOTTOM, true, false, 2, 1));
+		version.setAlignment(SWT.RIGHT);
+		version.setText(String.format("Artemis Grading %d.%d.%d", pluginVersion.getMajor(), pluginVersion.getMinor(), pluginVersion.getMicro()));
 
 		scrolledCompositeAssessment.setContent(assessmentComposite);
 		scrolledCompositeAssessment.setMinSize(assessmentComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
