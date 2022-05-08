@@ -123,8 +123,7 @@ public class ArtemisStudentView extends ViewPart {
 		Label version = new Label(exerciseGradingComposite, SWT.NONE);
 		version.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, true, false, 2, 1));
 		version.setAlignment(SWT.RIGHT);
-		version.setText("Artemis Student Version: " + //
-				pluginVersion.getMajor() + "." + pluginVersion.getMinor() + "." + pluginVersion.getMicro());
+		version.setText(String.format("Artemis Student Version: %d.%d.%d", pluginVersion.getMajor(), pluginVersion.getMinor(), pluginVersion.getMicro()));
 
 		Composite choosingComposite = new Composite(exerciseComposite, SWT.BORDER);
 		choosingComposite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
