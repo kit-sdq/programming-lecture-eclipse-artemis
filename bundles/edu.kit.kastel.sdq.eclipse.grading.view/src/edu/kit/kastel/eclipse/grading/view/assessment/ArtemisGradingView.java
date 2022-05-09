@@ -212,9 +212,6 @@ public class ArtemisGradingView extends ViewPart {
 
 	private void addSelectionListenerForFilterCombo(Combo backlogCombo, Combo filterCombo) {
 		filterCombo.addListener(SWT.Selection, e -> {
-			if (backlogCombo.getItemCount() == 0) {
-				return;
-			}
 			this.fillBacklogComboWithData(backlogCombo, filterCombo);
 		});
 	}
