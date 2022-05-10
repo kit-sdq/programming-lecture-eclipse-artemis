@@ -37,10 +37,14 @@ public class AdvancedPreferences extends FieldEditorPreferencePage implements IW
 		var userPrefersTextWrappingInPenaltyText = new BooleanFieldEditor(PreferenceConstants.PREFERS_TEXT_WRAPPING_IN_PENALTY_TEXT_PATH,
 				"Allow text-wrapping in multiline-text-box", parent);
 
+		var overrideDefaultPreferences = new BooleanFieldEditor(PreferenceConstants.OVERRIDE_DEFAULT_PREFERENCES, "Tweak Eclipse Preferences on startup",
+				parent);
+
 		this.addField(absoluteConfigPath);
 		this.addField(gitToken);
 		this.addField(userPrefersLargePenaltyText);
 		this.addField(userPrefersTextWrappingInPenaltyText);
+		this.addField(overrideDefaultPreferences);
 
 	}
 

@@ -15,6 +15,8 @@ public final class PreferenceConstants {
 	public static final String PREFERS_LARGE_PENALTY_TEXT_PATH = "userPreferresLargePenaltyText";
 	public static final String PREFERS_TEXT_WRAPPING_IN_PENALTY_TEXT_PATH = "userPrefersTextWrappingInPenaltyText";
 
+	public static final String OVERRIDE_DEFAULT_PREFERENCES = "override_default_preferences";
+
 	private PreferenceConstants() {
 		throw new IllegalAccessError();
 	}
