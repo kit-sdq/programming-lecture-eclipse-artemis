@@ -48,6 +48,7 @@ jobs:
         
 
     - name: Sign MacOS Eclipse Distribution (Grading)
+      if: startsWith(github.ref, 'refs/tags/v')
       env: 
         MACOS_CERTIFICATE: ${{ secrets.MACOS_CERTIFICATE }}
         MACOS_CERTIFICATE_PWD: ${{ secrets.MACOS_CERTIFICATE_PWD }}
@@ -66,6 +67,7 @@ jobs:
         ditto -c -k --sequesterRsrc --keepParent Eclipse.app dist/Artemis_Grading_MacOS.zip
         
     - name: Sign MacOS Eclipse Distribution (Student)
+      if: startsWith(github.ref, 'refs/tags/v')
       env: 
         MACOS_CERTIFICATE: ${{ secrets.MACOS_CERTIFICATE }}
         MACOS_CERTIFICATE_PWD: ${{ secrets.MACOS_CERTIFICATE_PWD }}
