@@ -21,8 +21,9 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		store.setDefault(PreferenceConstants.GIT_TOKEN, "");
 
 		store.setDefault(PreferenceConstants.ABSOLUTE_CONFIG_PATH, "");
-		store.setDefault(PreferenceConstants.PREFERS_LARGE_PENALTY_TEXT_PATH, "false");
-		store.setDefault(PreferenceConstants.PREFERS_TEXT_WRAPPING_IN_PENALTY_TEXT_PATH, "false");
+		store.setDefault(PreferenceConstants.PREFERS_LARGE_PENALTY_TEXT_PATH, false);
+		store.setDefault(PreferenceConstants.PREFERS_TEXT_WRAPPING_IN_PENALTY_TEXT_PATH, false);
+		store.setDefault(PreferenceConstants.OVERRIDE_DEFAULT_PREFERENCES, true);
 
 	}
 

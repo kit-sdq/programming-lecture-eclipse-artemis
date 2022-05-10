@@ -1,8 +1,12 @@
 /* Licensed under EPL-2.0 2022. */
 package edu.kit.kastel.eclipse.common.view.activator;
 
+import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.osgi.framework.BundleContext;
+
+import edu.kit.kastel.sdq.eclipse.common.api.PreferenceConstants;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -26,6 +30,7 @@ public class CommonActivator extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
+		this.tweakPreferences();
 	}
 
 	@Override
@@ -41,6 +46,16 @@ public class CommonActivator extends AbstractUIPlugin {
 	 */
 	public static CommonActivator getDefault() {
 		return plugin;
+	}
+
+	private void tweakPreferences() {
+		var preferences = this.getPreferenceStore();
+		if (!preferences.getBoolean(PreferenceConstants.OVERRIDE_DEFAULT_PREFERENCES)) {
+			return;
+		}
+
+		// Enable Line Numbers by default
+		EditorsUI.getPreferenceStore().setValue(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER, true);
 	}
 
 }
