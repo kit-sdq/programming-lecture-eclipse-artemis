@@ -15,3 +15,6 @@ Please take a look at our [Wiki](https://github.com/kit-sdq/programming-lecture-
 
 ## Development of the plugin(s)
 Please take a look at our [Wiki](https://github.com/kit-sdq/programming-lecture-eclipse-artemis/wiki/Grading-Dev).
+
+### Update the Versions
+See [Tycho Plugin](https://www.eclipse.org/tycho/sitedocs/tycho-release/tycho-versions-plugin/set-version-mojo.html#tycho-versions-set-version). Run with `products` profile.
