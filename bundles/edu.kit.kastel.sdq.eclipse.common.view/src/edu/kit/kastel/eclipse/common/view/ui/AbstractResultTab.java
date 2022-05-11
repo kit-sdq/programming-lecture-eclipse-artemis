@@ -26,6 +26,7 @@ public abstract class AbstractResultTab extends AbstractResultTabCompositeContro
 
 	protected AbstractResultTab(TabFolder tabFolder, boolean hasReloadFunctionality) {
 		super(tabFolder, hasReloadFunctionality);
+		this.layout(true);
 	}
 
 	/**

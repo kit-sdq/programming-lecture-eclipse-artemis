@@ -4,16 +4,14 @@ package edu.kit.kastel.eclipse.common.view.ui;
 import java.util.Locale;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
+import edu.kit.kastel.eclipse.common.view.utilities.UIUtilities;
 import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.Feedback;
 import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.IExercise;
 
@@ -22,21 +20,13 @@ abstract class AbstractResultTabCompositeController extends AbstractResultTabCom
 	private static final String X_MARK_IN_UTF8 = "\u2717";
 
 	protected AbstractResultTabCompositeController(TabFolder tabFolder, boolean hasReloadFunctionality) {
-		super(createTabItem(tabFolder), SWT.NONE);
+		super(UIUtilities.createTabWithScrolledComposite(tabFolder, "Test Results"), SWT.NONE);
 		if (!hasReloadFunctionality) {
 			this.btnReload.setVisible(false);
 		}
 		btnReload.addListener(SWT.Selection, e -> this.reloadFeedbackForExcerise());
 		testTable.addListener(SWT.Selection, this::handleResultTableEvent);
-	}
-
-	private static Composite createTabItem(TabFolder tabFolder) {
-		TabItem tbtmResult = new TabItem(tabFolder, SWT.NONE);
-		tbtmResult.setText("Test Results");
-		Composite container = new Composite(tabFolder, SWT.NONE);
-		tbtmResult.setControl(container);
-		container.setLayout(new FillLayout());
-		return container;
+		UIUtilities.initializeTabAfterFilling(this.getParent(), this);
 	}
 
 	protected abstract void reloadFeedbackForExcerise();
