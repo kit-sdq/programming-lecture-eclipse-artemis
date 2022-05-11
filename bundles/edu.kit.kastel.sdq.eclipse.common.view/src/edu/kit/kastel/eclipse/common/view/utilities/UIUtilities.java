@@ -7,7 +7,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 
-public class UIUtilities {
+public final class UIUtilities {
 	private UIUtilities() {
 		throw new IllegalAccessError();
 	}
