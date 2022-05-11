@@ -206,8 +206,7 @@ public class ArtemisGradingView extends ViewPart {
 	}
 
 	private void createResultTab(TabFolder tabFolder) {
-		this.result = new ResultTab(Activator.getDefault().getSystemwideController());
-		this.result.create(tabFolder);
+		this.result = new ResultTab(Activator.getDefault().getSystemwideController(), tabFolder);
 	}
 
 	private void addSelectionListenerForFilterCombo(Combo backlogCombo, Combo filterCombo) {

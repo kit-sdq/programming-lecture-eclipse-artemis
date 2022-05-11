@@ -1,7 +1,6 @@
 /* Licensed under EPL-2.0 2022. */
 package edu.kit.kastel.eclipse.student.view.ui;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jface.fieldassist.ControlDecoration;
@@ -41,7 +40,7 @@ public class ArtemisStudentView extends ViewPart {
 	private static final String NO_SELECTED = "*NOTHING SELECTED*";
 	private static final String EXERCISE = "Exercise";
 
-	private List<ArtemisStudentTab> tabs = new ArrayList<>();
+	private ResultTab resultTab;
 	private StudentViewController viewController;
 
 	private Button btnSubmitExcerise;
@@ -68,9 +67,6 @@ public class ArtemisStudentView extends ViewPart {
 
 	public ArtemisStudentView() {
 		this.viewController = new StudentViewController();
-		ResultTab resultTab = new ResultTab(this.viewController);
-		this.tabs.add(resultTab);
-		this.viewController.connectToWebsocket(resultTab);
 	}
 
 	/**
@@ -84,7 +80,12 @@ public class ArtemisStudentView extends ViewPart {
 	private void createView(Composite parent) {
 		TabFolder tabFolder = new TabFolder(parent, SWT.NONE);
 		this.createMainTab(tabFolder);
-		this.createAllTabs(tabFolder);
+		this.createTestTab(tabFolder);
+	}
+
+	public void createTestTab(TabFolder tabFolder) {
+		resultTab = new ResultTab(this.viewController, tabFolder);
+		this.viewController.connectToWebsocket(resultTab);
 	}
 
 	@Override
@@ -505,7 +506,7 @@ public class ArtemisStudentView extends ViewPart {
 
 	private void refreshArtemisState() {
 		this.viewController = new StudentViewController();
-		this.viewController.connectToWebsocket((ResultTab) this.tabs.get(0));
+		this.viewController.connectToWebsocket(resultTab);
 		this.setViewControllerForAllTabs();
 		this.resetCombos();
 		this.resetButtons();
@@ -543,22 +544,26 @@ public class ArtemisStudentView extends ViewPart {
 	}
 
 	private void resetAllTabs() {
-		this.tabs.forEach(ArtemisStudentTab::reset);
-	}
-
-	private void createAllTabs(TabFolder folder) {
-		this.tabs.forEach(t -> t.create(folder));
+		if (resultTab != null) {
+			resultTab.reset();
+		}
 	}
 
 	private void callAllTabsForExerciseEvent() {
-		this.tabs.forEach(ArtemisStudentTab::callExercisesEvent);
+		if (resultTab != null) {
+			resultTab.callExercisesEvent();
+		}
 	}
 
 	private void callAllTabsForExamEvent() {
-		this.tabs.forEach(ArtemisStudentTab::callExamEvent);
+		if (resultTab != null) {
+			resultTab.callExamEvent();
+		}
 	}
 
 	private void setViewControllerForAllTabs() {
-		this.tabs.forEach(tab -> tab.setViewController(this.viewController));
+		if (resultTab != null) {
+			resultTab.setViewController(this.viewController);
+		}
 	}
 }

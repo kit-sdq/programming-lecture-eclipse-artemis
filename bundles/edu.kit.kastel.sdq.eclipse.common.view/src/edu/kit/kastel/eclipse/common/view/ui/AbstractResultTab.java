@@ -3,16 +3,13 @@ package edu.kit.kastel.eclipse.common.view.ui;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableItem;
 
 import edu.kit.kastel.eclipse.common.view.utilities.AssessmentUtilities;
 import edu.kit.kastel.sdq.eclipse.common.api.ArtemisClientException;
@@ -23,14 +20,12 @@ import edu.kit.kastel.sdq.eclipse.common.api.model.IMistakeType;
 import edu.kit.kastel.sdq.eclipse.common.api.util.Triple;
 import edu.kit.kastel.sdq.eclipse.common.core.model.annotation.Annotation;
 
-public abstract class AbstractResultTab extends ResultTabUI {
-	private static final String CHECK_MARK_IN_UTF8 = "\u2713";
-	private static final String X_MARK_IN_UTF8 = "\u2717";
+public abstract class AbstractResultTab extends AbstractResultTabCompositeController {
 
 	protected final ILog log = Platform.getLog(this.getClass());
 
-	protected AbstractResultTab(boolean hasReloadFunctionality) {
-		super(hasReloadFunctionality);
+	protected AbstractResultTab(TabFolder tabFolder, boolean hasReloadFunctionality) {
+		super(tabFolder, hasReloadFunctionality);
 	}
 
 	/**
@@ -78,37 +73,26 @@ public abstract class AbstractResultTab extends ResultTabUI {
 				this.createAnnotationsMarkers(currentProjectFileForAnnotation, currentSourceDirectory, resultFeedback.third());
 			}
 		} else {
-			this.feedbackTable.removeAll();
+			this.testTable.removeAll();
 			this.resetView();
 		}
 	}
 
 	private void addResultToTab(IExercise currentExercise, String completionTime, String resultString, List<Feedback> feedbacks) {
-		Display display = Display.getDefault();
-
 		boolean successOfAutomaticTests = this.calculateSuccessOfAutomaticTests(feedbacks);
 		double points = this.calculatePoints(currentExercise, feedbacks);
-
 		double score = this.calculateScore(currentExercise, points);
 
-		String title = currentExercise == null ? "Unknown Task" : currentExercise.getTitle();
-
-		this.btnResultSuccessful.setForeground(successOfAutomaticTests ? display.getSystemColor(SWT.COLOR_GREEN) : display.getSystemColor(SWT.COLOR_RED));
-		this.btnResultSuccessful.setText(successOfAutomaticTests ? "Test(s) succeeded" : "Test(s) failed");
-
-		this.lblResultExerciseShortName.setText(title);
-		this.lblResultExerciseDescription.setText(completionTime == null ? "" : completionTime);
-		this.resultScore.setText(resultString == null ? String.format(Locale.ENGLISH, "Score: %.2f%%", score) : resultString);
-		this.lblPoints.setText(String.format(Locale.ENGLISH, "Points: %.2f", points));
+		this.setSuccessAndScore(currentExercise, successOfAutomaticTests, points, score, completionTime, resultString);
 		this.layout();
-
 	}
 
 	private double calculatePoints(IExercise exercise, List<Feedback> feedbacks) {
 		if (exercise == null || feedbacks == null) {
 			return Double.NaN;
 		}
-		return feedbacks.stream().mapToDouble(f -> f.getCredits() == null ? 0.0 : f.getCredits()).sum();
+		var sum = feedbacks.stream().mapToDouble(f -> f.getCredits() == null ? 0.0 : f.getCredits()).sum();
+		return Math.max(0, sum);
 	}
 
 	private double calculateScore(IExercise exercise, double points) {
@@ -139,40 +123,10 @@ public abstract class AbstractResultTab extends ResultTabUI {
 
 	}
 
-	private void createTableItemsForFeedback(Table table, String name, Feedback feedback) {
-		String roundedCredits = feedback.getCredits() == null ? "0.00" : String.format(Locale.ENGLISH, "%.2f", feedback.getCredits());
-		String success = this.calculateSuccessMessage(feedback);
-		int colorIndicator = this.calculateSuccessColorIndicator(feedback);
-
-		final TableItem item = new TableItem(table, SWT.NULL);
-		item.setData(feedback);
-		item.setText(0, name);
-		item.setText(1, "" + roundedCredits);
-		item.setText(2, success);
-		item.setForeground(2, Display.getDefault().getSystemColor(colorIndicator));
-		item.setText(3, feedback.getDetailText() != null ? CHECK_MARK_IN_UTF8 : X_MARK_IN_UTF8);
-	}
-
-	private String calculateSuccessMessage(Feedback feedback) {
-		if (feedback.getPositive() == null) {
-			return "";
-		}
-		return Boolean.TRUE.equals(feedback.getPositive()) ? "successful" : "failed";
-	}
-
-	private int calculateSuccessColorIndicator(Feedback feedback) {
-		if (feedback.getPositive() == null) {
-			return SWT.COLOR_BLACK;
-		}
-		return Boolean.TRUE.equals(feedback.getPositive()) ? SWT.COLOR_GREEN : SWT.COLOR_RED;
-	}
-
 	private void handleNewResult(IExercise currentExercise, String completionTime, String resultString, List<Feedback> feedbacks) {
-		this.feedbackTable.removeAll();
-		this.addFeedbackToTable(this.feedbackTable, feedbacks);
+		this.testTable.removeAll();
+		this.addFeedbackToTable(this.testTable, feedbacks);
 		this.addResultToTab(currentExercise, completionTime, resultString, feedbacks);
-		this.feedbackContainerComposite.pack();
-		this.feedbackContentComposite.setVisible(true);
 	}
 
 	/**
