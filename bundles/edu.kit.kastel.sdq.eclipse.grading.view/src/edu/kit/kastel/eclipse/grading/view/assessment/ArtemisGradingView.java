@@ -80,7 +80,7 @@ public class ArtemisGradingView extends ViewPart {
 
 	private void addListenerForMarkerDeletion() {
 		AssessmentUtilities.getWorkspace()
-				.addResourceChangeListener(event -> Arrays.asList(event.findMarkerDeltas(AssessmentUtilities.MARKER_NAME, true)).forEach(marker -> {
+				.addResourceChangeListener(event -> Arrays.asList(event.findMarkerDeltas(AssessmentUtilities.MARKER_CLASS_NAME, true)).forEach(marker -> {
 					// check if marker is deleted
 					if (marker.getKind() == 2) {
 						this.viewController.deleteAnnotation((String) marker.getAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_ANNOTATION_ID));
@@ -225,8 +225,7 @@ public class ArtemisGradingView extends ViewPart {
 		customButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		customButton.setText(mistake.getButtonText());
 		customButton.addListener(SWT.Selection, event -> {
-			final CustomButtonDialog customDialog = new CustomButtonDialog(AssessmentUtilities.getWindowsShell(), this.viewController,
-					ratingGroup.getDisplayName(), mistake);
+			final CustomButtonDialog customDialog = new CustomButtonDialog(AssessmentUtilities.getWindowsShell(), this.viewController, mistake);
 			customDialog.setBlockOnOpen(true);
 			customDialog.open();
 			// avoid SWT Exception
@@ -263,8 +262,10 @@ public class ArtemisGradingView extends ViewPart {
 		tbtmAssessment.setControl(scrolledCompositeAssessment);
 		scrolledCompositeAssessment.setExpandHorizontal(true);
 		scrolledCompositeAssessment.setExpandVertical(true);
+		scrolledCompositeAssessment.setLayout(new GridLayout(1, false));
 
 		Composite assessmentComposite = new Composite(scrolledCompositeAssessment, SWT.NONE);
+		assessmentComposite.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, true, true, 10, 10));
 		assessmentComposite.setLayout(new GridLayout(2, false));
 
 		this.correctionCountLbl = new Label(assessmentComposite, SWT.NONE);
@@ -349,6 +350,12 @@ public class ArtemisGradingView extends ViewPart {
 		this.addSelectionListenerForRefreshArtemisStateButton(btnRefreshArtemisState);
 		this.addControlToPossibleActions(btnRefreshArtemisState, Transition.ON_RESET);
 
+		var pluginVersion = Activator.getDefault().getBundle().getVersion();
+		Label version = new Label(assessmentComposite, SWT.NONE);
+		version.setLayoutData(new GridData(SWT.RIGHT, SWT.BOTTOM, true, false, 2, 1));
+		version.setAlignment(SWT.RIGHT);
+		version.setText(String.format("Artemis Grading %d.%d.%d", pluginVersion.getMajor(), pluginVersion.getMinor(), pluginVersion.getMicro()));
+
 		scrolledCompositeAssessment.setContent(assessmentComposite);
 		scrolledCompositeAssessment.setMinSize(assessmentComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 	}
@@ -401,9 +408,9 @@ public class ArtemisGradingView extends ViewPart {
 
 					KeyboardAwareMouseListener listener = new KeyboardAwareMouseListener();
 					// Normal click
-					listener.setClickHandler(//
-							() -> this.viewController.addAssessmentAnnotation(mistake, null, null, mistake.getRatingGroup().getDisplayName()), SWT.BUTTON1 //
-					);
+					listener.setClickHandler(
+							() -> AssessmentUtilities.createAssessmentAnnotation(this.viewController.getAssessmentController(), mistake, null, null),
+							SWT.BUTTON1);
 					// shift-click and middle-click
 					listener.setClickHandler(() -> this.createMistakePenaltyWithCustomMessageDialog(mistake), SWT.SHIFT, SWT.BUTTON2);
 					// every click
@@ -428,12 +435,11 @@ public class ArtemisGradingView extends ViewPart {
 	}
 
 	private void createMistakePenaltyWithCustomMessageDialog(IMistakeType mistake) {
-		CustomButtonDialog buttonDialog = new CustomButtonDialog(AssessmentUtilities.getWindowsShell(), this.viewController,
-				mistake.getRatingGroup().getDisplayName(), null);
+		CustomButtonDialog buttonDialog = new CustomButtonDialog(AssessmentUtilities.getWindowsShell(), this.viewController, null);
 		buttonDialog.setBlockOnOpen(true);
 		buttonDialog.open();
 		if (buttonDialog.isClosedByOk()) {
-			this.viewController.addAssessmentAnnotation(mistake, buttonDialog.getCustomMessage(), null, mistake.getRatingGroup().getDisplayName());
+			AssessmentUtilities.createAssessmentAnnotation(this.viewController.getAssessmentController(), mistake, buttonDialog.getCustomMessage(), null);
 		}
 	}
 

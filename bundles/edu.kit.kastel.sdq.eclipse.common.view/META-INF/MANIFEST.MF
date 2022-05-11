@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: edu.kit.kastel.sdq.eclipse.common
 Bundle-SymbolicName: edu.kit.kastel.sdq.eclipse.common.view;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 2.0.0
 Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.ide,
  org.eclipse.ui.editors,
@@ -14,7 +14,7 @@ Require-Bundle: org.eclipse.ui,
  edu.kit.kastel.sdq.eclipse.common.core
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-ActivationPolicy: lazy
-Bundle-Activator: edu.kit.kastel.eclipse.common.view.activator.Activator
+Bundle-Activator: edu.kit.kastel.eclipse.common.view.activator.CommonActivator
 Automatic-Module-Name: edu.kit.kastel.sdq.eclipse.common
 Export-Package: edu.kit.kastel.eclipse.common.view.activator,
  edu.kit.kastel.eclipse.common.view.controllers,

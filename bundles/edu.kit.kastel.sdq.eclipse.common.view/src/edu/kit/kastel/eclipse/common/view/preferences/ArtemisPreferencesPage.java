@@ -1,5 +1,5 @@
 /* Licensed under EPL-2.0 2022. */
-package edu.kit.kastel.eclipse.student.view.preferences;
+package edu.kit.kastel.eclipse.common.view.preferences;
 
 import java.util.Objects;
 
@@ -13,7 +13,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import edu.kit.kastel.eclipse.common.view.utilities.ResourceBundleProvider;
-import edu.kit.kastel.eclipse.student.view.activator.Activator;
+import edu.kit.kastel.eclipse.common.view.activator.CommonActivator;
 import edu.kit.kastel.sdq.eclipse.common.api.PreferenceConstants;
 
 /**
@@ -28,13 +28,13 @@ import edu.kit.kastel.sdq.eclipse.common.api.PreferenceConstants;
  * <p>
  */
 
-public class ArtemisStudentPreferencesPage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
+public class ArtemisPreferencesPage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 
 	private ComboFieldEditor languageSelector;
 
-	public ArtemisStudentPreferencesPage() {
+	public ArtemisPreferencesPage() {
 		super(FieldEditorPreferencePage.GRID);
-		this.setPreferenceStore(Activator.getDefault().getPreferenceStore());
+		this.setPreferenceStore(CommonActivator.getDefault().getPreferenceStore());
 		this.setDescription(ResourceBundleProvider.getResourceBundle().getString("settings.student.description"));
 	}
 
@@ -45,16 +45,16 @@ public class ArtemisStudentPreferencesPage extends FieldEditorPreferencePage imp
 	 */
 	@Override
 	public void createFieldEditors() {
-		StringFieldEditor artemisUrl = new StringFieldEditor(PreferenceConstants.ARTEMIS_URL,
-				ResourceBundleProvider.getResourceBundle().getString("settings.url") + " ", this.getFieldEditorParent());
-		StringFieldEditor artemisUser = new StringFieldEditor(PreferenceConstants.ARTEMIS_USER,
-				ResourceBundleProvider.getResourceBundle().getString("settings.username") + " ", this.getFieldEditorParent());
-		StringFieldEditor artemisPassword = new StringFieldEditor(PreferenceConstants.ARTEMIS_PASSWORD,
-				ResourceBundleProvider.getResourceBundle().getString("settings.password") + " ", this.getFieldEditorParent());
+		var parent = this.getFieldEditorParent();
+
+		var artemisUrl = new StringFieldEditor(PreferenceConstants.ARTEMIS_URL, ResourceBundleProvider.getResourceBundle().getString("settings.url") + " ", parent);
+		var artemisUser = new StringFieldEditor(PreferenceConstants.ARTEMIS_USER, ResourceBundleProvider.getResourceBundle().getString("settings.username") + " ", parent);
+		var artemisPassword = new StringFieldEditor(PreferenceConstants.ARTEMIS_PASSWORD, ResourceBundleProvider.getResourceBundle().getString("settings.password") + " ", parent);
+
 		artemisPassword.getTextControl(this.getFieldEditorParent()).setEchoChar('*');
 
 		// Load value from common view
-		this.getPreferenceStore().setValue(PreferenceConstants.PREFERRED_LANGUAGE_PATH, edu.kit.kastel.eclipse.common.view.activator.Activator.getDefault()
+		this.getPreferenceStore().setValue(PreferenceConstants.PREFERRED_LANGUAGE_PATH, CommonActivator.getDefault()
 				.getPreferenceStore().getString(PreferenceConstants.PREFERRED_LANGUAGE_PATH));
 		this.languageSelector = new ComboFieldEditor(PreferenceConstants.PREFERRED_LANGUAGE_PATH,
 				ResourceBundleProvider.getResourceBundle().getString("settings.language"), new String[][] { { "Deutsch", "de_DE" }, { "Englisch", "en_US" } },
@@ -88,7 +88,7 @@ public class ArtemisStudentPreferencesPage extends FieldEditorPreferencePage imp
 				String newLanguage = (String) Objects.requireNonNullElse(event.getNewValue(), "en_US");
 				// This makes sure the common-view will always contain the newest value (hence
 				// technically student and grading have own settings)
-				edu.kit.kastel.eclipse.common.view.activator.Activator.getDefault().getPreferenceStore().setValue(PreferenceConstants.PREFERRED_LANGUAGE_PATH,
+				CommonActivator.getDefault().getPreferenceStore().setValue(PreferenceConstants.PREFERRED_LANGUAGE_PATH,
 						newLanguage);
 				ResourceBundleProvider.updateResourceBundle();
 			}

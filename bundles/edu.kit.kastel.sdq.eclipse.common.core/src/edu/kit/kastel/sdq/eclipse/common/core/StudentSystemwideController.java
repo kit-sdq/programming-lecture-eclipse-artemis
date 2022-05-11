@@ -48,7 +48,9 @@ public class StudentSystemwideController extends SystemwideController implements
 
 	public StudentSystemwideController(final IPreferenceStore preferenceStore) {
 		super(preferenceStore.getString(PreferenceConstants.ARTEMIS_USER), //
-				preferenceStore.getString(PreferenceConstants.ARTEMIS_PASSWORD));
+				preferenceStore.getString(PreferenceConstants.ARTEMIS_PASSWORD), //
+				preferenceStore.getString(PreferenceConstants.GIT_TOKEN) //
+		);
 		this.createControllers(preferenceStore.getString(PreferenceConstants.ARTEMIS_URL), //
 				preferenceStore.getString(PreferenceConstants.ARTEMIS_USER), //
 				preferenceStore.getString(PreferenceConstants.ARTEMIS_PASSWORD) //
@@ -56,11 +58,6 @@ public class StudentSystemwideController extends SystemwideController implements
 		this.preferenceStore = preferenceStore;
 
 		this.initPreferenceStoreCallback(preferenceStore);
-	}
-
-	public StudentSystemwideController(final String artemisHost, final String username, final String password) {
-		super(username, password);
-		this.createControllers(artemisHost, username, password);
 	}
 
 	private void createControllers(final String artemisHost, final String username, final String password) {
@@ -188,16 +185,14 @@ public class StudentSystemwideController extends SystemwideController implements
 		}
 		for (IAnnotation annotation : annotations) {
 			this.addAnnotation(annotation.getUUID(), annotation.getMistakeType(), annotation.getStartLine(), annotation.getEndLine(),
-					annotation.getClassFilePath(), annotation.getCustomMessage().orElse(null), annotation.getCustomPenalty().orElse(null),
-					annotation.getMarkerCharStart(), annotation.getMarkerCharEnd());
+					annotation.getClassFilePath(), annotation.getCustomMessage().orElse(null), annotation.getCustomPenalty().orElse(null));
 		}
 	}
 
 	private void addAnnotation(String annotationID, IMistakeType mistakeType, int startLine, int endLine, String fullyClassifiedClassName, String customMessage,
-			Double customPenalty, int markerCharStart, int markerCharEnd) {
+			Double customPenalty) {
 		try {
-			this.annotationDao.addAnnotation(annotationID, mistakeType, startLine, endLine, fullyClassifiedClassName, customMessage, customPenalty,
-					markerCharStart, markerCharEnd);
+			this.annotationDao.addAnnotation(annotationID, mistakeType, startLine, endLine, fullyClassifiedClassName, customMessage, customPenalty);
 		} catch (AnnotationException e) {
 			this.error(e.getMessage(), e);
 		}

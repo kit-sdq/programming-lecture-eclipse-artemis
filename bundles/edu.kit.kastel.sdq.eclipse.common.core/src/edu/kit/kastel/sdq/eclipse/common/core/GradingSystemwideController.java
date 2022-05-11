@@ -42,7 +42,9 @@ public class GradingSystemwideController extends SystemwideController implements
 
 	public GradingSystemwideController(final IPreferenceStore preferenceStore) {
 		super(preferenceStore.getString(PreferenceConstants.ARTEMIS_USER), //
-				preferenceStore.getString(PreferenceConstants.ARTEMIS_PASSWORD));
+				preferenceStore.getString(PreferenceConstants.ARTEMIS_PASSWORD), //
+				preferenceStore.getString(PreferenceConstants.GIT_TOKEN) //
+		);
 		this.createController(preferenceStore.getString(PreferenceConstants.ARTEMIS_URL), //
 				preferenceStore.getString(PreferenceConstants.ARTEMIS_USER), //
 				preferenceStore.getString(PreferenceConstants.ARTEMIS_PASSWORD) //
@@ -53,11 +55,6 @@ public class GradingSystemwideController extends SystemwideController implements
 		this.updateConfigFile();
 
 		this.initPreferenceStoreCallback(preferenceStore);
-	}
-
-	public GradingSystemwideController(final String artemisHost, final String username, final String password) {
-		super(username, password);
-		this.createController(artemisHost, username, password);
 	}
 
 	private void createController(final String artemisHost, final String username, final String password) {
@@ -320,16 +317,7 @@ public class GradingSystemwideController extends SystemwideController implements
 	}
 
 	private void updateConfigFile() {
-		if (this.preferenceStore.getBoolean(PreferenceConstants.IS_RELATIVE_CONFIG_PATH)) {
-			if (this.course != null && this.exercise != null && this.submission != null) {
-				// not the case at startup with rel config path chosen!
-				this.setConfigFile(new File(ResourcesPlugin.getWorkspace().getRoot().getProject(this.getCurrentProjectName()).getLocation().toFile(),
-						this.preferenceStore.getString(PreferenceConstants.RELATIVE_CONFIG_PATH)));
-			}
-		} else {
-			this.setConfigFile(new File(this.preferenceStore.getString(PreferenceConstants.ABSOLUTE_CONFIG_PATH)));
-
-		}
+		this.setConfigFile(new File(this.preferenceStore.getString(PreferenceConstants.ABSOLUTE_CONFIG_PATH)));
 	}
 
 	private boolean nullCheckMembersAndNotify(boolean checkCourseID, boolean checkExerciseID, boolean checkSubmissionID) {

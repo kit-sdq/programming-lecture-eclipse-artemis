@@ -22,7 +22,7 @@ public class ArtemisExam implements IExam, Serializable {
 	private int examId;
 	@JsonProperty
 	private String title;
-	@JsonProperty
+	@JsonProperty("numberOfCorrectionRoundsInExam")
 	private int numberOfCorrectionRounds;
 	@JsonProperty
 	private Date startDate;

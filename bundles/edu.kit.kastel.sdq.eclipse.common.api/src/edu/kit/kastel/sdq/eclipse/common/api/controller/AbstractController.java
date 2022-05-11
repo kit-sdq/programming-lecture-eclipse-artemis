@@ -65,4 +65,8 @@ public abstract class AbstractController implements IController {
 		}
 	}
 
+	protected final IViewInteraction getViewInteractionHandler() {
+		return viewInteractionHandler;
+	}
+
 }

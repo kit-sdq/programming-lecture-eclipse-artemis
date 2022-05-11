@@ -4,6 +4,7 @@ package edu.kit.kastel.eclipse.grading.view.activator;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
+import edu.kit.kastel.eclipse.common.view.activator.CommonActivator;
 import edu.kit.kastel.sdq.eclipse.common.api.controller.IGradingSystemwideController;
 import edu.kit.kastel.sdq.eclipse.common.core.GradingSystemwideController;
 
@@ -52,7 +53,7 @@ public class Activator extends AbstractUIPlugin {
 	 * Creates a new instance of the SystemWideController
 	 */
 	public IGradingSystemwideController createNewSystemwideController() {
-		this.systemwideController = new GradingSystemwideController(this.getPreferenceStore());
+		this.systemwideController = new GradingSystemwideController(CommonActivator.getDefault().getPreferenceStore());
 		return this.systemwideController;
 	}
 

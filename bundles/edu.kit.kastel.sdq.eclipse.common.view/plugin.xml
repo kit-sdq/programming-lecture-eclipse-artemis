@@ -144,4 +144,28 @@
             name="Custom Penalty">
       </markerField>
    </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="edu.kit.kastel.eclipse.common.view.preferences.ArtemisPreferencesPage"
+            id="edu.kit.kastel.eclipse.common.view.preferences.ArtemisPreferencesPage"
+            name="Artemis">
+      </page>
+      <page
+            class="edu.kit.kastel.eclipse.common.view.preferences.AdvancedPreferences"
+            id="edu.kit.kastel.eclipse.common.view.preferences.AdvancedPreferences"
+            name="Advanced"
+            category="edu.kit.kastel.eclipse.common.view.preferences.ArtemisPreferencesPage/">
+      </page>
+   </extension>
+   <extension
+         name="Artemis"
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="edu.kit.kastel.eclipse.common.view.preferences.PreferenceInitializer">
+      </initializer>
+      <initializer
+            class="edu.kit.kastel.eclipse.common.view.preferences.PreferenceInitializer">
+      </initializer>
+   </extension>
 </plugin>

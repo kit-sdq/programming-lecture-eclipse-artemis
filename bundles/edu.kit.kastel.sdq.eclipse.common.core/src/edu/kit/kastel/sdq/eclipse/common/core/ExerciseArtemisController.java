@@ -22,11 +22,11 @@ import edu.kit.kastel.sdq.eclipse.common.core.artemis.WorkspaceUtil;
 
 public class ExerciseArtemisController extends AbstractController implements IExerciseArtemisController {
 	private String username;
-	private String password;
+	private String gitPassword;
 
-	public ExerciseArtemisController(String username, String password) {
+	public ExerciseArtemisController(String username, String password, String gitToken) {
 		this.username = username;
-		this.password = password;
+		this.gitPassword = gitToken == null || gitToken.isBlank() ? password : gitToken;
 	}
 
 	@Override
@@ -59,7 +59,7 @@ public class ExerciseArtemisController extends AbstractController implements IEx
 				throw new ArtemisClientException("Could not clone project " + projectDirectory.getName() + ", " + "directory already exists!");
 			}
 
-			var credentials = new UsernamePasswordCredentialsProvider(this.username, this.password);
+			var credentials = new UsernamePasswordCredentialsProvider(this.username, this.gitPassword);
 			// Download test repository
 			GitHandler.cloneRepo(projectDirectory, exercise.getTestRepositoryUrl(), credentials);
 			// download submission inside the exercise project directory
@@ -78,7 +78,7 @@ public class ExerciseArtemisController extends AbstractController implements IEx
 			}
 
 			// Download test repository
-			var credentials = new UsernamePasswordCredentialsProvider(this.username, this.password);
+			var credentials = new UsernamePasswordCredentialsProvider(this.username, this.gitPassword);
 			GitHandler.cloneRepo(projectDirectory, repoUrl, credentials);
 		} catch (GitException e) {
 			throw new ArtemisClientException("Unable to download exercise: " + e.getMessage(), e);
@@ -103,7 +103,7 @@ public class ExerciseArtemisController extends AbstractController implements IEx
 		File exerciseRepo = projectNaming.getProjectFileInWorkspace(eclipseWorkspaceRoot, exercise, null);
 		File gitFileInRepo = projectNaming.getGitFileInProjectDirectory(exerciseRepo);
 		try {
-			GitHandler.pullExercise(this.username, this.password, exerciseRepo);
+			GitHandler.pullExercise(this.username, this.gitPassword, exerciseRepo);
 			GitHandler.commitExercise(this.username, this.username, this.createCommitMsg(course, exercise), gitFileInRepo);
 		} catch (GitException e) {
 			throw new ArtemisClientException("Can't save selected exercise " + exercise.getShortName() //
@@ -111,7 +111,7 @@ public class ExerciseArtemisController extends AbstractController implements IEx
 		}
 
 		try {
-			var credentials = new UsernamePasswordCredentialsProvider(this.username, this.password);
+			var credentials = new UsernamePasswordCredentialsProvider(this.username, this.gitPassword);
 			GitHandler.pushExercise(gitFileInRepo, credentials);
 		} catch (GitException e) {
 			throw new ArtemisClientException("Can't upload solution. Please check if submissions are still possible.", e);

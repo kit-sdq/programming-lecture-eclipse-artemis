@@ -10,21 +10,6 @@
             restorable="true">
       </view>
    </extension>
-   <extension
-         point="org.eclipse.ui.preferencePages">
-      <page
-            class="edu.kit.kastel.eclipse.student.view.preferences.ArtemisStudentPreferencesPage"
-            id="edu.kit.kastel.eclipse.student.view.preferences.SamplePreferencePage"
-            name="Artemis Student">
-      </page>
-   </extension>
-   <extension
-         name="Artemis Student"
-         point="org.eclipse.core.runtime.preferences">
-      <initializer
-            class="edu.kit.kastel.eclipse.student.view.preferences.PreferenceInitializer">
-      </initializer>
-   </extension>
 	<extension
          point="org.eclipse.ui.perspectives">
          <perspective

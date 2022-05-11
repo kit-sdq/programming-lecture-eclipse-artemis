@@ -34,13 +34,25 @@ public class ResultTab extends AbstractResultTab implements ArtemisStudentTab, W
 	@Override
 	protected Triple<String, String, List<Feedback>> getCurrentResultAndFeedback() {
 		var details = this.viewController.getFeedbackExcerise();
-
+		if (details.isEmpty()) {
+			return new Triple<>(null, null, null);
+		}
 		return new Triple<>(details.first().completionDateAsString(), details.first().resultString, details.second());
 	}
 
 	@Override
 	protected IExercise getCurrentExercise() {
 		return this.viewController.getCurrentSelectedExercise();
+	}
+
+	@Override
+	protected String getCurrentProjectNameForAnnotations() {
+		return this.viewController.getCurrentProjectNameInEclipse();
+	}
+
+	@Override
+	protected String getCurrentSourceDirectoryRelative() {
+		return "src/";
 	}
 
 	@Override
@@ -81,8 +93,4 @@ public class ResultTab extends AbstractResultTab implements ArtemisStudentTab, W
 		this.viewController = viewController;
 	}
 
-	@Override
-	protected String getCurrentProjectNameForAnnotations() {
-		return this.viewController.getCurrentProjectNameInEclipse();
-	}
 }
