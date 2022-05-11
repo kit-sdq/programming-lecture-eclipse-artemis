@@ -4,6 +4,7 @@ package edu.kit.kastel.eclipse.common.view.preferences;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.FileFieldEditor;
+import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
@@ -40,8 +41,14 @@ public class AdvancedPreferences extends FieldEditorPreferencePage implements IW
 		var overrideDefaultPreferences = new BooleanFieldEditor(PreferenceConstants.OVERRIDE_DEFAULT_PREFERENCES, "Tweak Eclipse Preferences on startup",
 				parent);
 
-		this.addField(absoluteConfigPath);
+		var columnsForGradingButtons = new IntegerFieldEditor(PreferenceConstants.GRADING_BUTTONS_IN_COLUMN, "Amount of Grading Buttons in one row", parent);
+		columnsForGradingButtons.setEmptyStringAllowed(false);
+		columnsForGradingButtons.setValidRange(1, 10);
+
 		this.addField(gitToken);
+
+		this.addField(absoluteConfigPath);
+		this.addField(columnsForGradingButtons);
 		this.addField(userPrefersLargePenaltyText);
 		this.addField(userPrefersTextWrappingInPenaltyText);
 		this.addField(overrideDefaultPreferences);

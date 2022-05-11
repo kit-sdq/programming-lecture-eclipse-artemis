@@ -16,17 +16,13 @@ public class ResultTab extends AbstractResultTab {
 
 	private IGradingSystemwideController controller;
 
-	public ResultTab(IGradingSystemwideController controller) {
-		super(false);
+	public ResultTab(IGradingSystemwideController controller, TabFolder tabFolder) {
+		super(tabFolder, false);
 		this.controller = controller;
 	}
 
 	public void setController(IGradingSystemwideController controller) {
 		this.controller = controller;
-	}
-
-	public void create(TabFolder tabFolder) {
-		this.createTabFolder(tabFolder);
 	}
 
 	@Override

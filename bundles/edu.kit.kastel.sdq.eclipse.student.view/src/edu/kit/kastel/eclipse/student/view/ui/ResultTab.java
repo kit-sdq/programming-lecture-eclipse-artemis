@@ -13,20 +13,14 @@ import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.IExercise;
 import edu.kit.kastel.sdq.eclipse.common.api.client.websocket.WebsocketCallback;
 import edu.kit.kastel.sdq.eclipse.common.api.util.Triple;
 
-public class ResultTab extends AbstractResultTab implements ArtemisStudentTab, WebsocketCallback {
+public class ResultTab extends AbstractResultTab implements WebsocketCallback {
 	private StudentViewController viewController;
 
-	public ResultTab(StudentViewController viewController) {
-		super(true);
+	public ResultTab(StudentViewController viewController, TabFolder tabFolder) {
+		super(tabFolder, true);
 		this.viewController = viewController;
 	}
 
-	@Override
-	public void create(TabFolder tabFolder) {
-		super.createTabFolder(tabFolder);
-	}
-
-	@Override
 	public void reset() {
 		super.resetView();
 	}
@@ -78,17 +72,14 @@ public class ResultTab extends AbstractResultTab implements ArtemisStudentTab, W
 
 	}
 
-	@Override
 	public void callExercisesEvent() {
 		this.reloadFeedbackForExcerise();
 	}
 
-	@Override
 	public void callExamEvent() {
 		this.reset();
 	}
 
-	@Override
 	public void setViewController(StudentViewController viewController) {
 		this.viewController = viewController;
 	}
