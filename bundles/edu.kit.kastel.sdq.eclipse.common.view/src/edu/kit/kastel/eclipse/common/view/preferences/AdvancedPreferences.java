@@ -41,7 +41,7 @@ public class AdvancedPreferences extends FieldEditorPreferencePage implements IW
 		var overrideDefaultPreferences = new BooleanFieldEditor(PreferenceConstants.OVERRIDE_DEFAULT_PREFERENCES, "Tweak Eclipse Preferences on startup",
 				parent);
 
-		var columnsForGradingButtons = new IntegerFieldEditor(PreferenceConstants.GRADING_BUTTONS_IN_COLUMN, "Amount of Grading Buttons in one column", parent);
+		var columnsForGradingButtons = new IntegerFieldEditor(PreferenceConstants.GRADING_BUTTONS_IN_COLUMN, "Amount of Grading Buttons in one row", parent);
 		columnsForGradingButtons.setEmptyStringAllowed(false);
 		columnsForGradingButtons.setValidRange(1, 10);
 
