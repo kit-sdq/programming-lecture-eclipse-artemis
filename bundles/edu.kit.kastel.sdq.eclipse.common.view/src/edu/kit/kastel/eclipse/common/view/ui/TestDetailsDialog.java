@@ -1,13 +1,13 @@
 /* Licensed under EPL-2.0 2022. */
 package edu.kit.kastel.eclipse.common.view.ui;
 
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Dialog;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
@@ -21,49 +21,42 @@ class TestDetailsDialog extends Dialog {
 	private String testDetails;
 
 	public TestDetailsDialog(Shell parent, String testName, String testDetails) {
-		super(parent, SWT.DIALOG_TRIM | SWT.RESIZE | SWT.ON_TOP);
+		super(parent);
+		this.setShellStyle(SWT.DIALOG_TRIM | SWT.RESIZE | SWT.MODELESS | SWT.ON_TOP);
 		this.testName = testName;
 		this.testDetails = testDetails;
 	}
 
-	public void open() {
-		Shell shell = new Shell(this.getParent(), this.getStyle());
-		shell.setText(this.testName);
-		shell.setSize(WIDTH, HEIGHT);
+	@Override
+	protected void configureShell(Shell newShell) {
+		super.configureShell(newShell);
+		newShell.setText(this.testName);
+		newShell.setSize(WIDTH, HEIGHT);
 
 		// Set to mid
 		Monitor mon = Display.getDefault().getMonitors()[0];
 		int newLeftPos = (mon.getBounds().width - WIDTH) / 2;
 		int newTopPos = (mon.getBounds().height - HEIGHT) / 2;
-		shell.setLocation(newLeftPos, newTopPos);
-
-		this.createContents(shell);
-		shell.open();
-		Display display = this.getParent().getDisplay();
-		while (!shell.isDisposed()) {
-			if (!display.readAndDispatch()) {
-				display.sleep();
-			}
-		}
+		newShell.setLocation(newLeftPos, newTopPos);
 	}
 
-	private void createContents(Shell shell) {
-		shell.setLayout(new GridLayout(1, true));
-		Text details = new Text(shell, SWT.MULTI | SWT.BORDER | SWT.WRAP | SWT.V_SCROLL);
-		details.setEditable(false);
+	@Override
+	protected Control createDialogArea(Composite parent) {
+		final Composite comp = (Composite) super.createDialogArea(parent);
+
+		final GridLayout layout = (GridLayout) comp.getLayout();
+		layout.numColumns = 1;
+
+		Text details = new Text(comp, SWT.MULTI | SWT.BORDER | SWT.WRAP | SWT.V_SCROLL);
+
 		details.setText(this.testDetails.replace("<br />", "\n"));
 		details.setLayoutData(new GridData(GridData.FILL_BOTH));
-		Button ok = new Button(shell, SWT.PUSH);
-		ok.setText("OK");
-		ok.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		ok.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent event) {
-				shell.close();
-			}
-		});
+		return comp;
+	}
 
-		shell.setDefaultButton(ok);
+	@Override
+	protected void createButtonsForButtonBar(Composite parent) {
+		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
 	}
 
 }

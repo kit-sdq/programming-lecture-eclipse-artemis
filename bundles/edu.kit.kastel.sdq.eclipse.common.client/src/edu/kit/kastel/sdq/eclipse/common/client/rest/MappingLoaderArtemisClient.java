@@ -29,8 +29,6 @@ import edu.kit.kastel.sdq.eclipse.common.client.mappings.exam.ArtemisExam;
 import edu.kit.kastel.sdq.eclipse.common.client.mappings.exam.ArtemisExerciseGroup;
 
 public class MappingLoaderArtemisClient extends AbstractArtemisClient implements ICourseArtemisClient, IMappingLoader {
-	private static final String PROGRAMMING_IDENTIFIER = "programming";
-
 	private WebTarget endpoint;
 	private String token;
 	private ISubmissionsArtemisClient submissionClient;
@@ -84,8 +82,8 @@ public class MappingLoaderArtemisClient extends AbstractArtemisClient implements
 	@Override
 	public List<IExerciseGroup> getExerciseGroupsForExam(IExam artemisExam, ICourse course) throws ArtemisClientException {
 		final Response rsp = this.endpoint.path(COURSES_PATHPART).path(String.valueOf(course.getCourseId())).path(EXAMS_PATHPART)
-				.path(String.valueOf(artemisExam.getExamId())).path("exam-for-assessment-dashboard") // web client does it that way..
-				.request().header(AUTHORIZATION_NAME, this.token).buildGet().invoke(); // synchronous variant
+				.path(String.valueOf(artemisExam.getExamId())).path("exam-for-assessment-dashboard").request().header(AUTHORIZATION_NAME, this.token).buildGet()
+				.invoke();
 		this.throwIfStatusUnsuccessful(rsp);
 
 		// need to retrieve the exerciseGroups array root node to deserialize it!
@@ -129,7 +127,7 @@ public class MappingLoaderArtemisClient extends AbstractArtemisClient implements
 		for (ArtemisExercise exercise : excerciseArray) {
 			exercise.init(this, artemisCourse);
 		}
-		return Arrays.asList(excerciseArray);
+		return Arrays.stream(excerciseArray).filter(IExercise::isProgramming).collect(Collectors.toList());
 	}
 
 	@Override
@@ -156,7 +154,7 @@ public class MappingLoaderArtemisClient extends AbstractArtemisClient implements
 		}
 
 		// Here we filter all programming exercises
-		return Arrays.stream(exercisesArray).filter(exercise -> PROGRAMMING_IDENTIFIER.equals(exercise.getType())).collect(Collectors.toList());
+		return Arrays.stream(exercisesArray).filter(IExercise::isProgramming).collect(Collectors.toList());
 	}
 
 	@Override

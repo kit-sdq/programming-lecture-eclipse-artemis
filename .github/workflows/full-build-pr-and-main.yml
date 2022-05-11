@@ -1,0 +1,111 @@
+# This workflow will build a Java project with Maven
+# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-maven
+
+name: Bundles / Products Build (PRs & Main Branch)
+
+on:
+  push:
+    branches: [ main ]
+    paths-ignore:
+      - '**.md'
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up JDK
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'temurin'
+        java-version: 17
+
+    - name: Cache Maven packages
+      uses: actions/cache@v3
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: ${{ runner.os }}-maven-
+
+    - name: Build with Maven
+      run: mvn -U -B -Pproducts package
+
+    - name: Move Distributions
+      run: |
+        mkdir dist 
+        mv releng/edu.kit.kastel.sdq.eclipse.grading.product/target/products/*-win32*.zip dist/Artemis_Grading_Windows.zip
+        mv releng/edu.kit.kastel.sdq.eclipse.grading.product/target/products/*-linux*.zip dist/Artemis_Grading_Linux.zip
+        mv releng/edu.kit.kastel.sdq.eclipse.grading.product/target/products/*-macosx*.zip dist/Artemis_Grading_MacOS.zip
+        mv releng/edu.kit.kastel.sdq.eclipse.student.product/target/products/*-win32*.zip dist/Artemis_Student_Windows.zip
+        mv releng/edu.kit.kastel.sdq.eclipse.student.product/target/products/*-linux*.zip dist/Artemis_Student_Linux.zip
+        mv releng/edu.kit.kastel.sdq.eclipse.student.product/target/products/*-macosx*.zip dist/Artemis_Student_MacOS.zip
+        
+
+    - name: Sign MacOS Eclipse Distribution (Grading)
+      if: startsWith(github.ref, 'refs/tags/v')
+      env: 
+        MACOS_CERTIFICATE: ${{ secrets.MACOS_CERTIFICATE }}
+        MACOS_CERTIFICATE_PWD: ${{ secrets.MACOS_CERTIFICATE_PWD }}
+      run: |
+        rm -rf Eclipse.app
+        echo $MACOS_CERTIFICATE | base64 --decode > certificate.p12
+        security create-keychain -p keychainpw build.keychain
+        security default-keychain -s build.keychain
+        security unlock-keychain -p keychainpw build.keychain
+        security import certificate.p12 -k build.keychain -P $MACOS_CERTIFICATE_PWD -T /usr/bin/codesign
+        security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k keychainpw build.keychain
+        security find-identity -p codesigning
+        unzip dist/Artemis_Grading_MacOS.zip
+        /usr/bin/codesign -s "kit-sdq/programming-lecture-eclipse-artemis" -fv Eclipse.app
+        rm dist/Artemis_Grading_MacOS.zip
+        ditto -c -k --sequesterRsrc --keepParent Eclipse.app dist/Artemis_Grading_MacOS.zip
+        
+    - name: Sign MacOS Eclipse Distribution (Student)
+      if: startsWith(github.ref, 'refs/tags/v')
+      env: 
+        MACOS_CERTIFICATE: ${{ secrets.MACOS_CERTIFICATE }}
+        MACOS_CERTIFICATE_PWD: ${{ secrets.MACOS_CERTIFICATE_PWD }}
+      run: |
+        rm -rf Eclipse.app
+        echo $MACOS_CERTIFICATE | base64 --decode > certificate.p12
+        unzip dist/Artemis_Student_MacOS.zip
+        /usr/bin/codesign -s "kit-sdq/programming-lecture-eclipse-artemis" -fv Eclipse.app
+        rm dist/Artemis_Student_MacOS.zip
+        ditto -c -k --sequesterRsrc --keepParent Eclipse.app dist/Artemis_Student_MacOS.zip        
+
+    - name: Save Eclipse Distribution (Windows)
+      uses: actions/upload-artifact@v3
+      with:
+        name: "Eclipse Distribution Windows"
+        path: "dist/Artemis_*_Windows.zip"
+    
+    - name: Save Eclipse Distribution (Linux)
+      uses: actions/upload-artifact@v3
+      with:
+        name: "Eclipse Distribution Linux"
+        path: "dist/Artemis_*_Linux.zip"
+
+    - name: Save Eclipse Distribution (MacOS)
+      uses: actions/upload-artifact@v3
+      with:
+        name: "Eclipse Distribution MacOS"
+        path: "dist/Artemis_*_MacOS.zip"
+  
+          
+    - name: Release
+      uses: softprops/action-gh-release@v1
+      if: startsWith(github.ref, 'refs/tags/v')
+      with:
+        files: |
+          dist/Artemis_Grading_Windows.zip
+          dist/Artemis_Grading_Linux.zip
+          dist/Artemis_Grading_MacOS.zip
+          dist/Artemis_Student_Windows.zip
+          dist/Artemis_Student_Linux.zip
+          dist/Artemis_Student_MacOS.zip      

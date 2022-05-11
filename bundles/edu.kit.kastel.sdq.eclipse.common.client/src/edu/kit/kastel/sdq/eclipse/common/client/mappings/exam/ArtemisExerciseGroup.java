@@ -56,7 +56,7 @@ public class ArtemisExerciseGroup implements IExerciseGroup, Serializable {
 		}
 		this.exercises = this.exercises.stream().filter(exercise -> exercise.getShortName() != null).toList();
 		// TODO Check Filter ..
-		this.exercises = this.exercises.stream().filter(exercise -> "programming".equals(exercise.getType())).toList();
+		this.exercises = this.exercises.stream().filter(IExercise::isProgramming).toList();
 
 		for (ArtemisExercise artemisExercise : this.exercises) {
 			artemisExercise.init(client, course, Optional.of(exam));
