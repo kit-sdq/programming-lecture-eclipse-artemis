@@ -4,6 +4,7 @@ package edu.kit.kastel.sdq.eclipse.common.client.mappings;
 import java.util.Date;
 import java.util.Optional;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import edu.kit.kastel.sdq.eclipse.common.api.ArtemisClientException;
@@ -27,6 +28,9 @@ public class ArtemisExercise implements IExercise {
 	private Boolean secondCorrectionEnabled;
 	@JsonProperty
 	private String type;
+	// assessmentType == AUTOMATIC it shall not be present in Grading Tool
+	@JsonProperty
+	private String assessmentType;
 	@JsonProperty
 	private double maxPoints;
 	@JsonProperty
@@ -74,11 +78,6 @@ public class ArtemisExercise implements IExercise {
 	}
 
 	@Override
-	public String getType() {
-		return this.type;
-	}
-
-	@Override
 	public double getMaxPoints() {
 		return this.maxPoints;
 	}
@@ -118,4 +117,15 @@ public class ArtemisExercise implements IExercise {
 		return dueDate;
 	}
 
+	@Override
+	@JsonIgnore
+	public boolean isAutomaticAssessment() {
+		return "AUTOMATIC".equals(assessmentType);
+	}
+
+	@Override
+	@JsonIgnore
+	public boolean isProgramming() {
+		return "programming".equals(type);
+	}
 }
