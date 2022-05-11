@@ -243,7 +243,7 @@ public class GradingSystemwideController extends SystemwideController implements
 		for (ICourse c : this.getArtemisController().getCourses()) {
 			if (c.getShortName().equals(courseShortName)) {
 				this.course = c;
-				return c.getExercises().stream().map(IExercise::getShortName).toList();
+				return c.getExercises().stream().filter(it -> !it.isAutomaticAssessment()).map(IExercise::getShortName).toList();
 			}
 		}
 		this.error("No Course with the given shortName \"" + courseShortName + "\" found.", null);
