@@ -7,8 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -22,7 +20,6 @@ import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.IExam;
 import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.IExercise;
 import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.ISubmission;
 import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.SubmissionFilter;
-import edu.kit.kastel.sdq.eclipse.common.api.backendstate.Transition;
 import edu.kit.kastel.sdq.eclipse.common.api.controller.IAssessmentController;
 import edu.kit.kastel.sdq.eclipse.common.api.controller.IGradingArtemisController;
 import edu.kit.kastel.sdq.eclipse.common.api.controller.IGradingSystemwideController;
@@ -37,8 +34,6 @@ public class GradingSystemwideController extends SystemwideController implements
 	private ConfigDAO configDao;
 
 	private ISubmission submission;
-
-	private BackendStateMachine backendStateMachine;
 
 	public GradingSystemwideController(final IPreferenceStore preferenceStore) {
 		super(preferenceStore.getString(PreferenceConstants.ARTEMIS_USER), //
@@ -59,17 +54,6 @@ public class GradingSystemwideController extends SystemwideController implements
 
 	private void createController(final String artemisHost, final String username, final String password) {
 		this.artemisGUIController = new GradingArtemisController(artemisHost, username, password);
-		this.backendStateMachine = new BackendStateMachine();
-	}
-
-	private boolean applyTransitionAndNotifyIfNotAllowed(Transition transition) {
-		try {
-			this.backendStateMachine.applyTransition(transition);
-		} catch (NoTransitionException e) {
-			this.error(e.getMessage(), e);
-			return true;
-		}
-		return false;
 	}
 
 	private IAssessmentController getAssessmentController(ISubmission submission, ICourse course, IExercise exercise) {
@@ -124,14 +108,6 @@ public class GradingSystemwideController extends SystemwideController implements
 	}
 
 	@Override
-	public Set<Transition> getCurrentlyPossibleTransitions() {
-		boolean secondCorrectionRoundEnabled = this.exercise != null && this.exercise.isSecondCorrectionEnabled();
-
-		return this.backendStateMachine.getCurrentlyPossibleTransitions().stream()
-				.filter(transition -> !Transition.START_CORRECTION_ROUND_2.equals(transition) || secondCorrectionRoundEnabled).collect(Collectors.toSet());
-	}
-
-	@Override
 	public String getCurrentProjectName() {
 		if (this.nullCheckMembersAndNotify(true, true, true)) {
 			return null;
@@ -150,9 +126,6 @@ public class GradingSystemwideController extends SystemwideController implements
 
 	@Override
 	public void loadAgain() {
-		if (this.applyTransitionAndNotifyIfNotAllowed(Transition.LOAD_AGAIN)) {
-			return;
-		}
 		if (this.nullCheckMembersAndNotify(true, true, true)) {
 			return;
 		}
@@ -163,9 +136,6 @@ public class GradingSystemwideController extends SystemwideController implements
 
 	@Override
 	public void setExerciseId(final String exerciseShortName) throws ArtemisClientException {
-		if (this.applyTransitionAndNotifyIfNotAllowed(Transition.SET_EXERCISE_ID)) {
-			return;
-		}
 		// Normal exercises
 		List<IExercise> exercises = new ArrayList<>(this.course.getExercises());
 		// exam exercises
@@ -184,9 +154,6 @@ public class GradingSystemwideController extends SystemwideController implements
 
 	@Override
 	public void reloadAssessment() {
-		if (this.applyTransitionAndNotifyIfNotAllowed(Transition.RELOAD_ASSESSMENT)) {
-			return;
-		}
 		if (this.nullCheckMembersAndNotify(true, true, true)) {
 			return;
 		}
@@ -197,9 +164,6 @@ public class GradingSystemwideController extends SystemwideController implements
 
 	@Override
 	public void saveAssessment() {
-		if (this.applyTransitionAndNotifyIfNotAllowed(Transition.SAVE_ASSESSMENT)) {
-			return;
-		}
 		if (this.nullCheckMembersAndNotify(true, true, true)) {
 			return;
 		}
@@ -209,9 +173,6 @@ public class GradingSystemwideController extends SystemwideController implements
 
 	@Override
 	public void setAssessedSubmissionByProjectName(String projectName) {
-		if (this.applyTransitionAndNotifyIfNotAllowed(Transition.SET_ASSESSED_SUBMISSION_BY_PROJECT_NAME)) {
-			return;
-		}
 
 		boolean[] found = { false };
 		this.getBegunSubmissions(SubmissionFilter.ALL).forEach(sub -> {
@@ -236,9 +197,6 @@ public class GradingSystemwideController extends SystemwideController implements
 
 	@Override
 	public List<String> setCourseIdAndGetExerciseShortNames(final String courseShortName) throws ArtemisClientException {
-		if (this.applyTransitionAndNotifyIfNotAllowed(Transition.SET_COURSE_ID_AND_GET_EXERCISE_SHORT_NAMES)) {
-			return List.of();
-		}
 
 		for (ICourse c : this.getArtemisController().getCourses()) {
 			if (c.getShortName().equals(courseShortName)) {
@@ -250,15 +208,6 @@ public class GradingSystemwideController extends SystemwideController implements
 		return List.of();
 	}
 
-	@Override
-	public boolean startAssessment() {
-		if (this.applyTransitionAndNotifyIfNotAllowed(Transition.START_ASSESSMENT)) {
-			return false;
-		}
-
-		return this.startAssessment(0);
-	}
-
 	private boolean startAssessment(int correctionRound) {
 		if (this.nullCheckMembersAndNotify(true, true, false)) {
 			return false;
@@ -268,7 +217,6 @@ public class GradingSystemwideController extends SystemwideController implements
 		Optional<ISubmission> optionalSubmissionID = this.artemisGUIController.startNextAssessment(this.exercise, correctionRound);
 		if (optionalSubmissionID.isEmpty()) {
 			// revert!
-			this.backendStateMachine.revertLatestTransition();
 			this.info("No more submissions available for Correction Round " + (correctionRound + 1) + "!");
 			return false;
 		}
@@ -276,7 +224,6 @@ public class GradingSystemwideController extends SystemwideController implements
 
 		// perform download. Revert state if that fails.
 		if (!this.downloadExerciseAndSubmission(this.course, this.exercise, this.submission, this.projectFileNamingStrategy)) {
-			this.backendStateMachine.revertLatestTransition();
 			return false;
 		}
 		return true;
@@ -284,27 +231,16 @@ public class GradingSystemwideController extends SystemwideController implements
 
 	@Override
 	public boolean startCorrectionRound1() {
-		if (this.applyTransitionAndNotifyIfNotAllowed(Transition.START_CORRECTION_ROUND_1)) {
-			return false;
-		}
-
 		return this.startAssessment(0);
 	}
 
 	@Override
 	public boolean startCorrectionRound2() {
-		if (this.applyTransitionAndNotifyIfNotAllowed(Transition.START_CORRECTION_ROUND_2)) {
-			return false;
-		}
-
 		return this.startAssessment(1);
 	}
 
 	@Override
 	public void submitAssessment() {
-		if (this.applyTransitionAndNotifyIfNotAllowed(Transition.SUBMIT_ASSESSMENT)) {
-			return;
-		}
 		if (this.nullCheckMembersAndNotify(true, true, true)) {
 			return;
 		}
@@ -356,4 +292,15 @@ public class GradingSystemwideController extends SystemwideController implements
 	public IGradingArtemisController getArtemisController() {
 		return this.artemisGUIController;
 	}
+
+	@Override
+	public boolean isAssessmentStarted() {
+		return this.submission != null;
+	}
+
+	@Override
+	public Optional<IExercise> getSelectedExercise() {
+		return Optional.ofNullable(this.exercise);
+	}
+
 }

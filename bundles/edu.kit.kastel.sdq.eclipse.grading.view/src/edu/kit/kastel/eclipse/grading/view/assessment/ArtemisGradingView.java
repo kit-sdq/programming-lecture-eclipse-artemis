@@ -2,12 +2,9 @@
 package edu.kit.kastel.eclipse.grading.view.assessment;
 
 import java.util.Arrays;
-import java.util.EnumMap;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -15,7 +12,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
@@ -34,7 +30,6 @@ import edu.kit.kastel.eclipse.grading.view.listeners.AssessmentMarkerViewDoubleC
 import edu.kit.kastel.eclipse.grading.view.listeners.KeyboardAwareMouseListener;
 import edu.kit.kastel.sdq.eclipse.common.api.PreferenceConstants;
 import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.SubmissionFilter;
-import edu.kit.kastel.sdq.eclipse.common.api.backendstate.Transition;
 import edu.kit.kastel.sdq.eclipse.common.api.controller.IGradingSystemwideController;
 import edu.kit.kastel.sdq.eclipse.common.api.model.IMistakeType;
 import edu.kit.kastel.sdq.eclipse.common.api.model.IRatingGroup;
@@ -51,7 +46,6 @@ public class ArtemisGradingView extends ViewPart {
 	private AssessmentViewController viewController;
 	private Map<String, Group> ratingGroupViewElements;
 	private Map<String, Button> mistakeButtons;
-	private Map<Transition, Set<Control>> possibleActions;
 	private Combo backlogCombo;
 
 	private AssessmentTab assessmentTab;
@@ -65,17 +59,8 @@ public class ArtemisGradingView extends ViewPart {
 		this.viewController = new AssessmentViewController();
 		this.ratingGroupViewElements = new HashMap<>();
 		this.mistakeButtons = new HashMap<>();
-		this.possibleActions = new EnumMap<>(Transition.class);
-		this.initializePossibleActions();
 		this.initializeAnnotationEditing();
 		this.addListenerForMarkerDeletion();
-	}
-
-	private void initializePossibleActions() {
-		for (int i = 0; i < Transition.values().length; i++) {
-			Transition current = Transition.values()[i];
-			this.possibleActions.put(current, new HashSet<>());
-		}
 	}
 
 	private void addListenerForMarkerDeletion() {
@@ -178,7 +163,6 @@ public class ArtemisGradingView extends ViewPart {
 		this.backlogCombo.setLayoutData(gdBacklogCombo);
 
 		this.initializeBacklogCombo(this.backlogCombo);
-		this.addControlToPossibleActions(this.backlogCombo, Transition.SET_ASSESSED_SUBMISSION_BY_PROJECT_NAME);
 
 		this.addSelectionListenerForFilterCombo(this.backlogCombo, filterCombo);
 
@@ -193,7 +177,6 @@ public class ArtemisGradingView extends ViewPart {
 
 		Button btnLoadAgain = new Button(buttons, SWT.NONE);
 		btnLoadAgain.setText("Load again");
-		this.addControlToPossibleActions(btnLoadAgain, Transition.LOAD_AGAIN);
 		this.addSelectionListenerForLoadFromBacklogButton(btnLoadAgain);
 
 		UIUtilities.initializeTabAfterFilling(scrolledCompositeBacklog, backlogComposite);
@@ -245,27 +228,18 @@ public class ArtemisGradingView extends ViewPart {
 
 	private void createAssessmentTab(TabFolder tabFolder) {
 		this.assessmentTab = new AssessmentTab(tabFolder);
-		this.addControlToPossibleActions(this.assessmentTab.comboCourse, Transition.SET_COURSE_ID_AND_GET_EXERCISE_SHORT_NAMES);
 		/*
 		 * The exam combo does not really have an influence on the backend state, but
 		 * should be disabled after a new assessment is started
 		 */
-		this.addControlToPossibleActions(this.assessmentTab.comboExam, Transition.SET_COURSE_ID_AND_GET_EXERCISE_SHORT_NAMES);
 		this.loadExamComboEntries(this.assessmentTab.comboCourse, this.assessmentTab.comboExam, this.assessmentTab.comboExercise);
-		this.addControlToPossibleActions(this.assessmentTab.comboExercise, Transition.SET_EXERCISE_ID);
 
 		this.addSelectionListenerForReloadButton(this.assessmentTab.btnReload);
-		this.addControlToPossibleActions(this.assessmentTab.btnReload, Transition.RELOAD_ASSESSMENT);
 		this.addSelectionListenerForSaveButton(this.assessmentTab.btnSave);
-		this.addControlToPossibleActions(this.assessmentTab.btnSave, Transition.SAVE_ASSESSMENT);
 		this.addSelectionListenerForStartFirstRound(this.assessmentTab.btnStartRoundOne);
-		this.addControlToPossibleActions(this.assessmentTab.btnStartRoundOne, Transition.START_CORRECTION_ROUND_1);
 		this.addSelectionListenerForStartSecondRound(this.assessmentTab.btnStartRoundTwo);
-		this.addControlToPossibleActions(this.assessmentTab.btnStartRoundTwo, Transition.START_CORRECTION_ROUND_2);
 		this.addSelectionListenerForSubmitButton(this.assessmentTab.btnSubmit);
-		this.addControlToPossibleActions(this.assessmentTab.btnSubmit, Transition.SUBMIT_ASSESSMENT);
 		this.addSelectionListenerForRefreshArtemisStateButton(this.assessmentTab.btnResetPluginState);
-		this.addControlToPossibleActions(this.assessmentTab.btnResetPluginState, Transition.ON_RESET);
 
 		setVersionText(this.assessmentTab.lblPluginVersion);
 	}
@@ -440,8 +414,22 @@ public class ArtemisGradingView extends ViewPart {
 	}
 
 	private void updateState() {
-		this.possibleActions.values().forEach(set -> set.forEach(control -> control.setEnabled(false)));
-		this.viewController.getPossiblyTransitions().forEach(transition -> this.possibleActions.get(transition).forEach(control -> control.setEnabled(true)));
+		boolean courseSelected = this.assessmentTab.comboCourse.getSelectionIndex() >= 0;
+		boolean examSelected = this.assessmentTab.comboExam.getSelectionIndex() >= 0;
+		boolean exerciseSelected = this.assessmentTab.comboExercise.getSelectionIndex() >= 0;
+
+		boolean secondCorrectionRound = courseSelected && examSelected && exerciseSelected;
+		if (secondCorrectionRound) {
+			var currentExercise = this.viewController.getSelectedExercise();
+			secondCorrectionRound &= currentExercise.isPresent();
+			secondCorrectionRound &= currentExercise.get().hasSecondCorrectionRound();
+			secondCorrectionRound &= currentExercise.get().isSecondCorrectionEnabled();
+		}
+
+		boolean assessmentStarted = this.viewController.isAssessmentStarted();
+
+		this.assessmentTab.setAssessmentInProgress(courseSelected, examSelected, exerciseSelected, assessmentStarted, secondCorrectionRound);
+
 		this.updateCorrectedSubmissionCount();
 	}
 
@@ -462,12 +450,6 @@ public class ArtemisGradingView extends ViewPart {
 		} else {
 			this.assessmentTab.lblStatisticsInformation.setText("");
 		}
-	}
-
-	private void addControlToPossibleActions(Control control, Transition transition) {
-		Set<Control> temp = this.possibleActions.get(transition);
-		temp.add(control);
-		this.possibleActions.put(transition, temp);
 	}
 
 	private void refreshArtemisState() {

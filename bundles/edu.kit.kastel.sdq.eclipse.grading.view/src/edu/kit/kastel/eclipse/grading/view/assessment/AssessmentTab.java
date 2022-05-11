@@ -18,4 +18,21 @@ public class AssessmentTab extends AssessmentTabComposite {
 		this.comboExam.removeAll();
 		this.comboExercise.removeAll();
 	}
+
+	public void setAssessmentInProgress(boolean courseSelected, boolean examSelected, boolean exerciseSelected, boolean assessmentStarted,
+			boolean secondCorrectionRoundEnabled) {
+		comboCourse.setEnabled(!assessmentStarted);
+		comboExam.setEnabled(courseSelected && !assessmentStarted);
+		comboExercise.setEnabled(examSelected && !assessmentStarted);
+
+		btnReload.setEnabled(assessmentStarted);
+		btnSave.setEnabled(assessmentStarted);
+		btnSubmit.setEnabled(assessmentStarted);
+
+		btnStartRoundOne.setEnabled(exerciseSelected && !assessmentStarted);
+		btnStartRoundTwo.setEnabled(exerciseSelected && !assessmentStarted && secondCorrectionRoundEnabled);
+
+		btnResetPluginState.setEnabled(!assessmentStarted);
+	}
+
 }
