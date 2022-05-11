@@ -55,6 +55,8 @@ public class ArtemisGradingView extends ViewPart {
 	private Combo backlogCombo;
 
 	private AssessmentTab assessmentTab;
+
+	private GradingTabComposite gradingTabComposite;
 	private Composite gradingButtonComposite;
 
 	private ResultTab result;
@@ -265,21 +267,25 @@ public class ArtemisGradingView extends ViewPart {
 		this.addSelectionListenerForRefreshArtemisStateButton(this.assessmentTab.btnResetPluginState);
 		this.addControlToPossibleActions(this.assessmentTab.btnResetPluginState, Transition.ON_RESET);
 
+		setVersionText(this.assessmentTab.lblPluginVersion);
+	}
+
+	private void setVersionText(Label label) {
 		var pluginVersion = Activator.getDefault().getBundle().getVersion();
-		this.assessmentTab.lblPluginVersion
-				.setText(String.format("Artemis Grading %d.%d.%d", pluginVersion.getMajor(), pluginVersion.getMinor(), pluginVersion.getMicro()));
+		String versionText = String.format("Artemis Grading %d.%d.%d", pluginVersion.getMajor(), pluginVersion.getMinor(), pluginVersion.getMicro());
+		label.setText(versionText);
 	}
 
 	private void addSelectionListenerForRefreshArtemisStateButton(Button btnRefreshArtemisState) {
 		btnRefreshArtemisState.addListener(SWT.Selection, e -> this.refreshArtemisState());
 	}
 
-	private void createGradingViewElements() {
+	private void fillGradingTab() {
 		if (this.gradingButtonComposite != null && !this.gradingButtonComposite.isDisposed()) {
 			gradingButtonComposite.dispose();
 		}
 
-		var container = this.assessmentTab.gradingCompositeContainerScrollable;
+		var container = this.gradingTabComposite.gradingCompositeContainerScrollable;
 		this.gradingButtonComposite = new Composite(container, SWT.NONE);
 		this.viewController.setCurrentAssessmentController();
 		this.gradingButtonComposite.setLayout(new GridLayout(1, true));
@@ -345,9 +351,15 @@ public class ArtemisGradingView extends ViewPart {
 	private void createView(Composite parent) {
 		TabFolder tabFolder = new TabFolder(parent, SWT.NONE);
 		this.createAssessmentTab(tabFolder);
+		this.createGradingTab(tabFolder);
 		this.createResultTab(tabFolder);
 		this.createBacklogTab(tabFolder);
 		this.updateState();
+	}
+
+	private void createGradingTab(TabFolder tabFolder) {
+		this.gradingTabComposite = new GradingTabComposite(tabFolder);
+		setVersionText(this.gradingTabComposite.lblPluginVersion);
 	}
 
 	private void fillBacklogComboWithData(Combo backlogCombo, Combo filterCombo) {
@@ -378,7 +390,7 @@ public class ArtemisGradingView extends ViewPart {
 	}
 
 	private void prepareNewAssessment() {
-		this.createGradingViewElements();
+		this.fillGradingTab();
 		this.viewController.createAnnotationsMarkers();
 		this.viewController.getRatingGroups().forEach(ratingGroup -> this.updatePenalty(ratingGroup.getDisplayName()));
 		this.result.loadFeedbackForExcerise();
@@ -444,11 +456,11 @@ public class ArtemisGradingView extends ViewPart {
 	private void updateCorrectedSubmissionCount() {
 		if (this.assessmentTab.comboExercise.getSelectionIndex() != -1) {
 			IGradingSystemwideController sc = Activator.getDefault().getSystemwideController();
-			this.assessmentTab.lblMetaInformation
+			this.assessmentTab.lblStatisticsInformation
 					.setText(String.format("Started submissions: %d  Submitted: %d", sc.getBegunSubmissionsProjectNames(SubmissionFilter.ALL).size(),
 							sc.getBegunSubmissionsProjectNames(SubmissionFilter.SAVED_AND_SUBMITTED).size()));
 		} else {
-			this.assessmentTab.lblMetaInformation.setText("");
+			this.assessmentTab.lblStatisticsInformation.setText("");
 		}
 	}
 

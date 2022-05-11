@@ -2,13 +2,12 @@
 package edu.kit.kastel.eclipse.grading.view.assessment;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 
 public class AssessmentTabComposite extends Composite {
@@ -21,9 +20,8 @@ public class AssessmentTabComposite extends Composite {
 	protected Button btnStartRoundOne;
 	protected Button btnStartRoundTwo;
 	protected Button btnResetPluginState;
-	protected Label lblMetaInformation;
+	protected Label lblStatisticsInformation;
 	protected Label lblPluginVersion;
-	protected ScrolledComposite gradingCompositeContainerScrollable;
 
 	/**
 	 * Create the composite.
@@ -81,20 +79,20 @@ public class AssessmentTabComposite extends Composite {
 		btnResetPluginState.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		btnResetPluginState.setText("Reset Plugin State");
 
-		lblMetaInformation = new Label(this, SWT.NONE);
-		lblMetaInformation.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+		Group grpMetaInformation = new Group(this, SWT.NONE);
+		grpMetaInformation.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+		grpMetaInformation.setText("Meta Information");
+		grpMetaInformation.setLayout(new GridLayout(2, false));
 
-		Composite gradingComposite = new Composite(this, SWT.BORDER);
-		gradingComposite.setLayout(new FillLayout(SWT.HORIZONTAL));
-		gradingComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
+		Label lblStatistics = new Label(grpMetaInformation, SWT.NONE);
+		lblStatistics.setText("Statistics: ");
 
-		gradingCompositeContainerScrollable = new ScrolledComposite(gradingComposite, SWT.H_SCROLL | SWT.V_SCROLL);
-		gradingCompositeContainerScrollable.setExpandHorizontal(true);
-		gradingCompositeContainerScrollable.setExpandVertical(true);
+		lblStatisticsInformation = new Label(grpMetaInformation, SWT.NONE);
+		lblStatisticsInformation.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
 		lblPluginVersion = new Label(this, SWT.NONE);
 		lblPluginVersion.setAlignment(SWT.RIGHT);
-		lblPluginVersion.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 2, 1));
+		lblPluginVersion.setLayoutData(new GridData(SWT.FILL, SWT.BOTTOM, false, true, 2, 1));
 		lblPluginVersion.setText("PluginVersion");
 
 	}
