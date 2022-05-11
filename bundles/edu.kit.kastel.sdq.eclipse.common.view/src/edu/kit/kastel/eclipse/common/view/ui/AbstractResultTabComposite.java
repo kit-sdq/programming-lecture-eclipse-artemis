@@ -55,24 +55,28 @@ class AbstractResultTabComposite extends Composite {
 		compositeOverview.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 3, 1));
 
 		lblTaskname = new Label(compositeOverview, SWT.NONE);
+		lblTaskname.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		lblTaskname.setText(TASK_NAME);
 
 		lblStateOfTests = new Label(compositeOverview, SWT.NONE);
-		lblStateOfTests.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblStateOfTests.setAlignment(SWT.RIGHT);
+		lblStateOfTests.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		lblStateOfTests.setText(STATE_OF_TESTS);
 
 		lblTaskdetails = new Label(compositeOverview, SWT.NONE);
-		lblTaskdetails.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 2, 1));
+		lblTaskdetails.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
 		lblTaskdetails.setText(TASK_DETAILS);
 
 		Label separator = new Label(compositeOverview, SWT.SEPARATOR | SWT.HORIZONTAL);
 		separator.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
 
 		lblScore = new Label(compositeOverview, SWT.NONE);
+		lblScore.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		lblScore.setText(SCORE);
 
 		lblPoints = new Label(compositeOverview, SWT.NONE);
-		lblPoints.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblPoints.setAlignment(SWT.RIGHT);
+		lblPoints.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		lblPoints.setText(POINTS);
 
 		loadingIndicator = new ProgressBar(this, SWT.INDETERMINATE);
