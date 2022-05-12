@@ -52,7 +52,7 @@ public class CommonActivator extends AbstractUIPlugin {
 
 	private void tweakPreferences() {
 		var preferences = this.getPreferenceStore();
-		if (!preferences.getBoolean(PreferenceConstants.OVERRIDE_DEFAULT_PREFERENCES)) {
+		if (!preferences.getBoolean(PreferenceConstants.GENERAL_OVERRIDE_DEFAULT_PREFERENCES)) {
 			return;
 		}
 

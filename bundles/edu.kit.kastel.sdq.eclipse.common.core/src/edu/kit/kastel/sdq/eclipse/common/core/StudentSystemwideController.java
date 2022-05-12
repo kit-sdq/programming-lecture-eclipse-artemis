@@ -47,13 +47,13 @@ public class StudentSystemwideController extends SystemwideController implements
 	private IAnnotationDao annotationDao;
 
 	public StudentSystemwideController(final IPreferenceStore preferenceStore) {
-		super(preferenceStore.getString(PreferenceConstants.ARTEMIS_USER), //
-				preferenceStore.getString(PreferenceConstants.ARTEMIS_PASSWORD), //
-				preferenceStore.getString(PreferenceConstants.GIT_TOKEN) //
+		super(preferenceStore.getString(PreferenceConstants.GENERAL_ARTEMIS_USER), //
+				preferenceStore.getString(PreferenceConstants.GENERAL_ARTEMIS_PASSWORD), //
+				preferenceStore.getString(PreferenceConstants.GENERAL_GIT_TOKEN) //
 		);
-		this.createControllers(preferenceStore.getString(PreferenceConstants.ARTEMIS_URL), //
-				preferenceStore.getString(PreferenceConstants.ARTEMIS_USER), //
-				preferenceStore.getString(PreferenceConstants.ARTEMIS_PASSWORD) //
+		this.createControllers(preferenceStore.getString(PreferenceConstants.GENERAL_ARTEMIS_URL), //
+				preferenceStore.getString(PreferenceConstants.GENERAL_ARTEMIS_USER), //
+				preferenceStore.getString(PreferenceConstants.GENERAL_ARTEMIS_PASSWORD) //
 		);
 		this.preferenceStore = preferenceStore;
 

@@ -295,7 +295,7 @@ public class ArtemisGradingView extends ViewPart {
 			final Group rgDisplay = new Group(this.gradingButtonComposite, SWT.NONE);
 			this.ratingGroupViewElements.put(ratingGroup.getDisplayName(), rgDisplay);
 			this.updatePenalty(ratingGroup.getDisplayName());
-			var columns = CommonActivator.getDefault().getPreferenceStore().getInt(PreferenceConstants.GRADING_BUTTONS_IN_COLUMN);
+			var columns = CommonActivator.getDefault().getPreferenceStore().getInt(PreferenceConstants.GRADING_VIEW_BUTTONS_IN_COLUMN);
 			final GridLayout gridLayout = new GridLayout(columns, true);
 			rgDisplay.setLayout(gridLayout);
 			final GridData gridData = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);

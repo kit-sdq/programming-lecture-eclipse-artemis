@@ -47,9 +47,9 @@ public class ArtemisPreferencesPage extends FieldEditorPreferencePage implements
 	public void createFieldEditors() {
 		var parent = this.getFieldEditorParent();
 
-		var artemisUrl = new StringFieldEditor(PreferenceConstants.ARTEMIS_URL, I18N().settingsUrl(), parent);
-		var artemisUser = new StringFieldEditor(PreferenceConstants.ARTEMIS_USER, I18N().settingsUsername(), parent);
-		var artemisPassword = new StringFieldEditor(PreferenceConstants.ARTEMIS_PASSWORD, I18N().settingsPassword(), parent);
+		var artemisUrl = new StringFieldEditor(PreferenceConstants.GENERAL_ARTEMIS_URL, I18N().settingsUrl(), parent);
+		var artemisUser = new StringFieldEditor(PreferenceConstants.GENERAL_ARTEMIS_USER, I18N().settingsUsername(), parent);
+		var artemisPassword = new StringFieldEditor(PreferenceConstants.GENERAL_ARTEMIS_PASSWORD, I18N().settingsPassword(), parent);
 
 		artemisPassword.getTextControl(this.getFieldEditorParent()).setEchoChar('*');
 
