@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
+import org.eclipse.jface.preference.ComboFieldEditor;
+
 import edu.kit.kastel.eclipse.common.view.activator.CommonActivator;
 import edu.kit.kastel.sdq.eclipse.common.api.PreferenceConstants;
 
@@ -18,10 +20,22 @@ public final class LanguageSettings {
 		throw new IllegalAccessException();
 	}
 
+	/**
+	 * provides an {@link I18N}-instance to use for the translations Normally this
+	 * method should be statically imported
+	 * 
+	 * @return the {@link I18N}-instance
+	 */
 	public static I18N I18N() {
 		return currentOverride;
 	}
 
+	/**
+	 * Creates a 2D-String-Array required for {@link ComboFieldEditor} containing
+	 * all languages
+	 * 
+	 * @return the array
+	 */
 	public static String[][] getAvailableLocalesForComboField() {
 		String[][] ret = new String[availableLanguages.size()][];
 		for (int i = 0; i < availableLanguages.size(); i++) {
@@ -30,6 +44,10 @@ public final class LanguageSettings {
 		return ret;
 	}
 
+	/**
+	 * Reloads the internal {@link I18N} to match the selected language. Note: A
+	 * restart of the IDE might be required for all changes to take effect.
+	 */
 	public static void updateI18N() {
 		String languageString = CommonActivator.getDefault().getPreferenceStore().getString(PreferenceConstants.GENERAL_PREFERRED_LANGUAGE_PATH);
 

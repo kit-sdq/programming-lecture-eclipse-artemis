@@ -6,7 +6,8 @@ package edu.kit.kastel.eclipse.common.view.languages;
  * 
  * NOTE: This file MUST use UTF-8 encoding. Otherwise spotless will fail or
  * umlauts will break.
- *
+ * 
+ * @see I18N
  */
 public class GermanLanguage implements I18N {
 

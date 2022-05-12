@@ -1,7 +1,13 @@
 /* Licensed under EPL-2.0 2022. */
 package edu.kit.kastel.eclipse.common.view.languages;
 
+/**
+ * This interface contains a method for every string used in the UI. All methods
+ * are defaulted to an English text and can be overwritten by sub-classes. If a
+ * subclass does not redefine all strings, they will use English as fallback.
+ */
 public interface I18N {
+
 	//
 	// Translations
 	//
@@ -62,10 +68,19 @@ public interface I18N {
 		return "Assessment";
 	}
 
+	/**
+	 * @param i the number of the correction round
+	 * @return the correction-round message with the correct number
+	 */
 	public default String tabAssessmentStartCorrectionRound(int i) {
 		return String.format("Start Correction Round %d", i);
 	}
 
+	/**
+	 * @param started   the amount of started submissions
+	 * @param submitted the amount of submitted submissions
+	 * @return the started/submitted message with the correct amounts
+	 */
 	public default String tabAssessmentStartedSubmitted(int started, int submitted) {
 		return String.format("Started submissions: %d  Submitted: %d", started, submitted);
 	}
@@ -114,6 +129,10 @@ public interface I18N {
 		return "Tutor Comment";
 	}
 
+	/**
+	 * @param name the name of the exercise
+	 * @return the clean-message including the name of the exercise
+	 */
 	public default String tabStudentClean(String name) {
 		return String.format("Clean: %s", name);
 	}
@@ -134,6 +153,10 @@ public interface I18N {
 		return "*NOTHING SELECTED*";
 	}
 
+	/**
+	 * @param name the name of the exercise
+	 * @return the reset-message including the name of the exercise
+	 */
 	public default String tabStudentReset(String name) {
 		return String.format("Reset: %s", name);
 	}
@@ -150,6 +173,10 @@ public interface I18N {
 		return "Start exercises";
 	}
 
+	/**
+	 * @param name the name of the exercise
+	 * @return the submit-message including the name of the exercise
+	 */
 	public default String tabStudentSubmit(String name) {
 		return String.format("Submit: %s", name);
 	}
@@ -270,6 +297,12 @@ public interface I18N {
 	// internal
 	//
 
+	/**
+	 * This method defines the display-name for the current language (default:
+	 * English)
+	 * 
+	 * @return the display-name of the language
+	 */
 	public default String languageDisplayName() {
 		return "English";
 	}
