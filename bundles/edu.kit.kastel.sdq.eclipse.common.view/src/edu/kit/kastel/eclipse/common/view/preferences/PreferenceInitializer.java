@@ -25,7 +25,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		store.setDefault(PreferenceConstants.GRADING_VIEW_PREFERS_LARGE_PENALTY_TEXT_PATH, false);
 		store.setDefault(PreferenceConstants.GRADING_VIEW_PREFERS_TEXT_WRAPPING_IN_PENALTY_TEXT_PATH, false);
 		store.setDefault(PreferenceConstants.GENERAL_OVERRIDE_DEFAULT_PREFERENCES, true);
-		store.setDefault(PreferenceConstants.PREFERRED_LANGGENERAL_PREFERRED_LANGUAGE_PATHUAGE_PATH, "English");
+		store.setDefault(PreferenceConstants.GENERAL_PREFERRED_LANGUAGE_PATH, "English");
 	}
 
 }

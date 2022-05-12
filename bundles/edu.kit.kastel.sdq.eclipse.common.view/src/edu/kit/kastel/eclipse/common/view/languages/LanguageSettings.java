@@ -2,6 +2,7 @@
 package edu.kit.kastel.eclipse.common.view.languages;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import edu.kit.kastel.eclipse.common.view.activator.CommonActivator;
 import edu.kit.kastel.sdq.eclipse.common.api.PreferenceConstants;
@@ -10,7 +11,6 @@ public final class LanguageSettings {
 
 	private static I18N currentOverride = new DefaultLanguage();
 
-	// first entry must be default language!
 	private static final List<I18N> availableLanguages = List.of(new DefaultLanguage(), new GermanLanguage());
 
 	private LanguageSettings() throws IllegalAccessException {
@@ -30,10 +30,11 @@ public final class LanguageSettings {
 	}
 
 	public static void updateI18N() {
-		String languageString = CommonActivator.getDefault().getPreferenceStore().getString(PreferenceConstants.PREFERRED_LANGUAGE_PATH);
+		String languageString = CommonActivator.getDefault().getPreferenceStore().getString(PreferenceConstants.GENERAL_PREFERRED_LANGUAGE_PATH);
 
 		currentOverride = availableLanguages.stream().filter(lang -> lang.languageDisplayName().equals(languageString)).findAny()
-				.orElse(availableLanguages.get(0));
+				.orElseGet(() -> availableLanguages.stream().filter(I18N::isDefault).findFirst()
+						.orElseThrow(() -> new NoSuchElementException("No default language found!")));
 	}
 
 }

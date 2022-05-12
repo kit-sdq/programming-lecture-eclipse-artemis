@@ -53,7 +53,7 @@ public class ArtemisPreferencesPage extends FieldEditorPreferencePage implements
 
 		artemisPassword.getTextControl(this.getFieldEditorParent()).setEchoChar('*');
 
-		this.languageSelector = new ComboFieldEditor(PreferenceConstants.PREFERRED_LANGUAGE_PATH, I18N().settingsLanguage(),
+		this.languageSelector = new ComboFieldEditor(PreferenceConstants.GENERAL_PREFERRED_LANGUAGE_PATH, I18N().settingsLanguage(),
 				LanguageSettings.getAvailableLocalesForComboField(), this.getFieldEditorParent());
 
 		this.addField(artemisUrl);

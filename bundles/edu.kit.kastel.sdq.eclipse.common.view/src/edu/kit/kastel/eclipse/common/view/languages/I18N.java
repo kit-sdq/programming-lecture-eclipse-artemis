@@ -194,6 +194,12 @@ public interface I18N {
 		return "English";
 	}
 
+	/**
+	 * Used to determine which language should be used as the default. Only
+	 * {@link DefaultLanguage} is allowed to return <code>true</code>
+	 * 
+	 * @return true, iff the current language is the default.
+	 */
 	boolean isDefault();
 
 }
