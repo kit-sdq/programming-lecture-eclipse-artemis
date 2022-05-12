@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 
 import edu.kit.kastel.sdq.eclipse.common.core.model.CustomPenaltyRule;
 import edu.kit.kastel.sdq.eclipse.common.core.model.PenaltyRule;
+import edu.kit.kastel.sdq.eclipse.common.core.model.StackingPenaltyRule;
 import edu.kit.kastel.sdq.eclipse.common.core.model.ThresholdPenaltyRule;
 
 /**
@@ -35,7 +36,8 @@ public class PenaltyRuleDeserializer extends StdDeserializer<PenaltyRule> {
 		// config file) and a constructor based on the json node.
 		THRESHOLD_PENALTY_RULE_TYPE(ThresholdPenaltyRule.SHORT_NAME,
 				penaltyRuleNode -> new ThresholdPenaltyRule(penaltyRuleNode.get("threshold").asInt(), penaltyRuleNode.get("penalty").asDouble())),
-		CUSTOM_PENALTY_RULE_TYPE(CustomPenaltyRule.SHORT_NAME, penaltyRuleNode -> new CustomPenaltyRule());
+		STACKING_PENATLY_RULE_TYPE(StackingPenaltyRule.SHORT_NAME, penaltyRuleNode -> new StackingPenaltyRule(penaltyRuleNode.get("penalty").asDouble())),
+		CUSTOM_PENALTY_RULE_TYPE(CustomPenaltyRule.SHORT_NAME, penaltyRuleNode -> new CustomPenaltyRule()),;
 
 		interface Constructor {
 			PenaltyRule construct(final JsonNode penaltyRuleNode);
