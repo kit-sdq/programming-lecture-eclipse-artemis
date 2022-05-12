@@ -258,6 +258,14 @@ public interface I18N {
 		return "Detail Text";
 	}
 
+	public default String metaInformation() {
+		return "Meta Information";
+	}
+
+	public default String statistics() {
+		return "Statistics: ";
+	}
+
 	//
 	// internal
 	//

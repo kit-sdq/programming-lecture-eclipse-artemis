@@ -83,11 +83,11 @@ public class AssessmentTabComposite extends Composite {
 
 		Group grpMetaInformation = new Group(this, SWT.NONE);
 		grpMetaInformation.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
-		grpMetaInformation.setText("Meta Information");
+		grpMetaInformation.setText(I18N().metaInformation());
 		grpMetaInformation.setLayout(new GridLayout(2, false));
 
 		Label lblStatistics = new Label(grpMetaInformation, SWT.NONE);
-		lblStatistics.setText("Statistics: ");
+		lblStatistics.setText(I18N().statistics());
 
 		lblStatisticsInformation = new Label(grpMetaInformation, SWT.NONE);
 		lblStatisticsInformation.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));

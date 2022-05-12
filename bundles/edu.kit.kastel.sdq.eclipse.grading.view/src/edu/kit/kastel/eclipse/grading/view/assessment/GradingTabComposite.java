@@ -12,12 +12,14 @@ import org.eclipse.swt.widgets.TabFolder;
 
 import edu.kit.kastel.eclipse.common.view.utilities.UIUtilities;
 
+import static edu.kit.kastel.eclipse.common.view.languages.LanguageSettings.I18N;
+
 public class GradingTabComposite extends Composite {
 	protected Label lblPluginVersion;
 	protected ScrolledComposite gradingCompositeContainerScrollable;
 
 	public GradingTabComposite(TabFolder tabFolder) {
-		this(UIUtilities.createTabWithScrolledComposite(tabFolder, "Grading"), SWT.NONE);
+		this(UIUtilities.createTabWithScrolledComposite(tabFolder, I18N().tabGrading()), SWT.NONE);
 		UIUtilities.initializeTabAfterFilling(this.getParent(), this);
 	}
 
