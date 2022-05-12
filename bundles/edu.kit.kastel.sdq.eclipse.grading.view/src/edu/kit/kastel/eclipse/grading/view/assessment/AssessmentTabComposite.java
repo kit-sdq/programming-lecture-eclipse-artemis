@@ -1,6 +1,8 @@
 /* Licensed under EPL-2.0 2022. */
 package edu.kit.kastel.eclipse.grading.view.assessment;
 
+import static edu.kit.kastel.eclipse.common.view.languages.LanguageSettings.I18N;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -9,8 +11,6 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
-
-import edu.kit.kastel.eclipse.common.view.utilities.ResourceBundleProvider;
 
 public class AssessmentTabComposite extends Composite {
 	protected Combo comboCourse;
@@ -34,21 +34,21 @@ public class AssessmentTabComposite extends Composite {
 
 		Label lblCourse = new Label(this, SWT.NONE);
 		lblCourse.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblCourse.setText(ResourceBundleProvider.getResourceBundle().getString("tabs.assessment.course"));
+		lblCourse.setText(I18N().course());
 
 		comboCourse = new Combo(this, SWT.READ_ONLY);
 		comboCourse.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
 		Label lblExam = new Label(this, SWT.NONE);
 		lblExam.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblExam.setText(ResourceBundleProvider.getResourceBundle().getString("tabs.assessment.exam"));
+		lblExam.setText(I18N().exam());
 
 		comboExam = new Combo(this, SWT.READ_ONLY);
 		comboExam.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
 		Label lblExercise = new Label(this, SWT.NONE);
 		lblExercise.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblExercise.setText(ResourceBundleProvider.getResourceBundle().getString("tabs.assessment.exercise"));
+		lblExercise.setText(I18N().exercise());
 
 		comboExercise = new Combo(this, SWT.READ_ONLY);
 		comboExercise.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
@@ -59,23 +59,23 @@ public class AssessmentTabComposite extends Composite {
 
 		btnReload = new Button(compositeButtons, SWT.NONE);
 		btnReload.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-		btnReload.setText(ResourceBundleProvider.getResourceBundle().getString("tabs.assessment.reload"));
+		btnReload.setText(I18N().reload());
 
 		btnSave = new Button(compositeButtons, SWT.NONE);
 		btnSave.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-		btnSave.setText(ResourceBundleProvider.getResourceBundle().getString("tabs.assessment.save"));
+		btnSave.setText(I18N().save());
 
 		btnSubmit = new Button(compositeButtons, SWT.NONE);
 		btnSubmit.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-		btnSubmit.setText(ResourceBundleProvider.getResourceBundle().getString("tabs.assessment.submit"));
+		btnSubmit.setText(I18N().submit());
 
 		btnStartRoundOne = new Button(compositeButtons, SWT.NONE);
 		btnStartRoundOne.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-		btnStartRoundOne.setText(String.format(ResourceBundleProvider.getResourceBundle().getString("tabs.assessment.startCorrectionRound"), 1));
+		btnStartRoundOne.setText(I18N().tabAssessmentStartCorrectionRound(1));
 
 		btnStartRoundTwo = new Button(compositeButtons, SWT.NONE);
 		btnStartRoundTwo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-		btnStartRoundTwo.setText(String.format(ResourceBundleProvider.getResourceBundle().getString("tabs.assessment.startCorrectionRound"), 2));
+		btnStartRoundTwo.setText(I18N().tabAssessmentStartCorrectionRound(2));
 
 		btnResetPluginState = new Button(compositeButtons, SWT.NONE);
 		btnResetPluginState.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));

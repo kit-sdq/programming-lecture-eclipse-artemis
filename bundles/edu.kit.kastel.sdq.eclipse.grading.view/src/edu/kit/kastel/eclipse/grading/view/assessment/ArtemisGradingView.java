@@ -27,7 +27,6 @@ import org.eclipse.ui.part.ViewPart;
 import edu.kit.kastel.eclipse.common.view.activator.CommonActivator;
 import edu.kit.kastel.eclipse.common.view.marker.AssessmentMarkerView;
 import edu.kit.kastel.eclipse.common.view.utilities.AssessmentUtilities;
-import edu.kit.kastel.eclipse.common.view.utilities.ResourceBundleProvider;
 import edu.kit.kastel.eclipse.common.view.utilities.UIUtilities;
 import edu.kit.kastel.eclipse.grading.view.activator.Activator;
 import edu.kit.kastel.eclipse.grading.view.controllers.AssessmentViewController;
@@ -39,6 +38,8 @@ import edu.kit.kastel.sdq.eclipse.common.api.backendstate.Transition;
 import edu.kit.kastel.sdq.eclipse.common.api.controller.IGradingSystemwideController;
 import edu.kit.kastel.sdq.eclipse.common.api.model.IMistakeType;
 import edu.kit.kastel.sdq.eclipse.common.api.model.IRatingGroup;
+
+import static edu.kit.kastel.eclipse.common.view.languages.LanguageSettings.I18N;;
 
 /**
  * This class creates the view elements for the artemis grading process. It is
@@ -153,14 +154,14 @@ public class ArtemisGradingView extends ViewPart {
 	}
 
 	private void createBacklogTab(TabFolder tabFolder) {
-		var scrolledCompositeBacklog = UIUtilities.createTabWithScrolledComposite(tabFolder, ResourceBundleProvider.getResourceBundle().getString("tabs.backlog"));
+		var scrolledCompositeBacklog = UIUtilities.createTabWithScrolledComposite(tabFolder, I18N().tabBacklog());
 
 		Composite backlogComposite = new Composite(scrolledCompositeBacklog, SWT.NONE);
 		backlogComposite.setLayout(new GridLayout(2, false));
 
 		Label lblFilter = new Label(backlogComposite, SWT.NONE);
 		lblFilter.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblFilter.setText(ResourceBundleProvider.getResourceBundle().getString("tabs.backlog.filter"));
+		lblFilter.setText(I18N().tabBacklogFilter());
 
 		Combo filterCombo = new Combo(backlogComposite, SWT.READ_ONLY);
 		GridData gdFilterCombo = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
@@ -172,7 +173,7 @@ public class ArtemisGradingView extends ViewPart {
 
 		Label lblSubmitted = new Label(backlogComposite, SWT.NONE);
 		lblSubmitted.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblSubmitted.setText(ResourceBundleProvider.getResourceBundle().getString("tabs.backlog.submissions"));
+		lblSubmitted.setText(I18N().submissions());
 
 		this.backlogCombo = new Combo(backlogComposite, SWT.READ_ONLY);
 		GridData gdBacklogCombo = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
@@ -188,12 +189,12 @@ public class ArtemisGradingView extends ViewPart {
 		buttons.setLayoutData(new GridData(SWT.CENTER, SWT.FILL, true, true, 2, 1));
 
 		Button refreshButton = new Button(buttons, SWT.NONE);
-		refreshButton.setText(ResourceBundleProvider.getResourceBundle().getString("tabs.backlog.refreshSubmissions"));
+		refreshButton.setText(I18N().tabBacklogRefresh());
 
 		this.addSelectionListenerForRefreshButton(refreshButton, this.backlogCombo, filterCombo);
 
 		Button btnLoadAgain = new Button(buttons, SWT.NONE);
-		btnLoadAgain.setText(ResourceBundleProvider.getResourceBundle().getString("tabs.assessment.reload"));
+		btnLoadAgain.setText(I18N().reload());
 		this.addControlToPossibleActions(btnLoadAgain, Transition.LOAD_AGAIN);
 		this.addSelectionListenerForLoadFromBacklogButton(btnLoadAgain);
 
@@ -458,9 +459,8 @@ public class ArtemisGradingView extends ViewPart {
 		if (this.assessmentTab.comboExercise.getSelectionIndex() != -1) {
 			IGradingSystemwideController sc = Activator.getDefault().getSystemwideController();
 			this.assessmentTab.lblStatisticsInformation
-					.setText(String.format(ResourceBundleProvider.getResourceBundle().getString("tabs.assessment.startedSubmitted"),
-					sc.getBegunSubmissionsProjectNames(SubmissionFilter.ALL).size(),
-					sc.getBegunSubmissionsProjectNames(SubmissionFilter.SAVED_AND_SUBMITTED).size()));
+					.setText(I18N().tabAssessmentStartedSubmitted(sc.getBegunSubmissionsProjectNames(SubmissionFilter.ALL).size(),
+							sc.getBegunSubmissionsProjectNames(SubmissionFilter.SAVED_AND_SUBMITTED).size()));
 		} else {
 			this.assessmentTab.lblStatisticsInformation.setText("");
 		}

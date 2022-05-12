@@ -1,7 +1,7 @@
 /* Licensed under EPL-2.0 2022. */
 package edu.kit.kastel.eclipse.common.view.preferences;
 
-import java.util.Objects;
+import static edu.kit.kastel.eclipse.common.view.languages.LanguageSettings.I18N;
 
 import org.eclipse.jface.preference.ComboFieldEditor;
 import org.eclipse.jface.preference.FieldEditor;
@@ -12,8 +12,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
-import edu.kit.kastel.eclipse.common.view.utilities.ResourceBundleProvider;
 import edu.kit.kastel.eclipse.common.view.activator.CommonActivator;
+import edu.kit.kastel.eclipse.common.view.languages.LanguageSettings;
 import edu.kit.kastel.sdq.eclipse.common.api.PreferenceConstants;
 
 /**
@@ -35,7 +35,7 @@ public class ArtemisPreferencesPage extends FieldEditorPreferencePage implements
 	public ArtemisPreferencesPage() {
 		super(FieldEditorPreferencePage.GRID);
 		this.setPreferenceStore(CommonActivator.getDefault().getPreferenceStore());
-		this.setDescription(ResourceBundleProvider.getResourceBundle().getString("settings.student.description"));
+		this.setDescription(I18N().settingsDescription());
 	}
 
 	/**
@@ -47,18 +47,14 @@ public class ArtemisPreferencesPage extends FieldEditorPreferencePage implements
 	public void createFieldEditors() {
 		var parent = this.getFieldEditorParent();
 
-		var artemisUrl = new StringFieldEditor(PreferenceConstants.ARTEMIS_URL, ResourceBundleProvider.getResourceBundle().getString("settings.url") + " ", parent);
-		var artemisUser = new StringFieldEditor(PreferenceConstants.ARTEMIS_USER, ResourceBundleProvider.getResourceBundle().getString("settings.username") + " ", parent);
-		var artemisPassword = new StringFieldEditor(PreferenceConstants.ARTEMIS_PASSWORD, ResourceBundleProvider.getResourceBundle().getString("settings.password") + " ", parent);
+		var artemisUrl = new StringFieldEditor(I18N().settingsUrl(), I18N().settingsUrl(), parent);
+		var artemisUser = new StringFieldEditor(I18N().settingsUsername(), I18N().settingsUsername(), parent);
+		var artemisPassword = new StringFieldEditor(I18N().settingsPassword(), I18N().settingsPassword(), parent);
 
 		artemisPassword.getTextControl(this.getFieldEditorParent()).setEchoChar('*');
 
-		// Load value from common view
-		this.getPreferenceStore().setValue(PreferenceConstants.PREFERRED_LANGUAGE_PATH, CommonActivator.getDefault()
-				.getPreferenceStore().getString(PreferenceConstants.PREFERRED_LANGUAGE_PATH));
-		this.languageSelector = new ComboFieldEditor(PreferenceConstants.PREFERRED_LANGUAGE_PATH,
-				ResourceBundleProvider.getResourceBundle().getString("settings.language"), new String[][] { { "Deutsch", "de_DE" }, { "Englisch", "en_US" } },
-				this.getFieldEditorParent());
+		this.languageSelector = new ComboFieldEditor(PreferenceConstants.PREFERRED_LANGUAGE_PATH, I18N().settingsLanguage(),
+				LanguageSettings.getAvailableLocalesForComboField(), this.getFieldEditorParent());
 
 		this.addField(artemisUrl);
 		this.addField(artemisUser);
@@ -70,7 +66,7 @@ public class ArtemisPreferencesPage extends FieldEditorPreferencePage implements
 		GridData gd = new GridData();
 		gd.horizontalSpan = 3;
 		hint.setLayoutData(gd);
-		hint.setText(ResourceBundleProvider.getResourceBundle().getString("settings.language.hint"));
+		hint.setText(I18N().settingsLanguageHint());
 	}
 
 	@Override
@@ -84,13 +80,7 @@ public class ArtemisPreferencesPage extends FieldEditorPreferencePage implements
 
 		this.languageSelector.setPropertyChangeListener(event -> {
 			if (event.getProperty().equals(FieldEditor.VALUE)) {
-				// The value of the FieldEditor changed
-				String newLanguage = (String) Objects.requireNonNullElse(event.getNewValue(), "en_US");
-				// This makes sure the common-view will always contain the newest value (hence
-				// technically student and grading have own settings)
-				CommonActivator.getDefault().getPreferenceStore().setValue(PreferenceConstants.PREFERRED_LANGUAGE_PATH,
-						newLanguage);
-				ResourceBundleProvider.updateResourceBundle();
+				LanguageSettings.updateI18N();
 			}
 		});
 	}

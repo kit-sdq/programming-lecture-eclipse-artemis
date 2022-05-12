@@ -11,10 +11,11 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
-import edu.kit.kastel.eclipse.common.view.utilities.ResourceBundleProvider;
 import edu.kit.kastel.eclipse.common.view.utilities.UIUtilities;
 import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.Feedback;
 import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.IExercise;
+
+import static edu.kit.kastel.eclipse.common.view.languages.LanguageSettings.I18N;
 
 abstract class AbstractResultTabCompositeController extends AbstractResultTabComposite {
 	private static final String CHECK_MARK_IN_UTF8 = "\u2713";
@@ -38,8 +39,7 @@ abstract class AbstractResultTabCompositeController extends AbstractResultTabCom
 		String title = currentExercise == null ? "Unknown Task" : currentExercise.getTitle();
 
 		this.lblStateOfTests.setForeground(successOfAutomaticTests ? display.getSystemColor(SWT.COLOR_GREEN) : display.getSystemColor(SWT.COLOR_RED));
-		this.lblStateOfTests.setText("Test(s) " + (successOfAutomaticTests ? ResourceBundleProvider.getResourceBundle().getString("tabs.results.successful")
-				: ResourceBundleProvider.getResourceBundle().getString("tabs.results.unsuccessful")));
+		this.lblStateOfTests.setText("Test(s) " + (successOfAutomaticTests ? I18N().successful() : I18N().unsuccessful()));
 
 		this.lblTaskname.setText(title);
 		this.lblTaskdetails.setText(completionTime == null ? "" : completionTime);
@@ -65,8 +65,7 @@ abstract class AbstractResultTabCompositeController extends AbstractResultTabCom
 		if (feedback.getPositive() == null) {
 			return "";
 		}
-		return Boolean.TRUE.equals(feedback.getPositive()) ? ResourceBundleProvider.getResourceBundle().getString("tabs.results.successful")
-				: ResourceBundleProvider.getResourceBundle().getString("tabs.results.unsuccessful");
+		return Boolean.TRUE.equals(feedback.getPositive()) ? I18N().successful() : I18N().unsuccessful();
 	}
 
 	private int calculateSuccessColorIndicator(Feedback feedback) {

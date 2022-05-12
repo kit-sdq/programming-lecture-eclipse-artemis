@@ -12,7 +12,6 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.Table;
 
 import edu.kit.kastel.eclipse.common.view.utilities.AssessmentUtilities;
-import edu.kit.kastel.eclipse.common.view.utilities.ResourceBundleProvider;
 import edu.kit.kastel.sdq.eclipse.common.api.ArtemisClientException;
 import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.Feedback;
 import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.FeedbackType;
@@ -20,6 +19,8 @@ import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.IExercise;
 import edu.kit.kastel.sdq.eclipse.common.api.model.IMistakeType;
 import edu.kit.kastel.sdq.eclipse.common.api.util.Triple;
 import edu.kit.kastel.sdq.eclipse.common.core.model.annotation.Annotation;
+
+import static edu.kit.kastel.eclipse.common.view.languages.LanguageSettings.I18N;
 
 public abstract class AbstractResultTab extends AbstractResultTabCompositeController {
 
@@ -119,8 +120,7 @@ public abstract class AbstractResultTab extends AbstractResultTabCompositeContro
 		}
 
 		entries.stream().sorted().forEach(feedback -> {
-			var name = feedback.getFeedbackType() != FeedbackType.AUTOMATIC && feedback.getText() == null
-					? ResourceBundleProvider.getResourceBundle().getString("tabs.results.tutorComment")
+			var name = feedback.getFeedbackType() != FeedbackType.AUTOMATIC && feedback.getText() == null ? I18N().tabResultsTutorComment()
 					: feedback.getText();
 			this.createTableItemsForFeedback(table, name, feedback);
 		});

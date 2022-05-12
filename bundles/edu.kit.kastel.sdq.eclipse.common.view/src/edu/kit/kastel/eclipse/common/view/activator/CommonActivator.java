@@ -6,6 +6,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.osgi.framework.BundleContext;
 
+import edu.kit.kastel.eclipse.common.view.languages.LanguageSettings;
 import edu.kit.kastel.sdq.eclipse.common.api.PreferenceConstants;
 
 /**
@@ -31,6 +32,7 @@ public class CommonActivator extends AbstractUIPlugin {
 		super.start(context);
 		plugin = this;
 		this.tweakPreferences();
+		LanguageSettings.updateI18N();
 	}
 
 	@Override
