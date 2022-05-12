@@ -28,20 +28,21 @@ public class AdvancedPreferences extends FieldEditorPreferencePage implements IW
 	public void createFieldEditors() {
 		var parent = this.getFieldEditorParent();
 
-		var gitToken = new StringFieldEditor(PreferenceConstants.GIT_TOKEN, "Git Token (optional): ", parent);
+		var gitToken = new StringFieldEditor(PreferenceConstants.GENERAL_GIT_TOKEN, "Git Token (optional): ", parent);
 		gitToken.getTextControl(this.getFieldEditorParent()).setEchoChar('*');
 
-		var absoluteConfigPath = new FileFieldEditor(PreferenceConstants.ABSOLUTE_CONFIG_PATH, "Grading Config Path: ", parent);
+		var absoluteConfigPath = new FileFieldEditor(PreferenceConstants.GRADING_ABSOLUTE_CONFIG_PATH, "Grading Config Path: ", parent);
 
-		var userPrefersLargePenaltyText = new BooleanFieldEditor(PreferenceConstants.PREFERS_LARGE_PENALTY_TEXT_PATH,
+		var userPrefersLargePenaltyText = new BooleanFieldEditor(PreferenceConstants.GRADING_VIEW_PREFERS_LARGE_PENALTY_TEXT_PATH,
 				"Use larger multi-line-text-box for custom penaltys", parent);
-		var userPrefersTextWrappingInPenaltyText = new BooleanFieldEditor(PreferenceConstants.PREFERS_TEXT_WRAPPING_IN_PENALTY_TEXT_PATH,
+		var userPrefersTextWrappingInPenaltyText = new BooleanFieldEditor(PreferenceConstants.GRADING_VIEW_PREFERS_TEXT_WRAPPING_IN_PENALTY_TEXT_PATH,
 				"Allow text-wrapping in multiline-text-box", parent);
 
-		var overrideDefaultPreferences = new BooleanFieldEditor(PreferenceConstants.OVERRIDE_DEFAULT_PREFERENCES, "Tweak Eclipse Preferences on startup",
-				parent);
+		var overrideDefaultPreferences = new BooleanFieldEditor(PreferenceConstants.GENERAL_OVERRIDE_DEFAULT_PREFERENCES,
+				"Tweak Eclipse Preferences on startup", parent);
 
-		var columnsForGradingButtons = new IntegerFieldEditor(PreferenceConstants.GRADING_BUTTONS_IN_COLUMN, "Amount of Grading Buttons in one row", parent);
+		var columnsForGradingButtons = new IntegerFieldEditor(PreferenceConstants.GRADING_VIEW_BUTTONS_IN_COLUMN, "Amount of Grading Buttons in one row",
+				parent);
 		columnsForGradingButtons.setEmptyStringAllowed(false);
 		columnsForGradingButtons.setValidRange(1, 10);
 

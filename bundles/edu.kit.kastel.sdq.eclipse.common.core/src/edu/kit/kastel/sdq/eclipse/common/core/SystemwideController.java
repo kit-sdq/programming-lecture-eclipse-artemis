@@ -30,17 +30,17 @@ public abstract class SystemwideController extends AbstractController implements
 		// change preferences
 		this.preferenceStore.addPropertyChangeListener(event -> {
 			boolean trigger = false;
-			trigger |= PreferenceConstants.ARTEMIS_URL.equals(event.getProperty());
-			trigger |= PreferenceConstants.ARTEMIS_USER.equals(event.getProperty());
-			trigger |= PreferenceConstants.ARTEMIS_PASSWORD.equals(event.getProperty());
+			trigger |= PreferenceConstants.GENERAL_ARTEMIS_URL.equals(event.getProperty());
+			trigger |= PreferenceConstants.GENERAL_ARTEMIS_USER.equals(event.getProperty());
+			trigger |= PreferenceConstants.GENERAL_ARTEMIS_PASSWORD.equals(event.getProperty());
 
 			if (!trigger) {
 				return;
 			}
 
-			String url = preferenceStore.getString(PreferenceConstants.ARTEMIS_URL);
-			String user = preferenceStore.getString(PreferenceConstants.ARTEMIS_USER);
-			String pass = preferenceStore.getString(PreferenceConstants.ARTEMIS_PASSWORD);
+			String url = preferenceStore.getString(PreferenceConstants.GENERAL_ARTEMIS_URL);
+			String user = preferenceStore.getString(PreferenceConstants.GENERAL_ARTEMIS_USER);
+			String pass = preferenceStore.getString(PreferenceConstants.GENERAL_ARTEMIS_PASSWORD);
 
 			this.refreshArtemisController(url, user, pass);
 		});

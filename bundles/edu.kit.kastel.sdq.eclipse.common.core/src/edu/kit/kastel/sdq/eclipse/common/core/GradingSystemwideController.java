@@ -36,13 +36,13 @@ public class GradingSystemwideController extends SystemwideController implements
 	private ISubmission submission;
 
 	public GradingSystemwideController(final IPreferenceStore preferenceStore) {
-		super(preferenceStore.getString(PreferenceConstants.ARTEMIS_USER), //
-				preferenceStore.getString(PreferenceConstants.ARTEMIS_PASSWORD), //
-				preferenceStore.getString(PreferenceConstants.GIT_TOKEN) //
+		super(preferenceStore.getString(PreferenceConstants.GENERAL_ARTEMIS_USER), //
+				preferenceStore.getString(PreferenceConstants.GENERAL_ARTEMIS_PASSWORD), //
+				preferenceStore.getString(PreferenceConstants.GENERAL_GIT_TOKEN) //
 		);
-		this.createController(preferenceStore.getString(PreferenceConstants.ARTEMIS_URL), //
-				preferenceStore.getString(PreferenceConstants.ARTEMIS_USER), //
-				preferenceStore.getString(PreferenceConstants.ARTEMIS_PASSWORD) //
+		this.createController(preferenceStore.getString(PreferenceConstants.GENERAL_ARTEMIS_URL), //
+				preferenceStore.getString(PreferenceConstants.GENERAL_ARTEMIS_USER), //
+				preferenceStore.getString(PreferenceConstants.GENERAL_ARTEMIS_PASSWORD) //
 		);
 		this.preferenceStore = preferenceStore;
 
@@ -253,7 +253,7 @@ public class GradingSystemwideController extends SystemwideController implements
 	}
 
 	private void updateConfigFile() {
-		this.setConfigFile(new File(this.preferenceStore.getString(PreferenceConstants.ABSOLUTE_CONFIG_PATH)));
+		this.setConfigFile(new File(this.preferenceStore.getString(PreferenceConstants.GRADING_ABSOLUTE_CONFIG_PATH)));
 	}
 
 	private boolean nullCheckMembersAndNotify(boolean checkCourseID, boolean checkExerciseID, boolean checkSubmissionID) {
