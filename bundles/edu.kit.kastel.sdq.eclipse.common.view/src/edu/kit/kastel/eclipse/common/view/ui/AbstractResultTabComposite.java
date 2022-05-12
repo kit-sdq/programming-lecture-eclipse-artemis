@@ -14,9 +14,11 @@ import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
+import static edu.kit.kastel.eclipse.common.view.languages.LanguageSettings.I18N;
+
 class AbstractResultTabComposite extends Composite {
-	protected static final String POINTS = "?/? Points";
-	protected static final String SCORE = "Score:";
+	protected static final String POINTS = "?/? " + I18N().points();
+	protected static final String SCORE = I18N().score() + ":";
 	protected static final String TASK_DETAILS = "TaskDetails";
 	protected static final String STATE_OF_TESTS = "StateOfTests";
 	protected static final String TASK_NAME = "TaskName";
@@ -41,14 +43,14 @@ class AbstractResultTabComposite extends Composite {
 		setLayout(new GridLayout(2, false));
 
 		Label lblLatestResults = new Label(this, SWT.NONE);
-		lblLatestResults.setText("Latest Results from Artemis");
+		lblLatestResults.setText(I18N().tabResultsLatestResultsFromArtemis());
 		FontDescriptor boldDescriptor = FontDescriptor.createFrom(lblLatestResults.getFont()).setStyle(SWT.BOLD).setHeight(12);
 		Font boldFont = boldDescriptor.createFont(lblLatestResults.getDisplay());
 		lblLatestResults.setFont(boldFont);
 
 		btnReload = new Button(this, SWT.NONE);
 		btnReload.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		btnReload.setText("Reload");
+		btnReload.setText(I18N().reload());
 
 		Composite compositeOverview = new Composite(this, SWT.BORDER);
 		compositeOverview.setLayout(new GridLayout(2, false));
@@ -85,7 +87,7 @@ class AbstractResultTabComposite extends Composite {
 
 		Label lblSummaryOfAll = new Label(this, SWT.NONE);
 		lblSummaryOfAll.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 3, 1));
-		lblSummaryOfAll.setText("Summary of all visible Tests");
+		lblSummaryOfAll.setText(I18N().tabResultsSummary());
 
 		ScrolledComposite scrolledComposite = new ScrolledComposite(this, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 		scrolledComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1));
@@ -98,19 +100,19 @@ class AbstractResultTabComposite extends Composite {
 
 		TableColumn tblclmnName = new TableColumn(testTable, SWT.NONE);
 		tblclmnName.setWidth(100);
-		tblclmnName.setText("Name");
+		tblclmnName.setText(I18N().name());
 
 		TableColumn tblclmnCredits = new TableColumn(testTable, SWT.NONE);
 		tblclmnCredits.setWidth(100);
-		tblclmnCredits.setText("Credits");
+		tblclmnCredits.setText(I18N().credits());
 
 		TableColumn tblclmnSuccessful = new TableColumn(testTable, SWT.NONE);
 		tblclmnSuccessful.setWidth(100);
-		tblclmnSuccessful.setText("Successful");
+		tblclmnSuccessful.setText(I18N().successful());
 
 		TableColumn tblclmnDetailText = new TableColumn(testTable, SWT.NONE);
 		tblclmnDetailText.setWidth(100);
-		tblclmnDetailText.setText("Detail Text");
+		tblclmnDetailText.setText(I18N().detailText());
 		scrolledComposite.setContent(testTable);
 		scrolledComposite.setMinSize(testTable.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 

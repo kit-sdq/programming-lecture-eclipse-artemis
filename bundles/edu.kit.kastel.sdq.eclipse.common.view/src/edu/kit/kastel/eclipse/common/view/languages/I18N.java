@@ -23,7 +23,7 @@ public interface I18N {
 	}
 
 	public default String settingsLanguage() {
-		return "Language:";
+		return "Language: ";
 	}
 
 	public default String settingsLanguageHint() {
@@ -31,15 +31,31 @@ public interface I18N {
 	}
 
 	public default String settingsPassword() {
-		return "Artemis password:";
+		return "Artemis Password: ";
 	}
 
 	public default String settingsUrl() {
-		return "Artemis URL";
+		return "Artemis URL: ";
 	}
 
 	public default String settingsUsername() {
-		return "Artemis username";
+		return "Artemis Username: ";
+	}
+
+	public default String settingsConfigPath() {
+		return "Grading Config Path: ";
+	}
+
+	public default String settingsGitToken() {
+		return "Git Token (optional): ";
+	}
+
+	public default String settingsTweakEclipsePreferences() {
+		return "Tweak Eclipse Preferences on startup";
+	}
+
+	public default String settingsAmountOfGradingButtonsInOneRow() {
+		return "Amount of Grading Buttons in one row";
 	}
 
 	public default String tabAssessment() {
@@ -86,6 +102,10 @@ public interface I18N {
 		return "Latest Results";
 	}
 
+	public default String tabResultsLatestResultsFromArtemis() {
+		return "Latest Results from Artemis";
+	}
+
 	public default String tabResultsSummary() {
 		return "Summary of all visible tests";
 	}
@@ -100,6 +120,14 @@ public interface I18N {
 
 	public default String tabStudentCleanLastChanges() {
 		return "Clean your last changes";
+	}
+
+	public default String tabStudentCleanImpossible() {
+		return "The exercise can not be cleaned!";
+	}
+
+	public default String tabStudentEndExamInArtemis() {
+		return "<a>Click Here to access Artemis to end your Exam</a>";
 	}
 
 	public default String tabStudentNoSelection() {
@@ -132,6 +160,34 @@ public interface I18N {
 
 	public default String tabStudent() {
 		return "Exercise";
+	}
+
+	public default String tabStudentExerciseExpired() {
+		return "The exercise is expired and can therefore not be submitted!";
+	}
+
+	public default String tabStudentExerciseStartTime() {
+		return "Starts at:";
+	}
+
+	public default String tabStudentExerciseEndTime() {
+		return "Due to:";
+	}
+
+	public default String none() {
+		return "None";
+	}
+
+	public default String ended() {
+		return "ended";
+	}
+
+	public default String notEnded() {
+		return "not ended";
+	}
+
+	public default String finished() {
+		return "finished";
 	}
 
 	public default String course() {
@@ -174,6 +230,10 @@ public interface I18N {
 		return "Points";
 	}
 
+	public default String score() {
+		return "Score";
+	}
+
 	public default String success() {
 		return "Success";
 	}
@@ -184,6 +244,18 @@ public interface I18N {
 
 	public default String unsuccessful() {
 		return "Unsuccessful";
+	}
+
+	public default String unknownTask() {
+		return "Unknown Task";
+	}
+
+	public default String tests() {
+		return "Test(s)";
+	}
+
+	public default String detailText() {
+		return "Detail Text";
 	}
 
 	//

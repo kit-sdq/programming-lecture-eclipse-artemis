@@ -222,7 +222,7 @@ public class ArtemisStudentView extends ViewPart {
 		this.addSelectionListenerForSubmitButton(this.btnSubmitExcerise);
 		this.controlDecorationSubmitted = new ControlDecoration(this.btnSubmitExcerise, SWT.RIGHT | SWT.CENTER);
 		this.controlDecorationSubmitted.setImage(image);
-		this.controlDecorationSubmitted.setDescriptionText("The exercise is expired and can therefore not be submitted!");
+		this.controlDecorationSubmitted.setDescriptionText(I18N().tabStudentExerciseExpired());
 		this.controlDecorationSubmitted.hide();
 		this.controlDecorationSubmitted.setImage(image);
 
@@ -238,7 +238,7 @@ public class ArtemisStudentView extends ViewPart {
 
 		this.controlDecorationClean = new ControlDecoration(this.btnClean, SWT.RIGHT | SWT.CENTER);
 		this.controlDecorationClean.setMarginWidth(5);
-		this.controlDecorationClean.setDescriptionText("The exercise can not be cleaned!");
+		this.controlDecorationClean.setDescriptionText(I18N().tabStudentCleanImpossible());
 		this.controlDecorationClean.hide();
 
 		Composite resetComposite = new Composite(submitArea, SWT.NONE);
@@ -292,7 +292,7 @@ public class ArtemisStudentView extends ViewPart {
 		labelResult.setText(Messages.STUDENT_ARTMIS_EXAMTAB_REMEMBER);
 
 		Link examLink = new Link(resultComposite, SWT.NONE);
-		examLink.setText("<a>Click Here to access Artemis to end your Exam</a>");
+		examLink.setText(I18N().tabStudentEndExamInArtemis());
 		examLink.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -316,7 +316,7 @@ public class ArtemisStudentView extends ViewPart {
 		this.lblExamShortName.setFont(boldFont);
 
 		this.lblExamIsEnded = new Label(this.examHeaderComposite, SWT.NONE);
-		this.lblExamIsEnded.setText("finished");
+		this.lblExamIsEnded.setText(I18N().finished());
 		this.lblExamIsEnded.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, true, false, 1, 1));
 		boldDescriptor = FontDescriptor.createFrom(this.lblExamIsEnded.getFont()).setStyle(SWT.BOLD).setHeight(12);
 		boldFont = boldDescriptor.createFont(this.lblExamIsEnded.getDisplay());
@@ -339,7 +339,7 @@ public class ArtemisStudentView extends ViewPart {
 		this.compositeFooter.setLayout(new GridLayout(1, true));
 
 		this.lblExamStart = new Label(this.compositeFooter, SWT.NONE);
-		this.lblExamStart.setText("Starts at: ");
+		this.lblExamStart.setText(I18N().tabStudentExerciseStartTime() + " ");
 		this.lblExamStart.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, true, true, 1, 1));
 		boldDescriptor = FontDescriptor.createFrom(this.lblExamStart.getFont()).setStyle(SWT.ITALIC).setHeight(9);
 		boldFont = boldDescriptor.createFont(this.lblExamStart.getDisplay());
@@ -347,7 +347,7 @@ public class ArtemisStudentView extends ViewPart {
 
 		this.resultScore = new Label(this.compositeFooter, SWT.RIGHT);
 		this.resultScore.setAlignment(SWT.LEFT);
-		this.resultScore.setText("Due to: ");
+		this.resultScore.setText(I18N().tabStudentExerciseEndTime() + " ");
 		this.resultScore.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
 		boldDescriptor = FontDescriptor.createFrom(this.resultScore.getFont()).setStyle(SWT.ITALIC).setHeight(9);
 		boldFont = boldDescriptor.createFont(this.resultScore.getDisplay());
@@ -365,10 +365,10 @@ public class ArtemisStudentView extends ViewPart {
 	private void setExamDataToUI(IStudentExam exam) {
 		if (exam != null && exam.getExam() != null) {
 			this.lblExamShortName.setText(exam.getExam().getTitle());
-			this.resultScore.setText("Due to: " + exam.getExam().getEndDate());
-			this.lblExamStart.setText("Starts at: " + exam.getExam().getStartDate());
+			this.resultScore.setText(I18N().tabStudentExerciseEndTime() + " " + exam.getExam().getEndDate());
+			this.lblExamStart.setText(I18N().tabStudentExerciseStartTime() + " " + exam.getExam().getStartDate());
 			this.btnStart.setEnabled(!exam.isStarted());
-			this.lblExamIsEnded.setText(exam.isEnded() ? "ended" : "not ended");
+			this.lblExamIsEnded.setText(exam.isEnded() ? I18N().ended() : I18N().notEnded());
 			this.lblExamDescription.setText(!exam.isSubmitted() && exam.isEnded() ? Messages.STUDENT_ARTMIS_EXAM_NOT_SUBMITTED : "");
 
 			this.resultContentComposite.layout();

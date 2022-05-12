@@ -3,6 +3,7 @@ package edu.kit.kastel.eclipse.common.view.languages;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import edu.kit.kastel.eclipse.common.view.activator.CommonActivator;
 import edu.kit.kastel.sdq.eclipse.common.api.PreferenceConstants;
@@ -32,9 +33,14 @@ public final class LanguageSettings {
 	public static void updateI18N() {
 		String languageString = CommonActivator.getDefault().getPreferenceStore().getString(PreferenceConstants.GENERAL_PREFERRED_LANGUAGE_PATH);
 
-		currentOverride = availableLanguages.stream().filter(lang -> lang.languageDisplayName().equals(languageString)).findAny()
-				.orElseGet(() -> availableLanguages.stream().filter(I18N::isDefault).findFirst()
-						.orElseThrow(() -> new NoSuchElementException("No default language found!")));
+		// Load language with name from config
+		Optional<I18N> optionalLanguage = availableLanguages.stream().filter(lang -> lang.languageDisplayName().equals(languageString)).findFirst();
+
+		if (optionalLanguage.isEmpty()) {
+			// fallback to default language if none found
+			optionalLanguage = availableLanguages.stream().filter(I18N::isDefault).findFirst();
+		}
+		currentOverride = optionalLanguage.orElseThrow(() -> new NoSuchElementException("No default language found!"));
 	}
 
 }

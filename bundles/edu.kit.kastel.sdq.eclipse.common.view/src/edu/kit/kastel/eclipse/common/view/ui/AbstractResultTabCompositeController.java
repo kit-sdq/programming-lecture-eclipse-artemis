@@ -22,7 +22,7 @@ abstract class AbstractResultTabCompositeController extends AbstractResultTabCom
 	private static final String X_MARK_IN_UTF8 = "\u2717";
 
 	protected AbstractResultTabCompositeController(TabFolder tabFolder, boolean hasReloadFunctionality) {
-		super(UIUtilities.createTabWithScrolledComposite(tabFolder, "Test Results"), SWT.NONE);
+		super(UIUtilities.createTabWithScrolledComposite(tabFolder, I18N().tabResults()), SWT.NONE);
 		if (!hasReloadFunctionality) {
 			this.btnReload.setVisible(false);
 		}
@@ -36,15 +36,15 @@ abstract class AbstractResultTabCompositeController extends AbstractResultTabCom
 	protected void setSuccessAndScore(IExercise currentExercise, boolean successOfAutomaticTests, double points, double score, String completionTime,
 			String resultString) {
 		var display = getDisplay();
-		String title = currentExercise == null ? "Unknown Task" : currentExercise.getTitle();
+		String title = currentExercise == null ? I18N().unknownTask() : currentExercise.getTitle();
 
 		this.lblStateOfTests.setForeground(successOfAutomaticTests ? display.getSystemColor(SWT.COLOR_GREEN) : display.getSystemColor(SWT.COLOR_RED));
-		this.lblStateOfTests.setText("Test(s) " + (successOfAutomaticTests ? I18N().successful() : I18N().unsuccessful()));
+		this.lblStateOfTests.setText(I18N().tests() + " " + (successOfAutomaticTests ? I18N().successful() : I18N().unsuccessful()));
 
 		this.lblTaskname.setText(title);
 		this.lblTaskdetails.setText(completionTime == null ? "" : completionTime);
-		this.lblScore.setText(resultString == null ? String.format(Locale.ENGLISH, "Score: %.2f%%", score) : resultString);
-		this.lblPoints.setText(String.format(Locale.ENGLISH, "Points: %.2f", points));
+		this.lblScore.setText(resultString == null ? String.format(Locale.ENGLISH, I18N().score() + ": %.2f%%", score) : resultString);
+		this.lblPoints.setText(String.format(Locale.ENGLISH, I18N().points() + ": %.2f", points));
 	}
 
 	protected void createTableItemsForFeedback(Table table, String name, Feedback feedback) {
