@@ -16,8 +16,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 
+import edu.kit.kastel.eclipse.common.view.activator.CommonActivator;
 import edu.kit.kastel.eclipse.common.view.utilities.AssessmentUtilities;
-import edu.kit.kastel.eclipse.grading.view.activator.Activator;
 import edu.kit.kastel.eclipse.grading.view.controllers.AssessmentViewController;
 import edu.kit.kastel.sdq.eclipse.common.api.PreferenceConstants;
 import edu.kit.kastel.sdq.eclipse.common.api.model.IMistakeType;
@@ -67,7 +67,8 @@ public class CustomButtonDialog extends Dialog {
 	protected Control createDialogArea(Composite parent) {
 		final Composite comp = (Composite) super.createDialogArea(parent);
 
-		boolean userWantsBigWindow = Activator.getDefault().getPreferenceStore().getBoolean(PreferenceConstants.PREFERS_LARGE_PENALTY_TEXT_PATH);
+		boolean userWantsBigWindow = CommonActivator.getDefault().getPreferenceStore()
+				.getBoolean(PreferenceConstants.GRADING_VIEW_PREFERS_LARGE_PENALTY_TEXT_PATH);
 
 		final GridLayout layout = (GridLayout) comp.getLayout();
 		layout.numColumns = userWantsBigWindow ? 1 : 2;
@@ -79,8 +80,8 @@ public class CustomButtonDialog extends Dialog {
 
 		GridData customMessageInputFieldData;
 		if (userWantsBigWindow) {
-			int textWrapping = Activator.getDefault().getPreferenceStore().getBoolean(PreferenceConstants.PREFERS_TEXT_WRAPPING_IN_PENALTY_TEXT_PATH) ? SWT.WRAP
-					: 0;
+			int textWrapping = CommonActivator.getDefault().getPreferenceStore()
+					.getBoolean(PreferenceConstants.GRADING_VIEW_PREFERS_TEXT_WRAPPING_IN_PENALTY_TEXT_PATH) ? SWT.WRAP : 0;
 			this.customMessageInputField = new Text(comp, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | textWrapping);
 			customMessageInputFieldData = new GridData(GridData.FILL_BOTH);
 
