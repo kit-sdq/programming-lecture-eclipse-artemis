@@ -12,9 +12,9 @@ import edu.kit.kastel.sdq.eclipse.common.api.PreferenceConstants;
 
 public final class LanguageSettings {
 
-	private static I18N currentOverride = new DefaultLanguage();
+	private static I18N currentLanguage = new EnglishLanguage();
 
-	private static final List<I18N> availableLanguages = List.of(new DefaultLanguage(), new GermanLanguage());
+	private static final List<I18N> availableLanguages = List.of(new EnglishLanguage(), new GermanLanguage());
 
 	private LanguageSettings() throws IllegalAccessException {
 		throw new IllegalAccessException();
@@ -27,7 +27,7 @@ public final class LanguageSettings {
 	 * @return the {@link I18N}-instance
 	 */
 	public static I18N I18N() {
-		return currentOverride;
+		return currentLanguage;
 	}
 
 	/**
@@ -49,16 +49,16 @@ public final class LanguageSettings {
 	 * restart of the IDE might be required for all changes to take effect.
 	 */
 	public static void updateI18N() {
-		String languageString = CommonActivator.getDefault().getPreferenceStore().getString(PreferenceConstants.GENERAL_PREFERRED_LANGUAGE_PATH);
+		String languageString = CommonActivator.getDefault().getPreferenceStore().getString(PreferenceConstants.GENERAL_PREFERRED_LANGUAGE);
 
 		// Load language with name from config
 		Optional<I18N> optionalLanguage = availableLanguages.stream().filter(lang -> lang.languageDisplayName().equals(languageString)).findFirst();
 
 		if (optionalLanguage.isEmpty()) {
 			// fallback to default language if none found
-			optionalLanguage = availableLanguages.stream().filter(I18N::isDefault).findFirst();
+			optionalLanguage = Optional.of(availableLanguages.get(0));
 		}
-		currentOverride = optionalLanguage.orElseThrow(() -> new NoSuchElementException("No default language found!"));
+		currentLanguage = optionalLanguage.orElseThrow(() -> new NoSuchElementException("No default language found!"));
 	}
 
 }

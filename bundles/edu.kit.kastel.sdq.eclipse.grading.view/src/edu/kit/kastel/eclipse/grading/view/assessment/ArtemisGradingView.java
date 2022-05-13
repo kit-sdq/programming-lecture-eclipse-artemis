@@ -1,6 +1,8 @@
 /* Licensed under EPL-2.0 2022. */
 package edu.kit.kastel.eclipse.grading.view.assessment;
 
+import static edu.kit.kastel.eclipse.common.view.languages.LanguageSettings.I18N;
+
 import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -38,8 +40,6 @@ import edu.kit.kastel.sdq.eclipse.common.api.backendstate.Transition;
 import edu.kit.kastel.sdq.eclipse.common.api.controller.IGradingSystemwideController;
 import edu.kit.kastel.sdq.eclipse.common.api.model.IMistakeType;
 import edu.kit.kastel.sdq.eclipse.common.api.model.IRatingGroup;
-
-import static edu.kit.kastel.eclipse.common.view.languages.LanguageSettings.I18N;;
 
 /**
  * This class creates the view elements for the artemis grading process. It is

@@ -12,59 +12,59 @@ public interface I18N {
 	// Translations
 	//
 
-	public default String settingsLargeTextBox() {
+	default String settingsLargeTextBox() {
 		return "Use larger multiline text box for custom penalties";
 	}
 
-	public default String settingsTextWrapping() {
+	default String settingsTextWrapping() {
 		return "Allow text-wrapping for multiline text boxes";
 	}
 
-	public default String settingsDescription() {
+	default String settingsDescription() {
 		return "Set preferences for Artemis Grading";
 	}
 
-	public default String settingsAdvancedDescription() {
+	default String settingsAdvancedDescription() {
 		return "Set advanced settings for Artemis Grading";
 	}
 
-	public default String settingsLanguage() {
+	default String settingsLanguage() {
 		return "Language: ";
 	}
 
-	public default String settingsLanguageHint() {
+	default String settingsLanguageHint() {
 		return "Note: Changing the language might require a restart of the IDE!";
 	}
 
-	public default String settingsPassword() {
+	default String settingsPassword() {
 		return "Artemis Password: ";
 	}
 
-	public default String settingsUrl() {
+	default String settingsUrl() {
 		return "Artemis URL: ";
 	}
 
-	public default String settingsUsername() {
+	default String settingsUsername() {
 		return "Artemis Username: ";
 	}
 
-	public default String settingsConfigPath() {
+	default String settingsConfigPath() {
 		return "Grading Config Path: ";
 	}
 
-	public default String settingsGitToken() {
+	default String settingsGitToken() {
 		return "Git Token (optional): ";
 	}
 
-	public default String settingsTweakEclipsePreferences() {
+	default String settingsTweakEclipsePreferences() {
 		return "Tweak Eclipse Preferences on startup";
 	}
 
-	public default String settingsAmountOfGradingButtonsInOneRow() {
+	default String settingsAmountOfGradingButtonsInOneRow() {
 		return "Amount of Grading Buttons in one row";
 	}
 
-	public default String tabAssessment() {
+	default String tabAssessment() {
 		return "Assessment";
 	}
 
@@ -72,7 +72,7 @@ public interface I18N {
 	 * @param i the number of the correction round
 	 * @return the correction-round message with the correct number
 	 */
-	public default String tabAssessmentStartCorrectionRound(int i) {
+	default String tabAssessmentStartCorrectionRound(int i) {
 		return String.format("Start Correction Round %d", i);
 	}
 
@@ -81,51 +81,51 @@ public interface I18N {
 	 * @param submitted the amount of submitted submissions
 	 * @return the started/submitted message with the correct amounts
 	 */
-	public default String tabAssessmentStartedSubmitted(int started, int submitted) {
+	default String tabAssessmentStartedSubmitted(int started, int submitted) {
 		return String.format("Started submissions: %d  Submitted: %d", started, submitted);
 	}
 
-	public default String tabBacklog() {
+	default String tabBacklog() {
 		return "Backlog";
 	}
 
-	public default String tabBacklogFilter() {
+	default String tabBacklogFilter() {
 		return "Filter Selection";
 	}
 
-	public default String tabBacklogRefresh() {
+	default String tabBacklogRefresh() {
 		return "Refresh Submissions";
 	}
 
-	public default String tabGrading() {
+	default String tabGrading() {
 		return "Grading";
 	}
 
-	public default String tabResults() {
+	default String tabResults() {
 		return "Test Results";
 	}
 
-	public default String tabResultsDescription() {
+	default String tabResultsDescription() {
 		return "Summary of the results of the currently selected exercise";
 	}
 
-	public default String tabResultsDetailedText() {
+	default String tabResultsDetailedText() {
 		return "Detailed Text";
 	}
 
-	public default String tabResultsLatest() {
+	default String tabResultsLatest() {
 		return "Latest Results";
 	}
 
-	public default String tabResultsLatestResultsFromArtemis() {
+	default String tabResultsLatestResultsFromArtemis() {
 		return "Latest Results from Artemis";
 	}
 
-	public default String tabResultsSummary() {
+	default String tabResultsSummary() {
 		return "Summary of all visible tests";
 	}
 
-	public default String tabResultsTutorComment() {
+	default String tabResultsTutorComment() {
 		return "Tutor Comment";
 	}
 
@@ -133,23 +133,23 @@ public interface I18N {
 	 * @param name the name of the exercise
 	 * @return the clean-message including the name of the exercise
 	 */
-	public default String tabStudentClean(String name) {
+	default String tabStudentClean(String name) {
 		return String.format("Clean: %s", name);
 	}
 
-	public default String tabStudentCleanLastChanges() {
+	default String tabStudentCleanLastChanges() {
 		return "Clean your last changes";
 	}
 
-	public default String tabStudentCleanImpossible() {
+	default String tabStudentCleanImpossible() {
 		return "The exercise can not be cleaned!";
 	}
 
-	public default String tabStudentEndExamInArtemis() {
+	default String tabStudentEndExamInArtemis() {
 		return "<a>Click Here to access Artemis to end your Exam</a>";
 	}
 
-	public default String tabStudentNoSelection() {
+	default String tabStudentNoSelection() {
 		return "*NOTHING SELECTED*";
 	}
 
@@ -157,19 +157,19 @@ public interface I18N {
 	 * @param name the name of the exercise
 	 * @return the reset-message including the name of the exercise
 	 */
-	public default String tabStudentReset(String name) {
+	default String tabStudentReset(String name) {
 		return String.format("Reset: %s", name);
 	}
 
-	public default String tabStudentResetToRemote() {
+	default String tabStudentResetToRemote() {
 		return "Reset exercise to remote state";
 	}
 
-	public default String tabStudentStartExercise() {
+	default String tabStudentStartExercise() {
 		return "Start exercise";
 	}
 
-	public default String tabStudentStartExercises() {
+	default String tabStudentStartExercises() {
 		return "Start exercises";
 	}
 
@@ -177,119 +177,119 @@ public interface I18N {
 	 * @param name the name of the exercise
 	 * @return the submit-message including the name of the exercise
 	 */
-	public default String tabStudentSubmit(String name) {
+	default String tabStudentSubmit(String name) {
 		return String.format("Submit: %s", name);
 	}
 
-	public default String tabStudentSubmitSolution() {
+	default String tabStudentSubmitSolution() {
 		return "Submit your solution";
 	}
 
-	public default String tabStudent() {
+	default String tabStudent() {
 		return "Exercise";
 	}
 
-	public default String tabStudentExerciseExpired() {
+	default String tabStudentExerciseExpired() {
 		return "The exercise is expired and can therefore not be submitted!";
 	}
 
-	public default String tabStudentExerciseStartTime() {
+	default String tabStudentExerciseStartTime() {
 		return "Starts at:";
 	}
 
-	public default String tabStudentExerciseEndTime() {
+	default String tabStudentExerciseEndTime() {
 		return "Due to:";
 	}
 
-	public default String none() {
+	default String none() {
 		return "None";
 	}
 
-	public default String ended() {
+	default String ended() {
 		return "ended";
 	}
 
-	public default String notEnded() {
+	default String notEnded() {
 		return "not ended";
 	}
 
-	public default String finished() {
+	default String finished() {
 		return "finished";
 	}
 
-	public default String course() {
+	default String course() {
 		return "Course";
 	}
 
-	public default String exam() {
+	default String exam() {
 		return "Exam";
 	}
 
-	public default String exercise() {
+	default String exercise() {
 		return "Exercise";
 	}
 
-	public default String reload() {
+	default String reload() {
 		return "Reload";
 	}
 
-	public default String save() {
+	default String save() {
 		return "Save";
 	}
 
-	public default String submit() {
+	default String submit() {
 		return "Submit";
 	}
 
-	public default String submissions() {
+	default String submissions() {
 		return "Submissions";
 	}
 
-	public default String credits() {
+	default String credits() {
 		return "Credits";
 	}
 
-	public default String name() {
+	default String name() {
 		return "Name";
 	}
 
-	public default String points() {
+	default String points() {
 		return "Points";
 	}
 
-	public default String score() {
+	default String score() {
 		return "Score";
 	}
 
-	public default String success() {
+	default String success() {
 		return "Success";
 	}
 
-	public default String successful() {
+	default String successful() {
 		return "Successful";
 	}
 
-	public default String unsuccessful() {
+	default String unsuccessful() {
 		return "Unsuccessful";
 	}
 
-	public default String unknownTask() {
+	default String unknownTask() {
 		return "Unknown Task";
 	}
 
-	public default String tests() {
+	default String tests() {
 		return "Test(s)";
 	}
 
-	public default String detailText() {
+	default String detailText() {
 		return "Detail Text";
 	}
 
-	public default String metaInformation() {
+	default String metaInformation() {
 		return "Meta Information";
 	}
 
-	public default String statistics() {
+	default String statistics() {
 		return "Statistics: ";
 	}
 
@@ -300,19 +300,10 @@ public interface I18N {
 	/**
 	 * This method defines the display-name for the current language (default:
 	 * English)
-	 * 
+	 *
 	 * @return the display-name of the language
 	 */
-	public default String languageDisplayName() {
+	default String languageDisplayName() {
 		return "English";
 	}
-
-	/**
-	 * Used to determine which language should be used as the default. Only
-	 * {@link DefaultLanguage} is allowed to return <code>true</code>
-	 * 
-	 * @return true, iff the current language is the default.
-	 */
-	boolean isDefault();
-
 }

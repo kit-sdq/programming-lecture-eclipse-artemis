@@ -9,7 +9,7 @@ package edu.kit.kastel.eclipse.common.view.languages;
  * 
  * @see I18N
  */
-public class GermanLanguage implements I18N {
+class GermanLanguage implements I18N {
 
 	@Override
 	public String settingsLargeTextBox() {
@@ -340,10 +340,4 @@ public class GermanLanguage implements I18N {
 	public String languageDisplayName() {
 		return "Deutsch";
 	}
-
-	@Override
-	public boolean isDefault() {
-		return false;
-	}
-
 }

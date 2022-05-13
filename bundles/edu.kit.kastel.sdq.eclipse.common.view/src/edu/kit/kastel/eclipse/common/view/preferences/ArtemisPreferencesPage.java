@@ -50,11 +50,10 @@ public class ArtemisPreferencesPage extends FieldEditorPreferencePage implements
 		var artemisUrl = new StringFieldEditor(PreferenceConstants.GENERAL_ARTEMIS_URL, I18N().settingsUrl(), parent);
 		var artemisUser = new StringFieldEditor(PreferenceConstants.GENERAL_ARTEMIS_USER, I18N().settingsUsername(), parent);
 		var artemisPassword = new StringFieldEditor(PreferenceConstants.GENERAL_ARTEMIS_PASSWORD, I18N().settingsPassword(), parent);
-
 		artemisPassword.getTextControl(this.getFieldEditorParent()).setEchoChar('*');
 
-		this.languageSelector = new ComboFieldEditor(PreferenceConstants.GENERAL_PREFERRED_LANGUAGE_PATH, I18N().settingsLanguage(),
-				LanguageSettings.getAvailableLocalesForComboField(), this.getFieldEditorParent());
+		this.languageSelector = new ComboFieldEditor(PreferenceConstants.GENERAL_PREFERRED_LANGUAGE, I18N().settingsLanguage(),
+				LanguageSettings.getAvailableLocalesForComboField(), parent);
 
 		this.addField(artemisUrl);
 		this.addField(artemisUser);
@@ -79,7 +78,7 @@ public class ArtemisPreferencesPage extends FieldEditorPreferencePage implements
 		super.initialize();
 
 		this.languageSelector.setPropertyChangeListener(event -> {
-			if (event.getProperty().equals(FieldEditor.VALUE)) {
+			if (FieldEditor.VALUE.equals(event.getProperty())) {
 				LanguageSettings.updateI18N();
 			}
 		});
