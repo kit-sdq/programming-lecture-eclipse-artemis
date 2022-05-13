@@ -3,6 +3,8 @@ package edu.kit.kastel.sdq.eclipse.common.core.model;
 
 import java.util.List;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import edu.kit.kastel.sdq.eclipse.common.api.model.IAnnotation;
 
 public class StackingPenaltyRule extends PenaltyRule {
@@ -14,8 +16,8 @@ public class StackingPenaltyRule extends PenaltyRule {
 	// rounding issues happen)
 	private int penalty;
 
-	public StackingPenaltyRule(double penalty) {
-		this.penalty = (int) (penalty * 10);
+	public StackingPenaltyRule(JsonNode penaltyRuleNode) {
+		this.penalty = (int) (penaltyRuleNode.get("penalty").asDouble() * 10);
 	}
 
 	@Override
