@@ -23,7 +23,7 @@ class GermanLanguage implements I18N {
 
 	@Override
 	public String settingsDescription() {
-		return "Einstellungen für Artemis Grading";
+		return "Einstellungen für Artemis";
 	}
 
 	@Override
