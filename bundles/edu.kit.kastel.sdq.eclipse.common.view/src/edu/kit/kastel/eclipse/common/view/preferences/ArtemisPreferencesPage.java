@@ -1,12 +1,19 @@
 /* Licensed under EPL-2.0 2022. */
 package edu.kit.kastel.eclipse.common.view.preferences;
 
+import static edu.kit.kastel.eclipse.common.view.languages.LanguageSettings.I18N;
+
+import org.eclipse.jface.preference.ComboFieldEditor;
+import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.StringFieldEditor;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import edu.kit.kastel.eclipse.common.view.activator.CommonActivator;
+import edu.kit.kastel.eclipse.common.view.languages.LanguageSettings;
 import edu.kit.kastel.sdq.eclipse.common.api.PreferenceConstants;
 
 /**
@@ -23,10 +30,12 @@ import edu.kit.kastel.sdq.eclipse.common.api.PreferenceConstants;
 
 public class ArtemisPreferencesPage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 
+	private ComboFieldEditor languageSelector;
+
 	public ArtemisPreferencesPage() {
 		super(FieldEditorPreferencePage.GRID);
 		this.setPreferenceStore(CommonActivator.getDefault().getPreferenceStore());
-		this.setDescription("Set preferences for the Artemis");
+		this.setDescription(I18N().settingsDescription());
 	}
 
 	/**
@@ -38,19 +47,41 @@ public class ArtemisPreferencesPage extends FieldEditorPreferencePage implements
 	public void createFieldEditors() {
 		var parent = this.getFieldEditorParent();
 
-		var artemisUrl = new StringFieldEditor(PreferenceConstants.GENERAL_ARTEMIS_URL, "Artemis URL: ", parent);
-		var artemisUser = new StringFieldEditor(PreferenceConstants.GENERAL_ARTEMIS_USER, "Artemis Username: ", parent);
-
-		var artemisPassword = new StringFieldEditor(PreferenceConstants.GENERAL_ARTEMIS_PASSWORD, "Artemis Password: ", parent);
+		var artemisUrl = new StringFieldEditor(PreferenceConstants.GENERAL_ARTEMIS_URL, I18N().settingsUrl(), parent);
+		var artemisUser = new StringFieldEditor(PreferenceConstants.GENERAL_ARTEMIS_USER, I18N().settingsUsername(), parent);
+		var artemisPassword = new StringFieldEditor(PreferenceConstants.GENERAL_ARTEMIS_PASSWORD, I18N().settingsPassword(), parent);
 		artemisPassword.getTextControl(this.getFieldEditorParent()).setEchoChar('*');
+
+		this.languageSelector = new ComboFieldEditor(PreferenceConstants.GENERAL_PREFERRED_LANGUAGE, I18N().settingsLanguage(),
+				LanguageSettings.getAvailableLocalesForComboField(), parent);
 
 		this.addField(artemisUrl);
 		this.addField(artemisUser);
 		this.addField(artemisPassword);
+
+		this.addField(languageSelector);
+
+		Label hint = this.createDescriptionLabel(this.getFieldEditorParent());
+		GridData gd = new GridData();
+		gd.horizontalSpan = 3;
+		hint.setLayoutData(gd);
+		hint.setText(I18N().settingsLanguageHint());
 	}
 
 	@Override
 	public void init(IWorkbench workbench) {
 		// NOP
 	}
+
+	@Override
+	protected void initialize() {
+		super.initialize();
+
+		this.languageSelector.setPropertyChangeListener(event -> {
+			if (FieldEditor.VALUE.equals(event.getProperty())) {
+				LanguageSettings.updateI18N();
+			}
+		});
+	}
+
 }

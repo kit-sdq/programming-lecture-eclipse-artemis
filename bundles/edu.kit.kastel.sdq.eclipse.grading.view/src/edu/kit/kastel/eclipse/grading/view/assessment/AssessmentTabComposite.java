@@ -1,6 +1,8 @@
 /* Licensed under EPL-2.0 2022. */
 package edu.kit.kastel.eclipse.grading.view.assessment;
 
+import static edu.kit.kastel.eclipse.common.view.languages.LanguageSettings.I18N;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -32,21 +34,21 @@ public class AssessmentTabComposite extends Composite {
 
 		Label lblCourse = new Label(this, SWT.NONE);
 		lblCourse.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblCourse.setText("Course");
+		lblCourse.setText(I18N().course());
 
 		comboCourse = new Combo(this, SWT.READ_ONLY);
 		comboCourse.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
 		Label lblExam = new Label(this, SWT.NONE);
 		lblExam.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblExam.setText("Exam");
+		lblExam.setText(I18N().exam());
 
 		comboExam = new Combo(this, SWT.READ_ONLY);
 		comboExam.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
 		Label lblExercise = new Label(this, SWT.NONE);
 		lblExercise.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblExercise.setText("Exercise");
+		lblExercise.setText(I18N().exercise());
 
 		comboExercise = new Combo(this, SWT.READ_ONLY);
 		comboExercise.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
@@ -57,23 +59,23 @@ public class AssessmentTabComposite extends Composite {
 
 		btnReload = new Button(compositeButtons, SWT.NONE);
 		btnReload.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-		btnReload.setText("Reload");
+		btnReload.setText(I18N().reload());
 
 		btnSave = new Button(compositeButtons, SWT.NONE);
 		btnSave.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-		btnSave.setText("Save");
+		btnSave.setText(I18N().save());
 
 		btnSubmit = new Button(compositeButtons, SWT.NONE);
 		btnSubmit.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-		btnSubmit.setText("Submit");
+		btnSubmit.setText(I18N().submit());
 
 		btnStartRoundOne = new Button(compositeButtons, SWT.NONE);
 		btnStartRoundOne.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-		btnStartRoundOne.setText("Start Round 1");
+		btnStartRoundOne.setText(I18N().tabAssessmentStartCorrectionRound(1));
 
 		btnStartRoundTwo = new Button(compositeButtons, SWT.NONE);
 		btnStartRoundTwo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-		btnStartRoundTwo.setText("Start Round 2");
+		btnStartRoundTwo.setText(I18N().tabAssessmentStartCorrectionRound(2));
 
 		btnResetPluginState = new Button(compositeButtons, SWT.NONE);
 		btnResetPluginState.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
@@ -81,11 +83,11 @@ public class AssessmentTabComposite extends Composite {
 
 		Group grpMetaInformation = new Group(this, SWT.NONE);
 		grpMetaInformation.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
-		grpMetaInformation.setText("Meta Information");
+		grpMetaInformation.setText(I18N().metaInformation());
 		grpMetaInformation.setLayout(new GridLayout(2, false));
 
 		Label lblStatistics = new Label(grpMetaInformation, SWT.NONE);
-		lblStatistics.setText("Statistics: ");
+		lblStatistics.setText(I18N().statistics());
 
 		lblStatisticsInformation = new Label(grpMetaInformation, SWT.NONE);
 		lblStatisticsInformation.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));

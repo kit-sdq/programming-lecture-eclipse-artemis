@@ -12,6 +12,8 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import edu.kit.kastel.eclipse.common.view.activator.CommonActivator;
 import edu.kit.kastel.sdq.eclipse.common.api.PreferenceConstants;
 
+import static edu.kit.kastel.eclipse.common.view.languages.LanguageSettings.I18N;
+
 public class AdvancedPreferences extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 
 	public AdvancedPreferences() {
@@ -28,21 +30,21 @@ public class AdvancedPreferences extends FieldEditorPreferencePage implements IW
 	public void createFieldEditors() {
 		var parent = this.getFieldEditorParent();
 
-		var gitToken = new StringFieldEditor(PreferenceConstants.GENERAL_GIT_TOKEN, "Git Token (optional): ", parent);
+		var gitToken = new StringFieldEditor(PreferenceConstants.GENERAL_GIT_TOKEN, I18N().settingsGitToken(), parent);
 		gitToken.getTextControl(this.getFieldEditorParent()).setEchoChar('*');
 
-		var absoluteConfigPath = new FileFieldEditor(PreferenceConstants.GRADING_ABSOLUTE_CONFIG_PATH, "Grading Config Path: ", parent);
+		var absoluteConfigPath = new FileFieldEditor(PreferenceConstants.GRADING_ABSOLUTE_CONFIG_PATH, I18N().settingsConfigPath(), parent);
 
 		var userPrefersLargePenaltyText = new BooleanFieldEditor(PreferenceConstants.GRADING_VIEW_PREFERS_LARGE_PENALTY_TEXT_PATH,
-				"Use larger multi-line-text-box for custom penaltys", parent);
+				I18N().settingsLargeTextBox(), parent);
 		var userPrefersTextWrappingInPenaltyText = new BooleanFieldEditor(PreferenceConstants.GRADING_VIEW_PREFERS_TEXT_WRAPPING_IN_PENALTY_TEXT_PATH,
-				"Allow text-wrapping in multiline-text-box", parent);
+				I18N().settingsTextWrapping(), parent);
 
 		var overrideDefaultPreferences = new BooleanFieldEditor(PreferenceConstants.GENERAL_OVERRIDE_DEFAULT_PREFERENCES,
-				"Tweak Eclipse Preferences on startup", parent);
+				I18N().settingsTweakEclipsePreferences(), parent);
 
-		var columnsForGradingButtons = new IntegerFieldEditor(PreferenceConstants.GRADING_VIEW_BUTTONS_IN_COLUMN, "Amount of Grading Buttons in one row",
-				parent);
+		var columnsForGradingButtons = new IntegerFieldEditor(PreferenceConstants.GRADING_VIEW_BUTTONS_IN_COLUMN,
+				I18N().settingsAmountOfGradingButtonsInOneRow(), parent);
 		columnsForGradingButtons.setEmptyStringAllowed(false);
 		columnsForGradingButtons.setValidRange(1, 10);
 

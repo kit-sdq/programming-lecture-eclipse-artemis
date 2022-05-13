@@ -20,6 +20,8 @@ import edu.kit.kastel.sdq.eclipse.common.api.model.IMistakeType;
 import edu.kit.kastel.sdq.eclipse.common.api.util.Triple;
 import edu.kit.kastel.sdq.eclipse.common.core.model.annotation.Annotation;
 
+import static edu.kit.kastel.eclipse.common.view.languages.LanguageSettings.I18N;
+
 public abstract class AbstractResultTab extends AbstractResultTabCompositeController {
 
 	protected final ILog log = Platform.getLog(this.getClass());
@@ -118,7 +120,8 @@ public abstract class AbstractResultTab extends AbstractResultTabCompositeContro
 		}
 
 		entries.stream().sorted().forEach(feedback -> {
-			var name = feedback.getFeedbackType() != FeedbackType.AUTOMATIC && feedback.getText() == null ? "Tutor Comment" : feedback.getText();
+			var name = feedback.getFeedbackType() != FeedbackType.AUTOMATIC && feedback.getText() == null ? I18N().tabResultsTutorComment()
+					: feedback.getText();
 			this.createTableItemsForFeedback(table, name, feedback);
 		});
 

@@ -30,15 +30,15 @@ import edu.kit.kastel.eclipse.student.view.controllers.StudentViewController;
 import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.IStudentExam;
 import edu.kit.kastel.sdq.eclipse.common.api.messages.Messages;
 
+import static edu.kit.kastel.eclipse.common.view.languages.LanguageSettings.I18N;
+
 /**
- * This class creates the view elements for the artemis grading process. It is
- * build as a tab folder with four tabs: grading, assessment, exam and backlog.
+ * This class creates the view elements for the artemis student process. It is
+ * build as a tab folder with two tabs: exercise and results.
  *
  * @see ViewPart
  */
 public class ArtemisStudentView extends ViewPart {
-	private static final String NO_SELECTED = "*NOTHING SELECTED*";
-	private static final String EXERCISE = "Exercise";
 
 	private ResultTab resultTab;
 	private StudentViewController viewController;
@@ -95,7 +95,7 @@ public class ArtemisStudentView extends ViewPart {
 
 	public void createMainTab(TabFolder tabFolder) {
 		TabItem tbtmExercise = new TabItem(tabFolder, SWT.NONE);
-		tbtmExercise.setText(EXERCISE);
+		tbtmExercise.setText(I18N().tabStudent());
 
 		ScrolledComposite scrolledCompositeExercise = new ScrolledComposite(tabFolder, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 		tbtmExercise.setControl(scrolledCompositeExercise);
@@ -136,7 +136,7 @@ public class ArtemisStudentView extends ViewPart {
 		Font boldFont = boldDescriptor.createFont(lblCourse.getDisplay());
 		lblCourse.setFont(boldFont);
 		lblCourse.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, true, 1, 1));
-		lblCourse.setText("Course");
+		lblCourse.setText(I18N().course());
 
 		this.courseCombo = new Combo(choosingComposite, SWT.READ_ONLY);
 		this.courseCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
@@ -146,7 +146,7 @@ public class ArtemisStudentView extends ViewPart {
 		boldDescriptor = FontDescriptor.createFrom(lblExam.getFont()).setStyle(SWT.BOLD).setHeight(9);
 		boldFont = boldDescriptor.createFont(lblExam.getDisplay());
 		lblExam.setFont(boldFont);
-		lblExam.setText("Exam");
+		lblExam.setText(I18N().exam());
 
 		this.examCombo = new Combo(choosingComposite, SWT.READ_ONLY);
 		this.examCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
@@ -156,7 +156,7 @@ public class ArtemisStudentView extends ViewPart {
 		boldFont = boldDescriptor.createFont(lblExercise.getDisplay());
 		lblExercise.setFont(boldFont);
 		lblExercise.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
-		lblExercise.setText(EXERCISE);
+		lblExercise.setText(I18N().exercise());
 
 		this.exerciseCombo = new Combo(choosingComposite, SWT.READ_ONLY);
 		this.exerciseCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
@@ -168,7 +168,7 @@ public class ArtemisStudentView extends ViewPart {
 		buttons.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1));
 
 		Button btnRefreshArtemisState = new Button(buttons, SWT.NONE);
-		btnRefreshArtemisState.setText("Refresh Preferences");
+		btnRefreshArtemisState.setText(I18N().tabBacklogRefresh());
 		GridData gdBtnRefreshArtemisState = new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1);
 		gdBtnRefreshArtemisState.widthHint = 155;
 		btnRefreshArtemisState.setLayoutData(gdBtnRefreshArtemisState);
@@ -176,7 +176,7 @@ public class ArtemisStudentView extends ViewPart {
 		this.addSelectionListenerForRefreshArtemisStateButton(btnRefreshArtemisState);
 
 		Button btnLoadExercise = new Button(buttons, SWT.NONE);
-		btnLoadExercise.setText("Start Exercise");
+		btnLoadExercise.setText(I18N().tabStudentStartExercise());
 		btnLoadExercise.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
 
 		this.addLoadExerciseListenerForButton(btnLoadExercise);
@@ -192,20 +192,20 @@ public class ArtemisStudentView extends ViewPart {
 		boldDescriptor = FontDescriptor.createFrom(labelSubmit.getFont()).setStyle(SWT.BOLD).setHeight(9);
 		boldFont = boldDescriptor.createFont(labelSubmit.getDisplay());
 		labelSubmit.setFont(boldFont);
-		labelSubmit.setText("Submit your solution");
+		labelSubmit.setText(I18N().tabStudentSubmitSolution());
 
 		Label labelClean = new Label(submitArea, SWT.NONE);
 		boldDescriptor = FontDescriptor.createFrom(labelClean.getFont()).setStyle(SWT.BOLD).setHeight(9);
 		boldFont = boldDescriptor.createFont(labelClean.getDisplay());
 		labelClean.setFont(boldFont);
 		labelClean.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
-		labelClean.setText("Clean your last changes");
+		labelClean.setText(I18N().tabStudentCleanLastChanges());
 
 		Image image = FieldDecorationRegistry.getDefault().getFieldDecoration(FieldDecorationRegistry.DEC_WARNING).getImage();
 
 		Label labelReset = new Label(submitArea, SWT.NONE);
 		labelReset.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
-		labelReset.setText("Reset exercise to remote state");
+		labelReset.setText(I18N().tabStudentResetToRemote());
 		boldDescriptor = FontDescriptor.createFrom(labelReset.getFont()).setStyle(SWT.BOLD).setHeight(9);
 		boldFont = boldDescriptor.createFont(labelReset.getDisplay());
 		labelReset.setFont(boldFont);
@@ -216,13 +216,13 @@ public class ArtemisStudentView extends ViewPart {
 
 		this.btnSubmitExcerise = new Button(submitComposite, SWT.NONE);
 		this.btnSubmitExcerise.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		this.btnSubmitExcerise.setText(NO_SELECTED);
+		this.btnSubmitExcerise.setText(I18N().tabStudentNoSelection());
 		this.btnSubmitExcerise.setEnabled(false);
 
 		this.addSelectionListenerForSubmitButton(this.btnSubmitExcerise);
 		this.controlDecorationSubmitted = new ControlDecoration(this.btnSubmitExcerise, SWT.RIGHT | SWT.CENTER);
 		this.controlDecorationSubmitted.setImage(image);
-		this.controlDecorationSubmitted.setDescriptionText("The exercise is expired and can therefore not be submitted!");
+		this.controlDecorationSubmitted.setDescriptionText(I18N().tabStudentExerciseExpired());
 		this.controlDecorationSubmitted.hide();
 		this.controlDecorationSubmitted.setImage(image);
 
@@ -232,13 +232,13 @@ public class ArtemisStudentView extends ViewPart {
 
 		this.btnClean = new Button(cleanComposite, SWT.NONE);
 		this.btnClean.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		this.btnClean.setText(NO_SELECTED);
+		this.btnClean.setText(I18N().tabStudentNoSelection());
 		this.btnClean.addListener(SWT.Selection, e -> this.cleanWorkspaceForSelectedExercise());
 		this.btnClean.setEnabled(false);
 
 		this.controlDecorationClean = new ControlDecoration(this.btnClean, SWT.RIGHT | SWT.CENTER);
 		this.controlDecorationClean.setMarginWidth(5);
-		this.controlDecorationClean.setDescriptionText("The exercise can not be cleaned!");
+		this.controlDecorationClean.setDescriptionText(I18N().tabStudentCleanImpossible());
 		this.controlDecorationClean.hide();
 
 		Composite resetComposite = new Composite(submitArea, SWT.NONE);
@@ -247,7 +247,7 @@ public class ArtemisStudentView extends ViewPart {
 
 		this.btnReset = new Button(resetComposite, SWT.NONE);
 		this.btnReset.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1));
-		this.btnReset.setText(NO_SELECTED);
+		this.btnReset.setText(I18N().tabStudentNoSelection());
 		this.btnReset.setEnabled(false);
 		this.btnReset.addListener(SWT.Selection, e -> this.resetWorkspaceForSelectedExercise());
 
@@ -274,7 +274,7 @@ public class ArtemisStudentView extends ViewPart {
 		FontDescriptor boldDescriptor = FontDescriptor.createFrom(labelFeedback.getFont()).setStyle(SWT.BOLD).setHeight(18);
 		Font boldFont = boldDescriptor.createFont(labelFeedback.getDisplay());
 		labelFeedback.setFont(boldFont);
-		labelFeedback.setText("Exam");
+		labelFeedback.setText(I18N().exam());
 
 		this.btnStart = new Button(composite, SWT.CENTER);
 		GridData gdBtnStart = new GridData(SWT.RIGHT, SWT.CENTER, true, false, 1, 1);
@@ -292,7 +292,7 @@ public class ArtemisStudentView extends ViewPart {
 		labelResult.setText(Messages.STUDENT_ARTMIS_EXAMTAB_REMEMBER);
 
 		Link examLink = new Link(resultComposite, SWT.NONE);
-		examLink.setText("<a>Click Here to access Artemis to end your Exam</a>");
+		examLink.setText(I18N().tabStudentEndExamInArtemis());
 		examLink.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -309,21 +309,21 @@ public class ArtemisStudentView extends ViewPart {
 		this.examHeaderComposite.setLayout(new GridLayout(2, true));
 
 		this.lblExamShortName = new Label(this.examHeaderComposite, SWT.NONE);
-		this.lblExamShortName.setText("Name");
+		this.lblExamShortName.setText(I18N().tabResults());
 		this.lblExamShortName.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
 		boldDescriptor = FontDescriptor.createFrom(this.lblExamShortName.getFont()).setStyle(SWT.BOLD).setHeight(12);
 		boldFont = boldDescriptor.createFont(this.lblExamShortName.getDisplay());
 		this.lblExamShortName.setFont(boldFont);
 
 		this.lblExamIsEnded = new Label(this.examHeaderComposite, SWT.NONE);
-		this.lblExamIsEnded.setText("finished");
+		this.lblExamIsEnded.setText(I18N().finished());
 		this.lblExamIsEnded.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, true, false, 1, 1));
 		boldDescriptor = FontDescriptor.createFrom(this.lblExamIsEnded.getFont()).setStyle(SWT.BOLD).setHeight(12);
 		boldFont = boldDescriptor.createFont(this.lblExamIsEnded.getDisplay());
 		this.lblExamIsEnded.setFont(boldFont);
 
 		this.lblExamDescription = new Label(this.resultContentComposite, SWT.NONE);
-		this.lblExamDescription.setText("Start Exercises");
+		this.lblExamDescription.setText(I18N().tabStudentStartExercises());
 		GridData gdLblExamDescription = new GridData(SWT.LEFT, SWT.FILL, true, true, 1, 1);
 		gdLblExamDescription.horizontalIndent = 5;
 		this.lblExamDescription.setLayoutData(gdLblExamDescription);
@@ -339,7 +339,7 @@ public class ArtemisStudentView extends ViewPart {
 		this.compositeFooter.setLayout(new GridLayout(1, true));
 
 		this.lblExamStart = new Label(this.compositeFooter, SWT.NONE);
-		this.lblExamStart.setText("Starts at: ");
+		this.lblExamStart.setText(I18N().tabStudentExerciseStartTime() + " ");
 		this.lblExamStart.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, true, true, 1, 1));
 		boldDescriptor = FontDescriptor.createFrom(this.lblExamStart.getFont()).setStyle(SWT.ITALIC).setHeight(9);
 		boldFont = boldDescriptor.createFont(this.lblExamStart.getDisplay());
@@ -347,7 +347,7 @@ public class ArtemisStudentView extends ViewPart {
 
 		this.resultScore = new Label(this.compositeFooter, SWT.RIGHT);
 		this.resultScore.setAlignment(SWT.LEFT);
-		this.resultScore.setText("Due to: ");
+		this.resultScore.setText(I18N().tabStudentExerciseEndTime() + " ");
 		this.resultScore.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
 		boldDescriptor = FontDescriptor.createFrom(this.resultScore.getFont()).setStyle(SWT.ITALIC).setHeight(9);
 		boldFont = boldDescriptor.createFont(this.resultScore.getDisplay());
@@ -365,10 +365,10 @@ public class ArtemisStudentView extends ViewPart {
 	private void setExamDataToUI(IStudentExam exam) {
 		if (exam != null && exam.getExam() != null) {
 			this.lblExamShortName.setText(exam.getExam().getTitle());
-			this.resultScore.setText("Due to: " + exam.getExam().getEndDate());
-			this.lblExamStart.setText("Starts at: " + exam.getExam().getStartDate());
+			this.resultScore.setText(I18N().tabStudentExerciseEndTime() + " " + exam.getExam().getEndDate());
+			this.lblExamStart.setText(I18N().tabStudentExerciseStartTime() + " " + exam.getExam().getStartDate());
 			this.btnStart.setEnabled(!exam.isStarted());
-			this.lblExamIsEnded.setText(exam.isEnded() ? "ended" : "not ended");
+			this.lblExamIsEnded.setText(exam.isEnded() ? I18N().ended() : I18N().notEnded());
 			this.lblExamDescription.setText(!exam.isSubmitted() && exam.isEnded() ? Messages.STUDENT_ARTMIS_EXAM_NOT_SUBMITTED : "");
 
 			this.resultContentComposite.layout();
@@ -454,9 +454,9 @@ public class ArtemisStudentView extends ViewPart {
 	}
 
 	private void setButtonText(String exerciseName) {
-		this.btnSubmitExcerise.setText("Submit: " + exerciseName);
-		this.btnClean.setText("Clean: " + exerciseName);
-		this.btnReset.setText("Reset: " + exerciseName);
+		this.btnSubmitExcerise.setText(String.format(I18N().tabStudentSubmit(exerciseName)));
+		this.btnClean.setText(String.format(I18N().tabStudentClean(exerciseName)));
+		this.btnReset.setText(String.format(I18N().tabStudentReset(exerciseName)));
 	}
 
 	private void addExerciseShortNamesToExerciseCombo(List<String> exerciseShortNames) {
@@ -532,9 +532,9 @@ public class ArtemisStudentView extends ViewPart {
 	}
 
 	private void resetButtonText() {
-		this.btnSubmitExcerise.setText(NO_SELECTED);
-		this.btnClean.setText(NO_SELECTED);
-		this.btnReset.setText(NO_SELECTED);
+		this.btnSubmitExcerise.setText(I18N().tabStudentNoSelection());
+		this.btnClean.setText(I18N().tabStudentNoSelection());
+		this.btnReset.setText(I18N().tabStudentNoSelection());
 	}
 
 	private void resetButtonEnable() {

@@ -1,6 +1,8 @@
 /* Licensed under EPL-2.0 2022. */
 package edu.kit.kastel.eclipse.grading.view.assessment;
 
+import static edu.kit.kastel.eclipse.common.view.languages.LanguageSettings.I18N;
+
 import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -152,14 +154,14 @@ public class ArtemisGradingView extends ViewPart {
 	}
 
 	private void createBacklogTab(TabFolder tabFolder) {
-		var scrolledCompositeBacklog = UIUtilities.createTabWithScrolledComposite(tabFolder, "Backlog");
+		var scrolledCompositeBacklog = UIUtilities.createTabWithScrolledComposite(tabFolder, I18N().tabBacklog());
 
 		Composite backlogComposite = new Composite(scrolledCompositeBacklog, SWT.NONE);
 		backlogComposite.setLayout(new GridLayout(2, false));
 
 		Label lblFilter = new Label(backlogComposite, SWT.NONE);
 		lblFilter.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblFilter.setText("Filter Selection");
+		lblFilter.setText(I18N().tabBacklogFilter());
 
 		Combo filterCombo = new Combo(backlogComposite, SWT.READ_ONLY);
 		GridData gdFilterCombo = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
@@ -171,7 +173,7 @@ public class ArtemisGradingView extends ViewPart {
 
 		Label lblSubmitted = new Label(backlogComposite, SWT.NONE);
 		lblSubmitted.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblSubmitted.setText("Submissions");
+		lblSubmitted.setText(I18N().submissions());
 
 		this.backlogCombo = new Combo(backlogComposite, SWT.READ_ONLY);
 		GridData gdBacklogCombo = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
@@ -187,12 +189,12 @@ public class ArtemisGradingView extends ViewPart {
 		buttons.setLayoutData(new GridData(SWT.CENTER, SWT.FILL, true, true, 2, 1));
 
 		Button refreshButton = new Button(buttons, SWT.NONE);
-		refreshButton.setText("Refresh Submissions");
+		refreshButton.setText(I18N().tabBacklogRefresh());
 
 		this.addSelectionListenerForRefreshButton(refreshButton, this.backlogCombo, filterCombo);
 
 		Button btnLoadAgain = new Button(buttons, SWT.NONE);
-		btnLoadAgain.setText("Load again");
+		btnLoadAgain.setText(I18N().reload());
 		this.addControlToPossibleActions(btnLoadAgain, Transition.LOAD_AGAIN);
 		this.addSelectionListenerForLoadFromBacklogButton(btnLoadAgain);
 
@@ -457,7 +459,7 @@ public class ArtemisGradingView extends ViewPart {
 		if (this.assessmentTab.comboExercise.getSelectionIndex() != -1) {
 			IGradingSystemwideController sc = Activator.getDefault().getSystemwideController();
 			this.assessmentTab.lblStatisticsInformation
-					.setText(String.format("Started submissions: %d  Submitted: %d", sc.getBegunSubmissionsProjectNames(SubmissionFilter.ALL).size(),
+					.setText(I18N().tabAssessmentStartedSubmitted(sc.getBegunSubmissionsProjectNames(SubmissionFilter.ALL).size(),
 							sc.getBegunSubmissionsProjectNames(SubmissionFilter.SAVED_AND_SUBMITTED).size()));
 		} else {
 			this.assessmentTab.lblStatisticsInformation.setText("");
