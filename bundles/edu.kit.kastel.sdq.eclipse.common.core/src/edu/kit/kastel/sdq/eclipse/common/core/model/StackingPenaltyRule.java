@@ -3,8 +3,6 @@ package edu.kit.kastel.sdq.eclipse.common.core.model;
 
 import java.util.List;
 
-import org.eclipse.jgit.annotations.Nullable;
-
 import com.fasterxml.jackson.databind.JsonNode;
 
 import edu.kit.kastel.sdq.eclipse.common.api.model.IAnnotation;
@@ -18,7 +16,6 @@ public class StackingPenaltyRule extends PenaltyRule {
 	// rounding issues happen)
 	private int penalty;
 
-	@Nullable
 	private Integer maxUses = null; // null => no limit
 
 	public StackingPenaltyRule(JsonNode penaltyRuleNode) {
