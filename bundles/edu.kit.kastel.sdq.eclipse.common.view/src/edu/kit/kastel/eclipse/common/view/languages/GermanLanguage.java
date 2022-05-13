@@ -13,7 +13,7 @@ class GermanLanguage implements I18N {
 
 	@Override
 	public String settingsLargeTextBox() {
-		return "Benutze mehrzeile Textbox für benutzerdefinierte Abzüge";
+		return "Benutze mehrzeilige Textbox für benutzerdefinierte Abzüge";
 	}
 
 	@Override
