@@ -56,9 +56,13 @@ public final class LanguageSettings {
 
 		if (optionalLanguage.isEmpty()) {
 			// fallback to default language if none found
-			optionalLanguage = Optional.of(availableLanguages.get(0));
+			optionalLanguage = Optional.of(getDefaultLanguage());
 		}
 		currentLanguage = optionalLanguage.orElseThrow(() -> new NoSuchElementException("No default language found!"));
+	}
+
+	public static I18N getDefaultLanguage() {
+		return availableLanguages.get(0);
 	}
 
 }

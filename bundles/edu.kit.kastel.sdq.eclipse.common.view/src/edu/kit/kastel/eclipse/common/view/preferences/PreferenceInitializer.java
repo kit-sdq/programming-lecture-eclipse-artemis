@@ -5,6 +5,7 @@ import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
 
 import edu.kit.kastel.eclipse.common.view.activator.CommonActivator;
+import edu.kit.kastel.eclipse.common.view.languages.LanguageSettings;
 import edu.kit.kastel.sdq.eclipse.common.api.PreferenceConstants;
 
 /**
@@ -25,7 +26,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		store.setDefault(PreferenceConstants.GRADING_VIEW_PREFERS_LARGE_PENALTY_TEXT_PATH, false);
 		store.setDefault(PreferenceConstants.GRADING_VIEW_PREFERS_TEXT_WRAPPING_IN_PENALTY_TEXT_PATH, false);
 		store.setDefault(PreferenceConstants.GENERAL_OVERRIDE_DEFAULT_PREFERENCES, true);
-		store.setDefault(PreferenceConstants.GENERAL_PREFERRED_LANGUAGE, "English");
+		store.setDefault(PreferenceConstants.GENERAL_PREFERRED_LANGUAGE, LanguageSettings.getDefaultLanguage().languageDisplayName());
 	}
 
 }
