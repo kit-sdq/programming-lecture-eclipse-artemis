@@ -3,6 +3,8 @@ package edu.kit.kastel.sdq.eclipse.common.core.model;
 
 import java.util.List;
 
+import org.eclipse.jgit.annotations.Nullable;
+
 import com.fasterxml.jackson.databind.JsonNode;
 
 import edu.kit.kastel.sdq.eclipse.common.api.model.IAnnotation;
@@ -16,13 +18,21 @@ public class StackingPenaltyRule extends PenaltyRule {
 	// rounding issues happen)
 	private int penalty;
 
+	@Nullable
+	private Integer maxUses = null; // null => no limit
+
 	public StackingPenaltyRule(JsonNode penaltyRuleNode) {
 		this.penalty = (int) (penaltyRuleNode.get("penalty").asDouble() * 10);
+
+		if (penaltyRuleNode.hasNonNull("maxUses")) {
+			maxUses = penaltyRuleNode.get("maxUses").asInt();
+		}
 	}
 
 	@Override
 	public double calculatePenalty(List<IAnnotation> annotations) {
-		return (annotations.size() * this.penalty) / 10.0;
+		int multiplier = maxUses == null ? annotations.size() : Math.min(annotations.size(), maxUses);
+		return (multiplier * this.penalty) / 10.0;
 	}
 
 	@Override
@@ -38,12 +48,18 @@ public class StackingPenaltyRule extends PenaltyRule {
 	@Override
 	public String getTooltip(List<IAnnotation> annotations) {
 		double penaltyValue = this.calculatePenalty(annotations);
-		return penaltyValue + " points [" + annotations.size() + " annotations made]";
+		String tooltip = penaltyValue + " points [" + annotations.size() + " annotations made";
+		tooltip += maxUses != null ? " - capped to " + maxUses + " annotations" : "";
+		tooltip += "]";
+		return tooltip;
 	}
 
 	@Override
 	public String toString() {
-		return "StackingPenaltyRule [penalty=" + this.penalty / 10.0 + " per annotation]";
+		String string = "StackingPenaltyRule [penalty=\" + this.penalty / 10.0 + \" per annotation";
+		string += maxUses != null ? " capped to " + maxUses + " annotations" : "";
+		string += "]";
+		return string;
 	}
 
 	@Override
