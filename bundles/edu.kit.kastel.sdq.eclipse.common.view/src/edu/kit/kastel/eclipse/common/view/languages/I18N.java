@@ -25,7 +25,7 @@ public interface I18N {
 	}
 
 	default String settingsAdvancedDescription() {
-		return "Set advanced settings for Artemis Grading";
+		return "Set advanced settings for Artemis";
 	}
 
 	default String settingsLanguage() {
