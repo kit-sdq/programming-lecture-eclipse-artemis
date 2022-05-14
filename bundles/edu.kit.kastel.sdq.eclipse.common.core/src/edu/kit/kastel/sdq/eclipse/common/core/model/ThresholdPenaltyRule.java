@@ -3,6 +3,8 @@ package edu.kit.kastel.sdq.eclipse.common.core.model;
 
 import java.util.List;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import edu.kit.kastel.sdq.eclipse.common.api.model.IAnnotation;
 
 /**
@@ -17,9 +19,9 @@ public class ThresholdPenaltyRule extends PenaltyRule {
 	private int threshold;
 	private double penalty;
 
-	public ThresholdPenaltyRule(int threshold, double penalty) {
-		this.threshold = threshold;
-		this.penalty = penalty;
+	public ThresholdPenaltyRule(JsonNode penaltyRuleNode) {
+		this.threshold = penaltyRuleNode.get("threshold").asInt();
+		this.penalty = penaltyRuleNode.get("penalty").asDouble();
 	}
 
 	@Override
