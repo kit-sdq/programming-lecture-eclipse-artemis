@@ -38,7 +38,8 @@ import edu.kit.kastel.sdq.eclipse.common.api.model.IRatingGroup;
 
 /**
  * This class creates the view elements for the artemis grading process. It is
- * build as a tab folder with four tabs: grading, assessment, exam and backlog.
+ * build as a tab folder with with three tabs: assessment (incl. backlog),
+ * grading, and tests.
  *
  * @see {@link ViewPart}
  *
@@ -48,7 +49,6 @@ public class ArtemisGradingView extends ViewPart {
 	private AssessmentViewController viewController;
 	private Map<String, Group> ratingGroupViewElements;
 	private Map<String, Button> mistakeButtons;
-	private Combo backlogCombo;
 
 	private AssessmentTab assessmentTab;
 
@@ -83,8 +83,12 @@ public class ArtemisGradingView extends ViewPart {
 		}
 	}
 
-	private void addSelectionListenerForLoadFromBacklogButton(Button btnLoadAgain) {
+	private void addSelectionListenerForLoadFromBacklogButton(Combo backlogCombo, Button btnLoadAgain) {
 		btnLoadAgain.addListener(SWT.Selection, e -> {
+			if (backlogCombo.getSelectionIndex() < 0) {
+				return;
+			}
+			this.viewController.setAssessedSubmission(backlogCombo.getItem(backlogCombo.getSelectionIndex()));
 			this.viewController.onLoadAgain();
 			this.prepareNewAssessment();
 			this.updateState();
@@ -138,50 +142,19 @@ public class ArtemisGradingView extends ViewPart {
 		});
 	}
 
-	private void createBacklogTab(TabFolder tabFolder) {
-		var scrolledCompositeBacklog = UIUtilities.createTabWithScrolledComposite(tabFolder, I18N().tabBacklog());
-
-		Composite backlogComposite = new Composite(scrolledCompositeBacklog, SWT.NONE);
-		backlogComposite.setLayout(new GridLayout(2, false));
-
-		Label lblFilter = new Label(backlogComposite, SWT.NONE);
-		lblFilter.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblFilter.setText(I18N().tabBacklogFilter());
-
-		Combo filterCombo = new Combo(backlogComposite, SWT.READ_ONLY);
-		GridData gdFilterCombo = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
-		filterCombo.setLayoutData(gdFilterCombo);
+	private void createBacklog() {
+		var backlogCombo = assessmentTab.comboBacklogSubmission;
+		var filterCombo = assessmentTab.comboBacklogFilter;
+		var refreshButton = assessmentTab.btnBacklogRefreshSubmissions;
+		var btnLoadAgain = assessmentTab.btnBacklogLoadSubmission;
 
 		for (SubmissionFilter filter : SubmissionFilter.values()) {
-			filterCombo.add(filter.name());
+			assessmentTab.comboBacklogFilter.add(filter.name());
 		}
 
-		Label lblSubmitted = new Label(backlogComposite, SWT.NONE);
-		lblSubmitted.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblSubmitted.setText(I18N().submissions());
-
-		this.backlogCombo = new Combo(backlogComposite, SWT.READ_ONLY);
-		GridData gdBacklogCombo = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
-		this.backlogCombo.setLayoutData(gdBacklogCombo);
-
-		this.initializeBacklogCombo(this.backlogCombo);
-
-		this.addSelectionListenerForFilterCombo(this.backlogCombo, filterCombo);
-
-		Composite buttons = new Composite(backlogComposite, SWT.NONE);
-		buttons.setLayout(new GridLayout(2, true));
-		buttons.setLayoutData(new GridData(SWT.CENTER, SWT.FILL, true, true, 2, 1));
-
-		Button refreshButton = new Button(buttons, SWT.NONE);
-		refreshButton.setText(I18N().tabBacklogRefresh());
-
-		this.addSelectionListenerForRefreshButton(refreshButton, this.backlogCombo, filterCombo);
-
-		Button btnLoadAgain = new Button(buttons, SWT.NONE);
-		btnLoadAgain.setText(I18N().reload());
-		this.addSelectionListenerForLoadFromBacklogButton(btnLoadAgain);
-
-		UIUtilities.initializeTabAfterFilling(scrolledCompositeBacklog, backlogComposite);
+		this.addSelectionListenerForFilterCombo(backlogCombo, filterCombo);
+		this.addSelectionListenerForRefreshButton(refreshButton, backlogCombo, filterCombo);
+		this.addSelectionListenerForLoadFromBacklogButton(backlogCombo, btnLoadAgain);
 	}
 
 	private void createResultTab(TabFolder tabFolder) {
@@ -329,7 +302,7 @@ public class ArtemisGradingView extends ViewPart {
 		this.createAssessmentTab(tabFolder);
 		this.createGradingTab(tabFolder);
 		this.createResultTab(tabFolder);
-		this.createBacklogTab(tabFolder);
+		this.createBacklog();
 		this.updateState();
 	}
 
@@ -347,13 +320,6 @@ public class ArtemisGradingView extends ViewPart {
 			filter = Arrays.stream(SubmissionFilter.values()).filter(f -> f.name().equals(value)).findFirst().orElse(SubmissionFilter.ALL);
 		}
 		this.viewController.getSubmissionsForBacklog(filter).forEach(backlogCombo::add);
-	}
-
-	private void initializeBacklogCombo(Combo backlogCombo) {
-		backlogCombo.addListener(SWT.Selection, e -> {
-			this.viewController.setAssessedSubmission(backlogCombo.getItem(backlogCombo.getSelectionIndex()));
-			this.updateState();
-		});
 	}
 
 	private void loadExamComboEntries(Combo examCourseCombo, Combo examCombo, Combo examExerciseCombo) {
@@ -464,7 +430,6 @@ public class ArtemisGradingView extends ViewPart {
 
 	private void resetCombos() {
 		this.assessmentTab.resetCombos();
-		this.backlogCombo.removeAll();
 		this.viewController.getCourseShortNames().forEach(courseShortName -> this.assessmentTab.comboCourse.add(courseShortName));
 	}
 }

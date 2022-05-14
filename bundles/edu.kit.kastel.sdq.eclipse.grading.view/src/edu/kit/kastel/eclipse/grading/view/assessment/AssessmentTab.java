@@ -19,6 +19,7 @@ public class AssessmentTab extends AssessmentTabComposite {
 		this.comboCourse.removeAll();
 		this.comboExam.removeAll();
 		this.comboExercise.removeAll();
+		this.comboBacklogSubmission.removeAll();
 	}
 
 	public void setAssessmentInProgress(boolean courseSelected, boolean examSelected, boolean exerciseSelected, boolean assessmentStarted,
@@ -35,6 +36,13 @@ public class AssessmentTab extends AssessmentTabComposite {
 		btnStartRoundTwo.setEnabled(exerciseSelected && !assessmentStarted && secondCorrectionRoundEnabled);
 
 		btnResetPluginState.setEnabled(!assessmentStarted);
+
+		// Backlog
+		comboBacklogFilter.setEnabled(exerciseSelected && !assessmentStarted);
+		comboBacklogSubmission.setEnabled(exerciseSelected && !assessmentStarted);
+		btnBacklogRefreshSubmissions.setEnabled(exerciseSelected && !assessmentStarted);
+		btnBacklogLoadSubmission.setEnabled(exerciseSelected && !assessmentStarted);
+
 	}
 
 }
