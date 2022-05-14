@@ -4,12 +4,9 @@ package edu.kit.kastel.eclipse.grading.view.assessment;
 import static edu.kit.kastel.eclipse.common.view.languages.LanguageSettings.I18N;
 
 import java.util.Arrays;
-import java.util.EnumMap;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -17,7 +14,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
@@ -36,14 +32,14 @@ import edu.kit.kastel.eclipse.grading.view.listeners.AssessmentMarkerViewDoubleC
 import edu.kit.kastel.eclipse.grading.view.listeners.KeyboardAwareMouseListener;
 import edu.kit.kastel.sdq.eclipse.common.api.PreferenceConstants;
 import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.SubmissionFilter;
-import edu.kit.kastel.sdq.eclipse.common.api.backendstate.Transition;
 import edu.kit.kastel.sdq.eclipse.common.api.controller.IGradingSystemwideController;
 import edu.kit.kastel.sdq.eclipse.common.api.model.IMistakeType;
 import edu.kit.kastel.sdq.eclipse.common.api.model.IRatingGroup;
 
 /**
  * This class creates the view elements for the artemis grading process. It is
- * build as a tab folder with four tabs: grading, assessment, exam and backlog.
+ * build as a tab folder with with three tabs: assessment (incl. backlog),
+ * grading, and tests.
  *
  * @see {@link ViewPart}
  *
@@ -53,8 +49,6 @@ public class ArtemisGradingView extends ViewPart {
 	private AssessmentViewController viewController;
 	private Map<String, Group> ratingGroupViewElements;
 	private Map<String, Button> mistakeButtons;
-	private Map<Transition, Set<Control>> possibleActions;
-	private Combo backlogCombo;
 
 	private AssessmentTab assessmentTab;
 
@@ -67,17 +61,8 @@ public class ArtemisGradingView extends ViewPart {
 		this.viewController = new AssessmentViewController();
 		this.ratingGroupViewElements = new HashMap<>();
 		this.mistakeButtons = new HashMap<>();
-		this.possibleActions = new EnumMap<>(Transition.class);
-		this.initializePossibleActions();
 		this.initializeAnnotationEditing();
 		this.addListenerForMarkerDeletion();
-	}
-
-	private void initializePossibleActions() {
-		for (int i = 0; i < Transition.values().length; i++) {
-			Transition current = Transition.values()[i];
-			this.possibleActions.put(current, new HashSet<>());
-		}
 	}
 
 	private void addListenerForMarkerDeletion() {
@@ -98,8 +83,12 @@ public class ArtemisGradingView extends ViewPart {
 		}
 	}
 
-	private void addSelectionListenerForLoadFromBacklogButton(Button btnLoadAgain) {
+	private void addSelectionListenerForLoadFromBacklogButton(Combo backlogCombo, Button btnLoadAgain) {
 		btnLoadAgain.addListener(SWT.Selection, e -> {
+			if (backlogCombo.getSelectionIndex() < 0) {
+				return;
+			}
+			this.viewController.setAssessedSubmission(backlogCombo.getItem(backlogCombo.getSelectionIndex()));
 			this.viewController.onLoadAgain();
 			this.prepareNewAssessment();
 			this.updateState();
@@ -153,52 +142,19 @@ public class ArtemisGradingView extends ViewPart {
 		});
 	}
 
-	private void createBacklogTab(TabFolder tabFolder) {
-		var scrolledCompositeBacklog = UIUtilities.createTabWithScrolledComposite(tabFolder, I18N().tabBacklog());
-
-		Composite backlogComposite = new Composite(scrolledCompositeBacklog, SWT.NONE);
-		backlogComposite.setLayout(new GridLayout(2, false));
-
-		Label lblFilter = new Label(backlogComposite, SWT.NONE);
-		lblFilter.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblFilter.setText(I18N().tabBacklogFilter());
-
-		Combo filterCombo = new Combo(backlogComposite, SWT.READ_ONLY);
-		GridData gdFilterCombo = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
-		filterCombo.setLayoutData(gdFilterCombo);
+	private void createBacklog() {
+		var backlogCombo = assessmentTab.comboBacklogSubmission;
+		var filterCombo = assessmentTab.comboBacklogFilter;
+		var refreshButton = assessmentTab.btnBacklogRefreshSubmissions;
+		var btnLoadAgain = assessmentTab.btnBacklogLoadSubmission;
 
 		for (SubmissionFilter filter : SubmissionFilter.values()) {
-			filterCombo.add(filter.name());
+			assessmentTab.comboBacklogFilter.add(filter.name());
 		}
 
-		Label lblSubmitted = new Label(backlogComposite, SWT.NONE);
-		lblSubmitted.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblSubmitted.setText(I18N().submissions());
-
-		this.backlogCombo = new Combo(backlogComposite, SWT.READ_ONLY);
-		GridData gdBacklogCombo = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
-		this.backlogCombo.setLayoutData(gdBacklogCombo);
-
-		this.initializeBacklogCombo(this.backlogCombo);
-		this.addControlToPossibleActions(this.backlogCombo, Transition.SET_ASSESSED_SUBMISSION_BY_PROJECT_NAME);
-
-		this.addSelectionListenerForFilterCombo(this.backlogCombo, filterCombo);
-
-		Composite buttons = new Composite(backlogComposite, SWT.NONE);
-		buttons.setLayout(new GridLayout(2, true));
-		buttons.setLayoutData(new GridData(SWT.CENTER, SWT.FILL, true, true, 2, 1));
-
-		Button refreshButton = new Button(buttons, SWT.NONE);
-		refreshButton.setText(I18N().tabBacklogRefresh());
-
-		this.addSelectionListenerForRefreshButton(refreshButton, this.backlogCombo, filterCombo);
-
-		Button btnLoadAgain = new Button(buttons, SWT.NONE);
-		btnLoadAgain.setText(I18N().reload());
-		this.addControlToPossibleActions(btnLoadAgain, Transition.LOAD_AGAIN);
-		this.addSelectionListenerForLoadFromBacklogButton(btnLoadAgain);
-
-		UIUtilities.initializeTabAfterFilling(scrolledCompositeBacklog, backlogComposite);
+		this.addSelectionListenerForFilterCombo(backlogCombo, filterCombo);
+		this.addSelectionListenerForRefreshButton(refreshButton, backlogCombo, filterCombo);
+		this.addSelectionListenerForLoadFromBacklogButton(backlogCombo, btnLoadAgain);
 	}
 
 	private void createResultTab(TabFolder tabFolder) {
@@ -247,27 +203,18 @@ public class ArtemisGradingView extends ViewPart {
 
 	private void createAssessmentTab(TabFolder tabFolder) {
 		this.assessmentTab = new AssessmentTab(tabFolder);
-		this.addControlToPossibleActions(this.assessmentTab.comboCourse, Transition.SET_COURSE_ID_AND_GET_EXERCISE_SHORT_NAMES);
 		/*
 		 * The exam combo does not really have an influence on the backend state, but
 		 * should be disabled after a new assessment is started
 		 */
-		this.addControlToPossibleActions(this.assessmentTab.comboExam, Transition.SET_COURSE_ID_AND_GET_EXERCISE_SHORT_NAMES);
 		this.loadExamComboEntries(this.assessmentTab.comboCourse, this.assessmentTab.comboExam, this.assessmentTab.comboExercise);
-		this.addControlToPossibleActions(this.assessmentTab.comboExercise, Transition.SET_EXERCISE_ID);
 
 		this.addSelectionListenerForReloadButton(this.assessmentTab.btnReload);
-		this.addControlToPossibleActions(this.assessmentTab.btnReload, Transition.RELOAD_ASSESSMENT);
 		this.addSelectionListenerForSaveButton(this.assessmentTab.btnSave);
-		this.addControlToPossibleActions(this.assessmentTab.btnSave, Transition.SAVE_ASSESSMENT);
 		this.addSelectionListenerForStartFirstRound(this.assessmentTab.btnStartRoundOne);
-		this.addControlToPossibleActions(this.assessmentTab.btnStartRoundOne, Transition.START_CORRECTION_ROUND_1);
 		this.addSelectionListenerForStartSecondRound(this.assessmentTab.btnStartRoundTwo);
-		this.addControlToPossibleActions(this.assessmentTab.btnStartRoundTwo, Transition.START_CORRECTION_ROUND_2);
 		this.addSelectionListenerForSubmitButton(this.assessmentTab.btnSubmit);
-		this.addControlToPossibleActions(this.assessmentTab.btnSubmit, Transition.SUBMIT_ASSESSMENT);
 		this.addSelectionListenerForRefreshArtemisStateButton(this.assessmentTab.btnResetPluginState);
-		this.addControlToPossibleActions(this.assessmentTab.btnResetPluginState, Transition.ON_RESET);
 
 		setVersionText(this.assessmentTab.lblPluginVersion);
 	}
@@ -355,7 +302,7 @@ public class ArtemisGradingView extends ViewPart {
 		this.createAssessmentTab(tabFolder);
 		this.createGradingTab(tabFolder);
 		this.createResultTab(tabFolder);
-		this.createBacklogTab(tabFolder);
+		this.createBacklog();
 		this.updateState();
 	}
 
@@ -373,13 +320,6 @@ public class ArtemisGradingView extends ViewPart {
 			filter = Arrays.stream(SubmissionFilter.values()).filter(f -> f.name().equals(value)).findFirst().orElse(SubmissionFilter.ALL);
 		}
 		this.viewController.getSubmissionsForBacklog(filter).forEach(backlogCombo::add);
-	}
-
-	private void initializeBacklogCombo(Combo backlogCombo) {
-		backlogCombo.addListener(SWT.Selection, e -> {
-			this.viewController.setAssessedSubmission(backlogCombo.getItem(backlogCombo.getSelectionIndex()));
-			this.updateState();
-		});
 	}
 
 	private void loadExamComboEntries(Combo examCourseCombo, Combo examCombo, Combo examExerciseCombo) {
@@ -442,8 +382,22 @@ public class ArtemisGradingView extends ViewPart {
 	}
 
 	private void updateState() {
-		this.possibleActions.values().forEach(set -> set.forEach(control -> control.setEnabled(false)));
-		this.viewController.getPossiblyTransitions().forEach(transition -> this.possibleActions.get(transition).forEach(control -> control.setEnabled(true)));
+		boolean courseSelected = this.assessmentTab.comboCourse.getSelectionIndex() >= 0;
+		boolean examSelected = this.assessmentTab.comboExam.getSelectionIndex() >= 0;
+		boolean exerciseSelected = this.assessmentTab.comboExercise.getSelectionIndex() >= 0;
+
+		boolean secondCorrectionRound = courseSelected && examSelected && exerciseSelected;
+		if (secondCorrectionRound) {
+			var currentExercise = this.viewController.getSelectedExercise();
+			secondCorrectionRound &= currentExercise.isPresent();
+			secondCorrectionRound &= currentExercise.get().hasSecondCorrectionRound();
+			secondCorrectionRound &= currentExercise.get().isSecondCorrectionEnabled();
+		}
+
+		boolean assessmentStarted = this.viewController.isAssessmentStarted();
+
+		this.assessmentTab.setAssessmentInProgress(courseSelected, examSelected, exerciseSelected, assessmentStarted, secondCorrectionRound);
+
 		this.updateCorrectedSubmissionCount();
 	}
 
@@ -466,12 +420,6 @@ public class ArtemisGradingView extends ViewPart {
 		}
 	}
 
-	private void addControlToPossibleActions(Control control, Transition transition) {
-		Set<Control> temp = this.possibleActions.get(transition);
-		temp.add(control);
-		this.possibleActions.put(transition, temp);
-	}
-
 	private void refreshArtemisState() {
 		this.viewController = new AssessmentViewController();
 		this.result.setController(Activator.getDefault().getSystemwideController());
@@ -482,7 +430,6 @@ public class ArtemisGradingView extends ViewPart {
 
 	private void resetCombos() {
 		this.assessmentTab.resetCombos();
-		this.backlogCombo.removeAll();
 		this.viewController.getCourseShortNames().forEach(courseShortName -> this.assessmentTab.comboCourse.add(courseShortName));
 	}
 }

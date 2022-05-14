@@ -168,7 +168,7 @@ public class ArtemisStudentView extends ViewPart {
 		buttons.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1));
 
 		Button btnRefreshArtemisState = new Button(buttons, SWT.NONE);
-		btnRefreshArtemisState.setText(I18N().tabBacklogRefresh());
+		btnRefreshArtemisState.setText(I18N().backlogRefresh());
 		GridData gdBtnRefreshArtemisState = new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1);
 		gdBtnRefreshArtemisState.widthHint = 155;
 		btnRefreshArtemisState.setLayoutData(gdBtnRefreshArtemisState);

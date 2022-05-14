@@ -85,15 +85,19 @@ public interface I18N {
 		return String.format("Started submissions: %d  Submitted: %d", started, submitted);
 	}
 
-	default String tabBacklog() {
+	default String backlog() {
 		return "Backlog";
 	}
 
-	default String tabBacklogFilter() {
+	default String backlogFilter() {
 		return "Filter Selection";
 	}
 
-	default String tabBacklogRefresh() {
+	default String submission() {
+		return "Submission";
+	}
+
+	default String backlogRefresh() {
 		return "Refresh Submissions";
 	}
 
@@ -293,6 +297,10 @@ public interface I18N {
 		return "Statistics: ";
 	}
 
+	default String resetPluginState() {
+		return "Reset Plugin State";
+	}
+
 	//
 	// internal
 	//
@@ -306,4 +314,5 @@ public interface I18N {
 	default String languageDisplayName() {
 		return "English";
 	}
+
 }

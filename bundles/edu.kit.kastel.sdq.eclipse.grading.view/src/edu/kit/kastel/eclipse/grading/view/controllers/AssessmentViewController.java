@@ -2,14 +2,14 @@
 package edu.kit.kastel.eclipse.grading.view.controllers;
 
 import java.util.List;
-import java.util.Set;
+import java.util.Optional;
 
 import edu.kit.kastel.eclipse.common.view.controllers.AbstractArtemisViewController;
 import edu.kit.kastel.eclipse.common.view.utilities.AssessmentUtilities;
 import edu.kit.kastel.eclipse.grading.view.activator.Activator;
 import edu.kit.kastel.sdq.eclipse.common.api.ArtemisClientException;
+import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.IExercise;
 import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.SubmissionFilter;
-import edu.kit.kastel.sdq.eclipse.common.api.backendstate.Transition;
 import edu.kit.kastel.sdq.eclipse.common.api.controller.IAssessmentController;
 import edu.kit.kastel.sdq.eclipse.common.api.controller.IGradingSystemwideController;
 import edu.kit.kastel.sdq.eclipse.common.api.model.IAnnotation;
@@ -128,13 +128,6 @@ public class AssessmentViewController extends AbstractArtemisViewController<IGra
 	}
 
 	/**
-	 * @return true, if a new assessment is started, else false
-	 */
-	public boolean onStartAssessment() {
-		return this.systemwideController.startAssessment();
-	}
-
-	/**
 	 * Starts the first correction round of an exam
 	 */
 	public boolean onStartCorrectionRound1() {
@@ -171,16 +164,15 @@ public class AssessmentViewController extends AbstractArtemisViewController<IGra
 		this.assessmentController.setViewInteractionHandler(this.viewObserver);
 	}
 
-	/**
-	 * Request all possible transitions of the current state
-	 *
-	 * @return the possible transitions
-	 */
-	public Set<Transition> getPossiblyTransitions() {
-		return this.systemwideController.getCurrentlyPossibleTransitions();
-	}
-
 	public IAssessmentController getAssessmentController() {
 		return assessmentController;
+	}
+
+	public boolean isAssessmentStarted() {
+		return this.systemwideController.isAssessmentStarted();
+	}
+
+	public Optional<IExercise> getSelectedExercise() {
+		return this.systemwideController.getSelectedExercise();
 	}
 }

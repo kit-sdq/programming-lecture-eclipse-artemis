@@ -3,10 +3,10 @@ package edu.kit.kastel.eclipse.common.view.languages;
 
 /**
  * This class provides German translations for all UI-Elements
- * 
+ *
  * NOTE: This file MUST use UTF-8 encoding. Otherwise spotless will fail or
  * umlauts will break.
- * 
+ *
  * @see I18N
  */
 class GermanLanguage implements I18N {
@@ -92,17 +92,22 @@ class GermanLanguage implements I18N {
 	}
 
 	@Override
-	public String tabBacklog() {
+	public String backlog() {
 		return "Backlog";
 	}
 
 	@Override
-	public String tabBacklogFilter() {
+	public String backlogFilter() {
 		return "Filterauswahl";
 	}
 
 	@Override
-	public String tabBacklogRefresh() {
+	public String submission() {
+		return "Abgabe";
+	}
+
+	@Override
+	public String backlogRefresh() {
 		return "Abgaben neu laden";
 	}
 
@@ -334,6 +339,11 @@ class GermanLanguage implements I18N {
 	@Override
 	public String statistics() {
 		return "Statistiken";
+	}
+
+	@Override
+	public String resetPluginState() {
+		return "Plugin zurücksetzen";
 	}
 
 	@Override

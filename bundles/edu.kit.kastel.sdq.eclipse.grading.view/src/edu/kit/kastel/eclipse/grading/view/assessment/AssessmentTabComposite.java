@@ -25,6 +25,12 @@ public class AssessmentTabComposite extends Composite {
 	protected Label lblStatisticsInformation;
 	protected Label lblPluginVersion;
 
+	// Backlog
+	protected Combo comboBacklogFilter;
+	protected Combo comboBacklogSubmission;
+	protected Button btnBacklogRefreshSubmissions;
+	protected Button btnBacklogLoadSubmission;
+
 	/**
 	 * Create the composite.
 	 */
@@ -79,7 +85,7 @@ public class AssessmentTabComposite extends Composite {
 
 		btnResetPluginState = new Button(compositeButtons, SWT.NONE);
 		btnResetPluginState.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-		btnResetPluginState.setText("Reset Plugin State");
+		btnResetPluginState.setText(I18N().resetPluginState());
 
 		Group grpMetaInformation = new Group(this, SWT.NONE);
 		grpMetaInformation.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
@@ -91,6 +97,37 @@ public class AssessmentTabComposite extends Composite {
 
 		lblStatisticsInformation = new Label(grpMetaInformation, SWT.NONE);
 		lblStatisticsInformation.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+
+		Group grpBacklog = new Group(this, SWT.NONE);
+		grpBacklog.setLayout(new GridLayout(2, false));
+		grpBacklog.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+		grpBacklog.setText(I18N().backlog());
+
+		Label lblFilter = new Label(grpBacklog, SWT.NONE);
+		lblFilter.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblFilter.setText(I18N().backlogFilter());
+
+		comboBacklogFilter = new Combo(grpBacklog, SWT.READ_ONLY);
+		comboBacklogFilter.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+
+		Label lblSubmission = new Label(grpBacklog, SWT.NONE);
+		lblSubmission.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblSubmission.setText(I18N().submission());
+
+		comboBacklogSubmission = new Combo(grpBacklog, SWT.READ_ONLY);
+		comboBacklogSubmission.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+
+		Composite compositeBacklogButtons = new Composite(grpBacklog, SWT.NONE);
+		compositeBacklogButtons.setLayout(new GridLayout(2, true));
+		compositeBacklogButtons.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false, 2, 1));
+
+		btnBacklogRefreshSubmissions = new Button(compositeBacklogButtons, SWT.NONE);
+		btnBacklogRefreshSubmissions.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		btnBacklogRefreshSubmissions.setText(I18N().backlogRefresh());
+
+		btnBacklogLoadSubmission = new Button(compositeBacklogButtons, SWT.NONE);
+		btnBacklogLoadSubmission.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		btnBacklogLoadSubmission.setText(I18N().reload());
 
 		lblPluginVersion = new Label(this, SWT.NONE);
 		lblPluginVersion.setAlignment(SWT.RIGHT);
