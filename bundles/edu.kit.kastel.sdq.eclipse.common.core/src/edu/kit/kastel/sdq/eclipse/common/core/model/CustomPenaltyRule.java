@@ -3,6 +3,8 @@ package edu.kit.kastel.sdq.eclipse.common.core.model;
 
 import java.util.List;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import edu.kit.kastel.sdq.eclipse.common.api.model.IAnnotation;
 
 public class CustomPenaltyRule extends PenaltyRule {
@@ -10,8 +12,8 @@ public class CustomPenaltyRule extends PenaltyRule {
 	private static final String DISPLAY_NAME = "Custom Penalty";
 	public static final String SHORT_NAME = "customPenalty";
 
-	public CustomPenaltyRule() {
-		// a comment explaining why this method is empty
+	public CustomPenaltyRule(JsonNode penaltyRuleNode) {
+		// No need for custom configurations.
 	}
 
 	@Override

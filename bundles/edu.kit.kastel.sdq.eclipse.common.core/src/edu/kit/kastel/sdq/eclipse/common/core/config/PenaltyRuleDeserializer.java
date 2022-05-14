@@ -2,6 +2,7 @@
 package edu.kit.kastel.sdq.eclipse.common.core.config;
 
 import java.io.IOException;
+import java.util.function.Function;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -10,6 +11,7 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 
 import edu.kit.kastel.sdq.eclipse.common.core.model.CustomPenaltyRule;
 import edu.kit.kastel.sdq.eclipse.common.core.model.PenaltyRule;
+import edu.kit.kastel.sdq.eclipse.common.core.model.StackingPenaltyRule;
 import edu.kit.kastel.sdq.eclipse.common.core.model.ThresholdPenaltyRule;
 
 /**
@@ -33,13 +35,9 @@ public class PenaltyRuleDeserializer extends StdDeserializer<PenaltyRule> {
 	public enum PenaltyRuleType {
 		// Need to add a new enum value with a short Name (that must be used in the
 		// config file) and a constructor based on the json node.
-		THRESHOLD_PENALTY_RULE_TYPE(ThresholdPenaltyRule.SHORT_NAME,
-				penaltyRuleNode -> new ThresholdPenaltyRule(penaltyRuleNode.get("threshold").asInt(), penaltyRuleNode.get("penalty").asDouble())),
-		CUSTOM_PENALTY_RULE_TYPE(CustomPenaltyRule.SHORT_NAME, penaltyRuleNode -> new CustomPenaltyRule());
-
-		interface Constructor {
-			PenaltyRule construct(final JsonNode penaltyRuleNode);
-		}
+		THRESHOLD_PENALTY_RULE_TYPE(ThresholdPenaltyRule.SHORT_NAME, ThresholdPenaltyRule::new), //
+		STACKING_PENATLY_RULE_TYPE(StackingPenaltyRule.SHORT_NAME, StackingPenaltyRule::new), //
+		CUSTOM_PENALTY_RULE_TYPE(CustomPenaltyRule.SHORT_NAME, CustomPenaltyRule::new);
 
 		public static PenaltyRuleType fromShortName(String shortName) {
 			for (PenaltyRuleType penaltyRuleType : PenaltyRuleType.values()) {
@@ -50,17 +48,17 @@ public class PenaltyRuleDeserializer extends StdDeserializer<PenaltyRule> {
 			return null;
 		}
 
-		private Constructor constructor;
+		private final Function<JsonNode, PenaltyRule> constructor;
 
-		private String shortName;
+		private final String shortName;
 
-		PenaltyRuleType(final String shortName, final Constructor constructor) {
+		PenaltyRuleType(final String shortName, final Function<JsonNode, PenaltyRule> constructor) {
 			this.shortName = shortName;
 			this.constructor = constructor;
 		}
 
 		public PenaltyRule construct(final JsonNode penaltyRuleNode) {
-			return this.constructor.construct(penaltyRuleNode);
+			return this.constructor.apply(penaltyRuleNode);
 		}
 
 		public String getShortName() {
@@ -83,7 +81,5 @@ public class PenaltyRuleDeserializer extends StdDeserializer<PenaltyRule> {
 			return penaltyRuleType.construct(penaltyRuleNode);
 		}
 		throw new IOException("No PenaltyRule Subclass defined for penaltyRule " + penaltyRuleShortName);
-
 	}
-
 }

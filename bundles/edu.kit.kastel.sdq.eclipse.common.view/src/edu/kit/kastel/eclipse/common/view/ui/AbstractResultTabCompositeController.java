@@ -15,12 +15,14 @@ import edu.kit.kastel.eclipse.common.view.utilities.UIUtilities;
 import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.Feedback;
 import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.IExercise;
 
+import static edu.kit.kastel.eclipse.common.view.languages.LanguageSettings.I18N;
+
 abstract class AbstractResultTabCompositeController extends AbstractResultTabComposite {
 	private static final String CHECK_MARK_IN_UTF8 = "\u2713";
 	private static final String X_MARK_IN_UTF8 = "\u2717";
 
 	protected AbstractResultTabCompositeController(TabFolder tabFolder, boolean hasReloadFunctionality) {
-		super(UIUtilities.createTabWithScrolledComposite(tabFolder, "Test Results"), SWT.NONE);
+		super(UIUtilities.createTabWithScrolledComposite(tabFolder, I18N().tabResults()), SWT.NONE);
 		if (!hasReloadFunctionality) {
 			this.btnReload.setVisible(false);
 		}
@@ -34,15 +36,15 @@ abstract class AbstractResultTabCompositeController extends AbstractResultTabCom
 	protected void setSuccessAndScore(IExercise currentExercise, boolean successOfAutomaticTests, double points, double score, String completionTime,
 			String resultString) {
 		var display = getDisplay();
-		String title = currentExercise == null ? "Unknown Task" : currentExercise.getTitle();
+		String title = currentExercise == null ? I18N().unknownTask() : currentExercise.getTitle();
 
 		this.lblStateOfTests.setForeground(successOfAutomaticTests ? display.getSystemColor(SWT.COLOR_GREEN) : display.getSystemColor(SWT.COLOR_RED));
-		this.lblStateOfTests.setText(successOfAutomaticTests ? "Test(s) succeeded" : "Test(s) failed");
+		this.lblStateOfTests.setText(I18N().tests() + " " + (successOfAutomaticTests ? I18N().successful() : I18N().unsuccessful()));
 
 		this.lblTaskname.setText(title);
 		this.lblTaskdetails.setText(completionTime == null ? "" : completionTime);
-		this.lblScore.setText(resultString == null ? String.format(Locale.ENGLISH, "Score: %.2f%%", score) : resultString);
-		this.lblPoints.setText(String.format(Locale.ENGLISH, "Points: %.2f", points));
+		this.lblScore.setText(resultString == null ? String.format(Locale.ENGLISH, I18N().score() + ": %.2f%%", score) : resultString);
+		this.lblPoints.setText(String.format(Locale.ENGLISH, I18N().points() + ": %.2f", points));
 	}
 
 	protected void createTableItemsForFeedback(Table table, String name, Feedback feedback) {
@@ -63,7 +65,7 @@ abstract class AbstractResultTabCompositeController extends AbstractResultTabCom
 		if (feedback.getPositive() == null) {
 			return "";
 		}
-		return Boolean.TRUE.equals(feedback.getPositive()) ? "successful" : "failed";
+		return Boolean.TRUE.equals(feedback.getPositive()) ? I18N().successful() : I18N().unsuccessful();
 	}
 
 	private int calculateSuccessColorIndicator(Feedback feedback) {
