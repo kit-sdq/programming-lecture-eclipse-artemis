@@ -4,9 +4,9 @@ package edu.kit.kastel.eclipse.common.view.preferences;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
 
+import edu.kit.kastel.eclipse.common.api.PreferenceConstants;
 import edu.kit.kastel.eclipse.common.view.activator.CommonActivator;
 import edu.kit.kastel.eclipse.common.view.languages.LanguageSettings;
-import edu.kit.kastel.sdq.eclipse.common.api.PreferenceConstants;
 
 /**
  * Class used to initialize default preference values.

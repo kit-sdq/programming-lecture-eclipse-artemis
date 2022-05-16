@@ -12,9 +12,9 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
+import edu.kit.kastel.eclipse.common.api.PreferenceConstants;
 import edu.kit.kastel.eclipse.common.view.activator.CommonActivator;
 import edu.kit.kastel.eclipse.common.view.languages.LanguageSettings;
-import edu.kit.kastel.sdq.eclipse.common.api.PreferenceConstants;
 
 /**
  * This class represents a preference page that is contributed to the

@@ -7,8 +7,8 @@ import java.util.Optional;
 
 import org.eclipse.jface.preference.ComboFieldEditor;
 
+import edu.kit.kastel.eclipse.common.api.PreferenceConstants;
 import edu.kit.kastel.eclipse.common.view.activator.CommonActivator;
-import edu.kit.kastel.sdq.eclipse.common.api.PreferenceConstants;
 
 public final class LanguageSettings {
 

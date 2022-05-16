@@ -4,12 +4,12 @@ Bundle-Name: edu.kit.kastel.sdq.eclipse.common.core
 Bundle-SymbolicName: edu.kit.kastel.sdq.eclipse.common.core
 Bundle-Version: 2.2.0
 Bundle-RequiredExecutionEnvironment: JavaSE-17
-Export-Package: edu.kit.kastel.sdq.eclipse.common.core,
- edu.kit.kastel.sdq.eclipse.common.core.artemis,
- edu.kit.kastel.sdq.eclipse.common.core.artemis.calculation,
- edu.kit.kastel.sdq.eclipse.common.core.config,
- edu.kit.kastel.sdq.eclipse.common.core.model,
- edu.kit.kastel.sdq.eclipse.common.core.model.annotation
+Export-Package: edu.kit.kastel.eclipse.common.core,
+ edu.kit.kastel.eclipse.common.core.artemis,
+ edu.kit.kastel.eclipse.common.core.artemis.calculation,
+ edu.kit.kastel.eclipse.common.core.config,
+ edu.kit.kastel.eclipse.common.core.model,
+ edu.kit.kastel.eclipse.common.core.model.annotation
 Require-Bundle: com.fasterxml.jackson.core.jackson-databind,
  com.fasterxml.jackson.core.jackson-core,
  com.fasterxml.jackson.core.jackson-annotations,

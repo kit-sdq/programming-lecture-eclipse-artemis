@@ -4,18 +4,18 @@ package edu.kit.kastel.eclipse.student.view.controllers;
 import java.util.List;
 import java.util.Set;
 
+import edu.kit.kastel.eclipse.common.api.ArtemisClientException;
+import edu.kit.kastel.eclipse.common.api.artemis.mapping.Feedback;
+import edu.kit.kastel.eclipse.common.api.artemis.mapping.IExam;
+import edu.kit.kastel.eclipse.common.api.artemis.mapping.IExercise;
+import edu.kit.kastel.eclipse.common.api.artemis.mapping.IStudentExam;
+import edu.kit.kastel.eclipse.common.api.artemis.mapping.ResultsDTO;
+import edu.kit.kastel.eclipse.common.api.client.websocket.WebsocketCallback;
+import edu.kit.kastel.eclipse.common.api.controller.IStudentSystemwideController;
+import edu.kit.kastel.eclipse.common.api.model.IAnnotation;
+import edu.kit.kastel.eclipse.common.api.util.Pair;
 import edu.kit.kastel.eclipse.common.view.controllers.AbstractArtemisViewController;
 import edu.kit.kastel.eclipse.student.view.activator.Activator;
-import edu.kit.kastel.sdq.eclipse.common.api.ArtemisClientException;
-import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.Feedback;
-import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.IExam;
-import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.IExercise;
-import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.IStudentExam;
-import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.ResultsDTO;
-import edu.kit.kastel.sdq.eclipse.common.api.client.websocket.WebsocketCallback;
-import edu.kit.kastel.sdq.eclipse.common.api.controller.IStudentSystemwideController;
-import edu.kit.kastel.sdq.eclipse.common.api.model.IAnnotation;
-import edu.kit.kastel.sdq.eclipse.common.api.util.Pair;
 
 public class StudentViewController extends AbstractArtemisViewController<IStudentSystemwideController> {
 

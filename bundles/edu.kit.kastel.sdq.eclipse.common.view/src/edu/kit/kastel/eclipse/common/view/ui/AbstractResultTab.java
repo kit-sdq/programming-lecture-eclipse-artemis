@@ -11,14 +11,14 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.Table;
 
+import edu.kit.kastel.eclipse.common.api.ArtemisClientException;
+import edu.kit.kastel.eclipse.common.api.artemis.mapping.Feedback;
+import edu.kit.kastel.eclipse.common.api.artemis.mapping.FeedbackType;
+import edu.kit.kastel.eclipse.common.api.artemis.mapping.IExercise;
+import edu.kit.kastel.eclipse.common.api.model.IMistakeType;
+import edu.kit.kastel.eclipse.common.api.util.Triple;
+import edu.kit.kastel.eclipse.common.core.model.annotation.Annotation;
 import edu.kit.kastel.eclipse.common.view.utilities.AssessmentUtilities;
-import edu.kit.kastel.sdq.eclipse.common.api.ArtemisClientException;
-import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.Feedback;
-import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.FeedbackType;
-import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.IExercise;
-import edu.kit.kastel.sdq.eclipse.common.api.model.IMistakeType;
-import edu.kit.kastel.sdq.eclipse.common.api.util.Triple;
-import edu.kit.kastel.sdq.eclipse.common.core.model.annotation.Annotation;
 
 import static edu.kit.kastel.eclipse.common.view.languages.LanguageSettings.I18N;
 

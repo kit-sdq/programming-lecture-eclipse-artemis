@@ -33,10 +33,10 @@ Require-Bundle: org.eclipse.core.commands,
  org.springframework.spring-websocket,
  org.springframework.spring-messaging,
  org.glassfish.tyrus.bundles.tyrus-standalone-client;bundle-version="[1.9.0,1.9.0]"
-Export-Package: edu.kit.kastel.sdq.eclipse.common.client.git,
- edu.kit.kastel.sdq.eclipse.common.client.mappings,
- edu.kit.kastel.sdq.eclipse.common.client.mappings.exam,
- edu.kit.kastel.sdq.eclipse.common.client.rest,
- edu.kit.kastel.sdq.eclipse.common.client.websocket
+Export-Package: edu.kit.kastel.eclipse.common.client.git,
+ edu.kit.kastel.eclipse.common.client.mappings,
+ edu.kit.kastel.eclipse.common.client.mappings.exam,
+ edu.kit.kastel.eclipse.common.client.rest,
+ edu.kit.kastel.eclipse.common.client.websocket
 Automatic-Module-Name: edu.kit.kastel.sdq.eclipse.common.client
 Bundle-ClassPath: .
