@@ -9,8 +9,8 @@ import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.osgi.service.prefs.BackingStoreException;
 
+import edu.kit.kastel.eclipse.common.api.PreferenceConstants;
 import edu.kit.kastel.eclipse.common.view.activator.CommonActivator;
-import edu.kit.kastel.sdq.eclipse.common.api.PreferenceConstants;
 
 @SuppressWarnings("unused") // as not all constants are used
 public final class PreferenceTweaker {

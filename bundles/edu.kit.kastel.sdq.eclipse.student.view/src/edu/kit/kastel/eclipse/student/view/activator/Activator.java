@@ -4,9 +4,9 @@ package edu.kit.kastel.eclipse.student.view.activator;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
+import edu.kit.kastel.eclipse.common.api.controller.IStudentSystemwideController;
+import edu.kit.kastel.eclipse.common.core.StudentSystemwideController;
 import edu.kit.kastel.eclipse.common.view.activator.CommonActivator;
-import edu.kit.kastel.sdq.eclipse.common.api.controller.IStudentSystemwideController;
-import edu.kit.kastel.sdq.eclipse.common.core.StudentSystemwideController;
 
 /**
  * The activator class controls the plug-in life cycle

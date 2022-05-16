@@ -6,12 +6,12 @@ import java.util.List;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.TabFolder;
 
+import edu.kit.kastel.eclipse.common.api.artemis.mapping.Feedback;
+import edu.kit.kastel.eclipse.common.api.artemis.mapping.IExercise;
+import edu.kit.kastel.eclipse.common.api.client.websocket.WebsocketCallback;
+import edu.kit.kastel.eclipse.common.api.util.Triple;
 import edu.kit.kastel.eclipse.common.view.ui.AbstractResultTab;
 import edu.kit.kastel.eclipse.student.view.controllers.StudentViewController;
-import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.Feedback;
-import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.IExercise;
-import edu.kit.kastel.sdq.eclipse.common.api.client.websocket.WebsocketCallback;
-import edu.kit.kastel.sdq.eclipse.common.api.util.Triple;
 
 public class ResultTab extends AbstractResultTab implements WebsocketCallback {
 	private StudentViewController viewController;

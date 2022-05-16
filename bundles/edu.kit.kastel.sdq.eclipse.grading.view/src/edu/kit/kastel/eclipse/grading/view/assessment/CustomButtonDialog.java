@@ -16,11 +16,11 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 
+import edu.kit.kastel.eclipse.common.api.PreferenceConstants;
+import edu.kit.kastel.eclipse.common.api.model.IMistakeType;
 import edu.kit.kastel.eclipse.common.view.activator.CommonActivator;
 import edu.kit.kastel.eclipse.common.view.utilities.AssessmentUtilities;
 import edu.kit.kastel.eclipse.grading.view.controllers.AssessmentViewController;
-import edu.kit.kastel.sdq.eclipse.common.api.PreferenceConstants;
-import edu.kit.kastel.sdq.eclipse.common.api.model.IMistakeType;
 
 /**
  * This class is the view class for the custom penalty dialog. It has two

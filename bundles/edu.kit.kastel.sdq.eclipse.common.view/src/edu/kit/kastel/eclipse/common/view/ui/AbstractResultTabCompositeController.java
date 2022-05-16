@@ -11,9 +11,9 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
+import edu.kit.kastel.eclipse.common.api.artemis.mapping.Feedback;
+import edu.kit.kastel.eclipse.common.api.artemis.mapping.IExercise;
 import edu.kit.kastel.eclipse.common.view.utilities.UIUtilities;
-import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.Feedback;
-import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.IExercise;
 
 import static edu.kit.kastel.eclipse.common.view.languages.LanguageSettings.I18N;
 

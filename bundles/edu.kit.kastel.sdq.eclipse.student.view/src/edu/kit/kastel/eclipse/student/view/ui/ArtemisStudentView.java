@@ -25,10 +25,10 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.part.ViewPart;
 
+import edu.kit.kastel.eclipse.common.api.artemis.mapping.IStudentExam;
+import edu.kit.kastel.eclipse.common.api.messages.Messages;
 import edu.kit.kastel.eclipse.student.view.activator.Activator;
 import edu.kit.kastel.eclipse.student.view.controllers.StudentViewController;
-import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.IStudentExam;
-import edu.kit.kastel.sdq.eclipse.common.api.messages.Messages;
 
 import static edu.kit.kastel.eclipse.common.view.languages.LanguageSettings.I18N;
 

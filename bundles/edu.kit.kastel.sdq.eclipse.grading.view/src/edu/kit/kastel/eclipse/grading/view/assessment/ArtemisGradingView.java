@@ -22,6 +22,11 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
+import edu.kit.kastel.eclipse.common.api.PreferenceConstants;
+import edu.kit.kastel.eclipse.common.api.artemis.mapping.SubmissionFilter;
+import edu.kit.kastel.eclipse.common.api.controller.IGradingSystemwideController;
+import edu.kit.kastel.eclipse.common.api.model.IMistakeType;
+import edu.kit.kastel.eclipse.common.api.model.IRatingGroup;
 import edu.kit.kastel.eclipse.common.view.activator.CommonActivator;
 import edu.kit.kastel.eclipse.common.view.marker.AssessmentMarkerView;
 import edu.kit.kastel.eclipse.common.view.utilities.AssessmentUtilities;
@@ -30,11 +35,6 @@ import edu.kit.kastel.eclipse.grading.view.activator.Activator;
 import edu.kit.kastel.eclipse.grading.view.controllers.AssessmentViewController;
 import edu.kit.kastel.eclipse.grading.view.listeners.AssessmentMarkerViewDoubleClickListener;
 import edu.kit.kastel.eclipse.grading.view.listeners.KeyboardAwareMouseListener;
-import edu.kit.kastel.sdq.eclipse.common.api.PreferenceConstants;
-import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.SubmissionFilter;
-import edu.kit.kastel.sdq.eclipse.common.api.controller.IGradingSystemwideController;
-import edu.kit.kastel.sdq.eclipse.common.api.model.IMistakeType;
-import edu.kit.kastel.sdq.eclipse.common.api.model.IRatingGroup;
 
 /**
  * This class creates the view elements for the artemis grading process. It is

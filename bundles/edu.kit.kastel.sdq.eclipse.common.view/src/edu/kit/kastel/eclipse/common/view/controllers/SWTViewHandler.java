@@ -5,8 +5,8 @@ import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.MessageDialog;
 
+import edu.kit.kastel.eclipse.common.api.controller.IViewInteraction;
 import edu.kit.kastel.eclipse.common.view.utilities.AssessmentUtilities;
-import edu.kit.kastel.sdq.eclipse.common.api.controller.IViewInteraction;
 
 /**
  * this class displays all messages from the backend in the view. It always

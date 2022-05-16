@@ -4,17 +4,17 @@ package edu.kit.kastel.eclipse.grading.view.controllers;
 import java.util.List;
 import java.util.Optional;
 
+import edu.kit.kastel.eclipse.common.api.ArtemisClientException;
+import edu.kit.kastel.eclipse.common.api.artemis.mapping.IExercise;
+import edu.kit.kastel.eclipse.common.api.artemis.mapping.SubmissionFilter;
+import edu.kit.kastel.eclipse.common.api.controller.IAssessmentController;
+import edu.kit.kastel.eclipse.common.api.controller.IGradingSystemwideController;
+import edu.kit.kastel.eclipse.common.api.model.IAnnotation;
+import edu.kit.kastel.eclipse.common.api.model.IMistakeType;
+import edu.kit.kastel.eclipse.common.api.model.IRatingGroup;
 import edu.kit.kastel.eclipse.common.view.controllers.AbstractArtemisViewController;
 import edu.kit.kastel.eclipse.common.view.utilities.AssessmentUtilities;
 import edu.kit.kastel.eclipse.grading.view.activator.Activator;
-import edu.kit.kastel.sdq.eclipse.common.api.ArtemisClientException;
-import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.IExercise;
-import edu.kit.kastel.sdq.eclipse.common.api.artemis.mapping.SubmissionFilter;
-import edu.kit.kastel.sdq.eclipse.common.api.controller.IAssessmentController;
-import edu.kit.kastel.sdq.eclipse.common.api.controller.IGradingSystemwideController;
-import edu.kit.kastel.sdq.eclipse.common.api.model.IAnnotation;
-import edu.kit.kastel.sdq.eclipse.common.api.model.IMistakeType;
-import edu.kit.kastel.sdq.eclipse.common.api.model.IRatingGroup;
 
 /**
  * This class is the controller for the grading view. It creates the marker for
