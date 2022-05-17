@@ -2,6 +2,7 @@
 package edu.kit.kastel.eclipse.common.view.activator;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.wb.swt.ResourceManager;
 import org.osgi.framework.BundleContext;
 
 import edu.kit.kastel.eclipse.common.view.languages.LanguageSettings;
@@ -37,6 +38,9 @@ public class CommonActivator extends AbstractUIPlugin {
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
 		super.stop(context);
+
+		// Dispose SWT Resource Manager
+		ResourceManager.dispose();
 	}
 
 	/**

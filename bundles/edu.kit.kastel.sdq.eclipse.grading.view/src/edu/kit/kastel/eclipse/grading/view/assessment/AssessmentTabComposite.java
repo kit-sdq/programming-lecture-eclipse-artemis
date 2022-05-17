@@ -4,13 +4,19 @@ package edu.kit.kastel.eclipse.grading.view.assessment;
 import static edu.kit.kastel.eclipse.common.view.languages.LanguageSettings.I18N;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.wb.swt.ResourceManager;
+
+import edu.kit.kastel.eclipse.common.api.EclipseArtemisConstants;
 
 public class AssessmentTabComposite extends Composite {
 	protected Combo comboCourse;
@@ -24,6 +30,7 @@ public class AssessmentTabComposite extends Composite {
 	protected Button btnResetPluginState;
 	protected Label lblStatisticsInformation;
 	protected Label lblPluginVersion;
+	protected Button btnHelp;
 
 	// Backlog
 	protected Combo comboBacklogFilter;
@@ -129,9 +136,23 @@ public class AssessmentTabComposite extends Composite {
 		btnBacklogLoadSubmission.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		btnBacklogLoadSubmission.setText(I18N().reload());
 
-		lblPluginVersion = new Label(this, SWT.NONE);
+		Composite bottomComposite = new Composite(this, SWT.NONE);
+		bottomComposite.setLayoutData(new GridData(SWT.FILL, SWT.BOTTOM, true, true, 2, 1));
+		bottomComposite.setLayout(new GridLayout(2, false));
+
+		btnHelp = new Button(bottomComposite, SWT.NONE);
+		btnHelp.setImage(ResourceManager.getPluginImage("org.eclipse.ui", "/icons/full/etool16/help_contents@2x.png"));
+		btnHelp.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				Program.launch(EclipseArtemisConstants.GRADING_WIKI_URL);
+			}
+		});
+
+		lblPluginVersion = new Label(bottomComposite, SWT.NONE);
+		lblPluginVersion.setLayoutData(new GridData(SWT.RIGHT, SWT.BOTTOM, true, false, 1, 1));
+		lblPluginVersion.setSize(359, 20);
 		lblPluginVersion.setAlignment(SWT.RIGHT);
-		lblPluginVersion.setLayoutData(new GridData(SWT.FILL, SWT.BOTTOM, false, true, 2, 1));
 		lblPluginVersion.setText("PluginVersion");
 
 	}
@@ -140,5 +161,4 @@ public class AssessmentTabComposite extends Composite {
 	protected final void checkSubclass() {
 		// Disable the check that prevents subclassing of SWT components
 	}
-
 }
