@@ -217,6 +217,8 @@ public class ArtemisGradingView extends ViewPart {
 		this.addSelectionListenerForRefreshArtemisStateButton(this.assessmentTab.btnResetPluginState);
 
 		setVersionText(this.assessmentTab.lblPluginVersion);
+		this.assessmentTab.btnHelp.addListener(SWT.Selection, e -> {
+		});
 	}
 
 	private void setVersionText(Label label) {

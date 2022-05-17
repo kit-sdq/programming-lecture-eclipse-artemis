@@ -1,6 +1,8 @@
 /* Licensed under EPL-2.0 2022. */
 package edu.kit.kastel.eclipse.student.view.ui;
 
+import static edu.kit.kastel.eclipse.common.view.languages.LanguageSettings.I18N;
+
 import java.util.List;
 
 import org.eclipse.jface.fieldassist.ControlDecoration;
@@ -24,13 +26,13 @@ import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.wb.swt.ResourceManager;
 
+import edu.kit.kastel.eclipse.common.api.EclipseArtemisConstants;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.IStudentExam;
 import edu.kit.kastel.eclipse.common.api.messages.Messages;
 import edu.kit.kastel.eclipse.student.view.activator.Activator;
 import edu.kit.kastel.eclipse.student.view.controllers.StudentViewController;
-
-import static edu.kit.kastel.eclipse.common.view.languages.LanguageSettings.I18N;
 
 /**
  * This class creates the view elements for the artemis student process. It is
@@ -113,16 +115,9 @@ public class ArtemisStudentView extends ViewPart {
 		exerciseGradingComposite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		exerciseGradingComposite.setLayout(new GridLayout(1, true));
 
-//        Label labelExercise = new Label(exerciseGradingComposite, SWT.NONE);
-//        labelExercise.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1));
-//        labelExercise.setText(EXERCISE);
-//        FontDescriptor boldDescriptor = FontDescriptor.createFrom(labelExercise.getFont()).setStyle(SWT.BOLD).setHeight(18);
-//        Font boldFont = boldDescriptor.createFont(labelExercise.getDisplay());
-//        labelExercise.setFont(boldFont);
-
 		var pluginVersion = Activator.getDefault().getBundle().getVersion();
 		Label version = new Label(exerciseGradingComposite, SWT.NONE);
-		version.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, true, false, 2, 1));
+		version.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, true, false, 1, 1));
 		version.setAlignment(SWT.RIGHT);
 		version.setText(String.format("Artemis Student Version: %d.%d.%d", pluginVersion.getMajor(), pluginVersion.getMinor(), pluginVersion.getMicro()));
 
@@ -250,6 +245,16 @@ public class ArtemisStudentView extends ViewPart {
 		this.btnReset.setText(I18N().tabStudentNoSelection());
 		this.btnReset.setEnabled(false);
 		this.btnReset.addListener(SWT.Selection, e -> this.resetWorkspaceForSelectedExercise());
+
+		var btnHelp = new Button(exerciseComposite, SWT.NONE);
+		btnHelp.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP, true, false, 1, 1));
+		btnHelp.setImage(ResourceManager.getPluginImage("org.eclipse.ui", "/icons/full/etool16/help_contents@2x.png"));
+		btnHelp.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				Program.launch(EclipseArtemisConstants.STUDENT_WIKI_URL);
+			}
+		});
 
 		this.createExamPart(exerciseComposite);
 

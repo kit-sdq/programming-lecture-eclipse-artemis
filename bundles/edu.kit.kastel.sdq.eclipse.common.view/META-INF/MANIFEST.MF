@@ -22,4 +22,5 @@ Export-Package: edu.kit.kastel.eclipse.common.view.activator,
  edu.kit.kastel.eclipse.common.view.languages,
  edu.kit.kastel.eclipse.common.view.marker,
  edu.kit.kastel.eclipse.common.view.ui,
- edu.kit.kastel.eclipse.common.view.utilities
+ edu.kit.kastel.eclipse.common.view.utilities,
+ org.eclipse.wb.swt
