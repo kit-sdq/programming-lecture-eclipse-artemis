@@ -6,8 +6,6 @@ import java.net.ConnectException;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 
-import com.fasterxml.jackson.databind.JsonNode;
-
 import edu.kit.kastel.eclipse.common.api.ArtemisClientException;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.ICourse;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.IExercise;
@@ -33,9 +31,7 @@ public class ParticipationArtemisClient extends AbstractArtemisClient implements
 
 		this.throwIfStatusUnsuccessful(exercisesRsp);
 
-		// get the part of the json that we want to deserialize
-		final JsonNode exercisesAndParticipationsJsonNode = this.readTree(exercisesRsp.readEntity(String.class));
-		return this.read(exercisesAndParticipationsJsonNode.toString(), ParticipationDTO.class);
+		return this.read(exercisesRsp.readEntity(String.class), ParticipationDTO.class);
 	}
 
 	@Override
@@ -45,9 +41,7 @@ public class ParticipationArtemisClient extends AbstractArtemisClient implements
 
 		this.throwIfStatusUnsuccessful(exercisesRsp);
 
-		// get the part of the json that we want to deserialize
-		final JsonNode exercisesAndParticipationsJsonNode = this.readTree(exercisesRsp.readEntity(String.class));
-		return this.read(exercisesAndParticipationsJsonNode.toString(), ParticipationDTO.class);
+		return this.read(exercisesRsp.readEntity(String.class), ParticipationDTO.class);
 	}
 
 	@Override
@@ -57,9 +51,7 @@ public class ParticipationArtemisClient extends AbstractArtemisClient implements
 
 		this.throwIfStatusUnsuccessful(exercisesRsp);
 
-		// get the part of the json that we want to deserialize
-		final JsonNode exercisesAndParticipationsJsonNode = this.readTree(exercisesRsp.readEntity(String.class));
-		return this.read(exercisesAndParticipationsJsonNode.toString(), ParticipationDTO.class);
+		return this.read(exercisesRsp.readEntity(String.class), ParticipationDTO.class);
 	}
 
 	@Override
@@ -69,9 +61,7 @@ public class ParticipationArtemisClient extends AbstractArtemisClient implements
 
 		this.throwIfStatusUnsuccessful(exercisesRsp);
 
-		// get the part of the json that we want to deserialize
-		final JsonNode exercisesAndParticipationsJsonNode = this.readTree(exercisesRsp.readEntity(String.class));
-		return this.read(exercisesAndParticipationsJsonNode.toString(), ParticipationDTO.class);
+		return this.read(exercisesRsp.readEntity(String.class), ParticipationDTO.class);
 	}
 
 }

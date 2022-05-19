@@ -1,6 +1,7 @@
 /* Licensed under EPL-2.0 2022. */
 package edu.kit.kastel.eclipse.common.client.rest;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -9,8 +10,6 @@ import java.util.stream.Collectors;
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
-
-import com.fasterxml.jackson.databind.JsonNode;
 
 import edu.kit.kastel.eclipse.common.api.ArtemisClientException;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.ICourse;
@@ -24,9 +23,11 @@ import edu.kit.kastel.eclipse.common.api.messages.Messages;
 import edu.kit.kastel.eclipse.common.client.mappings.ArtemisCourse;
 import edu.kit.kastel.eclipse.common.client.mappings.ArtemisDashboardCourse;
 import edu.kit.kastel.eclipse.common.client.mappings.ArtemisExercise;
+import edu.kit.kastel.eclipse.common.client.mappings.ArtemisExerciseWrapper;
 import edu.kit.kastel.eclipse.common.client.mappings.IMappingLoader;
 import edu.kit.kastel.eclipse.common.client.mappings.exam.ArtemisExam;
 import edu.kit.kastel.eclipse.common.client.mappings.exam.ArtemisExerciseGroup;
+import edu.kit.kastel.eclipse.common.client.mappings.exam.ArtemisExerciseGroupWrapper;
 
 public class MappingLoaderArtemisClient extends AbstractArtemisClient implements ICourseArtemisClient, IMappingLoader {
 	private WebTarget endpoint;
@@ -87,21 +88,12 @@ public class MappingLoaderArtemisClient extends AbstractArtemisClient implements
 		this.throwIfStatusUnsuccessful(rsp);
 
 		// need to retrieve the exerciseGroups array root node to deserialize it!
-		JsonNode detailledExamJsonNode = this.readTree(rsp.readEntity(String.class));
-		JsonNode exerciseGroupsJsonArray = detailledExamJsonNode.get("exerciseGroups");
-		if (exerciseGroupsJsonArray == null) {
-			// exam has no exercise groups!
-			return List.of();
-		}
-		if (!exerciseGroupsJsonArray.isArray()) {
-			throw new ArtemisClientException(Messages.ASSESSMENT_JSON_PARSE_ERROR_MESSAGE);
-		}
+		List<ArtemisExerciseGroup> exerciseGroups = this.read(rsp.readEntity(String.class), ArtemisExerciseGroupWrapper.class).getExerciseGroups();
 
-		ArtemisExerciseGroup[] exerciseGroupsArray = this.read(exerciseGroupsJsonArray.toString(), ArtemisExerciseGroup[].class);
-		for (ArtemisExerciseGroup exerciseGroup : exerciseGroupsArray) {
+		for (ArtemisExerciseGroup exerciseGroup : exerciseGroups) {
 			exerciseGroup.init(this, course, artemisExam);
 		}
-		return Arrays.asList(exerciseGroupsArray);
+		return new ArrayList<>(exerciseGroups);
 	}
 
 	@Override
@@ -138,23 +130,14 @@ public class MappingLoaderArtemisClient extends AbstractArtemisClient implements
 		this.throwIfStatusUnsuccessful(exercisesRsp);
 
 		// get the part of the json that we want to deserialize
-		final JsonNode exercisesAndParticipationsJsonNode = this.readTree(exercisesRsp.readEntity(String.class));
-		JsonNode exercisesJsonArray = exercisesAndParticipationsJsonNode.get(EXERCISES_PATHPART);
-		if (exercisesJsonArray == null) {
-			// course has no exercises!
-			return List.of();
-		}
-		if (!exercisesJsonArray.isArray()) {
-			throw new ArtemisClientException(Messages.ASSESSMENT_JSON_PARSE_ERROR_MESSAGE);
-		}
+		final List<ArtemisExercise> exercises = this.read(exercisesRsp.readEntity(String.class), ArtemisExerciseWrapper.class).getExercises();
 
-		ArtemisExercise[] exercisesArray = this.read(exercisesJsonArray.toString(), ArtemisExercise[].class);
-		for (ArtemisExercise exercise : exercisesArray) {
+		for (ArtemisExercise exercise : exercises) {
 			exercise.init(this, artemisCourse, Optional.empty());
 		}
 
 		// Here we filter all programming exercises
-		return Arrays.stream(exercisesArray).filter(IExercise::isProgramming).collect(Collectors.toList());
+		return exercises.stream().filter(IExercise::isProgramming).collect(Collectors.toList());
 	}
 
 	@Override

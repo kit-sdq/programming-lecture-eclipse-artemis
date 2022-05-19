@@ -41,6 +41,8 @@ public class AnnotationMapper {
 
 	private static final NumberFormat nf = new DecimalFormat("##.###", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
 
+	private final ObjectMapper oom = new ObjectMapper();
+
 	private final IExercise exercise;
 	private final ISubmission submission;
 
@@ -159,7 +161,7 @@ public class AnnotationMapper {
 	}
 
 	private String convertAnnotationsToJSONString(final List<IAnnotation> givenAnnotations) throws JsonProcessingException {
-		return new ObjectMapper().writeValueAsString(givenAnnotations);
+		return oom.writeValueAsString(givenAnnotations);
 	}
 
 	/**

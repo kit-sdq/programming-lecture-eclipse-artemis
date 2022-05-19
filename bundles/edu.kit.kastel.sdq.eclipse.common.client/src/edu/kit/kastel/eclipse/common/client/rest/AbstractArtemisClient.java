@@ -9,7 +9,6 @@ import javax.ws.rs.core.Response.Status.Family;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import edu.kit.kastel.eclipse.common.api.ArtemisClientException;
@@ -85,14 +84,6 @@ public abstract class AbstractArtemisClient {
 	protected <E> E read(String rspEntity, Class<E> clazz) throws ArtemisClientException {
 		try {
 			return this.orm.readValue(rspEntity, clazz);
-		} catch (JsonProcessingException e) {
-			throw new ArtemisClientException(e.getMessage(), e);
-		}
-	}
-
-	protected JsonNode readTree(String readEntity) throws ArtemisClientException {
-		try {
-			return this.orm.readTree(readEntity);
 		} catch (JsonProcessingException e) {
 			throw new ArtemisClientException(e.getMessage(), e);
 		}

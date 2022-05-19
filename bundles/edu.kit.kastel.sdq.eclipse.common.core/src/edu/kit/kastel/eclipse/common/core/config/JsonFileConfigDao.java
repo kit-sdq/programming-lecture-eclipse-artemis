@@ -13,8 +13,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 public class JsonFileConfigDao implements ConfigDAO {
 
-	private File configFile;
 	private ExerciseConfig exerciseConfig;
+
+	private final File configFile;
+	private final ObjectMapper oom = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
 	public JsonFileConfigDao(File configFile) {
 		this.configFile = configFile;
@@ -31,8 +33,7 @@ public class JsonFileConfigDao implements ConfigDAO {
 			return;
 		}
 
-		ExerciseConfig config = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false).readValue(this.configFile,
-				ExerciseConfig.class);
+		ExerciseConfig config = oom.readValue(this.configFile, ExerciseConfig.class);
 		this.exerciseConfig = config;
 	}
 }

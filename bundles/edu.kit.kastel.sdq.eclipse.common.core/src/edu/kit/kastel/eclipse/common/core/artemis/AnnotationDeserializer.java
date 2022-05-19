@@ -2,13 +2,16 @@
 package edu.kit.kastel.eclipse.common.core.artemis;
 
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+
+import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.Platform;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.Feedback;
@@ -25,10 +28,14 @@ import edu.kit.kastel.eclipse.common.core.model.annotation.Annotation;
  */
 public class AnnotationDeserializer {
 
+	private static final ILog log = Platform.getLog(AnnotationDeserializer.class);
+
 	private static final String FEEDBACK_TEXT = "CLIENT_DATA";
-	private Map<String, IMistakeType> mistakeTypesMap;
+	private final Map<String, IMistakeType> mistakeTypesMap;
+	private final ObjectMapper oom;
 
 	public AnnotationDeserializer(List<IMistakeType> mistakeTypes) {
+		this.oom = new ObjectMapper();
 		this.mistakeTypesMap = new HashMap<>();
 		mistakeTypes.forEach(mistakeType -> this.mistakeTypesMap.put(mistakeType.getId(), mistakeType));
 	}
@@ -36,43 +43,16 @@ public class AnnotationDeserializer {
 	/**
 	 * Deserialize a given Collection of IFeedbacks (that contain json blobs in the
 	 * detailText field) into our model Annotations.
-	 *
-	 * @param feedbacks
-	 * @return
-	 * @throws IOException
 	 */
 	public List<IAnnotation> deserialize(List<Feedback> feedbacks) throws IOException {
-		final List<Feedback> matchingFeedbacks = feedbacks.stream().filter(feedback -> {
-			if (feedback == null) {
-				return false;
-			}
-			String text = feedback.getText();
-			return text != null && text.equals(FEEDBACK_TEXT);
-		}).toList();
+		final List<Feedback> feedbacksWithAnnotationInformation = feedbacks.stream() //
+				.filter(it -> it != null) //
+				.filter(it -> FEEDBACK_TEXT.equals(it.getText())) //
+				.toList();
 
-		if (matchingFeedbacks.isEmpty()) {
-			return List.of();
-		}
+		final List<Annotation> annotations = readAnnotations(feedbacksWithAnnotationInformation);
 
-		JsonProcessingException[] foundException = { null };
-		List<Annotation> deserializedAnnotations = matchingFeedbacks.stream().map(Feedback::getDetailText) // get the json blob
-				.map(feedbackDetailText -> { // transform the json blob to multiple annotations
-					try {
-
-						return new ObjectMapper().readValue(feedbackDetailText, Annotation[].class);
-					} catch (JsonProcessingException e) {
-						foundException[0] = e;
-						return new Annotation[0];
-					}
-				}).map(Arrays::asList).flatMap(List::stream) // Stream of List of annotations ==> Stream of annotations.
-				.collect(Collectors.toList());
-
-		if (foundException[0] != null) {
-			throw foundException[0];
-		}
-
-		// add mistaketypes!
-		for (Annotation annotation : deserializedAnnotations) {
+		for (Annotation annotation : annotations) {
 			final String mistakeTypeName = annotation.getMistakeTypeId();
 			if (!this.mistakeTypesMap.containsKey(mistakeTypeName)) {
 				throw new IOException("Trying to deserialize MistakeType \"" + mistakeTypeName + "\". It was not found in local config!");
@@ -80,6 +60,20 @@ public class AnnotationDeserializer {
 			annotation.setMistakeType(this.mistakeTypesMap.get(mistakeTypeName));
 		}
 
-		return deserializedAnnotations.stream().map(IAnnotation.class::cast).collect(Collectors.toList());
+		return new ArrayList<>(annotations);
+	}
+
+	private List<Annotation> readAnnotations(List<Feedback> feedbacksWithAnnotationInformation) {
+		List<Annotation> annotations = new ArrayList<>();
+		for (var feedback : feedbacksWithAnnotationInformation) {
+			try {
+				List<Annotation> annotationsInFeedback = oom.readValue(feedback.getDetailText(), new TypeReference<List<Annotation>>() {
+				});
+				annotations.addAll(annotationsInFeedback);
+			} catch (JsonProcessingException e) {
+				log.error(e.getMessage(), e);
+			}
+		}
+		return annotations;
 	}
 }
