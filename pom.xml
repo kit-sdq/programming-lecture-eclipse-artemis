@@ -193,7 +193,6 @@
                 <module>bundles</module>
                 <module>features</module>
                 <module>releng</module>
-                <module>jvm</module>
             </modules>
         </profile>
     </profiles>

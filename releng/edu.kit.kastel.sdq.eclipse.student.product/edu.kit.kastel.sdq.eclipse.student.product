@@ -37,9 +37,9 @@ Karlsruhe Institute of Technology (KIT), Software Design and Quality, Karlsruhe,
    </launcher>
 
    <vm>
-      <linux include="true">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-17</linux>
+      <linux include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-17</linux>
       <macos include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-17</macos>
-      <windows include="true">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-17</windows>
+      <windows include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-17</windows>
    </vm>
 
    <license>
@@ -353,7 +353,6 @@ version(s), and exceptions or additional permissions here}.&quot;
       <feature id="org.eclipse.m2e.sse.ui.feature" installMode="root"/>
       <feature id="org.eclipse.jgit.ssh.apache" installMode="root"/>
       <feature id="org.eclipse.jgit.gpg.bc" installMode="root"/>
-      <feature id="edu.kit.kastel.sdq.eclipse.jvm.feature"/>
       <feature id="org.springframework.websocket-messaging.feature" installMode="root"/>
       <feature id="org.glassfish.tyrus.client.feature" version="1.9.0" installMode="root"/>
       <feature id="net.sf.eclipsecs" installMode="root"/>
@@ -365,9 +364,9 @@ version(s), and exceptions or additional permissions here}.&quot;
       <plugin id="org.eclipse.equinox.common" autoStart="true" startLevel="2" />
       <plugin id="org.eclipse.equinox.event" autoStart="true" startLevel="2" />
       <plugin id="org.eclipse.equinox.simpleconfigurator" autoStart="true" startLevel="1" />
+      <property name="org.eclipse.ui/org.eclipse.ui.edit.text.encoding" value="UTF-8" />
       <property name="org.eclipse.core.resources/encoding" value="UTF-8" />
       <property name="osgi.instance.area.default" value="./workspace-student" />
-      <property name="org.eclipse.ui/org.eclipse.ui.edit.text.encoding" value="UTF-8" />
    </configurations>
 
    <preferencesInfo>
