@@ -41,7 +41,7 @@ public class Annotation implements IAnnotation {
 	public Annotation(@JsonProperty("uuid") String uuid, @JsonProperty("startLine") int startLine, @JsonProperty("endLine") int endLine,
 			@JsonProperty("classFilePath") String classFilePath, @JsonProperty("customMessageForJSON") String customMessage,
 			@JsonProperty("customPenaltyForJSON") Double customPenalty, @JsonProperty("mistakeTypeId") String mistakeTypeId) {
-		this.uuid = uuid == null ? IAnnotation.createUUID() : uuid;
+		this.uuid = uuid == null ? IAnnotation.createID() : uuid;
 		this.startLine = startLine;
 		this.endLine = endLine;
 		this.fullyClassifiedClassName = classFilePath;

@@ -172,7 +172,7 @@ public abstract class AbstractResultTab extends AbstractResultTabCompositeContro
 
 			var fileXline = reference.split(".java_line:");
 
-			String uuid = reference;
+			String id = reference;
 			IMistakeType type = null;
 			int startLine = Integer.parseInt(fileXline[1]);
 			int endLine = startLine;
@@ -180,7 +180,7 @@ public abstract class AbstractResultTab extends AbstractResultTabCompositeContro
 			String customMessage = f.getDetailText();
 			Double customPenalty = f.getCredits();
 
-			Annotation annotation = new Annotation(uuid, type, startLine, endLine, fullyClassifiedClassName, customMessage, customPenalty);
+			Annotation annotation = new Annotation(id, type, startLine, endLine, fullyClassifiedClassName, customMessage, customPenalty);
 			annotations.add(annotation);
 		}
 		return annotations;

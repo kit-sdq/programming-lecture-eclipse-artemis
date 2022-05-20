@@ -50,9 +50,9 @@ public class AssessmentViewController extends AbstractArtemisViewController<IGra
 	 *
 	 * @param id (of the annotation)
 	 */
-	public void deleteAnnotation(String uuid) {
+	public void deleteAnnotation(String id) {
 		if (this.assessmentController != null) {
-			this.assessmentController.removeAnnotation(uuid);
+			this.assessmentController.removeAnnotation(id);
 		}
 	}
 

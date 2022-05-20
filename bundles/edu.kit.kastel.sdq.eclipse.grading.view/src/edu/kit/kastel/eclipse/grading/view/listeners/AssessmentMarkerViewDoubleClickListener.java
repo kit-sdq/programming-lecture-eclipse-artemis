@@ -36,7 +36,7 @@ public class AssessmentMarkerViewDoubleClickListener implements IDoubleClickList
 			if (selection.getFirstElement()instanceof MarkerItem item) {
 				try {
 					IAnnotation annotation = Activator.getDefault().getSystemwideController().getCurrentAssessmentController()
-							.getAnnotationByUUID(item.getMarker().getAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_ANNOTATION_ID).toString())
+							.getAnnotationByID(item.getMarker().getAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_ANNOTATION_ID).toString())
 							.orElseThrow(() -> new NoSuchElementException("Could not find annotation. Please create it again."));
 
 					String customMessage = annotation.getCustomMessage().orElse("");

@@ -22,7 +22,7 @@ public interface IAssessmentController extends IController {
 	 * Add an annotation to the current assessment.<br>
 	 * <b>e.g. a ThresholdPenaltyRule will not consider custom penalties</b>
 	 *
-	 * @param annotationUUID           a unique annotation ID.
+	 * @param annotationID             a unique annotation ID.
 	 * @param mistakeType              the mistake type
 	 * @param startLine                annotation start
 	 * @param endLine                  annotation end
@@ -34,32 +34,32 @@ public interface IAssessmentController extends IController {
 	 *
 	 *
 	 */
-	void addAnnotation(String annotationUUID, IMistakeType mistakeType, int startLine, int endLine, String fullyClassifiedClassName, String customMessage,
+	void addAnnotation(String annotationID, IMistakeType mistakeType, int startLine, int endLine, String fullyClassifiedClassName, String customMessage,
 			Double customPenalty);
 
 	/**
 	 * Modify an existent annotation
 	 *
-	 * @param annatationUUID unique annotation identifier
-	 * @param customMessage  new custom message
-	 * @param customPenalty  new custom penalty. This may or may not have an effect,
-	 *                       depending on the MistakeType's PenaltyRule
+	 * @param annatationID  unique annotation identifier
+	 * @param customMessage new custom message
+	 * @param customPenalty new custom penalty. This may or may not have an effect,
+	 *                      depending on the MistakeType's PenaltyRule
 	 */
-	void modifyAnnotation(String annatationUUID, String customMessage, Double customPenalty);
+	void modifyAnnotation(String annatationID, String customMessage, Double customPenalty);
 
 	/**
 	 * Remove an existent annotation
 	 *
-	 * @param annatationUUID unique annotation identifier
+	 * @param annatationID unique annotation identifier
 	 */
-	void removeAnnotation(String annatationUUID);
+	void removeAnnotation(String annatationID);
 
 	/**
 	 * All annotations already made with this AssessmentController.
 	 */
 	List<IAnnotation> getAnnotations();
 
-	Optional<IAnnotation> getAnnotationByUUID(String uuid);
+	Optional<IAnnotation> getAnnotationByID(String id);
 
 	/**
 	 * All annotations already made for the given class.
