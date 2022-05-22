@@ -1,12 +1,13 @@
 /* Licensed under EPL-2.0 2022. */
 package edu.kit.kastel.eclipse.common.view.ui;
 
+import static edu.kit.kastel.eclipse.common.view.languages.LanguageSettings.I18N;
+
 import java.util.Locale;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
@@ -14,8 +15,6 @@ import org.eclipse.swt.widgets.TableItem;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.Feedback;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.IExercise;
 import edu.kit.kastel.eclipse.common.view.utilities.UIUtilities;
-
-import static edu.kit.kastel.eclipse.common.view.languages.LanguageSettings.I18N;
 
 abstract class AbstractResultTabCompositeController extends AbstractResultTabComposite {
 	private static final String CHECK_MARK_IN_UTF8 = "\u2713";
@@ -89,11 +88,9 @@ abstract class AbstractResultTabCompositeController extends AbstractResultTabCom
 		if (selectedFeedback == null) {
 			return;
 		}
-		Shell s = new Shell(Display.getDefault());
-		s.setMinimumSize(500, 500);
 		if (selectedFeedback.getDetailText() != null) {
 			var text = item.getText(0);
-			new TestDetailsDialog(s, text, selectedFeedback.getDetailText()).open();
+			new TestDetailsDialog(text, selectedFeedback.getDetailText()).open();
 		}
 	}
 

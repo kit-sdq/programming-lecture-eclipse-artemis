@@ -20,8 +20,8 @@ class TestDetailsDialog extends Dialog {
 	private String testName;
 	private String testDetails;
 
-	public TestDetailsDialog(Shell parent, String testName, String testDetails) {
-		super(parent);
+	public TestDetailsDialog(String testName, String testDetails) {
+		super((Shell) null);
 		this.setShellStyle(SWT.DIALOG_TRIM | SWT.RESIZE | SWT.MODELESS | SWT.ON_TOP);
 		this.testName = testName;
 		this.testDetails = testDetails;
