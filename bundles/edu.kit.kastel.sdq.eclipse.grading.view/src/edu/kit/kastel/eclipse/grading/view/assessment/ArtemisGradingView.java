@@ -32,6 +32,7 @@ import edu.kit.kastel.eclipse.common.view.marker.AssessmentMarkerView;
 import edu.kit.kastel.eclipse.common.view.utilities.AssessmentUtilities;
 import edu.kit.kastel.eclipse.common.view.utilities.UIUtilities;
 import edu.kit.kastel.eclipse.grading.view.activator.Activator;
+import edu.kit.kastel.eclipse.grading.view.assessment.complaints.ComplaintTab;
 import edu.kit.kastel.eclipse.grading.view.controllers.AssessmentViewController;
 import edu.kit.kastel.eclipse.grading.view.listeners.AssessmentMarkerViewDoubleClickListener;
 import edu.kit.kastel.eclipse.grading.view.listeners.KeyboardAwareMouseListener;
@@ -56,6 +57,8 @@ public class ArtemisGradingView extends ViewPart {
 	private Composite gradingButtonComposite;
 
 	private ResultTab result;
+
+	private ComplaintTab complaintTab;
 
 	public ArtemisGradingView() {
 		this.viewController = new AssessmentViewController();
@@ -159,6 +162,11 @@ public class ArtemisGradingView extends ViewPart {
 
 	private void createResultTab(TabFolder tabFolder) {
 		this.result = new ResultTab(Activator.getDefault().getSystemwideController(), tabFolder);
+	}
+
+	private void createComplaintTab(TabFolder tabFolder) {
+		this.complaintTab = new ComplaintTab(tabFolder);
+		// TODO Add listeners
 	}
 
 	private void addSelectionListenerForFilterCombo(Combo backlogCombo, Combo filterCombo) {
@@ -304,6 +312,7 @@ public class ArtemisGradingView extends ViewPart {
 		this.createAssessmentTab(tabFolder);
 		this.createGradingTab(tabFolder);
 		this.createResultTab(tabFolder);
+		this.createComplaintTab(tabFolder);
 		this.createBacklog();
 		this.updateState();
 	}
