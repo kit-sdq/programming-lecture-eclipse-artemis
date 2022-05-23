@@ -36,11 +36,13 @@ public class MistakeType implements IMistakeType {
 		this.penaltyRule = penaltyRule;
 
 		this.appliesTo = appliesTo;
+
 	}
 
 	@Override
-	public double calculatePenalty(List<IAnnotation> annotations) {
-		return this.penaltyRule.calculatePenalty(annotations);
+	public double calculate(List<IAnnotation> annotations) {
+		assert annotations.stream().allMatch(a -> this.equals(a.getMistakeType()));
+		return this.penaltyRule.calculate(annotations);
 	}
 
 	/**
@@ -112,4 +114,5 @@ public class MistakeType implements IMistakeType {
 	public boolean isCustomPenalty() {
 		return this.penaltyRule.isCustomPenalty();
 	}
+
 }

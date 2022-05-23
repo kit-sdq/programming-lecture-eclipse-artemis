@@ -19,8 +19,8 @@ import edu.kit.kastel.eclipse.common.api.model.IAnnotation;
 import edu.kit.kastel.eclipse.common.api.model.IMistakeType;
 import edu.kit.kastel.eclipse.common.api.model.IRatingGroup;
 import edu.kit.kastel.eclipse.common.core.artemis.AnnotationDeserializer;
+import edu.kit.kastel.eclipse.common.core.artemis.AnnotationMapper;
 import edu.kit.kastel.eclipse.common.core.artemis.WorkspaceUtil;
-import edu.kit.kastel.eclipse.common.core.artemis.calculation.DefaultPenaltyCalculationStrategy;
 import edu.kit.kastel.eclipse.common.core.config.ConfigDAO;
 import edu.kit.kastel.eclipse.common.core.model.annotation.AnnotationException;
 import edu.kit.kastel.eclipse.common.core.model.annotation.DefaultAnnotationDao;
@@ -68,16 +68,6 @@ public class AssessmentController extends AbstractController implements IAssessm
 			this.error(e.getMessage(), e);
 		}
 
-	}
-
-	@Override
-	public double calculateCurrentPenaltyForMistakeType(IMistakeType mistakeType) {
-		return new DefaultPenaltyCalculationStrategy(this.getAnnotations(), this.getMistakes()).calculatePenaltyForMistakeType(mistakeType);
-	}
-
-	@Override
-	public double calculateCurrentPenaltyForRatingGroup(IRatingGroup ratingGroup) {
-		return new DefaultPenaltyCalculationStrategy(this.getAnnotations(), this.getMistakes()).calcultatePenaltyForRatingGroup(ratingGroup);
 	}
 
 	@Override
@@ -215,5 +205,12 @@ public class AssessmentController extends AbstractController implements IAssessm
 	@Override
 	public IViewInteraction getViewInteraction() {
 		return this.getViewInteractionHandler();
+	}
+
+	@Override
+	public double getCurrentPenaltyForRatingGroup(IRatingGroup ratingGroup) {
+		AnnotationMapper mapper = //
+				new AnnotationMapper(exercise, submission, getAnnotations(), getRatingGroups(), null, null);
+		return mapper.calculatePointsForRatingGroup(ratingGroup).points();
 	}
 }

@@ -44,7 +44,7 @@ public class AssessmentMarkerViewDoubleClickListener implements IDoubleClickList
 					CustomButtonDialog dialog = new CustomButtonDialog(AssessmentUtilities.getWindowsShell(), null, null);
 
 					if (annotation.getMistakeType().isCustomPenalty()) {
-						dialog.setCustomPenalty(annotation.getCustomPenalty().orElse(null));
+						dialog.setCustomPoints(annotation.getCustomPenalty().orElse(null));
 						dialog.setForcePenaltyField(true);
 					}
 
@@ -58,7 +58,7 @@ public class AssessmentMarkerViewDoubleClickListener implements IDoubleClickList
 
 					String newMessage = dialog.getCustomMessage();
 					Double newPenalty = annotation.getMistakeType().isCustomPenalty() //
-							? dialog.getCustomPenalty()
+							? dialog.getCustomPoints()
 							: annotation.getCustomPenalty().orElse(null);
 
 					AssessmentUtilities.updateMarkerMessage(item.getMarker(), newMessage, newPenalty);

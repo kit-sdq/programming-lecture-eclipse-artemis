@@ -4,7 +4,6 @@ package edu.kit.kastel.eclipse.common.api.artemis.mapping;
 import java.io.Serializable;
 import java.util.Objects;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -25,19 +24,28 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class Feedback implements Comparable<Feedback>, Serializable {
 	private static final long serialVersionUID = 4531964872375020131L;
 
+	@JsonProperty("type")
 	private String type;
+	@JsonProperty("credits")
 	private Double credits;
+	@JsonProperty("id")
 	private Integer id; // null for all manual feedback
+	@JsonProperty("positive")
 	private Boolean positive; // null for all manual feedback
+	@JsonProperty("visibility")
 	private String visibility; // null for all manual feedback
+	@JsonProperty("text")
 	private String text; // null for UNREFERENCED manual feedback
+	@JsonProperty("reference")
 	private String reference; // null for UNREFERENCED manual feedback and auto feedback
+	@JsonProperty("detailText")
 	private String detailText; // null for auto feedback
 
-	@JsonCreator
-	public Feedback(@JsonProperty("type") String type, @JsonProperty("credits") Double credits, @JsonProperty("id") Integer id,
-			@JsonProperty("positive") Boolean positive, @JsonProperty("visibility") String visibility, @JsonProperty("text") String text,
-			@JsonProperty("reference") String reference, @JsonProperty("detailText") String detailText) {
+	public Feedback() {
+		// NOP
+	}
+
+	public Feedback(String type, Double credits, Integer id, Boolean positive, String visibility, String text, String reference, String detailText) {
 		this.type = type;
 		this.credits = credits;
 		this.id = id;
@@ -117,7 +125,7 @@ public class Feedback implements Comparable<Feedback>, Serializable {
 
 	/**
 	 * This is NECESSARY! for serialization to artemis.
-	 * 
+	 *
 	 * @return
 	 */
 	public String getType() {

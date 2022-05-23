@@ -17,7 +17,7 @@ public class CustomPenaltyRule extends PenaltyRule {
 	}
 
 	@Override
-	public double calculatePenalty(List<IAnnotation> annotations) {
+	public double calculate(List<IAnnotation> annotations) {
 		if (annotations != null) {
 			return annotations.stream().mapToDouble(annotation -> annotation.getCustomPenalty().orElse(0.D)).sum();
 		}
@@ -36,13 +36,7 @@ public class CustomPenaltyRule extends PenaltyRule {
 
 	@Override
 	public String getTooltip(List<IAnnotation> annotations) {
-		return new StringBuilder().append(this.calculatePenalty(annotations)).append(" points [").append(annotations.size()).append(" annotations made]")
-				.toString();
-	}
-
-	@Override
-	public String toString() {
-		return "CustomPenaltyRule";
+		return new StringBuilder().append(this.calculate(annotations)).append(" points [").append(annotations.size()).append(" annotations made]").toString();
 	}
 
 	@Override

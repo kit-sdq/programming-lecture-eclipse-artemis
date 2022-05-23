@@ -64,14 +64,6 @@ public class AssessmentViewController extends AbstractArtemisViewController<IGra
 	}
 
 	/**
-	 * @param ratingGroup
-	 * @return the current penalty for the given rating group
-	 */
-	public double getCurrentPenaltyForRatingGroup(IRatingGroup ratingGroup) {
-		return this.assessmentController.calculateCurrentPenaltyForRatingGroup(ratingGroup);
-	}
-
-	/**
 	 * @return the mistake types of the current config file
 	 */
 	public List<IMistakeType> getMistakeTypes() {

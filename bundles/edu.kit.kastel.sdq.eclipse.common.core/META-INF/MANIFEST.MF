@@ -6,7 +6,6 @@ Bundle-Version: 2.3.0
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Export-Package: edu.kit.kastel.eclipse.common.core,
  edu.kit.kastel.eclipse.common.core.artemis,
- edu.kit.kastel.eclipse.common.core.artemis.calculation,
  edu.kit.kastel.eclipse.common.core.config,
  edu.kit.kastel.eclipse.common.core.model,
  edu.kit.kastel.eclipse.common.core.model.annotation

@@ -4,12 +4,14 @@
         {
             "shortName": "functionality",
             "displayName": "Funktionalität",
-            "penaltyLimit": 20
+            "negativeLimit": -20,
+            "positiveLimit": null
         },
         {
             "shortName": "modelling",
             "displayName": "OO-Modellierung",
-            "penaltyLimit": 16
+            "negativeLimit": -16,
+            "positiveLimit": null
         },
         {
             "shortName": "understandability",
@@ -18,7 +20,8 @@
         {
             "shortName": "style",
             "displayName": "Programmierstil",
-            "penaltyLimit": 7
+            "negativeLimit": -7,
+            "positiveLimit": null
         }
     ],
     "mistakeTypes": [

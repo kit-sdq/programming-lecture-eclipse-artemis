@@ -27,9 +27,9 @@ public class StackingPenaltyRule extends PenaltyRule {
 	}
 
 	@Override
-	public double calculatePenalty(List<IAnnotation> annotations) {
+	public double calculate(List<IAnnotation> annotations) {
 		int multiplier = maxUses == null ? annotations.size() : Math.min(annotations.size(), maxUses);
-		return (multiplier * this.penalty) / 10.0;
+		return (multiplier * -this.penalty) / 10.0;
 	}
 
 	@Override
@@ -44,7 +44,7 @@ public class StackingPenaltyRule extends PenaltyRule {
 
 	@Override
 	public String getTooltip(List<IAnnotation> annotations) {
-		double penaltyValue = this.calculatePenalty(annotations);
+		double penaltyValue = this.calculate(annotations);
 		String tooltip = penaltyValue + " points [" + annotations.size() + " annotations made";
 		tooltip += maxUses != null ? " - capped to " + maxUses + " annotations" : "";
 		tooltip += "]";

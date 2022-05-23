@@ -25,8 +25,8 @@ public class ThresholdPenaltyRule extends PenaltyRule {
 	}
 
 	@Override
-	public double calculatePenalty(List<IAnnotation> annotations) {
-		return Math.abs(annotations.size() >= this.threshold ? this.penalty : 0.D);
+	public double calculate(List<IAnnotation> annotations) {
+		return annotations.size() >= this.threshold ? -this.penalty : 0.D;
 	}
 
 	@Override
@@ -41,7 +41,7 @@ public class ThresholdPenaltyRule extends PenaltyRule {
 
 	@Override
 	public String getTooltip(List<IAnnotation> annotations) {
-		double penaltyValue = this.calculatePenalty(annotations);
+		double penaltyValue = this.calculate(annotations);
 		return penaltyValue + " points [" + annotations.size() + " of at least " + this.threshold + " annotations made]";
 	}
 

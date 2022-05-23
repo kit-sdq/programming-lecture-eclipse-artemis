@@ -67,19 +67,6 @@ public interface IAssessmentController extends IController {
 	List<IAnnotation> getAnnotations(String className);
 
 	/**
-	 * Calculate a single penalty for a given mistakeType (uses one or many
-	 * annotations)
-	 */
-	double calculateCurrentPenaltyForMistakeType(IMistakeType mistakeType);
-
-	/**
-	 * Sum up all penalties of annotations whose mistakeTypes belong to the given
-	 * rating group. Takes into account the penaltyLimit of the given ratingGroup,
-	 * if defined.
-	 */
-	double calculateCurrentPenaltyForRatingGroup(IRatingGroup ratingGroup);
-
-	/**
 	 * Deletes the eclipse project this assessment belongs to. Also deletes it on
 	 * file system.
 	 */
@@ -109,4 +96,6 @@ public interface IAssessmentController extends IController {
 	void resetAndRestartAssessment(IProjectFileNamingStrategy projectNaming);
 
 	IViewInteraction getViewInteraction();
+
+	double getCurrentPenaltyForRatingGroup(IRatingGroup ratingGroup);
 }

@@ -14,11 +14,8 @@ import edu.kit.kastel.eclipse.common.api.controller.IAssessmentController;
 import edu.kit.kastel.eclipse.common.api.controller.IGradingArtemisController;
 import edu.kit.kastel.eclipse.common.api.messages.Messages;
 import edu.kit.kastel.eclipse.common.api.model.IAnnotation;
-import edu.kit.kastel.eclipse.common.api.model.IMistakeType;
 import edu.kit.kastel.eclipse.common.api.model.IRatingGroup;
 import edu.kit.kastel.eclipse.common.core.artemis.AnnotationMapper;
-import edu.kit.kastel.eclipse.common.core.artemis.calculation.DefaultPenaltyCalculationStrategy;
-import edu.kit.kastel.eclipse.common.core.artemis.calculation.IPenaltyCalculationStrategy;
 
 public class GradingArtemisController extends ArtemisController implements IGradingArtemisController {
 
@@ -53,14 +50,11 @@ public class GradingArtemisController extends ArtemisController implements IGrad
 		final int participationId = lock.getParticipationId();
 
 		final List<IAnnotation> annotations = assessmentController.getAnnotations();
-		final List<IMistakeType> mistakeTypes = assessmentController.getMistakes();
 		final List<IRatingGroup> ratingGroups = assessmentController.getRatingGroups();
 
-		IPenaltyCalculationStrategy calculator = new DefaultPenaltyCalculationStrategy(annotations, mistakeTypes);
 		try {
 			AnnotationMapper mapper = //
-					new AnnotationMapper(exercise, submission, annotations, mistakeTypes, ratingGroups, this.clientManager.getAuthenticationClient().getUser(),
-							calculator, lock);
+					new AnnotationMapper(exercise, submission, annotations, ratingGroups, this.clientManager.getAuthenticationClient().getUser(), lock);
 			this.clientManager.getAssessmentArtemisClient().saveAssessment(participationId, submit, mapper.createAssessmentResult());
 		} catch (IOException e) {
 			this.error("Local backend failed to format the annotations: " + e.getMessage(), e);

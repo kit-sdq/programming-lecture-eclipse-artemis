@@ -374,10 +374,12 @@ public class ArtemisGradingView extends ViewPart {
 		}
 		StringBuilder builder = new StringBuilder(ratingGroupName);
 		builder.append("(");
-		builder.append(this.viewController.getCurrentPenaltyForRatingGroup(ratingGroup));
-		if (ratingGroup.hasPenaltyLimit()) {
-			builder.append("/");
-			builder.append(ratingGroup.getPenaltyLimit());
+		builder.append(this.viewController.getAssessmentController().getCurrentPenaltyForRatingGroup(ratingGroup));
+		var range = ratingGroup.getRange();
+		if (!range.isEmpty()) {
+			double lower = range.first() == null ? Double.NEGATIVE_INFINITY : range.first();
+			double upper = range.second() == null ? Double.POSITIVE_INFINITY : range.second();
+			builder.append(" in [").append(lower).append(",").append(upper).append("]");
 		}
 		builder.append(") penalty points");
 		Display.getDefault().asyncExec(() -> viewElement.setText(builder.toString()));
