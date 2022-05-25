@@ -104,7 +104,7 @@ public class CustomButtonDialog extends Dialog {
 																	// points are
 																	// determined internally.
 			final Label customPenaltyLabel = new Label(comp, SWT.RIGHT);
-			customPenaltyLabel.setText("Custom Penalty: ");
+			customPenaltyLabel.setText("Custom Points: ");
 			this.customPointsInputField = new Spinner(comp, SWT.SINGLE | SWT.BORDER);
 			this.customPointsInputField.setDigits(1);
 			this.customPointsInputField.setIncrement(5);
