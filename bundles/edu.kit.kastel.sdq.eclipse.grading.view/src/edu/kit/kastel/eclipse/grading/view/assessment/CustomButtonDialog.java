@@ -40,16 +40,18 @@ public class CustomButtonDialog extends Dialog {
 	private boolean closedByOk;
 	private boolean forcePenaltyField;
 	private final AssessmentViewController viewController;
+	private final boolean allowPositiveFeedback;
 
 	// Data
 	private String customMessage;
 	private Double customPoints;
 	private IMistakeType customMistake;
 
-	public CustomButtonDialog(Shell parentShell, AssessmentViewController viewController, IMistakeType mistake) {
+	public CustomButtonDialog(Shell parentShell, boolean allowPositiveFeedback, AssessmentViewController viewController, IMistakeType mistake) {
 		super(parentShell);
 		this.viewController = viewController;
 		this.customMistake = mistake;
+		this.allowPositiveFeedback = allowPositiveFeedback;
 	}
 
 	@Override
@@ -110,7 +112,11 @@ public class CustomButtonDialog extends Dialog {
 			this.customPointsInputField.setIncrement(5);
 			this.customPointsInputField.setLayoutData(data);
 			this.customPointsInputField.setMinimum(Integer.MIN_VALUE);
-			this.customPointsInputField.setMaximum(Integer.MAX_VALUE);
+			if (this.allowPositiveFeedback) {
+				this.customPointsInputField.setMaximum(Integer.MAX_VALUE);
+			} else {
+				this.customPointsInputField.setMaximum(0);
+			}
 			this.customPointsInputField.addModifyListener(e -> {
 				// Set colors according to input
 				if (customPointsInputField.getSelection() == 0) {

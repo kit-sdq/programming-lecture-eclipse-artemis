@@ -127,6 +127,16 @@ public class AssessmentController extends AbstractController implements IAssessm
 	}
 
 	@Override
+	public boolean isPositiveFeedbackAllowed() {
+		try {
+			return this.getConfigDao().getExerciseConfig().isPositiveFeedbackAllowed();
+		} catch (IOException e) {
+			this.error("Exercise Config not parseable: " + e.getMessage(), e);
+			return true;
+		}
+	}
+
+	@Override
 	public IRatingGroup getRatingGroupByDisplayName(final String displayName) {
 		Optional<IRatingGroup> ratingGroupOptional = this.getRatingGroups().stream().filter(ratingGroup -> ratingGroup.getDisplayName().equals(displayName))
 				.findFirst();

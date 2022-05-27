@@ -98,4 +98,6 @@ public interface IAssessmentController extends IController {
 	IViewInteraction getViewInteraction();
 
 	double getCurrentPenaltyForRatingGroup(IRatingGroup ratingGroup);
+
+	boolean isPositiveFeedbackAllowed();
 }

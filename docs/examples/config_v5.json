@@ -1,5 +1,6 @@
 {
     "shortName": "Final Task 2",
+    "positiveFeedbackAllowed": true,
     "ratingGroups": [
         {
             "shortName": "functionality",

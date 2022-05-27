@@ -26,6 +26,8 @@ public class ExerciseConfig {
 	private List<RatingGroup> ratingGroups;
 	@JsonProperty("mistakeTypes")
 	private List<MistakeType> mistakeTypes;
+	@JsonProperty("positiveFeedbackAllowed")
+	private Boolean isPositiveFeedbackAllowed;
 
 	public List<IMistakeType> getIMistakeTypes() {
 		return new ArrayList<>(this.mistakeTypes);
@@ -45,6 +47,10 @@ public class ExerciseConfig {
 
 	public String getShortName() {
 		return this.shortName;
+	}
+
+	public boolean isPositiveFeedbackAllowed() {
+		return this.isPositiveFeedbackAllowed == null ? true : this.isPositiveFeedbackAllowed;
 	}
 
 }

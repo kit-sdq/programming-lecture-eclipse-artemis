@@ -41,7 +41,8 @@ public class AssessmentMarkerViewDoubleClickListener implements IDoubleClickList
 
 					String customMessage = annotation.getCustomMessage().orElse("");
 
-					CustomButtonDialog dialog = new CustomButtonDialog(AssessmentUtilities.getWindowsShell(), null, null);
+					CustomButtonDialog dialog = new CustomButtonDialog(AssessmentUtilities.getWindowsShell(), this.gradingView.isPositiveFeedbackAllowed(),
+							null, null);
 
 					if (annotation.getMistakeType().isCustomPenalty()) {
 						dialog.setCustomPoints(annotation.getCustomPenalty().orElse(null));

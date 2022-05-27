@@ -1,7 +1,6 @@
 /* Licensed under EPL-2.0 2022. */
 package edu.kit.kastel.eclipse.common.api.controller;
 
-import java.io.File;
 import java.util.List;
 import java.util.Optional;
 
@@ -63,13 +62,6 @@ public interface IGradingSystemwideController extends ISystemwideController {
 	 *
 	 */
 	void setAssessedSubmissionByProjectName(String projectName);
-
-	/**
-	 * set the new annotation model config globally.
-	 *
-	 * @param newConfigFile
-	 */
-	void setConfigFile(File newConfigFile);
 
 	/**
 	 * <B>ASSESSMENT</B><br/>
