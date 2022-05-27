@@ -27,11 +27,11 @@ public class RestClientManager {
 	private IAssessmentArtemisClient assessmentClient;
 
 	public RestClientManager(String hostname, String username, String password) {
-		this.username = username;
-		this.password = password;
-		this.hostname = hostname;
+		this.username = username.trim();
+		this.password = password.trim();
+		this.hostname = hostname.trim();
 
-		this.loginManager = new LoginManager(hostname, username, password);
+		this.loginManager = new LoginManager(this.hostname, this.username, this.password);
 	}
 
 	public String getArtemisUrl() {
