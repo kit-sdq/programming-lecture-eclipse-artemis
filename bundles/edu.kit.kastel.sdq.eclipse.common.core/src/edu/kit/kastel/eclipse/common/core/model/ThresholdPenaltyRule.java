@@ -2,6 +2,7 @@
 package edu.kit.kastel.eclipse.common.core.model;
 
 import java.util.List;
+import java.util.Objects;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -53,6 +54,23 @@ public class ThresholdPenaltyRule extends PenaltyRule {
 	@Override
 	protected boolean isCustomPenalty() {
 		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(penalty, threshold);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null || getClass() != obj.getClass()) {
+			return false;
+		}
+		ThresholdPenaltyRule other = (ThresholdPenaltyRule) obj;
+		return Double.doubleToLongBits(penalty) == Double.doubleToLongBits(other.penalty) && threshold == other.threshold;
 	}
 
 }

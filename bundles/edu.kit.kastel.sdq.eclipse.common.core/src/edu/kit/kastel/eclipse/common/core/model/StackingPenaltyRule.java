@@ -2,6 +2,7 @@
 package edu.kit.kastel.eclipse.common.core.model;
 
 import java.util.List;
+import java.util.Objects;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -62,6 +63,23 @@ public class StackingPenaltyRule extends PenaltyRule {
 	@Override
 	protected boolean isCustomPenalty() {
 		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(maxUses, penalty);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null || getClass() != obj.getClass()) {
+			return false;
+		}
+		StackingPenaltyRule other = (StackingPenaltyRule) obj;
+		return Objects.equals(maxUses, other.maxUses) && penalty == other.penalty;
 	}
 
 }

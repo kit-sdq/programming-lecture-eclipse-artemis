@@ -2,6 +2,7 @@
 package edu.kit.kastel.eclipse.common.core.model;
 
 import java.util.List;
+import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -113,6 +114,23 @@ public class MistakeType implements IMistakeType {
 	@Override
 	public boolean isCustomPenalty() {
 		return this.penaltyRule.isCustomPenalty();
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(appliesTo, penaltyRule, shortName);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null || getClass() != obj.getClass()) {
+			return false;
+		}
+		MistakeType other = (MistakeType) obj;
+		return Objects.equals(appliesTo, other.appliesTo) && Objects.equals(penaltyRule, other.penaltyRule) && Objects.equals(shortName, other.shortName);
 	}
 
 }
