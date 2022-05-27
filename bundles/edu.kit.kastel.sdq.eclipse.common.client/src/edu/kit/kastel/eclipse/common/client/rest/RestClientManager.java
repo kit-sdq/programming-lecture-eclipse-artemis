@@ -28,7 +28,7 @@ public class RestClientManager {
 
 	public RestClientManager(String hostname, String username, String password) {
 		this.username = username.trim();
-		this.password = password.trim();
+		this.password = password;
 		this.hostname = hostname.trim();
 
 		this.loginManager = new LoginManager(this.hostname, this.username, this.password);
