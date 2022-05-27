@@ -24,8 +24,6 @@ import edu.kit.kastel.eclipse.common.api.controller.IAssessmentController;
 import edu.kit.kastel.eclipse.common.api.controller.IGradingArtemisController;
 import edu.kit.kastel.eclipse.common.api.controller.IGradingSystemwideController;
 import edu.kit.kastel.eclipse.common.core.artemis.WorkspaceUtil;
-import edu.kit.kastel.eclipse.common.core.config.ConfigDAO;
-import edu.kit.kastel.eclipse.common.core.config.JsonFileConfigDao;
 
 public class GradingSystemwideController extends SystemwideController implements IGradingSystemwideController {
 
@@ -79,13 +77,6 @@ public class GradingSystemwideController extends SystemwideController implements
 		return this.getBegunSubmissions(submissionFilter).stream().map(
 				sub -> this.projectFileNamingStrategy.getProjectFileInWorkspace(WorkspaceUtil.getWorkspaceFile(), this.getCurrentExercise(), sub).getName())
 				.sorted().toList();
-	}
-
-	/**
-	 * @return this system's configDao.
-	 */
-	public ConfigDAO getConfigDao() {
-		return new JsonFileConfigDao(new File(this.preferenceStore.getString(PreferenceConstants.GRADING_ABSOLUTE_CONFIG_PATH)));
 	}
 
 	@Override
@@ -285,6 +276,10 @@ public class GradingSystemwideController extends SystemwideController implements
 	@Override
 	public Optional<IExercise> getSelectedExercise() {
 		return Optional.ofNullable(this.exercise);
+	}
+
+	public final IPreferenceStore getPreferences() {
+		return this.preferenceStore;
 	}
 
 }

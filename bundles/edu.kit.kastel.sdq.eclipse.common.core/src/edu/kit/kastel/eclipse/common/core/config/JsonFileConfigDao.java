@@ -8,10 +8,10 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
- * Implementation of {@link ConfigDAO} using a json file.
+ * Implementation of {@link GradingDAO} using a json file.
  *
  */
-public class JsonFileConfigDao implements ConfigDAO {
+public class JsonFileConfigDao implements GradingDAO {
 
 	private ExerciseConfig exerciseConfig;
 
