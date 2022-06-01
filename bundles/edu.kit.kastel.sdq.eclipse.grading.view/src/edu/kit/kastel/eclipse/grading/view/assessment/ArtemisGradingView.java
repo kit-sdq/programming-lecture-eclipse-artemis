@@ -172,7 +172,8 @@ public class ArtemisGradingView extends ViewPart {
 		customButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		customButton.setText(mistake.getButtonText());
 		customButton.addListener(SWT.Selection, event -> {
-			final CustomButtonDialog customDialog = new CustomButtonDialog(AssessmentUtilities.getWindowsShell(), this.viewController, mistake);
+			final CustomButtonDialog customDialog = new CustomButtonDialog(AssessmentUtilities.getWindowsShell(), isPositiveFeedbackAllowed(),
+					this.viewController, mistake);
 			customDialog.setBlockOnOpen(true);
 			customDialog.open();
 			// avoid SWT Exception
@@ -291,7 +292,7 @@ public class ArtemisGradingView extends ViewPart {
 	}
 
 	private void createMistakePenaltyWithCustomMessageDialog(IMistakeType mistake) {
-		CustomButtonDialog buttonDialog = new CustomButtonDialog(AssessmentUtilities.getWindowsShell(), this.viewController, null);
+		CustomButtonDialog buttonDialog = new CustomButtonDialog(AssessmentUtilities.getWindowsShell(), isPositiveFeedbackAllowed(), this.viewController, null);
 		buttonDialog.setBlockOnOpen(true);
 		buttonDialog.open();
 		if (buttonDialog.isClosedByOk()) {
@@ -374,10 +375,12 @@ public class ArtemisGradingView extends ViewPart {
 		}
 		StringBuilder builder = new StringBuilder(ratingGroupName);
 		builder.append("(");
-		builder.append(this.viewController.getCurrentPenaltyForRatingGroup(ratingGroup));
-		if (ratingGroup.hasPenaltyLimit()) {
-			builder.append("/");
-			builder.append(ratingGroup.getPenaltyLimit());
+		builder.append(this.viewController.getAssessmentController().getCurrentPenaltyForRatingGroup(ratingGroup));
+		var range = ratingGroup.getRange();
+		if (!range.isEmpty()) {
+			double lower = range.first() == null ? Double.NEGATIVE_INFINITY : range.first();
+			double upper = range.second() == null ? Double.POSITIVE_INFINITY : range.second();
+			builder.append(" in [").append(lower).append(",").append(upper).append("]");
 		}
 		builder.append(") penalty points");
 		Display.getDefault().asyncExec(() -> viewElement.setText(builder.toString()));
@@ -433,5 +436,9 @@ public class ArtemisGradingView extends ViewPart {
 	private void resetCombos() {
 		this.assessmentTab.resetCombos();
 		this.viewController.getCourseShortNames().forEach(courseShortName -> this.assessmentTab.comboCourse.add(courseShortName));
+	}
+
+	public boolean isPositiveFeedbackAllowed() {
+		return this.viewController.getAssessmentController().isPositiveFeedbackAllowed();
 	}
 }

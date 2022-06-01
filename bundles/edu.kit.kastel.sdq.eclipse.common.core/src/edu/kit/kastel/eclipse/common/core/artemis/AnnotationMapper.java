@@ -6,12 +6,16 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
+import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.Platform;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -26,7 +30,6 @@ import edu.kit.kastel.eclipse.common.api.artemis.mapping.User;
 import edu.kit.kastel.eclipse.common.api.model.IAnnotation;
 import edu.kit.kastel.eclipse.common.api.model.IMistakeType;
 import edu.kit.kastel.eclipse.common.api.model.IRatingGroup;
-import edu.kit.kastel.eclipse.common.core.artemis.calculation.IPenaltyCalculationStrategy;
 
 /**
  * Maps Annotations to Artemis-accepted json-formatted strings.
@@ -41,31 +44,28 @@ public class AnnotationMapper {
 
 	private static final NumberFormat nf = new DecimalFormat("##.###", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
 
+	private static final ILog log = Platform.getLog(AnnotationMapper.class);
+
+	private final ObjectMapper oom = new ObjectMapper();
+
 	private final IExercise exercise;
 	private final ISubmission submission;
 
 	private final List<IAnnotation> annotations;
-	private final List<IMistakeType> mistakeTypes;
 
 	private final List<IRatingGroup> ratingGroups;
 	private final User assessor;
 
-	private final IPenaltyCalculationStrategy penaltyCalculationStrategy;
-
 	private final ILockResult lock;
 
-	public AnnotationMapper(IExercise exercise, ISubmission submission, List<IAnnotation> annotations, List<IMistakeType> mistakeTypes,
-			List<IRatingGroup> ratingGroups, User assessor, IPenaltyCalculationStrategy penaltyCalculationStrategy, ILockResult lock) {
+	public AnnotationMapper(IExercise exercise, ISubmission submission, List<IAnnotation> annotations, List<IRatingGroup> ratingGroups, User assessor,
+			ILockResult lock) {
 		this.exercise = exercise;
 		this.submission = submission;
 
 		this.annotations = annotations;
-		this.mistakeTypes = mistakeTypes;
 		this.ratingGroups = ratingGroups;
-
 		this.assessor = assessor;
-		this.penaltyCalculationStrategy = penaltyCalculationStrategy;
-
 		this.lock = lock;
 	}
 
@@ -74,10 +74,8 @@ public class AnnotationMapper {
 	}
 
 	private List<Feedback> calculateAllFeedbacks() throws IOException {
-		final boolean submissionIsInvalid = this.penaltyCalculationStrategy.submissionIsInvalid();
-
 		final List<Feedback> result = new ArrayList<>(this.getFilteredPreexistentFeedbacks(FeedbackType.AUTOMATIC));
-		result.addAll(submissionIsInvalid ? this.calculateInvalidManualFeedback() : this.calculateManualFeedbacks());
+		result.addAll(this.calculateManualFeedbacks());
 		result.addAll(this.calculateAnnotationSerialitationAsFeedbacks());
 		result.removeIf(Objects::isNull);
 		return result;
@@ -110,32 +108,12 @@ public class AnnotationMapper {
 		return this.calculateAnnotationSerialisationAsFeedbacks(new ArrayList<>(this.annotations), FEEDBACK_DETAIL_TEXT_MAX_CHARACTERS);
 	}
 
-	private List<Feedback> calculateInvalidManualFeedback() {
-		final List<Feedback> manualFeedbacks = new ArrayList<>();
-		manualFeedbacks.add(new Feedback(FeedbackType.MANUAL_UNREFERENCED.name(), 0.D, null, null, null, null, null, "Invalid Submission."));
-		return manualFeedbacks;
-	}
-
 	private List<Feedback> calculateManualFeedbacks() {
 		List<Feedback> manualFeedbacks = new ArrayList<>(this.annotations.stream().collect(Collectors.groupingBy(IAnnotation::getStartLine)).entrySet().stream()
 				.map(this::createInlineFeedbackWithNoDeduction).toList());
 		// add the (rated!) rating group annotations
 		this.ratingGroups.forEach(group -> manualFeedbacks.addAll(this.createGlobalFeedbackWithDeduction(group)));
 		return manualFeedbacks;
-	}
-
-	/**
-	 * Negate what the strategy gives.
-	 */
-	private double calculatePenaltyForMistakeType(IMistakeType mistakeType) {
-		return -1D * this.penaltyCalculationStrategy.calculatePenaltyForMistakeType(mistakeType);
-	}
-
-	/**
-	 * Negate what the strategy gives.
-	 */
-	private double calculatePenaltyForRatingGroup(IRatingGroup ratingGroup) {
-		return -1D * this.penaltyCalculationStrategy.calcultatePenaltyForRatingGroup(ratingGroup);
 	}
 
 	private double calculateRelativeScore(double absoluteScore) {
@@ -159,7 +137,7 @@ public class AnnotationMapper {
 	}
 
 	private String convertAnnotationsToJSONString(final List<IAnnotation> givenAnnotations) throws JsonProcessingException {
-		return new ObjectMapper().writeValueAsString(givenAnnotations);
+		return oom.writeValueAsString(givenAnnotations);
 	}
 
 	/**
@@ -184,13 +162,14 @@ public class AnnotationMapper {
 	 * @return a json-formattable object ready to be send as payload to the Client
 	 */
 	public AssessmentResult createAssessmentResult() throws IOException {
-		final boolean submissionIsInvalid = this.penaltyCalculationStrategy.submissionIsInvalid();
 		// only add preexistent automatic feedback (unit tests etc) and manual feedback.
 		// this should work indepently of invalid or not. if invalid, there should just
 		// be no feedbacks.
 		final List<Feedback> allFeedbacks = this.calculateAllFeedbacks();
-		final double absoluteScore = submissionIsInvalid ? 0.D : Math.max(0.D, this.calculateAbsoluteScore(allFeedbacks));
-		final double relativeScore = submissionIsInvalid ? 0.D : this.calculateRelativeScore(absoluteScore);
+
+		// Cap to [0, maxPoints]
+		final double absoluteScore = Math.min(Math.max(0.D, this.calculateAbsoluteScore(allFeedbacks)), this.exercise.getMaxPoints());
+		final double relativeScore = this.calculateRelativeScore(absoluteScore);
 
 		return new AssessmentResult(this.submission.getSubmissionId(), this.calculateResultString(allFeedbacks, absoluteScore), "SEMI_AUTOMATIC", relativeScore,
 				true, true, null, this.assessor, allFeedbacks);
@@ -216,7 +195,7 @@ public class AnnotationMapper {
 			var mistakeType = annotation.getMistakeType();
 			String detailText = "[" + mistakeType.getRatingGroup().getDisplayName() + ":" + mistakeType.getButtonText() + "] ";
 			if (mistakeType.isCustomPenalty()) {
-				detailText += annotation.getCustomMessage().get() + " (" + nf.format(-annotation.getCustomPenalty().get()) + "P)";
+				detailText += annotation.getCustomMessage().get() + " (" + nf.format(annotation.getCustomPenalty().get()) + "P)";
 			} else {
 				detailText += mistakeType.getMessage();
 				if (annotation.getCustomMessage().isPresent()) {
@@ -229,37 +208,35 @@ public class AnnotationMapper {
 	}
 
 	private List<Feedback> createGlobalFeedbackWithDeduction(IRatingGroup ratingGroup) {
-		final double calculatedPenalty = this.calculatePenaltyForRatingGroup(ratingGroup);
+		final PointResult pointResult = calculatePointsForRatingGroup(ratingGroup);
+		final var range = ratingGroup.getRange();
 
 		List<String> lines = new ArrayList<>();
 
 		String annotationHeadline = "";
 
-		annotationHeadline = ratingGroup.getDisplayName() + " [" + nf.format(calculatedPenalty);
+		annotationHeadline = ratingGroup.getDisplayName() + " [" + nf.format(pointResult.points);
 
-		if (ratingGroup.hasPenaltyLimit()) {
-			annotationHeadline += " of at most " + nf.format(-ratingGroup.getPenaltyLimit());
+		if (!range.isEmpty()) {
+			double lower = range.first() == null ? Double.NEGATIVE_INFINITY : range.first();
+			double upper = range.second() == null ? Double.POSITIVE_INFINITY : range.second();
+
+			annotationHeadline += " (Range: " + nf.format(lower) + " -- " + nf.format(upper) + ")";
 		}
 
 		annotationHeadline += " points]";
 
-		for (var mistakeType : this.mistakeTypes) {
-			if (!mistakeType.getRatingGroup().equals(ratingGroup)) {
-				continue;
-			}
-
-			final double currentPenalty = this.calculatePenaltyForMistakeType(mistakeType);
-			if (Math.abs(currentPenalty) < 1E-8) {
-				continue;
-			}
+		for (var mistakeTypeXScore : pointResult.scores.entrySet()) {
+			final var mistakeType = mistakeTypeXScore.getKey();
+			final double currentPenalty = mistakeTypeXScore.getValue();
 
 			final List<IAnnotation> currentAnnotations = this.annotations.stream() //
 					.filter(annotation -> annotation.getMistakeType().equals(mistakeType)) //
-					.collect(Collectors.toList());
-			lines.add("\n    * \"" + mistakeType.getButtonText() + "\" [" + nf.format(currentPenalty) + "]:");
+					.toList();
+			lines.add("\n    * \"" + mistakeType.getButtonText() + "\" [" + nf.format(currentPenalty) + "P]:");
 			if (mistakeType.isCustomPenalty()) {
 				for (var annotation : currentAnnotations) {
-					String penalty = nf.format(-annotation.getCustomPenalty().get());
+					String penalty = nf.format(annotation.getCustomPenalty().get());
 					lines.add("\n        * " + annotation.getClassFilePath() + " at line " + (annotation.getStartLine() + 1) + " (" + penalty + "P)");
 				}
 			} else {
@@ -269,8 +246,8 @@ public class AnnotationMapper {
 			}
 		}
 
-		if (this.penaltyCalculationStrategy.penaltyLimitIsHitForRatingGroup(ratingGroup)) {
-			lines.add("\n    * Note: The sum of penalties hit the penalty limit for this rating group.");
+		if (pointResult.reachedLimit) {
+			lines.add("\n    * Note: The sum of penalties hit the limits for this rating group.");
 		}
 
 		List<String> feedbackTexts = new LinkedList<>();
@@ -292,7 +269,7 @@ public class AnnotationMapper {
 
 		List<Feedback> feedbacks = new LinkedList<>();
 
-		feedbacks.add(new Feedback(FeedbackType.MANUAL_UNREFERENCED.name(), calculatedPenalty, null, null, null, null, null, feedbackTexts.get(0)));
+		feedbacks.add(new Feedback(FeedbackType.MANUAL_UNREFERENCED.name(), pointResult.points, null, null, null, null, null, feedbackTexts.get(0)));
 
 		for (int i = 1; i < feedbackTexts.size(); i++) {
 			feedbacks.add(new Feedback(FeedbackType.MANUAL_UNREFERENCED.name(), 0d, null, null, null, null, null, feedbackTexts.get(i)));
@@ -310,6 +287,44 @@ public class AnnotationMapper {
 			feedbacks.add(feedback);
 		}
 		return feedbacks;
+	}
+
+	public PointResult calculatePointsForRatingGroup(IRatingGroup ratingGroup) {
+		// Calculate the points w.r.t. the PenaltyTypes
+		log.info("Calculate Points for RG " + ratingGroup.getDisplayName());
+		double sum = 0;
+		Map<IMistakeType, Double> scores = new HashMap<>();
+		for (var mistakeType : ratingGroup.getMistakeTypes()) {
+			Double score = calculatePointsForMistakeType(mistakeType);
+			if (score == null) {
+				// No annotation made.
+				continue;
+			}
+			scores.put(mistakeType, score);
+			sum += score;
+		}
+
+		boolean reachedLimit = !ratingGroup.getRange().isEmpty() && ratingGroup.setToRange(sum) != sum;
+		if (reachedLimit) {
+			log.info("RG " + ratingGroup.getDisplayName() + " reached limit");
+			sum = ratingGroup.setToRange(sum);
+		}
+		return new PointResult(sum, reachedLimit, scores);
+	}
+
+	private Double calculatePointsForMistakeType(IMistakeType mistakeType) {
+		log.info("Calculate Points for MT " + mistakeType.getButtonText());
+		var filteredAnnotations = this.annotations.stream().filter(a -> a.getMistakeType().equals(mistakeType)).toList();
+		if (filteredAnnotations.isEmpty()) {
+			return null;
+		}
+
+		var points = mistakeType.calculate(filteredAnnotations);
+		log.info("MT " + mistakeType.getButtonText() + " -> " + points);
+		return points;
+	}
+
+	public record PointResult(double points, boolean reachedLimit, Map<IMistakeType, Double> scores) {
 	}
 
 }

@@ -21,15 +21,18 @@ public class LockResult implements ILockResult {
 	private List<Feedback> latestFeedback;
 
 	@JsonCreator
-	public LockResult(@JsonProperty("id") int submissionID, @JsonProperty("results") List<LockCallAssessmentResult> previousAssessmentresults,
+	public LockResult( //
+			@JsonProperty("id") int submissionId, //
+			@JsonProperty("results") List<LockCallAssessmentResult> previousAssessmentResults, //
 			@JsonProperty("participation") ParticipationDTO participation) {
-		this.submissionId = submissionID;
+
+		this.submissionId = submissionId;
 		this.participationId = participation.getParticipationID();
 
 		this.latestFeedback = new ArrayList<>();
-		LockCallAssessmentResult latestResult = previousAssessmentresults.isEmpty() //
+		LockCallAssessmentResult latestResult = previousAssessmentResults.isEmpty() //
 				? null //
-				: previousAssessmentresults.get(previousAssessmentresults.size() - 1);
+				: previousAssessmentResults.get(previousAssessmentResults.size() - 1);
 
 		if (latestResult != null) {
 			latestResult.getFeedbacks().stream().filter(Objects::nonNull).forEach(this.latestFeedback::add);

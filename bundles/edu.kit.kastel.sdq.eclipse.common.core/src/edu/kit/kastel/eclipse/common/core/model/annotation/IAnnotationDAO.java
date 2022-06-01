@@ -9,7 +9,7 @@ import edu.kit.kastel.eclipse.common.api.model.IMistakeType;
 /**
  * Holder of Annotation State.
  */
-public interface IAnnotationDao {
+public interface IAnnotationDAO {
 
 	/**
 	 * Add an annotation to the current assessment.

@@ -1,6 +1,7 @@
 /* Licensed under EPL-2.0 2022. */
 package edu.kit.kastel.eclipse.common.core;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
@@ -8,6 +9,7 @@ import java.util.Optional;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 
+import edu.kit.kastel.eclipse.common.api.PreferenceConstants;
 import edu.kit.kastel.eclipse.common.api.artemis.IProjectFileNamingStrategy;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.ICourse;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.IExercise;
@@ -19,21 +21,24 @@ import edu.kit.kastel.eclipse.common.api.model.IAnnotation;
 import edu.kit.kastel.eclipse.common.api.model.IMistakeType;
 import edu.kit.kastel.eclipse.common.api.model.IRatingGroup;
 import edu.kit.kastel.eclipse.common.core.artemis.AnnotationDeserializer;
+import edu.kit.kastel.eclipse.common.core.artemis.AnnotationMapper;
 import edu.kit.kastel.eclipse.common.core.artemis.WorkspaceUtil;
-import edu.kit.kastel.eclipse.common.core.artemis.calculation.DefaultPenaltyCalculationStrategy;
-import edu.kit.kastel.eclipse.common.core.config.ConfigDAO;
+import edu.kit.kastel.eclipse.common.core.config.GradingDAO;
+import edu.kit.kastel.eclipse.common.core.config.JsonFileConfigDao;
+import edu.kit.kastel.eclipse.common.core.model.annotation.AnnotationDAO;
 import edu.kit.kastel.eclipse.common.core.model.annotation.AnnotationException;
-import edu.kit.kastel.eclipse.common.core.model.annotation.DefaultAnnotationDao;
-import edu.kit.kastel.eclipse.common.core.model.annotation.IAnnotationDao;
+import edu.kit.kastel.eclipse.common.core.model.annotation.IAnnotationDAO;
 
 public class AssessmentController extends AbstractController implements IAssessmentController {
 
-	private GradingSystemwideController systemWideController;
-	private IAnnotationDao annotationDao;
+	private final GradingSystemwideController systemWideController;
 
 	private final ICourse course;
 	private final IExercise exercise;
-	private ISubmission submission;
+	private final ISubmission submission;
+
+	private GradingDAO gradingDAO;
+	private IAnnotationDAO annotationDAO;
 
 	/**
 	 * Protected, because the way to get a specific assessment controller should be
@@ -50,7 +55,8 @@ public class AssessmentController extends AbstractController implements IAssessm
 		this.exercise = exercise;
 		this.submission = submission;
 
-		this.annotationDao = new DefaultAnnotationDao();
+		this.annotationDAO = new AnnotationDAO();
+		this.gradingDAO = loadGradingDAO();
 
 		try {
 			this.initializeWithDeserializedAnnotations();
@@ -59,25 +65,19 @@ public class AssessmentController extends AbstractController implements IAssessm
 		}
 	}
 
+	private GradingDAO loadGradingDAO() {
+		return new JsonFileConfigDao(new File(this.systemWideController.getPreferences().getString(PreferenceConstants.GRADING_ABSOLUTE_CONFIG_PATH)));
+	}
+
 	@Override
 	public void addAnnotation(String annotationID, IMistakeType mistakeType, int startLine, int endLine, String fullyClassifiedClassName, String customMessage,
 			Double customPenalty) {
 		try {
-			this.annotationDao.addAnnotation(annotationID, mistakeType, startLine, endLine, fullyClassifiedClassName, customMessage, customPenalty);
+			this.annotationDAO.addAnnotation(annotationID, mistakeType, startLine, endLine, fullyClassifiedClassName, customMessage, customPenalty);
 		} catch (AnnotationException e) {
 			this.error(e.getMessage(), e);
 		}
 
-	}
-
-	@Override
-	public double calculateCurrentPenaltyForMistakeType(IMistakeType mistakeType) {
-		return new DefaultPenaltyCalculationStrategy(this.getAnnotations(), this.getMistakes()).calculatePenaltyForMistakeType(mistakeType);
-	}
-
-	@Override
-	public double calculateCurrentPenaltyForRatingGroup(IRatingGroup ratingGroup) {
-		return new DefaultPenaltyCalculationStrategy(this.getAnnotations(), this.getMistakes()).calcultatePenaltyForRatingGroup(ratingGroup);
 	}
 
 	@Override
@@ -94,21 +94,17 @@ public class AssessmentController extends AbstractController implements IAssessm
 
 	@Override
 	public List<IAnnotation> getAnnotations() {
-		return this.annotationDao.getAnnotations().stream().toList();
+		return this.annotationDAO.getAnnotations().stream().toList();
 	}
 
 	@Override
-	public Optional<IAnnotation> getAnnotationByUUID(String uuid) {
-		return this.annotationDao.getAnnotations().stream().filter(annotation -> annotation.getUUID().equals(uuid)).findFirst();
+	public Optional<IAnnotation> getAnnotationByID(String id) {
+		return this.annotationDAO.getAnnotations().stream().filter(annotation -> annotation.getUUID().equals(id)).findFirst();
 	}
 
 	@Override
 	public List<IAnnotation> getAnnotations(String className) {
-		return this.annotationDao.getAnnotations().stream().filter(annotation -> annotation.getClassFilePath().equals(className)).toList();
-	}
-
-	private ConfigDAO getConfigDao() {
-		return this.systemWideController.getConfigDao();
+		return this.annotationDAO.getAnnotations().stream().filter(annotation -> annotation.getClassFilePath().equals(className)).toList();
 	}
 
 	@Override
@@ -129,10 +125,20 @@ public class AssessmentController extends AbstractController implements IAssessm
 	@Override
 	public List<IMistakeType> getMistakes() {
 		try {
-			return this.getConfigDao().getExerciseConfig().getIMistakeTypes();
+			return gradingDAO.getExerciseConfig().getIMistakeTypes();
 		} catch (IOException e) {
 			this.error("Exercise Config not parseable: " + e.getMessage(), e);
 			return List.of();
+		}
+	}
+
+	@Override
+	public boolean isPositiveFeedbackAllowed() {
+		try {
+			return gradingDAO.getExerciseConfig().isPositiveFeedbackAllowed();
+		} catch (IOException e) {
+			this.error("Exercise Config not parseable: " + e.getMessage(), e);
+			return true;
 		}
 	}
 
@@ -161,7 +167,7 @@ public class AssessmentController extends AbstractController implements IAssessm
 	@Override
 	public List<IRatingGroup> getRatingGroups() {
 		try {
-			return this.getConfigDao().getExerciseConfig().getIRatingGroups();
+			return gradingDAO.getExerciseConfig().getIRatingGroups();
 		} catch (IOException e) {
 			this.error("Exercise Config not parseable: " + e.getMessage(), e);
 			return List.of();
@@ -189,12 +195,12 @@ public class AssessmentController extends AbstractController implements IAssessm
 
 	@Override
 	public void modifyAnnotation(String annatationId, String customMessage, Double customPenalty) {
-		this.annotationDao.modifyAnnotation(annatationId, customMessage, customPenalty);
+		this.annotationDAO.modifyAnnotation(annatationId, customMessage, customPenalty);
 	}
 
 	@Override
 	public void removeAnnotation(String annotationId) {
-		this.annotationDao.removeAnnotation(annotationId);
+		this.annotationDAO.removeAnnotation(annotationId);
 	}
 
 	@Override
@@ -203,7 +209,8 @@ public class AssessmentController extends AbstractController implements IAssessm
 		this.systemWideController.getArtemisController().startAssessment(this.submission);
 		this.systemWideController.downloadExerciseAndSubmission(this.course, this.exercise, this.submission, projectNaming);
 
-		this.annotationDao = new DefaultAnnotationDao();
+		this.annotationDAO = new AnnotationDAO();
+		this.gradingDAO = loadGradingDAO();
 
 		try {
 			this.initializeWithDeserializedAnnotations();
@@ -215,5 +222,12 @@ public class AssessmentController extends AbstractController implements IAssessm
 	@Override
 	public IViewInteraction getViewInteraction() {
 		return this.getViewInteractionHandler();
+	}
+
+	@Override
+	public double getCurrentPenaltyForRatingGroup(IRatingGroup ratingGroup) {
+		AnnotationMapper mapper = //
+				new AnnotationMapper(exercise, submission, getAnnotations(), getRatingGroups(), null, null);
+		return mapper.calculatePointsForRatingGroup(ratingGroup).points();
 	}
 }

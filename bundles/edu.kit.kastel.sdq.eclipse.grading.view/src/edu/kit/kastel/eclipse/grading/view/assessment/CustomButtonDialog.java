@@ -15,6 +15,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.wb.swt.SWTResourceManager;
 
 import edu.kit.kastel.eclipse.common.api.PreferenceConstants;
 import edu.kit.kastel.eclipse.common.api.model.IMistakeType;
@@ -35,20 +36,22 @@ public class CustomButtonDialog extends Dialog {
 
 	// Internal state
 	private Text customMessageInputField;
-	private Spinner customPenaltyInputField;
+	private Spinner customPointsInputField;
 	private boolean closedByOk;
 	private boolean forcePenaltyField;
 	private final AssessmentViewController viewController;
+	private final boolean allowPositiveFeedback;
 
 	// Data
 	private String customMessage;
-	private Double customPenalty;
+	private Double customPoints;
 	private IMistakeType customMistake;
 
-	public CustomButtonDialog(Shell parentShell, AssessmentViewController viewController, IMistakeType mistake) {
+	public CustomButtonDialog(Shell parentShell, boolean allowPositiveFeedback, AssessmentViewController viewController, IMistakeType mistake) {
 		super(parentShell);
 		this.viewController = viewController;
 		this.customMistake = mistake;
+		this.allowPositiveFeedback = allowPositiveFeedback;
 	}
 
 	@Override
@@ -103,15 +106,36 @@ public class CustomButtonDialog extends Dialog {
 																	// points are
 																	// determined internally.
 			final Label customPenaltyLabel = new Label(comp, SWT.RIGHT);
-			customPenaltyLabel.setText("Custom Penalty: ");
-			this.customPenaltyInputField = new Spinner(comp, SWT.SINGLE | SWT.BORDER);
-			this.customPenaltyInputField.setDigits(1);
-			this.customPenaltyInputField.setIncrement(5);
-			this.customPenaltyInputField.setLayoutData(data);
+			customPenaltyLabel.setText("Custom Points: ");
+			this.customPointsInputField = new Spinner(comp, SWT.SINGLE | SWT.BORDER);
+			this.customPointsInputField.setDigits(1);
+			this.customPointsInputField.setIncrement(5);
+			this.customPointsInputField.setLayoutData(data);
+			this.customPointsInputField.setMinimum(Integer.MIN_VALUE);
+			if (this.allowPositiveFeedback) {
+				this.customPointsInputField.setMaximum(Integer.MAX_VALUE);
+			} else {
+				this.customPointsInputField.setMaximum(0);
+			}
+			this.customPointsInputField.addModifyListener(e -> {
+				// Set colors according to input
+				if (customPointsInputField.getSelection() == 0) {
+					this.customPointsInputField.setForeground(SWTResourceManager.getColor(SWT.COLOR_BLACK));
+					this.customMessageInputField.setForeground(SWTResourceManager.getColor(SWT.COLOR_BLACK));
+				}
+				if (customPointsInputField.getSelection() > 0) {
+					this.customPointsInputField.setForeground(SWTResourceManager.getColor(SWT.COLOR_DARK_GREEN));
+					this.customMessageInputField.setForeground(SWTResourceManager.getColor(SWT.COLOR_DARK_GREEN));
+				}
+				if (customPointsInputField.getSelection() < 0) {
+					this.customPointsInputField.setForeground(SWTResourceManager.getColor(SWT.COLOR_RED));
+					this.customMessageInputField.setForeground(SWTResourceManager.getColor(SWT.COLOR_RED));
+				}
+			});
 
 			// Multiply by 10 because the selection internally stores the selection as an
 			// integer ignoring the decimal point. (0.5 ==> 5, 1 ==> 10)
-			this.customPenaltyInputField.setSelection((int) (Objects.requireNonNullElse(this.customPenalty, 0d).doubleValue() * 10));
+			this.customPointsInputField.setSelection((int) (Objects.requireNonNullElse(this.customPoints, 0d).doubleValue() * 10));
 		}
 
 		return comp;
@@ -132,27 +156,27 @@ public class CustomButtonDialog extends Dialog {
 		return this.isClosedByOk() ? this.customMessage : null;
 	}
 
-	public void setCustomPenalty(Double customPenalty) {
-		this.customPenalty = customPenalty;
-		if (this.customPenaltyInputField != null) {
-			this.customPenaltyInputField.setSelection((int) (customPenalty * 10));
+	public void setCustomPoints(Double customPoints) {
+		this.customPoints = customPoints;
+		if (this.customPointsInputField != null) {
+			this.customPointsInputField.setSelection((int) (customPoints * 10));
 		}
 	}
 
-	public Double getCustomPenalty() {
-		return this.customPenalty;
+	public Double getCustomPoints() {
+		return this.customPoints;
 	}
 
 	@Override
 	protected void okPressed() {
 		this.closedByOk = true;
 		this.customMessage = this.customMessageInputField.getText();
-		if (this.customPenaltyInputField != null) {
-			this.customPenalty = Double.parseDouble(this.customPenaltyInputField.getText().replace(',', '.'));
+		if (this.customPointsInputField != null) {
+			this.customPoints = Double.parseDouble(this.customPointsInputField.getText().replace(',', '.'));
 			if (this.customMistake != null) {
 				// don't create an annotation iff the annotation is generated externally.
 				AssessmentUtilities.createAssessmentAnnotation(this.viewController.getAssessmentController(), this.customMistake, this.customMessage,
-						this.customPenalty);
+						this.customPoints);
 			}
 		}
 		super.okPressed();
@@ -215,7 +239,7 @@ public class CustomButtonDialog extends Dialog {
 				if (this.isReturnCharacter(e.keyCode)) {
 					this.customButtonDialog.okPressed();
 				} else {
-					this.customButtonDialog.customPenaltyInputField.setFocus();
+					this.customButtonDialog.customPointsInputField.setFocus();
 				}
 			}
 		}

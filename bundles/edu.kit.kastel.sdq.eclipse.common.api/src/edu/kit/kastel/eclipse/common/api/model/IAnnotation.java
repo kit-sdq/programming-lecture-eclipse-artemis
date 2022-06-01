@@ -37,9 +37,8 @@ public interface IAnnotation {
 
 	String getUUID();
 
-	static String createUUID() {
-		// TODO Better UUID Generation ..
-		return String.valueOf(UUID.randomUUID());
+	static String createID() {
+		return String.format("%d_%s", System.currentTimeMillis(), UUID.randomUUID());
 	}
 
 }

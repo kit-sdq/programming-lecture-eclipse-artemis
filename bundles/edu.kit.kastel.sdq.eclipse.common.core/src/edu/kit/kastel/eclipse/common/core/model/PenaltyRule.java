@@ -21,7 +21,7 @@ public abstract class PenaltyRule {
 	 *
 	 * @return a reducing penalty
 	 */
-	public abstract double calculatePenalty(List<IAnnotation> annotations);
+	public abstract double calculate(List<IAnnotation> annotations);
 
 	public abstract String getDisplayName();
 

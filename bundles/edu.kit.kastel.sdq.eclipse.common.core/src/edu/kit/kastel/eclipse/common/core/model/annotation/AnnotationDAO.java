@@ -8,11 +8,11 @@ import java.util.Set;
 import edu.kit.kastel.eclipse.common.api.model.IAnnotation;
 import edu.kit.kastel.eclipse.common.api.model.IMistakeType;
 
-public class DefaultAnnotationDao implements IAnnotationDao {
+public class AnnotationDAO implements IAnnotationDAO {
 
 	private final Set<IAnnotation> annotations;
 
-	public DefaultAnnotationDao() {
+	public AnnotationDAO() {
 		this.annotations = new HashSet<>();
 	}
 

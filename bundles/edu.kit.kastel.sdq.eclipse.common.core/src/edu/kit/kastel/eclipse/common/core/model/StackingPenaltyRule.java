@@ -2,6 +2,7 @@
 package edu.kit.kastel.eclipse.common.core.model;
 
 import java.util.List;
+import java.util.Objects;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -27,9 +28,9 @@ public class StackingPenaltyRule extends PenaltyRule {
 	}
 
 	@Override
-	public double calculatePenalty(List<IAnnotation> annotations) {
+	public double calculate(List<IAnnotation> annotations) {
 		int multiplier = maxUses == null ? annotations.size() : Math.min(annotations.size(), maxUses);
-		return (multiplier * this.penalty) / 10.0;
+		return (multiplier * -this.penalty) / 10.0;
 	}
 
 	@Override
@@ -44,7 +45,7 @@ public class StackingPenaltyRule extends PenaltyRule {
 
 	@Override
 	public String getTooltip(List<IAnnotation> annotations) {
-		double penaltyValue = this.calculatePenalty(annotations);
+		double penaltyValue = this.calculate(annotations);
 		String tooltip = penaltyValue + " points [" + annotations.size() + " annotations made";
 		tooltip += maxUses != null ? " - capped to " + maxUses + " annotations" : "";
 		tooltip += "]";
@@ -62,6 +63,23 @@ public class StackingPenaltyRule extends PenaltyRule {
 	@Override
 	protected boolean isCustomPenalty() {
 		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(maxUses, penalty);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null || getClass() != obj.getClass()) {
+			return false;
+		}
+		StackingPenaltyRule other = (StackingPenaltyRule) obj;
+		return Objects.equals(maxUses, other.maxUses) && penalty == other.penalty;
 	}
 
 }

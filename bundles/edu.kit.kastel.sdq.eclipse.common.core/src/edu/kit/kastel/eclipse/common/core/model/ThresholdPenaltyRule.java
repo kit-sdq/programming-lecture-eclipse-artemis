@@ -2,6 +2,7 @@
 package edu.kit.kastel.eclipse.common.core.model;
 
 import java.util.List;
+import java.util.Objects;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -25,8 +26,8 @@ public class ThresholdPenaltyRule extends PenaltyRule {
 	}
 
 	@Override
-	public double calculatePenalty(List<IAnnotation> annotations) {
-		return Math.abs(annotations.size() >= this.threshold ? this.penalty : 0.D);
+	public double calculate(List<IAnnotation> annotations) {
+		return annotations.size() >= this.threshold ? -this.penalty : 0.D;
 	}
 
 	@Override
@@ -41,7 +42,7 @@ public class ThresholdPenaltyRule extends PenaltyRule {
 
 	@Override
 	public String getTooltip(List<IAnnotation> annotations) {
-		double penaltyValue = this.calculatePenalty(annotations);
+		double penaltyValue = this.calculate(annotations);
 		return penaltyValue + " points [" + annotations.size() + " of at least " + this.threshold + " annotations made]";
 	}
 
@@ -53,6 +54,23 @@ public class ThresholdPenaltyRule extends PenaltyRule {
 	@Override
 	protected boolean isCustomPenalty() {
 		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(penalty, threshold);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null || getClass() != obj.getClass()) {
+			return false;
+		}
+		ThresholdPenaltyRule other = (ThresholdPenaltyRule) obj;
+		return Double.doubleToLongBits(penalty) == Double.doubleToLongBits(other.penalty) && threshold == other.threshold;
 	}
 
 }

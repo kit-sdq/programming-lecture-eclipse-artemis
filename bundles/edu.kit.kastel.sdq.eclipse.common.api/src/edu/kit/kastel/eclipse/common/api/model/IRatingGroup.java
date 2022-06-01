@@ -3,6 +3,8 @@ package edu.kit.kastel.eclipse.common.api.model;
 
 import java.util.List;
 
+import edu.kit.kastel.eclipse.common.api.util.Pair;
+
 /**
  * {@link IMistakeType}s belong to a {@link IRatingGroup}. Rating Groups may
  * introduce penalty limits for calculation, capping the maximum penalty that
@@ -11,8 +13,6 @@ import java.util.List;
  *
  */
 public interface IRatingGroup {
-	// TODO hier getMistakeTypes ! transient oder sowas (?), nicht serialisiert!
-
 	/**
 	 *
 	 * @return A more elaborate name.
@@ -27,10 +27,15 @@ public interface IRatingGroup {
 
 	/**
 	 *
-	 * @return the maximum penalty that all {@link IMistakeType}s belonging to one
-	 *         {@link IRatingGroup} can reach in sum
+	 * @return the minimum or maximum penalty that all {@link IMistakeType}
+	 *         belonging to one {@link IRatingGroup} can reach in sum
 	 */
-	double getPenaltyLimit();
+	double setToRange(double points);
+
+	/**
+	 * @return [negative_limit, positive_limit]
+	 */
+	Pair<Double, Double> getRange();
 
 	/**
 	 *
@@ -38,9 +43,4 @@ public interface IRatingGroup {
 	 */
 	String getShortName();
 
-	/**
-	 * The rating group might have a penalty limit or not. See
-	 * {@link #getPenaltyLimit()}
-	 */
-	boolean hasPenaltyLimit();
 }

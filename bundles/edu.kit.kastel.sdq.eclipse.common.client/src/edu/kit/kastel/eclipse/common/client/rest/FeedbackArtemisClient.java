@@ -4,8 +4,6 @@ package edu.kit.kastel.eclipse.common.client.rest;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 
-import com.fasterxml.jackson.databind.JsonNode;
-
 import edu.kit.kastel.eclipse.common.api.ArtemisClientException;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.Feedback;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.ParticipationDTO;
@@ -31,8 +29,7 @@ public class FeedbackArtemisClient extends AbstractArtemisClient implements IFee
 		this.throwIfStatusUnsuccessful(exercisesRsp);
 
 		// get the part of the json that we want to deserialize
-		final JsonNode exercisesAndParticipationsJsonNode = this.readTree(exercisesRsp.readEntity(String.class));
-		return this.read(exercisesAndParticipationsJsonNode.toString(), Feedback[].class);
+		return this.read(exercisesRsp.readEntity(String.class), Feedback[].class);
 	}
 
 }

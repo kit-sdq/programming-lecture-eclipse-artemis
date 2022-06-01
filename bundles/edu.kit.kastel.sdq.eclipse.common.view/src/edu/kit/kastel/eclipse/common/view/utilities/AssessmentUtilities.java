@@ -182,9 +182,9 @@ public final class AssessmentUtilities {
 		final String className = file.getFullPath().makeRelative().toString().split("src", 2)[1];
 
 		try {
-			String uuid = IAnnotation.createUUID();
+			String id = IAnnotation.createID();
 			IMarker marker = AssessmentUtilities.getCurrentlyOpenFile().createMarker(AssessmentUtilities.MARKER_CLASS_NAME);
-			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_ANNOTATION_ID, uuid);
+			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_ANNOTATION_ID, id);
 			AssessmentUtilities.setCharPositionsInMarkerByLine(marker, projectName, srcPath, className, startLine, endLine);
 
 			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_ERROR_DESCRIPTION, mistake.isCustomPenalty() ? "" : mistake.getMessage());
@@ -205,7 +205,7 @@ public final class AssessmentUtilities {
 			} else {
 				marker.setAttribute(IMarker.MESSAGE, AssessmentUtilities.createMarkerTooltipForCustomButton(startLine, endLine, customMessage, customPenalty));
 			}
-			assessmentController.addAnnotation(uuid, mistake, startLine, endLine, AssessmentUtilities.getPathForAnnotation(), customMessage, customPenalty);
+			assessmentController.addAnnotation(id, mistake, startLine, endLine, AssessmentUtilities.getPathForAnnotation(), customMessage, customPenalty);
 		} catch (Exception e) {
 
 			/*
@@ -295,7 +295,7 @@ public final class AssessmentUtilities {
 
 	/**
 	 * Checks whether the given annotation is present in the currently opened
-	 * project (An annotation is identified by its UUID)
+	 * project (An annotation is identified by its ID)
 	 *
 	 * @param annotation the annotation to check
 	 * @return annotation if the annotation is present, null if not

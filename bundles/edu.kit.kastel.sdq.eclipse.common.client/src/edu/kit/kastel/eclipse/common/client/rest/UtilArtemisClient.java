@@ -6,8 +6,6 @@ import java.time.LocalDateTime;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 
-import com.fasterxml.jackson.databind.JsonNode;
-
 import edu.kit.kastel.eclipse.common.api.ArtemisClientException;
 import edu.kit.kastel.eclipse.common.api.client.IUtilArtemisClient;
 
@@ -26,8 +24,7 @@ public class UtilArtemisClient extends AbstractArtemisClient implements IUtilArt
 
 		this.throwIfStatusUnsuccessful(exercisesRsp);
 
-		final JsonNode exercisesAndParticipationsJsonNode = this.readTree(exercisesRsp.readEntity(String.class));
-		return this.read(exercisesAndParticipationsJsonNode.toString(), LocalDateTime.class);
+		return this.read(exercisesRsp.readEntity(String.class), LocalDateTime.class);
 	}
 
 }

@@ -4,7 +4,6 @@ package edu.kit.kastel.eclipse.common.core.config;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
@@ -17,23 +16,18 @@ import edu.kit.kastel.eclipse.common.core.model.RatingGroup;
  * A mapped config file (from {@link JsonFileConfigDao})
  *
  */
-@JsonDeserialize(converter = ExerciseConfigConverter.class) // used for adding associations between mistakeType and RatingGroup
+@JsonDeserialize(converter = ExerciseConfigConverter.class) // used for adding associations between
+															// mistakeType and RatingGroup
 public class ExerciseConfig {
 
+	@JsonProperty("shortName")
 	private String shortName;
+	@JsonProperty("ratingGroups")
 	private List<RatingGroup> ratingGroups;
+	@JsonProperty("mistakeTypes")
 	private List<MistakeType> mistakeTypes;
-
-	@JsonCreator
-	public ExerciseConfig(//
-			@JsonProperty("shortName") String shortName, //
-			@JsonProperty("ratingGroups") List<RatingGroup> ratingGroups, //
-			@JsonProperty("mistakeTypes") List<MistakeType> mistakeTypes //
-	) {
-		this.shortName = shortName;
-		this.ratingGroups = ratingGroups;
-		this.mistakeTypes = mistakeTypes;
-	}
+	@JsonProperty("positiveFeedbackAllowed")
+	private Boolean isPositiveFeedbackAllowed;
 
 	public List<IMistakeType> getIMistakeTypes() {
 		return new ArrayList<>(this.mistakeTypes);
@@ -53,6 +47,10 @@ public class ExerciseConfig {
 
 	public String getShortName() {
 		return this.shortName;
+	}
+
+	public boolean isPositiveFeedbackAllowed() {
+		return this.isPositiveFeedbackAllowed == null ? true : this.isPositiveFeedbackAllowed;
 	}
 
 }

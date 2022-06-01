@@ -4,8 +4,6 @@ package edu.kit.kastel.eclipse.common.client.rest;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 
-import com.fasterxml.jackson.databind.JsonNode;
-
 import edu.kit.kastel.eclipse.common.api.ArtemisClientException;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.ICourse;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.IExam;
@@ -29,12 +27,9 @@ public class ExamArtemisClient extends AbstractArtemisClient implements IExamArt
 		// "/courses/{courseId}/exams/{examId}/start"
 		final Response exercisesRsp = this.endpoint.path(COURSES_PATHPART).path(String.valueOf(course.getCourseId())).path(EXAMS_PATHPART)
 				.path(String.valueOf(exam.getExamId())).path("start").request().header(AUTHORIZATION_NAME, this.token).buildGet().invoke();
-
 		this.throwIfStatusUnsuccessful(exercisesRsp);
-
 		// get the part of the json that we want to deserialize
-		final JsonNode exercisesAndParticipationsJsonNode = this.readTree(exercisesRsp.readEntity(String.class));
-		return this.read(exercisesAndParticipationsJsonNode.toString(), ArtemisStudentExam.class);
+		return this.read(exercisesRsp.readEntity(String.class), ArtemisStudentExam.class);
 	}
 
 	@Override
@@ -42,12 +37,8 @@ public class ExamArtemisClient extends AbstractArtemisClient implements IExamArt
 		final Response exercisesRsp = this.endpoint.path(COURSES_PATHPART).path(String.valueOf(course.getCourseId())).path(EXAMS_PATHPART)
 				.path(String.valueOf(exam.getExamId())).path(STUDENT_EXAM_PATH).path("conduction").request().header(AUTHORIZATION_NAME, this.token).buildGet()
 				.invoke();
-
 		this.throwIfStatusUnsuccessful(exercisesRsp);
-
-		// get the part of the json that we want to deserialize
-		final JsonNode exercisesAndParticipationsJsonNode = this.readTree(exercisesRsp.readEntity(String.class));
-		return this.read(exercisesAndParticipationsJsonNode.toString(), ArtemisStudentExam.class);
+		return this.read(exercisesRsp.readEntity(String.class), ArtemisStudentExam.class);
 	}
 
 }

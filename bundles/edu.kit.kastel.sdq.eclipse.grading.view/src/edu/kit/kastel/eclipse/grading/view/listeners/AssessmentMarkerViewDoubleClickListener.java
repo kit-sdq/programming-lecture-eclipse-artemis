@@ -36,15 +36,16 @@ public class AssessmentMarkerViewDoubleClickListener implements IDoubleClickList
 			if (selection.getFirstElement()instanceof MarkerItem item) {
 				try {
 					IAnnotation annotation = Activator.getDefault().getSystemwideController().getCurrentAssessmentController()
-							.getAnnotationByUUID(item.getMarker().getAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_ANNOTATION_ID).toString())
+							.getAnnotationByID(item.getMarker().getAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_ANNOTATION_ID).toString())
 							.orElseThrow(() -> new NoSuchElementException("Could not find annotation. Please create it again."));
 
 					String customMessage = annotation.getCustomMessage().orElse("");
 
-					CustomButtonDialog dialog = new CustomButtonDialog(AssessmentUtilities.getWindowsShell(), null, null);
+					CustomButtonDialog dialog = new CustomButtonDialog(AssessmentUtilities.getWindowsShell(), this.gradingView.isPositiveFeedbackAllowed(),
+							null, null);
 
 					if (annotation.getMistakeType().isCustomPenalty()) {
-						dialog.setCustomPenalty(annotation.getCustomPenalty().orElse(null));
+						dialog.setCustomPoints(annotation.getCustomPenalty().orElse(null));
 						dialog.setForcePenaltyField(true);
 					}
 
@@ -58,7 +59,7 @@ public class AssessmentMarkerViewDoubleClickListener implements IDoubleClickList
 
 					String newMessage = dialog.getCustomMessage();
 					Double newPenalty = annotation.getMistakeType().isCustomPenalty() //
-							? dialog.getCustomPenalty()
+							? dialog.getCustomPoints()
 							: annotation.getCustomPenalty().orElse(null);
 
 					AssessmentUtilities.updateMarkerMessage(item.getMarker(), newMessage, newPenalty);

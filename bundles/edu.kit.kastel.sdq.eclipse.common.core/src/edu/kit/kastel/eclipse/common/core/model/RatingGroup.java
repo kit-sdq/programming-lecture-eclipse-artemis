@@ -5,27 +5,27 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import edu.kit.kastel.eclipse.common.api.model.IMistakeType;
 import edu.kit.kastel.eclipse.common.api.model.IRatingGroup;
+import edu.kit.kastel.eclipse.common.api.util.Pair;
 
 public class RatingGroup implements IRatingGroup {
 
+	@JsonProperty
 	private String shortName;
+	@JsonProperty
 	private String displayName;
-	private Double penaltyLimit;
+	@JsonProperty
+	private Double positiveLimit;
+	@JsonProperty
+	private Double negativeLimit;
 
-	private List<MistakeType> mistakeTypes;
+	private transient List<MistakeType> mistakeTypes = new ArrayList<>();
 
-	@JsonCreator
-	public RatingGroup(@JsonProperty("shortName") final String shortName, @JsonProperty("displayName") final String displayName,
-			@JsonProperty("penaltyLimit") final Double penaltyLimit) {
-		this.shortName = shortName;
-		this.displayName = displayName;
-		this.mistakeTypes = new ArrayList<>();
-		this.penaltyLimit = penaltyLimit;
+	public RatingGroup() {
+		// NOP
 	}
 
 	public void addMistakeType(MistakeType mistakeType) {
@@ -43,25 +43,23 @@ public class RatingGroup implements IRatingGroup {
 	}
 
 	@Override
-	public double getPenaltyLimit() {
-		// in case the caller does not call this::hasPenaltyLimit.
-		return this.penaltyLimit != null ? this.penaltyLimit : Double.MAX_VALUE;
-	}
-
-	@Override
 	public String getShortName() {
 		return this.shortName;
 	}
 
 	@Override
-	public boolean hasPenaltyLimit() {
-		return this.penaltyLimit != null;
+	public Pair<Double, Double> getRange() {
+		return new Pair<>(this.negativeLimit, this.positiveLimit);
 	}
 
 	@Override
-	public String toString() {
-		return "RatingGroup [" + "shortName=" + this.shortName + ", displayName=" + this.displayName + ", penaltyLimit= "
-				+ (this.hasPenaltyLimit() ? this.penaltyLimit : "NO_LIMIT") + "]";
+	public double setToRange(double points) {
+		if (negativeLimit != null && points < negativeLimit) {
+			return negativeLimit;
+		}
+		if (positiveLimit != null && points > positiveLimit) {
+			return positiveLimit;
+		}
+		return points;
 	}
-
 }

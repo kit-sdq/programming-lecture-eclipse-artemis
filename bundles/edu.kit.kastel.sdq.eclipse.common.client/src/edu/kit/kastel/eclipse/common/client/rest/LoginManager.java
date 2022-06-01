@@ -70,8 +70,7 @@ public class LoginManager extends AbstractArtemisClient implements IAuthenticati
 
 		this.throwIfStatusUnsuccessful(authenticationResponse);
 		final String authRspEntity = authenticationResponse.readEntity(String.class);
-		final String rawToken = this.readTree(authRspEntity).get("id_token").asText();
-		return rawToken;
+		return this.read(authRspEntity, Token.class).token;
 	}
 
 	private final AuthenticationEntity getAuthenticationEntity() {
@@ -89,5 +88,11 @@ public class LoginManager extends AbstractArtemisClient implements IAuthenticati
 		private String password;
 		@JsonProperty
 		private boolean rememberMe = true;
+	}
+
+	private static final class Token implements Serializable {
+		private static final long serialVersionUID = -3729961485516556014L;
+		@JsonProperty("id_token")
+		private String token;
 	}
 }

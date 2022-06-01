@@ -22,7 +22,7 @@ public interface IAssessmentController extends IController {
 	 * Add an annotation to the current assessment.<br>
 	 * <b>e.g. a ThresholdPenaltyRule will not consider custom penalties</b>
 	 *
-	 * @param annotationUUID           a unique annotation ID.
+	 * @param annotationID             a unique annotation ID.
 	 * @param mistakeType              the mistake type
 	 * @param startLine                annotation start
 	 * @param endLine                  annotation end
@@ -34,50 +34,37 @@ public interface IAssessmentController extends IController {
 	 *
 	 *
 	 */
-	void addAnnotation(String annotationUUID, IMistakeType mistakeType, int startLine, int endLine, String fullyClassifiedClassName, String customMessage,
+	void addAnnotation(String annotationID, IMistakeType mistakeType, int startLine, int endLine, String fullyClassifiedClassName, String customMessage,
 			Double customPenalty);
 
 	/**
 	 * Modify an existent annotation
 	 *
-	 * @param annatationUUID unique annotation identifier
-	 * @param customMessage  new custom message
-	 * @param customPenalty  new custom penalty. This may or may not have an effect,
-	 *                       depending on the MistakeType's PenaltyRule
+	 * @param annatationID  unique annotation identifier
+	 * @param customMessage new custom message
+	 * @param customPenalty new custom penalty. This may or may not have an effect,
+	 *                      depending on the MistakeType's PenaltyRule
 	 */
-	void modifyAnnotation(String annatationUUID, String customMessage, Double customPenalty);
+	void modifyAnnotation(String annatationID, String customMessage, Double customPenalty);
 
 	/**
 	 * Remove an existent annotation
 	 *
-	 * @param annatationUUID unique annotation identifier
+	 * @param annatationID unique annotation identifier
 	 */
-	void removeAnnotation(String annatationUUID);
+	void removeAnnotation(String annatationID);
 
 	/**
 	 * All annotations already made with this AssessmentController.
 	 */
 	List<IAnnotation> getAnnotations();
 
-	Optional<IAnnotation> getAnnotationByUUID(String uuid);
+	Optional<IAnnotation> getAnnotationByID(String id);
 
 	/**
 	 * All annotations already made for the given class.
 	 */
 	List<IAnnotation> getAnnotations(String className);
-
-	/**
-	 * Calculate a single penalty for a given mistakeType (uses one or many
-	 * annotations)
-	 */
-	double calculateCurrentPenaltyForMistakeType(IMistakeType mistakeType);
-
-	/**
-	 * Sum up all penalties of annotations whose mistakeTypes belong to the given
-	 * rating group. Takes into account the penaltyLimit of the given ratingGroup,
-	 * if defined.
-	 */
-	double calculateCurrentPenaltyForRatingGroup(IRatingGroup ratingGroup);
 
 	/**
 	 * Deletes the eclipse project this assessment belongs to. Also deletes it on
@@ -109,4 +96,8 @@ public interface IAssessmentController extends IController {
 	void resetAndRestartAssessment(IProjectFileNamingStrategy projectNaming);
 
 	IViewInteraction getViewInteraction();
+
+	double getCurrentPenaltyForRatingGroup(IRatingGroup ratingGroup);
+
+	boolean isPositiveFeedbackAllowed();
 }

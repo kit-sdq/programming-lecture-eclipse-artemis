@@ -24,14 +24,11 @@ import edu.kit.kastel.eclipse.common.api.controller.IAssessmentController;
 import edu.kit.kastel.eclipse.common.api.controller.IGradingArtemisController;
 import edu.kit.kastel.eclipse.common.api.controller.IGradingSystemwideController;
 import edu.kit.kastel.eclipse.common.core.artemis.WorkspaceUtil;
-import edu.kit.kastel.eclipse.common.core.config.ConfigDAO;
-import edu.kit.kastel.eclipse.common.core.config.JsonFileConfigDao;
 
 public class GradingSystemwideController extends SystemwideController implements IGradingSystemwideController {
 
 	private final Map<Integer, IAssessmentController> assessmentControllers = new HashMap<>();
 	private IGradingArtemisController artemisGUIController;
-	private ConfigDAO configDao;
 
 	private ISubmission submission;
 
@@ -45,9 +42,6 @@ public class GradingSystemwideController extends SystemwideController implements
 				preferenceStore.getString(PreferenceConstants.GENERAL_ARTEMIS_PASSWORD) //
 		);
 		this.preferenceStore = preferenceStore;
-
-		// initialize config
-		this.updateConfigFile();
 
 		this.initPreferenceStoreCallback(preferenceStore);
 	}
@@ -83,13 +77,6 @@ public class GradingSystemwideController extends SystemwideController implements
 		return this.getBegunSubmissions(submissionFilter).stream().map(
 				sub -> this.projectFileNamingStrategy.getProjectFileInWorkspace(WorkspaceUtil.getWorkspaceFile(), this.getCurrentExercise(), sub).getName())
 				.sorted().toList();
-	}
-
-	/**
-	 * @return this system's configDao.
-	 */
-	public ConfigDAO getConfigDao() {
-		return this.configDao;
 	}
 
 	@Override
@@ -157,8 +144,6 @@ public class GradingSystemwideController extends SystemwideController implements
 		if (this.nullCheckMembersAndNotify(true, true, true)) {
 			return;
 		}
-		this.updateConfigFile();
-
 		this.getCurrentAssessmentController().resetAndRestartAssessment(this.projectFileNamingStrategy);
 	}
 
@@ -191,11 +176,6 @@ public class GradingSystemwideController extends SystemwideController implements
 	}
 
 	@Override
-	public void setConfigFile(File newConfigFile) {
-		this.configDao = new JsonFileConfigDao(newConfigFile);
-	}
-
-	@Override
 	public List<String> setCourseIdAndGetExerciseShortNames(final String courseShortName) throws ArtemisClientException {
 
 		for (ICourse c : this.getArtemisController().getCourses()) {
@@ -212,7 +192,6 @@ public class GradingSystemwideController extends SystemwideController implements
 		if (this.nullCheckMembersAndNotify(true, true, false)) {
 			return false;
 		}
-		this.updateConfigFile();
 
 		Optional<ISubmission> optionalSubmissionID = this.artemisGUIController.startNextAssessment(this.exercise, correctionRound);
 		if (optionalSubmissionID.isEmpty()) {
@@ -250,10 +229,6 @@ public class GradingSystemwideController extends SystemwideController implements
 			this.assessmentControllers.remove(this.submission.getSubmissionId());
 			this.submission = null;
 		}
-	}
-
-	private void updateConfigFile() {
-		this.setConfigFile(new File(this.preferenceStore.getString(PreferenceConstants.GRADING_ABSOLUTE_CONFIG_PATH)));
 	}
 
 	private boolean nullCheckMembersAndNotify(boolean checkCourseID, boolean checkExerciseID, boolean checkSubmissionID) {
@@ -301,6 +276,10 @@ public class GradingSystemwideController extends SystemwideController implements
 	@Override
 	public Optional<IExercise> getSelectedExercise() {
 		return Optional.ofNullable(this.exercise);
+	}
+
+	public final IPreferenceStore getPreferences() {
+		return this.preferenceStore;
 	}
 
 }

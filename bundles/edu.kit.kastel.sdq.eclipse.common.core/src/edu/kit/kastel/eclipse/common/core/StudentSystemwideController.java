@@ -34,8 +34,8 @@ import edu.kit.kastel.eclipse.common.api.util.Pair;
 import edu.kit.kastel.eclipse.common.core.artemis.AnnotationDeserializer;
 import edu.kit.kastel.eclipse.common.core.artemis.WorkspaceUtil;
 import edu.kit.kastel.eclipse.common.core.model.annotation.AnnotationException;
-import edu.kit.kastel.eclipse.common.core.model.annotation.DefaultAnnotationDao;
-import edu.kit.kastel.eclipse.common.core.model.annotation.IAnnotationDao;
+import edu.kit.kastel.eclipse.common.core.model.annotation.AnnotationDAO;
+import edu.kit.kastel.eclipse.common.core.model.annotation.IAnnotationDAO;
 
 public class StudentSystemwideController extends SystemwideController implements IStudentSystemwideController {
 
@@ -44,7 +44,7 @@ public class StudentSystemwideController extends SystemwideController implements
 	private IStudentArtemisController artemisGUIController;
 	private String artemisHost;
 
-	private IAnnotationDao annotationDao;
+	private IAnnotationDAO annotationDao;
 
 	public StudentSystemwideController(final IPreferenceStore preferenceStore) {
 		super(preferenceStore.getString(PreferenceConstants.GENERAL_ARTEMIS_USER), //
@@ -65,7 +65,7 @@ public class StudentSystemwideController extends SystemwideController implements
 		this.artemisGUIController = controller;
 		this.websocketController = controller;
 		this.artemisHost = artemisHost;
-		this.annotationDao = new DefaultAnnotationDao();
+		this.annotationDao = new AnnotationDAO();
 	}
 
 	@Override

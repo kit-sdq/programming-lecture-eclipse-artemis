@@ -50,9 +50,9 @@ public class AssessmentViewController extends AbstractArtemisViewController<IGra
 	 *
 	 * @param id (of the annotation)
 	 */
-	public void deleteAnnotation(String uuid) {
+	public void deleteAnnotation(String id) {
 		if (this.assessmentController != null) {
-			this.assessmentController.removeAnnotation(uuid);
+			this.assessmentController.removeAnnotation(id);
 		}
 	}
 
@@ -61,14 +61,6 @@ public class AssessmentViewController extends AbstractArtemisViewController<IGra
 	 */
 	public List<IAnnotation> getAnnotations() {
 		return this.assessmentController.getAnnotations();
-	}
-
-	/**
-	 * @param ratingGroup
-	 * @return the current penalty for the given rating group
-	 */
-	public double getCurrentPenaltyForRatingGroup(IRatingGroup ratingGroup) {
-		return this.assessmentController.calculateCurrentPenaltyForRatingGroup(ratingGroup);
 	}
 
 	/**

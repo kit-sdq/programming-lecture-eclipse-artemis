@@ -10,12 +10,12 @@ import java.util.List;
 public interface IMistakeType {
 
 	/**
-	 * Calculate penalty using only the given annotations.
+	 * Calculate penalty using only the given annotations. Consider
+	 * {@link #isDeduction()} for the calculation!
 	 *
-	 * @param annotations
-	 * @return a <i>positive</> value denoting the penalty.
+	 * @return a <i>positive or negative</> value denoting the penalty or points.
 	 */
-	double calculatePenalty(List<IAnnotation> annotations);
+	double calculate(List<IAnnotation> annotations);
 
 	/**
 	 *
