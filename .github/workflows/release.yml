@@ -65,24 +65,6 @@ jobs:
         rm dist/Artemis_Student_MacOS.zip
         ditto -c -k --sequesterRsrc --keepParent Eclipse.app dist/Artemis_Student_MacOS.zip        
 
-    - name: Save Eclipse Distribution (Windows)
-      uses: actions/upload-artifact@v3
-      with:
-        name: "Eclipse Distribution Windows"
-        path: "dist/Artemis_*_Windows.zip"
-    
-    - name: Save Eclipse Distribution (Linux)
-      uses: actions/upload-artifact@v3
-      with:
-        name: "Eclipse Distribution Linux"
-        path: "dist/Artemis_*_Linux.zip"
-
-    - name: Save Eclipse Distribution (MacOS)
-      uses: actions/upload-artifact@v3
-      with:
-        name: "Eclipse Distribution MacOS"
-        path: "dist/Artemis_*_MacOS.zip"
-
     - name: Deploy Update Site
       uses: JamesIves/github-pages-deploy-action@v4.3.3
       with:
