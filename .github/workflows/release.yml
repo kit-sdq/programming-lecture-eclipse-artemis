@@ -68,9 +68,10 @@ jobs:
     - name: Deploy Update Site
       uses: JamesIves/github-pages-deploy-action@v4.3.3
       with:
-        BRANCH: gh-pages 
-        FOLDER: releng/edu.kit.kastel.sdq.eclipse.updatesite/target/repository
-        CLEAN: true   
+        branch: gh-pages 
+        folder: releng/edu.kit.kastel.sdq.eclipse.updatesite/target/repository
+        clean: true 
+        single-commit: true
           
     - name: GitHub Release
       uses: softprops/action-gh-release@v1
