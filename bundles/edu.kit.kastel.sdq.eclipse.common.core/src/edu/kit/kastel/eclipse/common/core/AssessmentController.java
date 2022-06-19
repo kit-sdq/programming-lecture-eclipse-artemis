@@ -8,6 +8,7 @@ import java.util.Optional;
 
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.dialogs.MessageDialog;
 
 import edu.kit.kastel.eclipse.common.api.PreferenceConstants;
 import edu.kit.kastel.eclipse.common.api.artemis.IProjectFileNamingStrategy;
@@ -23,6 +24,7 @@ import edu.kit.kastel.eclipse.common.api.model.IRatingGroup;
 import edu.kit.kastel.eclipse.common.core.artemis.AnnotationDeserializer;
 import edu.kit.kastel.eclipse.common.core.artemis.AnnotationMapper;
 import edu.kit.kastel.eclipse.common.core.artemis.WorkspaceUtil;
+import edu.kit.kastel.eclipse.common.core.config.ExerciseConfig;
 import edu.kit.kastel.eclipse.common.core.config.GradingDAO;
 import edu.kit.kastel.eclipse.common.core.config.JsonFileConfigDao;
 import edu.kit.kastel.eclipse.common.core.model.annotation.AnnotationDAO;
@@ -57,6 +59,19 @@ public class AssessmentController extends AbstractController implements IAssessm
 
 		this.annotationDAO = new AnnotationDAO();
 		this.gradingDAO = loadGradingDAO();
+
+		try {
+			ExerciseConfig exerciseConfig = this.gradingDAO.getExerciseConfig();
+			if (!exerciseConfig.getAllowedExercises().isEmpty() && !exerciseConfig.getAllowedExercises().contains(this.exercise.getExerciseId())) {
+				MessageDialog.openWarning(null, "Warning - potential configuration mismatch", """
+						You are using a configuration file not designed for this exercise!\n
+						Your file is \"%s\", however you are correcting exercise \"%s\"!\n
+						Please double check your settings!
+						""".formatted(exerciseConfig.getShortName(), this.exercise.getShortName()));
+			}
+		} catch (IOException e) {
+			this.error("Exercise Config not parseable: " + e.getMessage(), e);
+		}
 
 		try {
 			this.initializeWithDeserializedAnnotations();
