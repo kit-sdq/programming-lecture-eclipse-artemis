@@ -15,6 +15,7 @@ on:
 
 jobs:
   build:
+    name: "Full build of all distributions"
     runs-on: macos-latest
 
     steps:

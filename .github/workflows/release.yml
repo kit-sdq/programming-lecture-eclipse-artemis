@@ -10,6 +10,7 @@ on:
 
 jobs:
   build:
+    name: "Create release for new version"
     runs-on: macos-latest
 
     steps:
