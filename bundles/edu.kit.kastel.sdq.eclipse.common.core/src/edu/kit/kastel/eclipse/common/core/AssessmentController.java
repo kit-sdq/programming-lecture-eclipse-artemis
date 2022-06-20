@@ -8,7 +8,6 @@ import java.util.Optional;
 
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.dialogs.MessageDialog;
 
 import edu.kit.kastel.eclipse.common.api.PreferenceConstants;
 import edu.kit.kastel.eclipse.common.api.artemis.IProjectFileNamingStrategy;
@@ -17,7 +16,6 @@ import edu.kit.kastel.eclipse.common.api.artemis.mapping.IExercise;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.ISubmission;
 import edu.kit.kastel.eclipse.common.api.controller.AbstractController;
 import edu.kit.kastel.eclipse.common.api.controller.IAssessmentController;
-import edu.kit.kastel.eclipse.common.api.controller.IViewInteraction;
 import edu.kit.kastel.eclipse.common.api.model.IAnnotation;
 import edu.kit.kastel.eclipse.common.api.model.IMistakeType;
 import edu.kit.kastel.eclipse.common.api.model.IRatingGroup;
@@ -63,7 +61,9 @@ public class AssessmentController extends AbstractController implements IAssessm
 		try {
 			ExerciseConfig exerciseConfig = this.gradingDAO.getExerciseConfig();
 			if (!exerciseConfig.getAllowedExercises().isEmpty() && !exerciseConfig.getAllowedExercises().contains(this.exercise.getExerciseId())) {
-				MessageDialog.openWarning(null, "Warning - potential configuration mismatch", """
+				// using interaction handler of the system wide controller, as the own
+				// interaction handler is not set during the constructor
+				systemWideController.getViewInteractionHandler().warn("""
 						You are using a configuration file not designed for this exercise!\n
 						Your file is \"%s\", however you are correcting exercise \"%s\"!\n
 						Please double check your settings!
@@ -232,11 +232,6 @@ public class AssessmentController extends AbstractController implements IAssessm
 		} catch (IOException e) {
 			this.info("Deserializing Annotations from Artemis failed: " + e.getMessage());
 		}
-	}
-
-	@Override
-	public IViewInteraction getViewInteraction() {
-		return this.getViewInteractionHandler();
 	}
 
 	@Override
