@@ -67,7 +67,7 @@ jobs:
         ditto -c -k --sequesterRsrc --keepParent Eclipse.app dist/Artemis_Student_MacOS.zip        
 
     - name: Deploy Update Site
-      uses: JamesIves/github-pages-deploy-action@v4.3.3
+      uses: JamesIves/github-pages-deploy-action@v4.3.4
       with:
         branch: gh-pages 
         folder: releng/edu.kit.kastel.sdq.eclipse.updatesite/target/repository
