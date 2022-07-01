@@ -35,296 +35,292 @@ import edu.kit.kastel.eclipse.common.api.model.IRatingGroup;
  * Maps Annotations to Artemis-accepted json-formatted strings.
  */
 public class AnnotationMapper {
-	// keep this up to date with
-	// https://github.com/ls1intum/Artemis/blob/develop/src/main/java/de/tum/in/www1/artemis/config/Constants.java#L121
-	private static final int FEEDBACK_DETAIL_TEXT_MAX_CHARACTERS = 5000;
+    // keep this up to date with
+    // https://github.com/ls1intum/Artemis/blob/develop/src/main/java/de/tum/in/www1/artemis/config/Constants.java#L121
+    private static final int FEEDBACK_DETAIL_TEXT_MAX_CHARACTERS = 5000;
 
-	// amount of space to leave in the feedback-text
-	private static final int FEEDBACK_DETAIL_SAFETY_MARGIN = 50;
+    // amount of space to leave in the feedback-text
+    private static final int FEEDBACK_DETAIL_SAFETY_MARGIN = 50;
 
-	private static final NumberFormat nf = new DecimalFormat("##.###", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
+    private static final NumberFormat nf = new DecimalFormat("##.###",
+            DecimalFormatSymbols.getInstance(Locale.ENGLISH));
 
-	private static final ILog log = Platform.getLog(AnnotationMapper.class);
+    private static final ILog log = Platform.getLog(AnnotationMapper.class);
 
-	private final ObjectMapper oom = new ObjectMapper();
+    private final ObjectMapper oom = new ObjectMapper();
 
-	private final IExercise exercise;
-	private final ISubmission submission;
+    private final IExercise exercise;
+    private final ISubmission submission;
 
-	private final List<IAnnotation> annotations;
+    private final List<IAnnotation> annotations;
 
-	private final List<IRatingGroup> ratingGroups;
-	private final User assessor;
+    private final List<IRatingGroup> ratingGroups;
+    private final User assessor;
 
-	private final ILockResult lock;
+    private final ILockResult lock;
 
-	public AnnotationMapper(IExercise exercise, ISubmission submission, List<IAnnotation> annotations, List<IRatingGroup> ratingGroups, User assessor,
-			ILockResult lock) {
-		this.exercise = exercise;
-		this.submission = submission;
+    public AnnotationMapper(IExercise exercise, ISubmission submission, List<IAnnotation> annotations,
+            List<IRatingGroup> ratingGroups, User assessor, ILockResult lock) {
+        this.exercise = exercise;
+        this.submission = submission;
 
-		this.annotations = annotations;
-		this.ratingGroups = ratingGroups;
-		this.assessor = assessor;
-		this.lock = lock;
-	}
+        this.annotations = annotations;
+        this.ratingGroups = ratingGroups;
+        this.assessor = assessor;
+        this.lock = lock;
+    }
 
-	private double calculateAbsoluteScore(List<Feedback> allFeedbacks) {
-		return allFeedbacks.stream().mapToDouble(Feedback::getCredits).sum();
-	}
+    private double calculateAbsoluteScore(List<Feedback> allFeedbacks) {
+        return allFeedbacks.stream().mapToDouble(Feedback::getCredits).sum();
+    }
 
-	private List<Feedback> calculateAllFeedbacks() throws IOException {
-		final List<Feedback> result = new ArrayList<>(this.getFilteredPreexistentFeedbacks(FeedbackType.AUTOMATIC));
-		result.addAll(this.calculateManualFeedbacks());
-		result.addAll(this.calculateAnnotationSerialitationAsFeedbacks());
-		result.removeIf(Objects::isNull);
-		return result;
-	}
+    private List<Feedback> calculateAllFeedbacks() throws IOException {
+        final List<Feedback> result = new ArrayList<>(this.getFilteredPreexistentFeedbacks(FeedbackType.AUTOMATIC));
+        result.addAll(this.calculateManualFeedbacks());
+        result.addAll(this.calculateAnnotationSerialitationAsFeedbacks());
+        result.removeIf(Objects::isNull);
+        return result;
+    }
 
-	private List<Feedback> calculateAnnotationSerialisationAsFeedbacks(List<IAnnotation> givenAnnotations, int detailTextMaxCharacters) throws IOException {
-		final String givenAnnotationsJSONString = this.convertAnnotationsToJSONString(givenAnnotations);
-		// put as many feedbacks in one pack.
-		if (givenAnnotationsJSONString.length() < detailTextMaxCharacters) {
-			// we don't want the serialization to be visible (for non-privileged users)
-			return List.of(new Feedback(FeedbackType.MANUAL_UNREFERENCED.name(), 0D, null, null, "NEVER", "CLIENT_DATA", null, givenAnnotationsJSONString));
-		}
-		// if one single annotation is too large, serialization is impossible!
-		if (givenAnnotations.size() == 1) {
-			throw new IOException("This annotation is too large to serialize! " + givenAnnotationsJSONString);
-		}
+    private List<Feedback> calculateAnnotationSerialisationAsFeedbacks(List<IAnnotation> givenAnnotations,
+            int detailTextMaxCharacters) throws IOException {
+        final String givenAnnotationsJSONString = this.convertAnnotationsToJSONString(givenAnnotations);
+        // put as many feedbacks in one pack.
+        if (givenAnnotationsJSONString.length() < detailTextMaxCharacters) {
+            // we don't want the serialization to be visible (for non-privileged users)
+            return List.of(new Feedback(FeedbackType.MANUAL_UNREFERENCED.name(), 0D, null, null, "NEVER", "CLIENT_DATA",
+                    null, givenAnnotationsJSONString));
+        }
+        // if one single annotation is too large, serialization is impossible!
+        if (givenAnnotations.size() == 1) {
+            throw new IOException("This annotation is too large to serialize! " + givenAnnotationsJSONString);
+        }
 
-		// recursion
-		final int givenAnnotationsSize = givenAnnotations.size();
-		final List<Feedback> resultFeedbacks = new ArrayList<>(
-				this.calculateAnnotationSerialisationAsFeedbacks(givenAnnotations.subList(0, givenAnnotationsSize / 2), detailTextMaxCharacters));
-		resultFeedbacks.addAll(this.calculateAnnotationSerialisationAsFeedbacks(givenAnnotations.subList(givenAnnotationsSize / 2, givenAnnotations.size()),
-				detailTextMaxCharacters));
-		return resultFeedbacks;
-	}
+        // recursion
+        final int givenAnnotationsSize = givenAnnotations.size();
+        final List<Feedback> resultFeedbacks = new ArrayList<>(
+                this.calculateAnnotationSerialisationAsFeedbacks(givenAnnotations.subList(0, givenAnnotationsSize
+                        / 2), detailTextMaxCharacters));
+        resultFeedbacks.addAll(this.calculateAnnotationSerialisationAsFeedbacks(givenAnnotations.subList(givenAnnotationsSize
+                / 2, givenAnnotations.size()), detailTextMaxCharacters));
+        return resultFeedbacks;
+    }
 
-	private List<Feedback> calculateAnnotationSerialitationAsFeedbacks() throws IOException {
-		// because Artemis has a Limit on "detailText" of 5000, we gotta do this little
-		// trick
-		return this.calculateAnnotationSerialisationAsFeedbacks(new ArrayList<>(this.annotations), FEEDBACK_DETAIL_TEXT_MAX_CHARACTERS);
-	}
+    private List<Feedback> calculateAnnotationSerialitationAsFeedbacks() throws IOException {
+        // because Artemis has a Limit on "detailText" of 5000, we gotta do this little
+        // trick
+        return this.calculateAnnotationSerialisationAsFeedbacks(new ArrayList<>(
+                this.annotations), FEEDBACK_DETAIL_TEXT_MAX_CHARACTERS);
+    }
 
-	private List<Feedback> calculateManualFeedbacks() {
-		List<Feedback> manualFeedbacks = new ArrayList<>(this.annotations.stream().collect(Collectors.groupingBy(IAnnotation::getStartLine)).entrySet().stream()
-				.map(this::createInlineFeedbackWithNoDeduction).toList());
-		// add the (rated!) rating group annotations
-		this.ratingGroups.forEach(group -> manualFeedbacks.addAll(this.createGlobalFeedbackWithDeduction(group)));
-		return manualFeedbacks;
-	}
+    private List<Feedback> calculateManualFeedbacks() {
+        List<Feedback> manualFeedbacks = new ArrayList<>(
+                this.annotations.stream().collect(Collectors.groupingBy(IAnnotation::getStartLine)).entrySet().stream().map(this::createInlineFeedbackWithNoDeduction).toList());
+        // add the (rated!) rating group annotations
+        this.ratingGroups.forEach(group -> manualFeedbacks.addAll(this.createGlobalFeedbackWithDeduction(group)));
+        return manualFeedbacks;
+    }
 
-	private double calculateRelativeScore(double absoluteScore) {
-		return absoluteScore / this.exercise.getMaxPoints() * 100D;
-	}
+    private double calculateRelativeScore(double absoluteScore) {
+        return absoluteScore / this.exercise.getMaxPoints() * 100D;
+    }
 
-	private String calculateResultString(final List<Feedback> allFeedbacks, final double absoluteScore) {
-		final List<Feedback> autoFeedbacks = //
-				allFeedbacks.stream().filter(Objects::nonNull).filter(feedback -> feedback.getFeedbackType() == FeedbackType.AUTOMATIC)
-						.collect(Collectors.toList());
+    private String convertAnnotationsToJSONString(final List<IAnnotation> givenAnnotations)
+            throws JsonProcessingException {
+        return oom.writeValueAsString(givenAnnotations);
+    }
 
-		final List<Feedback> tests = autoFeedbacks.stream().filter(f -> f.getReference() == null).collect(Collectors.toList());
-		long positiveTests = tests.stream().filter(feedback -> feedback.getPositive() != null && feedback.getPositive()).count();
-		long numberOfTests = tests.size();
+    /**
+     * This transforms Annotations (in the context of the whole model, consisting of RatingGroupse,
+     * MistakteTypes etc) into a payload. In the process, calculation is done, including
+     * <ul>
+     * <li>calculating the rating score based on our annotations and the previously existent
+     * (automatic) feedbacks (e.g. Unit test results)
+     * <li>creating per-annotation artemis-annotations ("Feedbacks") {@link FeedbackType#MANUAL}
+     * <li>creating general artemis-annotations ("Feedbacks")
+     * {@link FeedbackType#MANUAL_UNREFERENCED}
+     * <li>creating our own database by serializing our Java Annotations into HIDDEN
+     * {@link FeedbackType#MANUAL_UNREFERENCED} Feedbacks with
+     * <ul>
+     * <li>"CLIENT_DATA" in the <I>text</I> field, as an identifier
+     * <li>the Java Annotations as json blob in the <I>detailText</I> field.
+     * </ul>
+     * </ul>
+     *
+     * @return a json-formattable object ready to be send as payload to the Client
+     */
+    public AssessmentResult createAssessmentResult() throws IOException {
+        // only add preexistent automatic feedback (unit tests etc) and manual feedback.
+        // this should work indepently of invalid or not. if invalid, there should just
+        // be no feedbacks.
+        final List<Feedback> allFeedbacks = this.calculateAllFeedbacks();
 
-		// ENHANCE We may add "Issues" as text here iff activated ?
-		String result = "";
-		result += String.format("%d of %d passed, ", positiveTests, numberOfTests);
-		result += String.format("%s of %s points", nf.format(absoluteScore), nf.format(this.exercise.getMaxPoints()));
-		return result;
-	}
+        // Cap to [0, maxPoints]
+        final double absoluteScore = Math.min(Math.max(0.D, this.calculateAbsoluteScore(allFeedbacks)), this.exercise.getMaxPoints());
+        final double relativeScore = this.calculateRelativeScore(absoluteScore);
 
-	private String convertAnnotationsToJSONString(final List<IAnnotation> givenAnnotations) throws JsonProcessingException {
-		return oom.writeValueAsString(givenAnnotations);
-	}
+        return new AssessmentResult(this.submission.getSubmissionId(), "SEMI_AUTOMATIC", relativeScore, true, true,
+                null, this.assessor, allFeedbacks);
+    }
 
-	/**
-	 * This transforms Annotations (in the context of the whole model, consisting of
-	 * RatingGroupse, MistakteTypes etc) into a payload. In the process, calculation
-	 * is done, including
-	 * <ul>
-	 * <li>calculating the rating score based on our annotations and the previously
-	 * existent (automatic) feedbacks (e.g. Unit test results)
-	 * <li>creating per-annotation artemis-annotations ("Feedbacks")
-	 * {@link FeedbackType#MANUAL}
-	 * <li>creating general artemis-annotations ("Feedbacks")
-	 * {@link FeedbackType#MANUAL_UNREFERENCED}
-	 * <li>creating our own database by serializing our Java Annotations into HIDDEN
-	 * {@link FeedbackType#MANUAL_UNREFERENCED} Feedbacks with
-	 * <ul>
-	 * <li>"CLIENT_DATA" in the <I>text</I> field, as an identifier
-	 * <li>the Java Annotations as json blob in the <I>detailText</I> field.
-	 * </ul>
-	 * </ul>
-	 *
-	 * @return a json-formattable object ready to be send as payload to the Client
-	 */
-	public AssessmentResult createAssessmentResult() throws IOException {
-		// only add preexistent automatic feedback (unit tests etc) and manual feedback.
-		// this should work indepently of invalid or not. if invalid, there should just
-		// be no feedbacks.
-		final List<Feedback> allFeedbacks = this.calculateAllFeedbacks();
+    /**
+     * Creates the inlined feedbacks within Artemis
+     *
+     * @param annotations
+     *            an entry contains the line number (indexed by 0) and all annotations starting in
+     *            that line
+     * @return one feedback object for the line
+     */
+    private Feedback createInlineFeedbackWithNoDeduction(Map.Entry<Integer, List<IAnnotation>> annotations) {
+        int line = annotations.getKey();
+        var sampleAnnotation = annotations.getValue().get(0);
 
-		// Cap to [0, maxPoints]
-		final double absoluteScore = Math.min(Math.max(0.D, this.calculateAbsoluteScore(allFeedbacks)), this.exercise.getMaxPoints());
-		final double relativeScore = this.calculateRelativeScore(absoluteScore);
+        // Lines are indexed at 0
+        final String text = "File " + sampleAnnotation.getClassFilePath() + " at line " + (line + 1);
+        final String reference = "file:" + sampleAnnotation.getClassFilePath() + ".java_line:" + line;
 
-		return new AssessmentResult(this.submission.getSubmissionId(), this.calculateResultString(allFeedbacks, absoluteScore), "SEMI_AUTOMATIC", relativeScore,
-				true, true, null, this.assessor, allFeedbacks);
-	}
+        String resultText = "";
+        for (var annotation : annotations.getValue()) {
+            var mistakeType = annotation.getMistakeType();
+            String detailText = "[" + mistakeType.getRatingGroup().getDisplayName() + ":" + mistakeType.getButtonText()
+                    + "] ";
+            if (mistakeType.isCustomPenalty()) {
+                detailText += annotation.getCustomMessage().get() + " ("
+                        + nf.format(annotation.getCustomPenalty().get()) + "P)";
+            } else {
+                detailText += mistakeType.getMessage();
+                if (annotation.getCustomMessage().isPresent()) {
+                    detailText += "\nExplanation: " + annotation.getCustomMessage().get();
+                }
+            }
+            resultText += detailText + "\n\n";
+        }
+        return new Feedback(FeedbackType.MANUAL.name(), 0D, null, null, null, text, reference, resultText.trim());
+    }
 
-	/**
-	 * Creates the inlined feedbacks within Artemis
-	 *
-	 * @param annotations an entry contains the line number (indexed by 0) and all
-	 *                    annotations starting in that line
-	 * @return one feedback object for the line
-	 */
-	private Feedback createInlineFeedbackWithNoDeduction(Map.Entry<Integer, List<IAnnotation>> annotations) {
-		int line = annotations.getKey();
-		var sampleAnnotation = annotations.getValue().get(0);
+    private List<Feedback> createGlobalFeedbackWithDeduction(IRatingGroup ratingGroup) {
+        final PointResult pointResult = calculatePointsForRatingGroup(ratingGroup);
+        final var range = ratingGroup.getRange();
 
-		// Lines are indexed at 0
-		final String text = "File " + sampleAnnotation.getClassFilePath() + " at line " + (line + 1);
-		final String reference = "file:" + sampleAnnotation.getClassFilePath() + ".java_line:" + line;
+        List<String> lines = new ArrayList<>();
 
-		String resultText = "";
-		for (var annotation : annotations.getValue()) {
-			var mistakeType = annotation.getMistakeType();
-			String detailText = "[" + mistakeType.getRatingGroup().getDisplayName() + ":" + mistakeType.getButtonText() + "] ";
-			if (mistakeType.isCustomPenalty()) {
-				detailText += annotation.getCustomMessage().get() + " (" + nf.format(annotation.getCustomPenalty().get()) + "P)";
-			} else {
-				detailText += mistakeType.getMessage();
-				if (annotation.getCustomMessage().isPresent()) {
-					detailText += "\nExplanation: " + annotation.getCustomMessage().get();
-				}
-			}
-			resultText += detailText + "\n\n";
-		}
-		return new Feedback(FeedbackType.MANUAL.name(), 0D, null, null, null, text, reference, resultText.trim());
-	}
+        String annotationHeadline = "";
 
-	private List<Feedback> createGlobalFeedbackWithDeduction(IRatingGroup ratingGroup) {
-		final PointResult pointResult = calculatePointsForRatingGroup(ratingGroup);
-		final var range = ratingGroup.getRange();
+        annotationHeadline = ratingGroup.getDisplayName() + " [" + nf.format(pointResult.points);
 
-		List<String> lines = new ArrayList<>();
+        if (!range.isEmpty()) {
+            double lower = range.first() == null ? Double.NEGATIVE_INFINITY : range.first();
+            double upper = range.second() == null ? Double.POSITIVE_INFINITY : range.second();
 
-		String annotationHeadline = "";
+            annotationHeadline += " (Range: " + nf.format(lower) + " -- " + nf.format(upper) + ")";
+        }
 
-		annotationHeadline = ratingGroup.getDisplayName() + " [" + nf.format(pointResult.points);
+        annotationHeadline += " points]";
 
-		if (!range.isEmpty()) {
-			double lower = range.first() == null ? Double.NEGATIVE_INFINITY : range.first();
-			double upper = range.second() == null ? Double.POSITIVE_INFINITY : range.second();
+        for (var mistakeTypeXScore : pointResult.scores.entrySet()) {
+            final var mistakeType = mistakeTypeXScore.getKey();
+            final double currentPenalty = mistakeTypeXScore.getValue();
 
-			annotationHeadline += " (Range: " + nf.format(lower) + " -- " + nf.format(upper) + ")";
-		}
+            final List<IAnnotation> currentAnnotations = this.annotations.stream() //
+                .filter(annotation -> annotation.getMistakeType().equals(mistakeType)) //
+                .toList();
+            lines.add("\n    * \"" + mistakeType.getButtonText() + "\" [" + nf.format(currentPenalty) + "P]:");
+            if (mistakeType.isCustomPenalty()) {
+                for (var annotation : currentAnnotations) {
+                    String penalty = nf.format(annotation.getCustomPenalty().get());
+                    lines.add("\n        * " + annotation.getClassFilePath() + " at line "
+                            + (annotation.getStartLine() + 1) + " (" + penalty + "P)");
+                }
+            } else {
+                for (var annotation : currentAnnotations) {
+                    lines.add("\n        * " + annotation.getClassFilePath() + " at line "
+                            + (annotation.getStartLine() + 1));
+                }
+            }
+        }
 
-		annotationHeadline += " points]";
+        if (pointResult.reachedLimit) {
+            lines.add("\n    * Note: The sum of penalties hit the limits for this rating group.");
+        }
 
-		for (var mistakeTypeXScore : pointResult.scores.entrySet()) {
-			final var mistakeType = mistakeTypeXScore.getKey();
-			final double currentPenalty = mistakeTypeXScore.getValue();
+        List<String> feedbackTexts = new LinkedList<>();
 
-			final List<IAnnotation> currentAnnotations = this.annotations.stream() //
-					.filter(annotation -> annotation.getMistakeType().equals(mistakeType)) //
-					.toList();
-			lines.add("\n    * \"" + mistakeType.getButtonText() + "\" [" + nf.format(currentPenalty) + "P]:");
-			if (mistakeType.isCustomPenalty()) {
-				for (var annotation : currentAnnotations) {
-					String penalty = nf.format(annotation.getCustomPenalty().get());
-					lines.add("\n        * " + annotation.getClassFilePath() + " at line " + (annotation.getStartLine() + 1) + " (" + penalty + "P)");
-				}
-			} else {
-				for (var annotation : currentAnnotations) {
-					lines.add("\n        * " + annotation.getClassFilePath() + " at line " + (annotation.getStartLine() + 1));
-				}
-			}
-		}
+        if (lines.isEmpty()) {
+            return List.of();
+        }
 
-		if (pointResult.reachedLimit) {
-			lines.add("\n    * Note: The sum of penalties hit the limits for this rating group.");
-		}
+        String text = annotationHeadline + " (annotation " + 1 + ")";
 
-		List<String> feedbackTexts = new LinkedList<>();
+        for (int i = 0; i < lines.size(); i++) {
+            if (text.length() + lines.get(i).length() >= FEEDBACK_DETAIL_TEXT_MAX_CHARACTERS
+                    - annotationHeadline.length() - FEEDBACK_DETAIL_SAFETY_MARGIN) {
+                feedbackTexts.add(text);
+                text = annotationHeadline + " (annotation " + (feedbackTexts.size() + 1) + ")";
+            }
+            text += lines.get(i);
+        }
+        feedbackTexts.add(text);
 
-		if (lines.isEmpty()) {
-			return List.of();
-		}
+        List<Feedback> feedbacks = new LinkedList<>();
 
-		String text = annotationHeadline + " (annotation " + 1 + ")";
+        feedbacks.add(new Feedback(FeedbackType.MANUAL_UNREFERENCED.name(), pointResult.points, null, null, null, null,
+                null, feedbackTexts.get(0)));
 
-		for (int i = 0; i < lines.size(); i++) {
-			if (text.length() + lines.get(i).length() >= FEEDBACK_DETAIL_TEXT_MAX_CHARACTERS - annotationHeadline.length() - FEEDBACK_DETAIL_SAFETY_MARGIN) {
-				feedbackTexts.add(text);
-				text = annotationHeadline + " (annotation " + (feedbackTexts.size() + 1) + ")";
-			}
-			text += lines.get(i);
-		}
-		feedbackTexts.add(text);
+        for (int i = 1; i < feedbackTexts.size(); i++) {
+            feedbacks.add(new Feedback(FeedbackType.MANUAL_UNREFERENCED.name(), 0d, null, null, null, null, null,
+                    feedbackTexts.get(i)));
+        }
 
-		List<Feedback> feedbacks = new LinkedList<>();
+        return feedbacks;
+    }
 
-		feedbacks.add(new Feedback(FeedbackType.MANUAL_UNREFERENCED.name(), pointResult.points, null, null, null, null, null, feedbackTexts.get(0)));
+    private List<Feedback> getFilteredPreexistentFeedbacks(FeedbackType feedbackType) {
+        List<Feedback> feedbacks = new ArrayList<>();
+        for (Feedback feedback : this.lock.getLatestFeedback()) {
+            if (feedback.getFeedbackType() == null || feedback.getFeedbackType() != feedbackType) {
+                continue;
+            }
+            feedbacks.add(feedback);
+        }
+        return feedbacks;
+    }
 
-		for (int i = 1; i < feedbackTexts.size(); i++) {
-			feedbacks.add(new Feedback(FeedbackType.MANUAL_UNREFERENCED.name(), 0d, null, null, null, null, null, feedbackTexts.get(i)));
-		}
+    public PointResult calculatePointsForRatingGroup(IRatingGroup ratingGroup) {
+        // Calculate the points w.r.t. the PenaltyTypes
+        log.info("Calculate Points for RG " + ratingGroup.getDisplayName());
+        double sum = 0;
+        Map<IMistakeType, Double> scores = new HashMap<>();
+        for (var mistakeType : ratingGroup.getMistakeTypes()) {
+            Double score = calculatePointsForMistakeType(mistakeType);
+            if (score == null) {
+                // No annotation made.
+                continue;
+            }
+            scores.put(mistakeType, score);
+            sum += score;
+        }
 
-		return feedbacks;
-	}
+        boolean reachedLimit = !ratingGroup.getRange().isEmpty() && ratingGroup.setToRange(sum) != sum;
+        if (reachedLimit) {
+            log.info("RG " + ratingGroup.getDisplayName() + " reached limit");
+            sum = ratingGroup.setToRange(sum);
+        }
+        return new PointResult(sum, reachedLimit, scores);
+    }
 
-	private List<Feedback> getFilteredPreexistentFeedbacks(FeedbackType feedbackType) {
-		List<Feedback> feedbacks = new ArrayList<>();
-		for (Feedback feedback : this.lock.getLatestFeedback()) {
-			if (feedback.getFeedbackType() == null || feedback.getFeedbackType() != feedbackType) {
-				continue;
-			}
-			feedbacks.add(feedback);
-		}
-		return feedbacks;
-	}
+    private Double calculatePointsForMistakeType(IMistakeType mistakeType) {
+        log.info("Calculate Points for MT " + mistakeType.getButtonText());
+        var filteredAnnotations = this.annotations.stream().filter(a -> a.getMistakeType().equals(mistakeType)).toList();
+        if (filteredAnnotations.isEmpty()) {
+            return null;
+        }
 
-	public PointResult calculatePointsForRatingGroup(IRatingGroup ratingGroup) {
-		// Calculate the points w.r.t. the PenaltyTypes
-		log.info("Calculate Points for RG " + ratingGroup.getDisplayName());
-		double sum = 0;
-		Map<IMistakeType, Double> scores = new HashMap<>();
-		for (var mistakeType : ratingGroup.getMistakeTypes()) {
-			Double score = calculatePointsForMistakeType(mistakeType);
-			if (score == null) {
-				// No annotation made.
-				continue;
-			}
-			scores.put(mistakeType, score);
-			sum += score;
-		}
+        var points = mistakeType.calculate(filteredAnnotations);
+        log.info("MT " + mistakeType.getButtonText() + " -> " + points);
+        return points;
+    }
 
-		boolean reachedLimit = !ratingGroup.getRange().isEmpty() && ratingGroup.setToRange(sum) != sum;
-		if (reachedLimit) {
-			log.info("RG " + ratingGroup.getDisplayName() + " reached limit");
-			sum = ratingGroup.setToRange(sum);
-		}
-		return new PointResult(sum, reachedLimit, scores);
-	}
-
-	private Double calculatePointsForMistakeType(IMistakeType mistakeType) {
-		log.info("Calculate Points for MT " + mistakeType.getButtonText());
-		var filteredAnnotations = this.annotations.stream().filter(a -> a.getMistakeType().equals(mistakeType)).toList();
-		if (filteredAnnotations.isEmpty()) {
-			return null;
-		}
-
-		var points = mistakeType.calculate(filteredAnnotations);
-		log.info("MT " + mistakeType.getButtonText() + " -> " + points);
-		return points;
-	}
-
-	public record PointResult(double points, boolean reachedLimit, Map<IMistakeType, Double> scores) {
-	}
+    public record PointResult(double points, boolean reachedLimit, Map<IMistakeType, Double> scores) {
+    }
 
 }
