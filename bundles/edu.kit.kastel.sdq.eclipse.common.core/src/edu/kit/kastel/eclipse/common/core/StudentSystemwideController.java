@@ -33,8 +33,8 @@ import edu.kit.kastel.eclipse.common.api.model.IMistakeType;
 import edu.kit.kastel.eclipse.common.api.util.Pair;
 import edu.kit.kastel.eclipse.common.core.artemis.AnnotationDeserializer;
 import edu.kit.kastel.eclipse.common.core.artemis.WorkspaceUtil;
-import edu.kit.kastel.eclipse.common.core.model.annotation.AnnotationException;
 import edu.kit.kastel.eclipse.common.core.model.annotation.AnnotationDAO;
+import edu.kit.kastel.eclipse.common.core.model.annotation.AnnotationException;
 import edu.kit.kastel.eclipse.common.core.model.annotation.IAnnotationDAO;
 
 public class StudentSystemwideController extends SystemwideController implements IStudentSystemwideController {
@@ -51,17 +51,20 @@ public class StudentSystemwideController extends SystemwideController implements
 				preferenceStore.getString(PreferenceConstants.GENERAL_ARTEMIS_PASSWORD), //
 				preferenceStore.getString(PreferenceConstants.GENERAL_GIT_TOKEN) //
 		);
+
+		this.preferenceStore = preferenceStore;
+
 		this.createControllers(preferenceStore.getString(PreferenceConstants.GENERAL_ARTEMIS_URL), //
 				preferenceStore.getString(PreferenceConstants.GENERAL_ARTEMIS_USER), //
 				preferenceStore.getString(PreferenceConstants.GENERAL_ARTEMIS_PASSWORD) //
 		);
-		this.preferenceStore = preferenceStore;
 
 		this.initPreferenceStoreCallback(preferenceStore);
 	}
 
 	private void createControllers(final String artemisHost, final String username, final String password) {
-		StudentArtemisController controller = new StudentArtemisController(artemisHost, username, password);
+		StudentArtemisController controller = new StudentArtemisController(artemisHost, username, password,
+				token -> preferenceStore.setValue(PreferenceConstants.GENERAL_ARTEMIS_PASSWORD, token));
 		this.artemisGUIController = controller;
 		this.websocketController = controller;
 		this.artemisHost = artemisHost;

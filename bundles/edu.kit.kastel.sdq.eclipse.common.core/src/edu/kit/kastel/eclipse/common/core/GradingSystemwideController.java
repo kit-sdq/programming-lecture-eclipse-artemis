@@ -37,17 +37,19 @@ public class GradingSystemwideController extends SystemwideController implements
 				preferenceStore.getString(PreferenceConstants.GENERAL_ARTEMIS_PASSWORD), //
 				preferenceStore.getString(PreferenceConstants.GENERAL_GIT_TOKEN) //
 		);
+		this.preferenceStore = preferenceStore;
+
 		this.createController(preferenceStore.getString(PreferenceConstants.GENERAL_ARTEMIS_URL), //
 				preferenceStore.getString(PreferenceConstants.GENERAL_ARTEMIS_USER), //
 				preferenceStore.getString(PreferenceConstants.GENERAL_ARTEMIS_PASSWORD) //
 		);
-		this.preferenceStore = preferenceStore;
 
 		this.initPreferenceStoreCallback(preferenceStore);
 	}
 
 	private void createController(final String artemisHost, final String username, final String password) {
-		this.artemisGUIController = new GradingArtemisController(artemisHost, username, password);
+		this.artemisGUIController = new GradingArtemisController(artemisHost, username, password,
+				token -> preferenceStore.setValue(PreferenceConstants.GENERAL_ARTEMIS_PASSWORD, token));
 	}
 
 	private IAssessmentController getAssessmentController(ISubmission submission, ICourse course, IExercise exercise) {

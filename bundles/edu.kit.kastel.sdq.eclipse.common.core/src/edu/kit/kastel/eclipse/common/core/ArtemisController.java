@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.function.Consumer;
 
 import edu.kit.kastel.eclipse.common.api.ArtemisClientException;
 import edu.kit.kastel.eclipse.common.api.artemis.ILockResult;
@@ -27,8 +28,8 @@ public abstract class ArtemisController extends AbstractController implements IA
 	protected final RestClientManager clientManager;
 	protected List<ICourse> courses;
 
-	protected ArtemisController(final String host, final String username, final String password) {
-		this.clientManager = new RestClientManager(host, username, password);
+	protected ArtemisController(final String host, final String username, final String passwordOrToken, Consumer<String> newTokenCallback) {
+		this.clientManager = new RestClientManager(host, username, passwordOrToken, newTokenCallback);
 		this.lockResults = new HashMap<>();
 
 		this.loginOrNotify();

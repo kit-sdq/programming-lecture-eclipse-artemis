@@ -4,6 +4,7 @@ package edu.kit.kastel.eclipse.common.core;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 import edu.kit.kastel.eclipse.common.api.ArtemisClientException;
 import edu.kit.kastel.eclipse.common.api.artemis.ILockResult;
@@ -19,8 +20,8 @@ import edu.kit.kastel.eclipse.common.core.artemis.AnnotationMapper;
 
 public class GradingArtemisController extends ArtemisController implements IGradingArtemisController {
 
-	public GradingArtemisController(String host, String username, String password) {
-		super(host, username, password);
+	public GradingArtemisController(String host, String username, String password, Consumer<String> newTokenCallback) {
+		super(host, username, password, newTokenCallback);
 	}
 
 	@Override
