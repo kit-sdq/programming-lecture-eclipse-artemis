@@ -108,9 +108,9 @@ Configuration File
 ^^^^^^^^^^^^^^^^^^
 
 To Configure mistake types, rating groups and whatnot, we use a config file.
-See `docs/examples/config_v5.json <https://github.com/kit-sdq/programming-lecture-eclipse-artemis/blob/main/docs/examples/config_v5.json>`_ for an example configuration.
+See `docs/examples/config_v6.json <https://github.com/kit-sdq/programming-lecture-eclipse-artemis/blob/main/docs/examples/config_v6.json>`_ for an example configuration.
 
-There are rating groups, mistake types and penalty rules.
+There are rating groups, mistake types, penalty rules, and allowed exercises.
 The main config features are explained in the following.
 Be aware of `"positiveFeedbackAllowed": true` which enables or disables the positive custom feedback ability.
 
@@ -173,6 +173,24 @@ A mistake type belongs to a rating group and has a penalty rule that defines the
     ]
 
 See the Development chapter for more info about creating a new `PenaltyRule`.
+
+Allowed Exercises
+^^^^^^^^^^^^^^^^^
+There is an option to specify which exercises a configuration should be used for.
+If someone tries to start an assessment for an exercise with an id not specified in the configuration, a warning is shown.
+
+.. code-block:: json
+
+    "allowedExercises": [
+        42
+    ]
+
+where 42 is the id of the exercise. This can be found in the header of the page of the exercise:
+https://artemis.example.com/course-management/14/programming-exercises/42 .
+
+Also the last number of this URL is the exercise id.
+
+There can be any number of exercise ids in a configuration, if none is specified, no validation of the id will be done.
 
 Penalty Calculation / Artemis Mapping
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
