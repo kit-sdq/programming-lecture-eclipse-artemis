@@ -170,7 +170,7 @@ public final class AssessmentUtilities {
 			Double customPenalty) {
 		final ITextSelection textSelection = AssessmentUtilities.getTextSelection();
 		if (textSelection == null) {
-			assessmentController.getViewInteraction().error("Text selection needed to add a new annotation", null);
+			assessmentController.getViewInteractionHandler().error("Text selection needed to add a new annotation", null);
 			return;
 		}
 		// Lines are indexed starting at 0.
@@ -212,7 +212,7 @@ public final class AssessmentUtilities {
 			 * Future Work: the error handling should be more specific (maybe for each
 			 * setAttribute(...)) without getting a too messy code
 			 */
-			assessmentController.getViewInteraction().error("Unable to create marker for annotation: " + e.getMessage(), e);
+			assessmentController.getViewInteractionHandler().error("Unable to create marker for annotation: " + e.getMessage(), e);
 		}
 
 	}

@@ -95,8 +95,6 @@ public interface IAssessmentController extends IController {
 	 */
 	void resetAndRestartAssessment(IProjectFileNamingStrategy projectNaming);
 
-	IViewInteraction getViewInteraction();
-
 	double getCurrentPenaltyForRatingGroup(IRatingGroup ratingGroup);
 
 	boolean isPositiveFeedbackAllowed();

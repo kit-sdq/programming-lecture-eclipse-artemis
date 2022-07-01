@@ -2,6 +2,7 @@
 package edu.kit.kastel.eclipse.common.core.config;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -22,12 +23,18 @@ public class ExerciseConfig {
 
 	@JsonProperty("shortName")
 	private String shortName;
+	@JsonProperty("allowedExercises")
+	private List<Integer> allowedExercises;
 	@JsonProperty("ratingGroups")
 	private List<RatingGroup> ratingGroups;
 	@JsonProperty("mistakeTypes")
 	private List<MistakeType> mistakeTypes;
 	@JsonProperty("positiveFeedbackAllowed")
 	private Boolean isPositiveFeedbackAllowed;
+
+	public List<Integer> getAllowedExercises() {
+		return Collections.unmodifiableList(this.allowedExercises == null ? List.of() : this.allowedExercises);
+	}
 
 	public List<IMistakeType> getIMistakeTypes() {
 		return new ArrayList<>(this.mistakeTypes);

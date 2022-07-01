@@ -16,13 +16,13 @@ import edu.kit.kastel.eclipse.common.api.artemis.mapping.IExercise;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.ISubmission;
 import edu.kit.kastel.eclipse.common.api.controller.AbstractController;
 import edu.kit.kastel.eclipse.common.api.controller.IAssessmentController;
-import edu.kit.kastel.eclipse.common.api.controller.IViewInteraction;
 import edu.kit.kastel.eclipse.common.api.model.IAnnotation;
 import edu.kit.kastel.eclipse.common.api.model.IMistakeType;
 import edu.kit.kastel.eclipse.common.api.model.IRatingGroup;
 import edu.kit.kastel.eclipse.common.core.artemis.AnnotationDeserializer;
 import edu.kit.kastel.eclipse.common.core.artemis.AnnotationMapper;
 import edu.kit.kastel.eclipse.common.core.artemis.WorkspaceUtil;
+import edu.kit.kastel.eclipse.common.core.config.ExerciseConfig;
 import edu.kit.kastel.eclipse.common.core.config.GradingDAO;
 import edu.kit.kastel.eclipse.common.core.config.JsonFileConfigDao;
 import edu.kit.kastel.eclipse.common.core.model.annotation.AnnotationDAO;
@@ -57,6 +57,21 @@ public class AssessmentController extends AbstractController implements IAssessm
 
 		this.annotationDAO = new AnnotationDAO();
 		this.gradingDAO = loadGradingDAO();
+
+		try {
+			ExerciseConfig exerciseConfig = this.gradingDAO.getExerciseConfig();
+			if (!exerciseConfig.getAllowedExercises().isEmpty() && !exerciseConfig.getAllowedExercises().contains(this.exercise.getExerciseId())) {
+				// using interaction handler of the system wide controller, as the own
+				// interaction handler is not set during the constructor
+				systemWideController.getViewInteractionHandler().warn("""
+						You are using a configuration file not designed for this exercise!\n
+						Your file is \"%s\", however you are correcting exercise \"%s\"!\n
+						Please double check your settings!
+						""".formatted(exerciseConfig.getShortName(), this.exercise.getShortName()));
+			}
+		} catch (IOException e) {
+			this.error("Exercise Config not parseable: " + e.getMessage(), e);
+		}
 
 		try {
 			this.initializeWithDeserializedAnnotations();
@@ -217,11 +232,6 @@ public class AssessmentController extends AbstractController implements IAssessm
 		} catch (IOException e) {
 			this.info("Deserializing Annotations from Artemis failed: " + e.getMessage());
 		}
-	}
-
-	@Override
-	public IViewInteraction getViewInteraction() {
-		return this.getViewInteractionHandler();
 	}
 
 	@Override
