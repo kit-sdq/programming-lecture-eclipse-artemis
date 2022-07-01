@@ -39,3 +39,5 @@ buildNumber.properties
 .mvn/wrapper/maven-wrapper.jar
 .polyglot.*
 .settings
+.tycho-consumer-pom.xml
+pom.tycho

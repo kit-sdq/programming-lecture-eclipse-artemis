@@ -13,10 +13,7 @@ Export-Package: edu.kit.kastel.eclipse.common.api,
  edu.kit.kastel.eclipse.common.api.messages,
  edu.kit.kastel.eclipse.common.api.model,
  edu.kit.kastel.eclipse.common.api.util
-Require-Bundle: com.fasterxml.jackson.core.jackson-databind,
- com.fasterxml.jackson.core.jackson-core,
- com.fasterxml.jackson.core.jackson-annotations,
- javax.ws.rs,
+Require-Bundle: com.fasterxml.jackson.core.jackson-annotations,
  org.eclipse.core.runtime
 Automatic-Module-Name: edu.kit.kastel.sdq.eclipse.common.api
 

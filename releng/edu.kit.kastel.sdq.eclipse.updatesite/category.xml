@@ -81,9 +81,6 @@
    <bundle id="org.eclipse.jface.text">
       <category name="Eclipse Artemis Dev"/>
    </bundle>
-   <bundle id="org.eclipse.egit">
-      <category name="Eclipse Artemis Dev"/>
-   </bundle>
    <category-def name="Eclipse Artemis Grading" label="Eclipse Artemis Grading">
       <description>
          Plugin for easier grading with Artemis and Eclipse
