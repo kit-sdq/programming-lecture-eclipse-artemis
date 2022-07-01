@@ -1,0 +1,6 @@
+venv
+.venv
+.idea
+_build
+*.iml
+!bin
