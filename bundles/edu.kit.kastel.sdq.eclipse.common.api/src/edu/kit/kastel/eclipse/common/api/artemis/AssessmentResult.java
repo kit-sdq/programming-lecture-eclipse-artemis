@@ -15,7 +15,6 @@ public class AssessmentResult implements Serializable {
 	private static final long serialVersionUID = -1703764424474018461L;
 
 	private int id;
-	private String resultString;
 	private String assessmentType;
 	private double score;
 	private boolean rated;
@@ -24,10 +23,9 @@ public class AssessmentResult implements Serializable {
 	private User assessor;
 	private List<Feedback> feedbacks;
 
-	public AssessmentResult(int id, String resultString, String assessmentType, double score, boolean rated, boolean hasFeedback, String completionDate,
-			User assessor, List<Feedback> feedbacks) {
+	public AssessmentResult(int id, String assessmentType, double score, boolean rated, boolean hasFeedback, String completionDate, User assessor,
+			List<Feedback> feedbacks) {
 		this.id = id;
-		this.resultString = resultString;
 		this.assessmentType = assessmentType;
 		this.score = score;
 		this.rated = rated;
@@ -55,10 +53,6 @@ public class AssessmentResult implements Serializable {
 
 	public int getId() {
 		return this.id;
-	}
-
-	public String getResultString() {
-		return this.resultString;
 	}
 
 	public double getScore() {

@@ -1,6 +1,8 @@
 /* Licensed under EPL-2.0 2022. */
 package edu.kit.kastel.eclipse.common.view.ui;
 
+import static edu.kit.kastel.eclipse.common.view.languages.LanguageSettings.I18N;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,11 +18,9 @@ import edu.kit.kastel.eclipse.common.api.artemis.mapping.Feedback;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.FeedbackType;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.IExercise;
 import edu.kit.kastel.eclipse.common.api.model.IMistakeType;
-import edu.kit.kastel.eclipse.common.api.util.Triple;
+import edu.kit.kastel.eclipse.common.api.util.Pair;
 import edu.kit.kastel.eclipse.common.core.model.annotation.Annotation;
 import edu.kit.kastel.eclipse.common.view.utilities.AssessmentUtilities;
-
-import static edu.kit.kastel.eclipse.common.view.languages.LanguageSettings.I18N;
 
 public abstract class AbstractResultTab extends AbstractResultTabCompositeController {
 
@@ -42,9 +42,9 @@ public abstract class AbstractResultTab extends AbstractResultTabCompositeContro
 	 * Get the latest result of the currently selected submission.
 	 *
 	 * @return the current feedback as
-	 *         {@code [String completionTime, String resultString, List<Feedback> feedbacks]}
+	 *         {@code [String completionTime, List<Feedback> feedbacks]}
 	 */
-	protected abstract Triple<String, String, List<Feedback>> getCurrentResultAndFeedback();
+	protected abstract Pair<String, List<Feedback>> getCurrentResultAndFeedback();
 
 	/**
 	 * Get the project name of the currently selected project in eclipse to add
@@ -69,11 +69,10 @@ public abstract class AbstractResultTab extends AbstractResultTabCompositeContro
 		var currentSourceDirectory = this.getCurrentSourceDirectoryRelative();
 
 		if (!resultFeedback.isEmpty()) {
-			// IExercise currentExercise, String completionTime, String resultString,
-			// List<Feedback> feedbacks
-			this.handleNewResult(currentExercise, resultFeedback.first(), resultFeedback.second(), resultFeedback.third());
+			// IExercise currentExercise, String completionTime, List<Feedback> feedbacks
+			this.handleNewResult(currentExercise, resultFeedback.first(), resultFeedback.second());
 			if (currentProjectFileForAnnotation != null) {
-				this.createAnnotationsMarkers(currentProjectFileForAnnotation, currentSourceDirectory, resultFeedback.third());
+				this.createAnnotationsMarkers(currentProjectFileForAnnotation, currentSourceDirectory, resultFeedback.second());
 			}
 		} else {
 			this.testTable.removeAll();
@@ -81,12 +80,12 @@ public abstract class AbstractResultTab extends AbstractResultTabCompositeContro
 		}
 	}
 
-	private void addResultToTab(IExercise currentExercise, String completionTime, String resultString, List<Feedback> feedbacks) {
+	private void addResultToTab(IExercise currentExercise, String completionTime, List<Feedback> feedbacks) {
 		boolean successOfAutomaticTests = this.calculateSuccessOfAutomaticTests(feedbacks);
 		double points = this.calculatePoints(currentExercise, feedbacks);
 		double score = this.calculateScore(currentExercise, points);
 
-		this.setSuccessAndScore(currentExercise, successOfAutomaticTests, points, score, completionTime, resultString);
+		this.setSuccessAndScore(currentExercise, successOfAutomaticTests, points, score, completionTime);
 		this.layout();
 	}
 
@@ -127,10 +126,10 @@ public abstract class AbstractResultTab extends AbstractResultTabCompositeContro
 
 	}
 
-	private void handleNewResult(IExercise currentExercise, String completionTime, String resultString, List<Feedback> feedbacks) {
+	private void handleNewResult(IExercise currentExercise, String completionTime, List<Feedback> feedbacks) {
 		this.testTable.removeAll();
 		this.addFeedbackToTable(this.testTable, feedbacks);
-		this.addResultToTab(currentExercise, completionTime, resultString, feedbacks);
+		this.addResultToTab(currentExercise, completionTime, feedbacks);
 	}
 
 	/**

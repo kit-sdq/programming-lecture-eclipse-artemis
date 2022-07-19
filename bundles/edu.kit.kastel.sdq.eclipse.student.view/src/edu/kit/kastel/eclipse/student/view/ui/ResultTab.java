@@ -9,7 +9,7 @@ import org.eclipse.swt.widgets.TabFolder;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.Feedback;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.IExercise;
 import edu.kit.kastel.eclipse.common.api.client.websocket.WebsocketCallback;
-import edu.kit.kastel.eclipse.common.api.util.Triple;
+import edu.kit.kastel.eclipse.common.api.util.Pair;
 import edu.kit.kastel.eclipse.common.view.ui.AbstractResultTab;
 import edu.kit.kastel.eclipse.student.view.controllers.StudentViewController;
 
@@ -26,12 +26,12 @@ public class ResultTab extends AbstractResultTab implements WebsocketCallback {
 	}
 
 	@Override
-	protected Triple<String, String, List<Feedback>> getCurrentResultAndFeedback() {
+	protected Pair<String, List<Feedback>> getCurrentResultAndFeedback() {
 		var details = this.viewController.getFeedbackExcerise();
 		if (details.isEmpty()) {
-			return new Triple<>(null, null, null);
+			return new Pair<>(null, null);
 		}
-		return new Triple<>(details.first().completionDateAsString(), details.first().resultString, details.second());
+		return new Pair<>(details.first().completionDateAsString(), details.second());
 	}
 
 	@Override

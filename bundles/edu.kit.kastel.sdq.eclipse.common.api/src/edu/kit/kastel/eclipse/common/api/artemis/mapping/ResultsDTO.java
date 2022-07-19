@@ -27,8 +27,6 @@ public class ResultsDTO implements Serializable {
 	public double score;
 	@JsonProperty
 	public Boolean rated;
-	@JsonProperty
-	public String resultString;
 
 	public ResultsDTO() {
 		// NOP

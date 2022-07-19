@@ -32,8 +32,7 @@ abstract class AbstractResultTabCompositeController extends AbstractResultTabCom
 
 	protected abstract void reloadFeedbackForExcerise();
 
-	protected void setSuccessAndScore(IExercise currentExercise, boolean successOfAutomaticTests, double points, double score, String completionTime,
-			String resultString) {
+	protected void setSuccessAndScore(IExercise currentExercise, boolean successOfAutomaticTests, double points, double score, String completionTime) {
 		var display = getDisplay();
 		String title = currentExercise == null ? I18N().unknownTask() : currentExercise.getTitle();
 
@@ -42,7 +41,7 @@ abstract class AbstractResultTabCompositeController extends AbstractResultTabCom
 
 		this.lblTaskname.setText(title);
 		this.lblTaskdetails.setText(completionTime == null ? "" : completionTime);
-		this.lblScore.setText(resultString == null ? String.format(Locale.ENGLISH, I18N().score() + ": %.2f%%", score) : resultString);
+		this.lblScore.setText(String.format(Locale.ENGLISH, I18N().score() + ": %.2f%%", score));
 		this.lblPoints.setText(String.format(Locale.ENGLISH, I18N().points() + ": %.2f", points));
 	}
 

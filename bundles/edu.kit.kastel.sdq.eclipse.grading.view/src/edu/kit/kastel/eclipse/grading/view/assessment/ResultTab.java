@@ -9,7 +9,7 @@ import edu.kit.kastel.eclipse.common.api.artemis.mapping.Feedback;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.FeedbackType;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.IExercise;
 import edu.kit.kastel.eclipse.common.api.controller.IGradingSystemwideController;
-import edu.kit.kastel.eclipse.common.api.util.Triple;
+import edu.kit.kastel.eclipse.common.api.util.Pair;
 import edu.kit.kastel.eclipse.common.view.ui.AbstractResultTab;
 
 public class ResultTab extends AbstractResultTab {
@@ -31,14 +31,13 @@ public class ResultTab extends AbstractResultTab {
 	}
 
 	@Override
-	protected Triple<String, String, List<Feedback>> getCurrentResultAndFeedback() {
+	protected Pair<String, List<Feedback>> getCurrentResultAndFeedback() {
 		var submission = this.controller.getCurrentAssessmentController().getSubmission();
 		var feedbacks = this.controller.getArtemisController().getAllFeedbacksGottenFromLocking(submission);
 		// TODO Extract these strings from Artemis request
 		String completionTime = null;
-		String resultText = null;
 
-		return new Triple<>(completionTime, resultText, feedbacks.stream().filter(f -> f.getFeedbackType() == FeedbackType.AUTOMATIC).toList());
+		return new Pair<>(completionTime, feedbacks.stream().filter(f -> f.getFeedbackType() == FeedbackType.AUTOMATIC).toList());
 	}
 
 	@Override

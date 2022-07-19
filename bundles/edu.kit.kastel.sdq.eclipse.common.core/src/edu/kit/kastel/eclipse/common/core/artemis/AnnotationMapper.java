@@ -120,22 +120,6 @@ public class AnnotationMapper {
 		return absoluteScore / this.exercise.getMaxPoints() * 100D;
 	}
 
-	private String calculateResultString(final List<Feedback> allFeedbacks, final double absoluteScore) {
-		final List<Feedback> autoFeedbacks = //
-				allFeedbacks.stream().filter(Objects::nonNull).filter(feedback -> feedback.getFeedbackType() == FeedbackType.AUTOMATIC)
-						.collect(Collectors.toList());
-
-		final List<Feedback> tests = autoFeedbacks.stream().filter(f -> f.getReference() == null).collect(Collectors.toList());
-		long positiveTests = tests.stream().filter(feedback -> feedback.getPositive() != null && feedback.getPositive()).count();
-		long numberOfTests = tests.size();
-
-		// ENHANCE We may add "Issues" as text here iff activated ?
-		String result = "";
-		result += String.format("%d of %d passed, ", positiveTests, numberOfTests);
-		result += String.format("%s of %s points", nf.format(absoluteScore), nf.format(this.exercise.getMaxPoints()));
-		return result;
-	}
-
 	private String convertAnnotationsToJSONString(final List<IAnnotation> givenAnnotations) throws JsonProcessingException {
 		return oom.writeValueAsString(givenAnnotations);
 	}
@@ -171,8 +155,7 @@ public class AnnotationMapper {
 		final double absoluteScore = Math.min(Math.max(0.D, this.calculateAbsoluteScore(allFeedbacks)), this.exercise.getMaxPoints());
 		final double relativeScore = this.calculateRelativeScore(absoluteScore);
 
-		return new AssessmentResult(this.submission.getSubmissionId(), this.calculateResultString(allFeedbacks, absoluteScore), "SEMI_AUTOMATIC", relativeScore,
-				true, true, null, this.assessor, allFeedbacks);
+		return new AssessmentResult(this.submission.getSubmissionId(), "SEMI_AUTOMATIC", relativeScore, true, true, null, this.assessor, allFeedbacks);
 	}
 
 	/**
