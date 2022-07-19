@@ -4,6 +4,7 @@ package edu.kit.kastel.eclipse.common.api.artemis.mapping;
 import java.io.Serializable;
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -183,5 +184,10 @@ public class Feedback implements Comparable<Feedback>, Serializable {
 		return Objects.equals(this.credits, other.credits) && Objects.equals(this.detailText, other.detailText) && Objects.equals(this.id, other.id)
 				&& Objects.equals(this.positive, other.positive) && Objects.equals(this.reference, other.reference) && Objects.equals(this.text, other.text)
 				&& Objects.equals(this.type, other.type) && Objects.equals(this.visibility, other.visibility);
+	}
+
+	@JsonIgnore
+	public boolean isSCA() {
+		return this.text != null && this.text.startsWith("SCAFeedbackIdentifier");
 	}
 }

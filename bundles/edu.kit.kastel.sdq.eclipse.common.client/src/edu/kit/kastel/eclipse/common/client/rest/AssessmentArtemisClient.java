@@ -41,7 +41,7 @@ public class AssessmentArtemisClient extends AbstractArtemisClient implements IA
 	@Override
 	public void saveAssessment(int participationId, boolean submit, AssessmentResult assessment) throws ArtemisClientException {
 		String assessmentPayload = this.payload(assessment);
-		log.info(String.format("Saving assessment for submission %s with json: %s", assessment.getId(), assessmentPayload));
+		log.info(String.format("Saving assessment for submission %s with json: %s", assessment.id, assessmentPayload));
 
 		final Response rsp = this.endpoint.path(PARTICIPATION_PATHPART).path(String.valueOf(participationId)) //
 				.path(MANUAL_RESULT_PATHPART) //
@@ -54,7 +54,8 @@ public class AssessmentArtemisClient extends AbstractArtemisClient implements IA
 	@Override
 	public ILockResult startAssessment(ISubmission submission) throws ArtemisClientException {
 		final Response rsp = this.endpoint.path(PROGRAMMING_SUBMISSION_PATHPART).path(String.valueOf(submission.getSubmissionId())).path(LOCK_QUERY_PARAM)
-				.request().header(AUTHORIZATION_NAME, this.token).buildGet().invoke(); // synchronous variant
+				.request().header(AUTHORIZATION_NAME, this.token).buildGet().invoke(); // synchronous
+																						// variant
 		this.throwIfStatusUnsuccessful(rsp);
 		return this.read(rsp.readEntity(String.class), LockResult.class);
 	}

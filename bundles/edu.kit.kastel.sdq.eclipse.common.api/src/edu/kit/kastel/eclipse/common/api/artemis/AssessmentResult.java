@@ -4,66 +4,46 @@ package edu.kit.kastel.eclipse.common.api.artemis;
 import java.io.Serializable;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.Feedback;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.User;
 
-@JsonInclude(Include.NON_NULL)
 public class AssessmentResult implements Serializable {
 	private static final long serialVersionUID = -1703764424474018461L;
 
-	private int id;
+	@JsonProperty
+	public final int id;
+	@JsonProperty
 	private String assessmentType;
+	@JsonProperty
 	private double score;
+	@JsonProperty
 	private boolean rated;
+	@JsonProperty
 	private boolean hasFeedback;
-	private String completionDate;
+	@JsonProperty
 	private User assessor;
+	@JsonProperty
 	private List<Feedback> feedbacks;
+	@JsonProperty
+	private int codeIssueCount;
+	@JsonProperty
+	private int passedTestCaseCount;
+	@JsonProperty
+	private int testCaseCount;
 
-	public AssessmentResult(int id, String assessmentType, double score, boolean rated, boolean hasFeedback, String completionDate, User assessor,
-			List<Feedback> feedbacks) {
+	public AssessmentResult(int id, String assessmentType, double score, boolean rated, boolean hasFeedback, User assessor, List<Feedback> feedbacks,
+			int codeIssueCount, int passedTestCaseCount, int testCaseCount) {
 		this.id = id;
 		this.assessmentType = assessmentType;
 		this.score = score;
 		this.rated = rated;
 		this.hasFeedback = hasFeedback;
-		this.completionDate = completionDate;
 		this.assessor = assessor;
 		this.feedbacks = feedbacks;
-	}
-
-	public String getAssessmentType() {
-		return this.assessmentType;
-	}
-
-	public User getAssessor() {
-		return this.assessor;
-	}
-
-	public String getCompletionDate() {
-		return this.completionDate;
-	}
-
-	public List<Feedback> getFeedbacks() {
-		return this.feedbacks;
-	}
-
-	public int getId() {
-		return this.id;
-	}
-
-	public double getScore() {
-		return this.score;
-	}
-
-	public boolean isHasFeedback() {
-		return this.hasFeedback;
-	}
-
-	public boolean isRated() {
-		return this.rated;
+		this.codeIssueCount = codeIssueCount;
+		this.passedTestCaseCount = passedTestCaseCount;
+		this.testCaseCount = testCaseCount;
 	}
 }

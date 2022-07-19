@@ -155,7 +155,17 @@ public class AnnotationMapper {
 		final double absoluteScore = Math.min(Math.max(0.D, this.calculateAbsoluteScore(allFeedbacks)), this.exercise.getMaxPoints());
 		final double relativeScore = this.calculateRelativeScore(absoluteScore);
 
-		return new AssessmentResult(this.submission.getSubmissionId(), "SEMI_AUTOMATIC", relativeScore, true, true, null, this.assessor, allFeedbacks);
+		final List<Feedback> initialFeedback = getFilteredPreexistentFeedbacks(FeedbackType.AUTOMATIC);
+		final List<Feedback> tests = initialFeedback.stream().filter(f -> f.getReference() == null).collect(Collectors.toList());
+
+		int codeIssueCount = (int) initialFeedback.stream().filter(Feedback::isSCA).count();
+		int passedTestCaseCount = (int) tests.stream() //
+				.filter(feedback -> feedback.getPositive() != null && feedback.getPositive()).count();
+
+		return new AssessmentResult(this.submission.getSubmissionId(), "SEMI_AUTOMATIC", //
+				relativeScore, true, true, this.assessor, allFeedbacks, //
+				codeIssueCount, passedTestCaseCount, tests.size() //
+		);
 	}
 
 	/**
