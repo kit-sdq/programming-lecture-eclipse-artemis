@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.Platform;
@@ -33,8 +34,8 @@ public class StudentArtemisController extends ArtemisController implements IStud
 	private static final ILog log = Platform.getLog(ArtemisFeedbackWebsocket.class);
 	private final IWebsocketClient websocketClient;
 
-	protected StudentArtemisController(String host, String username, String password) {
-		super(host, username, password);
+	protected StudentArtemisController(String host, String username, String password, Consumer<String> newTokenCallback) {
+		super(host, username, password, newTokenCallback);
 		this.websocketClient = new ArtemisFeedbackWebsocket(this.clientManager.getArtemisUrl());
 	}
 

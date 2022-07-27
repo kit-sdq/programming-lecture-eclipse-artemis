@@ -1,6 +1,8 @@
 /* Licensed under EPL-2.0 2022. */
 package edu.kit.kastel.eclipse.common.client.rest;
 
+import java.util.function.Consumer;
+
 import edu.kit.kastel.eclipse.common.api.ArtemisClientException;
 import edu.kit.kastel.eclipse.common.api.client.IAssessmentArtemisClient;
 import edu.kit.kastel.eclipse.common.api.client.IAuthenticationArtemisClient;
@@ -14,7 +16,8 @@ import edu.kit.kastel.eclipse.common.api.messages.Messages;
 
 public class RestClientManager {
 	private final String username;
-	private final String password;
+	private transient final String passwordOrToken;
+
 	private final String hostname;
 
 	private IAuthenticationArtemisClient loginManager;
@@ -26,12 +29,12 @@ public class RestClientManager {
 	private IUtilArtemisClient utilClient;
 	private IAssessmentArtemisClient assessmentClient;
 
-	public RestClientManager(String hostname, String username, String password) {
+	public RestClientManager(String hostname, String username, String passwordOrToken, Consumer<String> newTokenCallback) {
 		this.username = username.trim();
-		this.password = password;
+		this.passwordOrToken = passwordOrToken;
 		this.hostname = hostname.trim();
 
-		this.loginManager = new LoginManager(this.hostname, this.username, this.password);
+		this.loginManager = new LoginManager(this.hostname, this.username, this.passwordOrToken, newTokenCallback);
 	}
 
 	public String getArtemisUrl() {
@@ -46,7 +49,7 @@ public class RestClientManager {
 	}
 
 	public boolean isReady() {
-		return !(this.hostname.isBlank() || this.username.isBlank() || this.password.isBlank());
+		return !(this.hostname.isBlank() || this.username.isBlank() || this.passwordOrToken.isBlank());
 	}
 
 	public IAuthenticationArtemisClient getAuthenticationClient() {

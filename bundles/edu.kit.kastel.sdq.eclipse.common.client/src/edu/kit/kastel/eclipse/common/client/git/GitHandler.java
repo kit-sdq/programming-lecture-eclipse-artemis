@@ -17,7 +17,6 @@ import org.eclipse.jgit.errors.NoWorkTreeException;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.transport.CredentialsProvider;
 import org.eclipse.jgit.transport.URIish;
-import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.eclipse.jgit.util.FileUtils;
 
 import edu.kit.kastel.eclipse.common.api.messages.Messages;
@@ -33,7 +32,9 @@ public final class GitHandler {
 			cloneRepository.setDirectory(destination);
 			cloneRepository.setRemote(REMOTE_NAME);
 			cloneRepository.setURI(String.valueOf(new URIish(repoURL)));
-			cloneRepository.setCredentialsProvider(credentials);
+			if (credentials != null) {
+				cloneRepository.setCredentialsProvider(credentials);
+			}
 			cloneRepository.setCloneAllBranches(true);
 			cloneRepository.setCloneSubmodules(false);
 			Git git = cloneRepository.call();
@@ -72,7 +73,9 @@ public final class GitHandler {
 		Git git = openGit(exerciseRepo);
 
 		PushCommand pushCommand = git.push();
-		pushCommand.setCredentialsProvider(credentials);
+		if (credentials != null) {
+			pushCommand.setCredentialsProvider(credentials);
+		}
 		// you can add more settings here if needed
 		try {
 			pushCommand.call().iterator().next();
@@ -84,11 +87,13 @@ public final class GitHandler {
 
 	}
 
-	public static void pullExercise(String gitUsername, String gitPassword, File exerciseRepo) throws GitException {
+	public static void pullExercise(File exerciseRepo, CredentialsProvider credentials) throws GitException {
 		Git git = openGit(exerciseRepo);
 
 		PullCommand pullCommand = git.pull();
-		pullCommand.setCredentialsProvider(new UsernamePasswordCredentialsProvider(gitUsername, gitPassword));
+		if (credentials != null) {
+			pullCommand.setCredentialsProvider(credentials);
+		}
 		// you can add more settings here if needed
 		try {
 			PullResult result = pullCommand.call();

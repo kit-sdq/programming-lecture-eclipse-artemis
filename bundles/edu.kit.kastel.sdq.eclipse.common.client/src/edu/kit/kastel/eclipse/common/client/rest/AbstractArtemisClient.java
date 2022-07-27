@@ -1,6 +1,8 @@
 /* Licensed under EPL-2.0 2022. */
 package edu.kit.kastel.eclipse.common.client.rest;
 
+import java.util.concurrent.TimeUnit;
+
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
@@ -63,7 +65,7 @@ public abstract class AbstractArtemisClient {
 	}
 
 	protected WebTarget getEndpoint(String url) {
-		return ClientBuilder.newBuilder().build().target(url);
+		return ClientBuilder.newBuilder().connectTimeout(5, TimeUnit.SECONDS).readTimeout(10, TimeUnit.SECONDS).build().target(url);
 	}
 
 	protected void throwIfStatusUnsuccessful(final Response response) throws ArtemisClientException {

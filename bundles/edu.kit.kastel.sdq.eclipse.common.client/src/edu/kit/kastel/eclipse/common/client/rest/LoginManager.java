@@ -2,11 +2,15 @@
 package edu.kit.kastel.eclipse.common.client.rest;
 
 import java.io.Serializable;
+import java.util.function.Consumer;
 
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
+
+import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.Platform;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -15,16 +19,24 @@ import edu.kit.kastel.eclipse.common.api.artemis.mapping.User;
 import edu.kit.kastel.eclipse.common.api.client.IAuthenticationArtemisClient;
 
 public class LoginManager extends AbstractArtemisClient implements IAuthenticationArtemisClient {
+
+	private static final ILog log = Platform.getLog(LoginManager.class);
+
 	private String username;
-	private String password;
-	private String token;
+	private String jwtToken;
+
+	private Consumer<String> newTokenCallback;
+	private transient String initialPasswordOrToken;
+
 	private WebTarget endpoint;
 	private User assessor;
 
-	public LoginManager(String hostname, String username, String password) {
+	public LoginManager(String hostname, String username, String passwordOrToken, Consumer<String> newTokenCallback) {
 		super(hostname);
 		this.username = username;
-		this.password = password;
+		this.initialPasswordOrToken = passwordOrToken;
+		this.newTokenCallback = newTokenCallback;
+
 		this.endpoint = this.getEndpoint(this.getApiRootURL());
 	}
 
@@ -35,22 +47,44 @@ public class LoginManager extends AbstractArtemisClient implements IAuthenticati
 
 	@Override
 	public void init() throws ArtemisClientException {
+		if (jwtToken != null) {
+			return;
+		}
+
 		try {
-			this.token = this.login();
+			if (JWTTokenUtils.isJWTToken(this.initialPasswordOrToken)) {
+				this.jwtToken = this.initialPasswordOrToken;
+			} else {
+				this.jwtToken = login();
+			}
+			updateTokenIfPossible();
+
 			this.assessor = this.fetchAssessor();
 		} catch (ProcessingException e) {
 			throw new ArtemisClientException(e.getMessage(), e);
 		}
 	}
 
+	private void updateTokenIfPossible() throws ArtemisClientException {
+		final Response rsp = this.endpoint.path("personal-access-token").request().header(AUTHORIZATION_NAME, this.getBearerToken())
+				.buildPost(Entity.json(null)).invoke();
+		if (!this.isStatusSuccessful(rsp)) {
+			log.error("Cannot update JWT Token. Please check that Artemis PAT profile is active!");
+			return;
+		}
+		Token token = this.read(rsp.readEntity(String.class), Token.class);
+		this.jwtToken = token.token;
+		newTokenCallback.accept(token.token);
+	}
+
 	@Override
 	public String getRawToken() {
-		return this.token;
+		return this.jwtToken;
 	}
 
 	@Override
 	public String getBearerToken() {
-		return "Bearer " + this.token;
+		return "Bearer " + this.jwtToken;
 	}
 
 	@Override
@@ -76,7 +110,7 @@ public class LoginManager extends AbstractArtemisClient implements IAuthenticati
 	private final AuthenticationEntity getAuthenticationEntity() {
 		AuthenticationEntity entity = new AuthenticationEntity();
 		entity.username = this.username;
-		entity.password = this.password;
+		entity.password = this.initialPasswordOrToken;
 		return entity;
 	}
 
