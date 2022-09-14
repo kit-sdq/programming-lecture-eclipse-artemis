@@ -1,19 +1,29 @@
 /* Licensed under EPL-2.0 2022. */
 package edu.kit.kastel.eclipse.common.client;
 
-import java.util.concurrent.Semaphore;
+import java.util.Objects;
 
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.browser.BrowserFunction;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
 
-public class BrowserLogin {
+public class BrowserLogin extends Dialog {
+	private static final int WIDTH = 1024;
+	private static final int HEIGHT = 1024;
+
+	private static final long MIN_TIME_TO_LOGIN_IN_MS = 2000;
 
 	private static final ILog log = Platform.getLog(BrowserLogin.class);
 
@@ -21,103 +31,148 @@ public class BrowserLogin {
 	private String token;
 	private Browser browser;
 
-	private Semaphore waitForBrowser = new Semaphore(0);
-	private Semaphore tokenWait = new Semaphore(0);
+	private boolean closed = false;
+
+	private long lastSuccessWasAlreadyLoggedIn;
 
 	public BrowserLogin(String hostname) {
+		super((Shell) null);
 		this.hostname = hostname;
+		this.setShellStyle((SWT.DIALOG_TRIM | SWT.RESIZE | SWT.APPLICATION_MODAL | SWT.ON_TOP) & ~SWT.CLOSE);
 	}
 
-	private Browser createBrowser(String hostname) {
-		Display display = new Display();
+	protected void configureShell(Shell newShell) {
+		super.configureShell(newShell);
+		newShell.setText("Artemis Login");
+		newShell.setSize(WIDTH, HEIGHT);
 
-		Shell shell = new Shell(display, SWT.SHELL_TRIM & ~SWT.CLOSE);
-		shell.setLayout(new GridLayout());
+		// Set to mid
+		Monitor mon = Display.getDefault().getMonitors()[0];
+		int newLeftPos = (mon.getBounds().width - WIDTH) / 2;
+		int newTopPos = (mon.getBounds().height - HEIGHT) / 2;
+		newShell.setLocation(newLeftPos, newTopPos);
+	}
 
-		final Browser browser = new Browser(shell, SWT.EDGE);
+	protected Control createDialogArea(Composite parent) {
+		final Composite comp = (Composite) super.createDialogArea(parent);
+		final GridLayout layout = (GridLayout) comp.getLayout();
+		layout.numColumns = 1;
+
+		browser = new Browser(comp, SWT.EDGE);
+		browser.setLayoutData(new GridData(GridData.FILL_BOTH));
 		browser.setJavascriptEnabled(true);
 		browser.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		browser.setUrl(hostname);
 
 		new BrowserFunction(browser, "tokenCallback") {
 			@Override
-			public Object function(Object[] objects) {
-				if (objects == null || objects.length != 1 || !(objects[0]instanceof String token))
-					return null;
-
-				// Crop " at beginning and end
-				BrowserLogin.this.token = token.substring(1, token.length() - 1);
-				tokenWait.release();
+			public Object function(Object[] parameters) {
+				handleTokenCallback(parameters);
 				return null;
 			}
 		};
 
-		return browser;
+		return comp;
 	}
 
+	@Override
+	public int open() {
+		closed = false;
+		lastSuccessWasAlreadyLoggedIn = System.currentTimeMillis();
+		int result = super.open();
+		closed = true;
+		return result;
+	}
+
+	@Override
+	protected void createButtonsForButtonBar(Composite parent) {
+		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CLOSE_LABEL, true);
+	}
+
+	@Override
+	protected void cancelPressed() {
+		closed = true;
+		super.cancelPressed();
+	}
+
+	/**
+	 * Gets the JWT Token from Artemis
+	 * 
+	 * @return the JWT Token or {@code null} if no token provided.
+	 */
 	public String getToken() {
 		if (this.token != null)
 			return token;
 
-		Thread daemon = new Thread(() -> swtThread());
-		daemon.setDaemon(true);
-		daemon.start();
+		closed = false;
 
-		log.info("Opened Browser. Waiting for token");
-		tokenWait.acquireUninterruptibly();
-		log.info("Got Token");
-
-		return this.token;
-	}
-
-	private void swtThread() {
-		browser = createBrowser(hostname);
-
-		Thread pollingDaemon = new Thread(() -> pollingThread(browser.getDisplay()));
+		Thread pollingDaemon = new Thread(() -> pollingThread());
 		pollingDaemon.setDaemon(true);
 		pollingDaemon.start();
 
-		var shell = browser.getShell();
-		var display = browser.getDisplay();
-
-		shell.setSize(1024, 512);
-		shell.open();
-
-		waitForBrowser.release();
-
-		while (!shell.isDisposed()) {
-			if (!display.readAndDispatch()) {
-				display.sleep();
-			}
-			if (token != null)
-				shell.close();
-		}
-		browser = null;
-		display.dispose();
+		log.info("Opened Browser. Waiting for token");
+		Display.getDefault().syncExec(() -> this.open());
+		log.info("Got Token");
+		return this.token;
 	}
 
-	private void pollingThread(Display display) {
-		waitForBrowser.acquireUninterruptibly();
-
-		var localBrowser = browser;
-		if (localBrowser == null)
-			return;
-
+	private void pollingThread() {
 		try {
-			while (localBrowser == browser) {
+			var display = Display.getDefault();
+			while (!closed) {
 				Thread.sleep(1000);
-				display.asyncExec(() -> {
-					try {
-						if (localBrowser == browser)
-							localBrowser.execute("tokenCallback(localStorage.getItem(\"jhi-authenticationtoken\"));");
-					} catch (Exception e) {
-						log.error(e.getMessage(), e);
-					}
-				});
+				display.asyncExec(() -> callBrowserFunction());
 			}
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 		}
 
+	}
+
+	private void handleTokenCallback(Object[] parameters) {
+		if (parameters == null || parameters.length != 1 || !(parameters[0]instanceof String newToken)) {
+			if (token != null) {
+				log.info("Logout occured");
+				token = null;
+			}
+			return;
+		}
+
+		// Crop '"' at beginning and end
+		newToken = newToken.substring(1, newToken.length() - 1);
+
+		if (!Objects.equals(token, newToken)) {
+			log.info("Got a new Token");
+		}
+
+		token = newToken;
+
+		// Close Dialog
+		if (!wasAlreadyLoggedIn()) {
+			Display.getDefault().asyncExec(() -> BrowserLogin.this.okPressed());
+		}
+	}
+
+	private void callBrowserFunction() {
+		try {
+			browser.execute("tokenCallback(localStorage.getItem(\"jhi-authenticationtoken\"));");
+		} catch (SWTException e) {
+			if (e.getMessage().equals("Widget is disposed")) {
+				return;
+			}
+			log.error(e.getMessage(), e);
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+		}
+	}
+
+	private boolean wasAlreadyLoggedIn() {
+		long currentTime = System.currentTimeMillis();
+		long diff = currentTime - lastSuccessWasAlreadyLoggedIn;
+		if (diff > MIN_TIME_TO_LOGIN_IN_MS) {
+			return false;
+		}
+		lastSuccessWasAlreadyLoggedIn = currentTime;
+		return true;
 	}
 }
