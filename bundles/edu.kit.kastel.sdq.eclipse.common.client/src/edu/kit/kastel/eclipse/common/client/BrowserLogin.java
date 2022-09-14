@@ -23,7 +23,10 @@ public class BrowserLogin extends Dialog {
 	private static final int WIDTH = 1024;
 	private static final int HEIGHT = 1024;
 
-	private static final long MIN_TIME_TO_LOGIN_IN_MS = 2000;
+	private static final long MIN_TIME_TO_LOGIN_IN_MS = 5000;
+	private static final long POLL_INTERVAL = 1000;
+
+	private static final String CALLBACK_NAME = "tokenCallback";
 
 	private static final ILog log = Platform.getLog(BrowserLogin.class);
 
@@ -64,7 +67,7 @@ public class BrowserLogin extends Dialog {
 		browser.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		browser.setUrl(hostname);
 
-		new BrowserFunction(browser, "tokenCallback") {
+		new BrowserFunction(browser, CALLBACK_NAME) {
 			@Override
 			public Object function(Object[] parameters) {
 				handleTokenCallback(parameters);
@@ -120,7 +123,7 @@ public class BrowserLogin extends Dialog {
 		try {
 			var display = Display.getDefault();
 			while (!closed) {
-				Thread.sleep(1000);
+				Thread.sleep(POLL_INTERVAL);
 				display.asyncExec(() -> callBrowserFunction());
 			}
 		} catch (Exception e) {
@@ -155,7 +158,7 @@ public class BrowserLogin extends Dialog {
 
 	private void callBrowserFunction() {
 		try {
-			browser.execute("tokenCallback(localStorage.getItem(\"jhi-authenticationtoken\"));");
+			browser.execute(CALLBACK_NAME + "(localStorage.getItem(\"jhi-authenticationtoken\"));");
 		} catch (SWTException e) {
 			if (e.getMessage().equals("Widget is disposed")) {
 				return;
