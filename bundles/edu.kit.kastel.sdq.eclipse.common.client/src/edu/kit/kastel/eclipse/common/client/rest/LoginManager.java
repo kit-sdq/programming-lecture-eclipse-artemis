@@ -13,6 +13,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import edu.kit.kastel.eclipse.common.api.ArtemisClientException;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.User;
 import edu.kit.kastel.eclipse.common.api.client.IAuthenticationArtemisClient;
+import edu.kit.kastel.eclipse.common.client.BrowserLogin;
 
 public class LoginManager extends AbstractArtemisClient implements IAuthenticationArtemisClient {
 	private String username;
@@ -20,6 +21,12 @@ public class LoginManager extends AbstractArtemisClient implements IAuthenticati
 	private String token;
 	private WebTarget endpoint;
 	private User assessor;
+
+	public LoginManager(String hostname, String token) {
+		super(hostname);
+		this.token = token;
+		this.endpoint = this.getEndpoint(this.getApiRootURL());
+	}
 
 	public LoginManager(String hostname, String username, String password) {
 		super(hostname);
@@ -34,13 +41,26 @@ public class LoginManager extends AbstractArtemisClient implements IAuthenticati
 	}
 
 	@Override
-	public void init() throws ArtemisClientException {
+	public void login() throws ArtemisClientException {
 		try {
-			this.token = this.login();
+
+			if (this.hostname.isBlank()) {
+				throw new ArtemisClientException("Login without hostname is impossible");
+			} else if (username.isBlank() || password.isBlank()) {
+				BrowserLogin login = new BrowserLogin(getRootURL());
+				this.token = login.getToken();
+			} else {
+				this.token = this.loginViaUsernameAndPassword();
+			}
 			this.assessor = this.fetchAssessor();
 		} catch (ProcessingException e) {
 			throw new ArtemisClientException(e.getMessage(), e);
 		}
+	}
+
+	@Override
+	public boolean isReady() {
+		return this.token != null;
 	}
 
 	@Override
@@ -64,7 +84,7 @@ public class LoginManager extends AbstractArtemisClient implements IAuthenticati
 		return this.read(rsp.readEntity(String.class), User.class);
 	}
 
-	private String login() throws ArtemisClientException, ProcessingException {
+	private String loginViaUsernameAndPassword() throws ArtemisClientException, ProcessingException {
 		String payload = this.payload(this.getAuthenticationEntity());
 		final Response authenticationResponse = this.endpoint.path("authenticate").request().buildPost(Entity.json(payload)).invoke();
 

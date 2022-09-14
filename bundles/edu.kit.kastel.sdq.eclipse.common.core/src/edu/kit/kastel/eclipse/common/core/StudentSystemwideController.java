@@ -38,34 +38,31 @@ import edu.kit.kastel.eclipse.common.core.model.annotation.AnnotationDAO;
 import edu.kit.kastel.eclipse.common.core.model.annotation.IAnnotationDAO;
 
 public class StudentSystemwideController extends SystemwideController implements IStudentSystemwideController {
+	private String artemisHost;
 
 	private IStudentExam exam;
 	private IWebsocketController websocketController;
 	private IStudentArtemisController artemisGUIController;
-	private String artemisHost;
 
 	private IAnnotationDAO annotationDao;
 
 	public StudentSystemwideController(final IPreferenceStore preferenceStore) {
-		super(preferenceStore.getString(PreferenceConstants.GENERAL_ARTEMIS_USER), //
-				preferenceStore.getString(PreferenceConstants.GENERAL_ARTEMIS_PASSWORD), //
-				preferenceStore.getString(PreferenceConstants.GENERAL_GIT_TOKEN) //
-		);
-		this.createControllers(preferenceStore.getString(PreferenceConstants.GENERAL_ARTEMIS_URL), //
-				preferenceStore.getString(PreferenceConstants.GENERAL_ARTEMIS_USER), //
-				preferenceStore.getString(PreferenceConstants.GENERAL_ARTEMIS_PASSWORD) //
-		);
+		super(preferenceStore);
 		this.preferenceStore = preferenceStore;
 
+		this.createController(preferenceStore);
 		this.initPreferenceStoreCallback(preferenceStore);
 	}
 
-	private void createControllers(final String artemisHost, final String username, final String password) {
-		StudentArtemisController controller = new StudentArtemisController(artemisHost, username, password);
+	protected IArtemisController createController(IPreferenceStore preferenceStore) {
+		this.artemisHost = preferenceStore.getString(PreferenceConstants.GENERAL_ARTEMIS_URL);
+		StudentArtemisController controller = new StudentArtemisController(this.artemisHost,
+				preferenceStore.getString(PreferenceConstants.GENERAL_ADVANCED_ARTEMIS_USER),
+				preferenceStore.getString(PreferenceConstants.GENERAL_ADVANCED_ARTEMIS_PASSWORD));
 		this.artemisGUIController = controller;
 		this.websocketController = controller;
-		this.artemisHost = artemisHost;
 		this.annotationDao = new AnnotationDAO();
+		return controller;
 	}
 
 	@Override
@@ -298,8 +295,8 @@ public class StudentSystemwideController extends SystemwideController implements
 	}
 
 	@Override
-	protected void refreshArtemisController(String url, String user, String pass) {
-		this.createControllers(url, user, pass);
+	protected void refreshArtemisController(IPreferenceStore preferenceStore) {
+		this.createController(preferenceStore);
 	}
 
 	@Override

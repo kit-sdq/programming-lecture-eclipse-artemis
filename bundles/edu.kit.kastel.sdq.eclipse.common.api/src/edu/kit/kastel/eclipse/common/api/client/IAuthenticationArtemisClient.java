@@ -32,5 +32,7 @@ public interface IAuthenticationArtemisClient {
 	 */
 	User getUser();
 
-	void init() throws ArtemisClientException;
+	void login() throws ArtemisClientException;
+
+	boolean isReady();
 }

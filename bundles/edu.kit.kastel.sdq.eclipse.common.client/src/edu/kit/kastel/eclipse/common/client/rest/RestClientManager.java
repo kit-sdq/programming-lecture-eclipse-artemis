@@ -10,11 +10,8 @@ import edu.kit.kastel.eclipse.common.api.client.IFeedbackArtemisClient;
 import edu.kit.kastel.eclipse.common.api.client.IParticipationArtemisClient;
 import edu.kit.kastel.eclipse.common.api.client.ISubmissionsArtemisClient;
 import edu.kit.kastel.eclipse.common.api.client.IUtilArtemisClient;
-import edu.kit.kastel.eclipse.common.api.messages.Messages;
 
 public class RestClientManager {
-	private final String username;
-	private final String password;
 	private final String hostname;
 
 	private IAuthenticationArtemisClient loginManager;
@@ -26,12 +23,13 @@ public class RestClientManager {
 	private IUtilArtemisClient utilClient;
 	private IAssessmentArtemisClient assessmentClient;
 
-	public RestClientManager(String hostname, String username, String password) {
-		this.username = username.trim();
-		this.password = password;
+	public RestClientManager(String hostname, String optionalUsername, String optionalPassword) {
 		this.hostname = hostname.trim();
+		this.loginManager = new LoginManager(this.hostname, optionalUsername, optionalPassword);
+	}
 
-		this.loginManager = new LoginManager(this.hostname, this.username, this.password);
+	public boolean isReady() {
+		return this.loginManager.isReady();
 	}
 
 	public String getArtemisUrl() {
@@ -39,14 +37,7 @@ public class RestClientManager {
 	}
 
 	public void login() throws ArtemisClientException {
-		if (!this.isReady()) {
-			throw new ArtemisClientException(Messages.CLIENT_NO_CREDENTIALS);
-		}
-		this.loginManager.init();
-	}
-
-	public boolean isReady() {
-		return !(this.hostname.isBlank() || this.username.isBlank() || this.password.isBlank());
+		this.loginManager.login();
 	}
 
 	public IAuthenticationArtemisClient getAuthenticationClient() {
@@ -101,5 +92,4 @@ public class RestClientManager {
 		}
 		return this.assessmentClient;
 	}
-
 }
