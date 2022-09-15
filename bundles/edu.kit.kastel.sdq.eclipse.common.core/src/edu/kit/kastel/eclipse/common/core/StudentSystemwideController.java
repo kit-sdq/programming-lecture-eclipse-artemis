@@ -49,8 +49,6 @@ public class StudentSystemwideController extends SystemwideController implements
 	public StudentSystemwideController(final IPreferenceStore preferenceStore) {
 		super(preferenceStore);
 		this.preferenceStore = preferenceStore;
-
-		this.createController(preferenceStore);
 		this.initPreferenceStoreCallback(preferenceStore);
 	}
 

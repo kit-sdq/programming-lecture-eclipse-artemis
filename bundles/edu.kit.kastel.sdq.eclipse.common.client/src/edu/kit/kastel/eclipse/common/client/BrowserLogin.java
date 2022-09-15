@@ -41,7 +41,7 @@ public class BrowserLogin extends Dialog {
 	public BrowserLogin(String hostname) {
 		super((Shell) null);
 		this.hostname = hostname;
-		this.setShellStyle((SWT.DIALOG_TRIM | SWT.RESIZE | SWT.APPLICATION_MODAL | SWT.ON_TOP) & ~SWT.CLOSE);
+		this.setShellStyle((SWT.DIALOG_TRIM | SWT.RESIZE | SWT.MODELESS | SWT.ON_TOP) & ~SWT.CLOSE);
 	}
 
 	protected void configureShell(Shell newShell) {
