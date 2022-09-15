@@ -61,7 +61,10 @@ public class BrowserLogin extends Dialog {
 		final GridLayout layout = (GridLayout) comp.getLayout();
 		layout.numColumns = 1;
 
-		browser = new Browser(comp, SWT.EDGE);
+		if (isWindows10orAbove())
+			browser = new Browser(comp, SWT.EDGE);
+		else
+			browser = new Browser(comp, SWT.NONE);
 		browser.setLayoutData(new GridData(GridData.FILL_BOTH));
 		browser.setJavascriptEnabled(true);
 		browser.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
@@ -177,5 +180,12 @@ public class BrowserLogin extends Dialog {
 		}
 		lastSuccessWasAlreadyLoggedIn = currentTime;
 		return true;
+	}
+
+	private boolean isWindows10orAbove() {
+		String os = System.getProperty("os.name");
+		if (os == null || !os.startsWith("Windows"))
+			return false;
+		return os.contains("Windows 10") || os.contains("Windows 11");
 	}
 }
