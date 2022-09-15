@@ -59,7 +59,6 @@ public final class GitHandler {
 			git.add().setUpdate(true).addFilepattern(".").call();
 			git.rm().addFilepattern(".").call();
 			git.commit().setCommitter(authorName, email).setMessage(commitMsg).setSign(false).call();
-			git.close();
 		} catch (GitAPIException e) {
 			throw new GitException(Messages.GIT_COMMIT_FAILED + exerciseRepo.getPath(), e);
 		} finally {
