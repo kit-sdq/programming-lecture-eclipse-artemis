@@ -3,7 +3,6 @@ package edu.kit.kastel.eclipse.common.core;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 
-import edu.kit.kastel.eclipse.common.api.PreferenceConstants;
 import edu.kit.kastel.eclipse.common.api.artemis.IProjectFileNamingStrategy;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.ICourse;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.IExercise;
@@ -31,19 +30,19 @@ public abstract class SystemwideController extends AbstractController implements
 	protected abstract void refreshArtemisController(IPreferenceStore preferenceStore);
 
 	protected void initPreferenceStoreCallback(final IPreferenceStore preferenceStore) {
-		// change preferences
-		this.preferenceStore.addPropertyChangeListener(event -> {
-			boolean trigger = false;
-			trigger |= PreferenceConstants.GENERAL_ARTEMIS_URL.equals(event.getProperty());
-			trigger |= PreferenceConstants.GENERAL_ADVANCED_ARTEMIS_USER.equals(event.getProperty());
-			trigger |= PreferenceConstants.GENERAL_ADVANCED_ARTEMIS_PASSWORD.equals(event.getProperty());
-
-			if (!trigger) {
-				return;
-			}
-
-			this.refreshArtemisController(preferenceStore);
-		});
+		// TODO DTHF1: For now we disable that as it causes problems with the login
+//		this.preferenceStore.addPropertyChangeListener(event -> {
+//			boolean trigger = false;
+//			trigger |= PreferenceConstants.GENERAL_ARTEMIS_URL.equals(event.getProperty());
+//			trigger |= PreferenceConstants.GENERAL_ADVANCED_ARTEMIS_USER.equals(event.getProperty());
+//			trigger |= PreferenceConstants.GENERAL_ADVANCED_ARTEMIS_PASSWORD.equals(event.getProperty());
+//
+//			if (!trigger) {
+//				return;
+//			}
+//
+//			this.refreshArtemisController(preferenceStore);
+//		});
 	}
 
 	protected boolean nullCheckMembersAndNotify(boolean checkCourseID, boolean checkExerciseID) {
