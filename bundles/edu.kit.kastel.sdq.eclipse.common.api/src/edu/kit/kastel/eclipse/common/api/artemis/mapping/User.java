@@ -31,6 +31,8 @@ public final class User implements Serializable {
 	private String participantIdentifier;
 	@JsonProperty("groups")
 	private List<String> groups;
+	@JsonProperty("vcsAccessToken")
+	private String vcsAccessToken;
 
 	public boolean getActivated() {
 		return this.activated;
@@ -74,6 +76,10 @@ public final class User implements Serializable {
 
 	public List<String> getGroups() {
 		return this.groups;
+	}
+
+	public String getVcsAccessToken() {
+		return vcsAccessToken;
 	}
 
 }

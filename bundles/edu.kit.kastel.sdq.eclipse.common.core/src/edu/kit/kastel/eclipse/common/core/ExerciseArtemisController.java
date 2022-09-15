@@ -31,8 +31,16 @@ public class ExerciseArtemisController extends AbstractController implements IEx
 		this.username = user == null ? null : user.getLogin();
 		String password = preferenceStore.getString(PreferenceConstants.GENERAL_ADVANCED_ARTEMIS_PASSWORD);
 		String gitToken = preferenceStore.getString(PreferenceConstants.GENERAL_ADVANCED_GIT_TOKEN);
-		// TODO Extract from Artemis ..
-		this.gitPassword = gitToken == null || gitToken.isBlank() ? password : gitToken;
+
+		if (gitToken != null && !gitToken.isBlank()) {
+			this.gitPassword = gitToken;
+		} else if (password != null && !password.isBlank()) {
+			this.gitPassword = password;
+		} else if (user != null && user.getVcsAccessToken() != null) {
+			this.gitPassword = user.getVcsAccessToken();
+		} else {
+			this.gitPassword = "";
+		}
 	}
 
 	@Override
