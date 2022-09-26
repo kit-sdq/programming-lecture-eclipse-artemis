@@ -41,11 +41,15 @@ jobs:
       run: |
         mkdir dist 
         mv releng/edu.kit.kastel.sdq.eclipse.grading.product/target/products/*-win32*.zip dist/Artemis_Grading_Windows.zip
-        mv releng/edu.kit.kastel.sdq.eclipse.grading.product/target/products/*-linux*.zip dist/Artemis_Grading_Linux.zip
-        mv releng/edu.kit.kastel.sdq.eclipse.grading.product/target/products/*-macosx*.zip dist/Artemis_Grading_MacOS.zip
+        mv releng/edu.kit.kastel.sdq.eclipse.grading.product/target/products/*-linux.*.x86_64.zip dist/Artemis_Grading_Linux_x86_64.zip
+        mv releng/edu.kit.kastel.sdq.eclipse.grading.product/target/products/*-linux.*.aarch64.zip dist/Artemis_Grading_Linux_aarch64.zip
+        mv releng/edu.kit.kastel.sdq.eclipse.grading.product/target/products/*-macosx.*.x86_64.zip dist/Artemis_Grading_MacOS_x86_64.zip
+        mv releng/edu.kit.kastel.sdq.eclipse.grading.product/target/products/*-macosx.*.aarch64.zip dist/Artemis_Grading_MacOS_aarch64.zip
         mv releng/edu.kit.kastel.sdq.eclipse.student.product/target/products/*-win32*.zip dist/Artemis_Student_Windows.zip
-        mv releng/edu.kit.kastel.sdq.eclipse.student.product/target/products/*-linux*.zip dist/Artemis_Student_Linux.zip
-        mv releng/edu.kit.kastel.sdq.eclipse.student.product/target/products/*-macosx*.zip dist/Artemis_Student_MacOS.zip
+        mv releng/edu.kit.kastel.sdq.eclipse.student.product/target/products/*-linux.*.x86_64.zip dist/Artemis_Student_Linux_x86_64.zip
+        mv releng/edu.kit.kastel.sdq.eclipse.student.product/target/products/*-linux.*.aarch64.zip dist/Artemis_Student_Linux_aarch64.zip
+        mv releng/edu.kit.kastel.sdq.eclipse.student.product/target/products/*-macosx.*.x86_64.zip dist/Artemis_Student_MacOS_x86_64.zip
+        mv releng/edu.kit.kastel.sdq.eclipse.student.product/target/products/*-macosx.*.aarch64.zip dist/Artemis_Student_MacOS_aarch64.zip
         
 
     - name: Sign MacOS Eclipse Distribution (Grading)
@@ -62,10 +66,15 @@ jobs:
         security import certificate.p12 -k build.keychain -P $MACOS_CERTIFICATE_PWD -T /usr/bin/codesign
         security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k keychainpw build.keychain
         security find-identity -p codesigning
-        unzip dist/Artemis_Grading_MacOS.zip
+        unzip dist/Artemis_Grading_MacOS_x86_64.zip
         /usr/bin/codesign -s "kit-sdq/programming-lecture-eclipse-artemis" -fv Eclipse.app
-        rm dist/Artemis_Grading_MacOS.zip
-        ditto -c -k --sequesterRsrc --keepParent Eclipse.app dist/Artemis_Grading_MacOS.zip
+        rm dist/Artemis_Grading_MacOS_x86_64.zip
+        ditto -c -k --sequesterRsrc --keepParent Eclipse.app dist/Artemis_Grading_MacOS_x86_64.zip
+        rm -rf Eclipse.app
+        unzip dist/Artemis_Grading_MacOS_aarch64.zip
+        /usr/bin/codesign -s "kit-sdq/programming-lecture-eclipse-artemis" -fv Eclipse.app
+        rm dist/Artemis_Grading_MacOS_aarch64.zip
+        ditto -c -k --sequesterRsrc --keepParent Eclipse.app dist/Artemis_Grading_MacOS_aarch64.zip
         
     - name: Sign MacOS Eclipse Distribution (Student)
       if: startsWith(github.ref, 'refs/tags/v')
@@ -75,10 +84,15 @@ jobs:
       run: |
         rm -rf Eclipse.app
         echo $MACOS_CERTIFICATE | base64 --decode > certificate.p12
-        unzip dist/Artemis_Student_MacOS.zip
+        unzip dist/Artemis_Student_MacOS_x86_64.zip
         /usr/bin/codesign -s "kit-sdq/programming-lecture-eclipse-artemis" -fv Eclipse.app
-        rm dist/Artemis_Student_MacOS.zip
-        ditto -c -k --sequesterRsrc --keepParent Eclipse.app dist/Artemis_Student_MacOS.zip        
+        rm dist/Artemis_Student_MacOS_x86_64.zip
+        ditto -c -k --sequesterRsrc --keepParent Eclipse.app dist/Artemis_Student_MacOS_x86_64.zip
+        rm -rf Eclipse.app
+        unzip dist/Artemis_Student_MacOS_aarch64.zip
+        /usr/bin/codesign -s "kit-sdq/programming-lecture-eclipse-artemis" -fv Eclipse.app
+        rm dist/Artemis_Student_MacOS_aarch64.zip
+        ditto -c -k --sequesterRsrc --keepParent Eclipse.app dist/Artemis_Student_MacOS_aarch64.zip    
 
     - name: Save Eclipse Distribution (Windows)
       uses: actions/upload-artifact@v3
@@ -90,13 +104,13 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: "Eclipse Distribution Linux"
-        path: "dist/Artemis_*_Linux.zip"
+        path: "dist/Artemis_*_Linux*.zip"
 
     - name: Save Eclipse Distribution (MacOS)
       uses: actions/upload-artifact@v3
       with:
         name: "Eclipse Distribution MacOS"
-        path: "dist/Artemis_*_MacOS.zip"
+        path: "dist/Artemis_*_MacOS*.zip"
   
           
     - name: Release
@@ -105,8 +119,12 @@ jobs:
       with:
         files: |
           dist/Artemis_Grading_Windows.zip
-          dist/Artemis_Grading_Linux.zip
-          dist/Artemis_Grading_MacOS.zip
+          dist/Artemis_Grading_Linux_x86_64.zip
+          dist/Artemis_Grading_Linux_aarch64.zip
+          dist/Artemis_Grading_MacOS_x86_64.zip
+          dist/Artemis_Grading_MacOS_aarch64.zip
           dist/Artemis_Student_Windows.zip
-          dist/Artemis_Student_Linux.zip
-          dist/Artemis_Student_MacOS.zip      
+          dist/Artemis_Student_Linux_x86_64.zip
+          dist/Artemis_Student_Linux_aarch64.zip
+          dist/Artemis_Student_MacOS_x86_64.zip      
+          dist/Artemis_Student_MacOS_aarch64.zip
