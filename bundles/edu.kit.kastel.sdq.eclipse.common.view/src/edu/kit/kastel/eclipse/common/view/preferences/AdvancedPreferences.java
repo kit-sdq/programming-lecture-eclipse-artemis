@@ -30,7 +30,11 @@ public class AdvancedPreferences extends FieldEditorPreferencePage implements IW
 	public void createFieldEditors() {
 		var parent = this.getFieldEditorParent();
 
-		var gitToken = new StringFieldEditor(PreferenceConstants.GENERAL_GIT_TOKEN, I18N().settingsGitToken(), parent);
+		var artemisUser = new StringFieldEditor(PreferenceConstants.GENERAL_ADVANCED_ARTEMIS_USER, I18N().settingsUsername(), parent);
+		var artemisPassword = new StringFieldEditor(PreferenceConstants.GENERAL_ADVANCED_ARTEMIS_PASSWORD, I18N().settingsPassword(), parent);
+		artemisPassword.getTextControl(this.getFieldEditorParent()).setEchoChar('*');
+
+		var gitToken = new StringFieldEditor(PreferenceConstants.GENERAL_ADVANCED_GIT_TOKEN, I18N().settingsGitToken(), parent);
 		gitToken.getTextControl(this.getFieldEditorParent()).setEchoChar('*');
 
 		var absoluteConfigPath = new FileFieldEditor(PreferenceConstants.GRADING_ABSOLUTE_CONFIG_PATH, I18N().settingsConfigPath(), parent);
@@ -48,6 +52,8 @@ public class AdvancedPreferences extends FieldEditorPreferencePage implements IW
 		columnsForGradingButtons.setEmptyStringAllowed(false);
 		columnsForGradingButtons.setValidRange(1, 10);
 
+		this.addField(artemisUser);
+		this.addField(artemisPassword);
 		this.addField(gitToken);
 
 		this.addField(absoluteConfigPath);

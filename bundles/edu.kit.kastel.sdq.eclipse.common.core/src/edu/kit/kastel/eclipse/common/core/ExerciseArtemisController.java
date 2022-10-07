@@ -7,13 +7,16 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 
 import edu.kit.kastel.eclipse.common.api.ArtemisClientException;
+import edu.kit.kastel.eclipse.common.api.PreferenceConstants;
 import edu.kit.kastel.eclipse.common.api.artemis.IProjectFileNamingStrategy;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.ICourse;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.IExercise;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.ISubmission;
+import edu.kit.kastel.eclipse.common.api.artemis.mapping.User;
 import edu.kit.kastel.eclipse.common.api.controller.AbstractController;
 import edu.kit.kastel.eclipse.common.api.controller.IExerciseArtemisController;
 import edu.kit.kastel.eclipse.common.client.git.GitException;
@@ -24,9 +27,20 @@ public class ExerciseArtemisController extends AbstractController implements IEx
 	private String username;
 	private String gitPassword;
 
-	public ExerciseArtemisController(String username, String password, String gitToken) {
-		this.username = username;
-		this.gitPassword = gitToken == null || gitToken.isBlank() ? password : gitToken;
+	public ExerciseArtemisController(User user, IPreferenceStore preferenceStore) {
+		this.username = user == null ? null : user.getLogin();
+		String password = preferenceStore.getString(PreferenceConstants.GENERAL_ADVANCED_ARTEMIS_PASSWORD);
+		String gitToken = preferenceStore.getString(PreferenceConstants.GENERAL_ADVANCED_GIT_TOKEN);
+
+		if (gitToken != null && !gitToken.isBlank()) {
+			this.gitPassword = gitToken;
+		} else if (password != null && !password.isBlank()) {
+			this.gitPassword = password;
+		} else if (user != null && user.getVcsAccessToken() != null) {
+			this.gitPassword = user.getVcsAccessToken();
+		} else {
+			this.gitPassword = "";
+		}
 	}
 
 	@Override

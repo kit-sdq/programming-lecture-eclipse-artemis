@@ -48,17 +48,11 @@ public class ArtemisPreferencesPage extends FieldEditorPreferencePage implements
 		var parent = this.getFieldEditorParent();
 
 		var artemisUrl = new StringFieldEditor(PreferenceConstants.GENERAL_ARTEMIS_URL, I18N().settingsUrl(), parent);
-		var artemisUser = new StringFieldEditor(PreferenceConstants.GENERAL_ARTEMIS_USER, I18N().settingsUsername(), parent);
-		var artemisPassword = new StringFieldEditor(PreferenceConstants.GENERAL_ARTEMIS_PASSWORD, I18N().settingsPassword(), parent);
-		artemisPassword.getTextControl(this.getFieldEditorParent()).setEchoChar('*');
 
 		this.languageSelector = new ComboFieldEditor(PreferenceConstants.GENERAL_PREFERRED_LANGUAGE, I18N().settingsLanguage(),
 				LanguageSettings.getAvailableLocalesForComboField(), parent);
 
 		this.addField(artemisUrl);
-		this.addField(artemisUser);
-		this.addField(artemisPassword);
-
 		this.addField(languageSelector);
 
 		Label hint = this.createDescriptionLabel(this.getFieldEditorParent());

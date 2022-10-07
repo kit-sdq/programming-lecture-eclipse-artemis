@@ -32,7 +32,7 @@ public abstract class AbstractArtemisClient {
 
 	protected static final String AUTHORIZATION_NAME = "Authorization";
 
-	private String artemisHostname;
+	protected final String hostname;
 	private ObjectMapper orm;
 
 	/**
@@ -41,12 +41,12 @@ public abstract class AbstractArtemisClient {
 	 * @param artemisHostname the hostname, only! (e.g. "test.kit.edu")
 	 */
 	protected AbstractArtemisClient(String artemisHostname) {
-		this.artemisHostname = artemisHostname;
+		this.hostname = artemisHostname;
 		this.orm = this.createObjectMapper();
 	}
 
 	protected final String getRootURL() {
-		String endpoint = this.artemisHostname;
+		String endpoint = this.hostname;
 		if (!endpoint.startsWith(PROTOCOL_PREFIX)) {
 			endpoint = PROTOCOL_PREFIX + endpoint;
 		}

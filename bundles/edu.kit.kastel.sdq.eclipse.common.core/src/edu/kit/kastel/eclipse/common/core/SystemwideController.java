@@ -3,11 +3,11 @@ package edu.kit.kastel.eclipse.common.core;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 
-import edu.kit.kastel.eclipse.common.api.PreferenceConstants;
 import edu.kit.kastel.eclipse.common.api.artemis.IProjectFileNamingStrategy;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.ICourse;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.IExercise;
 import edu.kit.kastel.eclipse.common.api.controller.AbstractController;
+import edu.kit.kastel.eclipse.common.api.controller.IArtemisController;
 import edu.kit.kastel.eclipse.common.api.controller.IExerciseArtemisController;
 import edu.kit.kastel.eclipse.common.api.controller.ISystemwideController;
 import edu.kit.kastel.eclipse.common.core.artemis.naming.ProjectFileNamingStrategies;
@@ -19,31 +19,30 @@ public abstract class SystemwideController extends AbstractController implements
 	protected IProjectFileNamingStrategy projectFileNamingStrategy;
 	protected IExerciseArtemisController exerciseController;
 
-	protected SystemwideController(String username, String password, String gitToken) {
+	protected SystemwideController(IPreferenceStore preferenceStore) {
 		this.projectFileNamingStrategy = ProjectFileNamingStrategies.DEFAULT.get();
-		exerciseController = new ExerciseArtemisController(username, password, gitToken);
+		var loginController = createController(preferenceStore);
+		exerciseController = new ExerciseArtemisController(loginController.getUserLogin(), preferenceStore);
 	}
 
-	protected abstract void refreshArtemisController(String url, String user, String pass);
+	protected abstract IArtemisController createController(IPreferenceStore preferenceStore);
+
+	protected abstract void refreshArtemisController(IPreferenceStore preferenceStore);
 
 	protected void initPreferenceStoreCallback(final IPreferenceStore preferenceStore) {
-		// change preferences
-		this.preferenceStore.addPropertyChangeListener(event -> {
-			boolean trigger = false;
-			trigger |= PreferenceConstants.GENERAL_ARTEMIS_URL.equals(event.getProperty());
-			trigger |= PreferenceConstants.GENERAL_ARTEMIS_USER.equals(event.getProperty());
-			trigger |= PreferenceConstants.GENERAL_ARTEMIS_PASSWORD.equals(event.getProperty());
-
-			if (!trigger) {
-				return;
-			}
-
-			String url = preferenceStore.getString(PreferenceConstants.GENERAL_ARTEMIS_URL);
-			String user = preferenceStore.getString(PreferenceConstants.GENERAL_ARTEMIS_USER);
-			String pass = preferenceStore.getString(PreferenceConstants.GENERAL_ARTEMIS_PASSWORD);
-
-			this.refreshArtemisController(url, user, pass);
-		});
+		// TODO DTHF1: For now we disable that as it causes problems with the login
+//		this.preferenceStore.addPropertyChangeListener(event -> {
+//			boolean trigger = false;
+//			trigger |= PreferenceConstants.GENERAL_ARTEMIS_URL.equals(event.getProperty());
+//			trigger |= PreferenceConstants.GENERAL_ADVANCED_ARTEMIS_USER.equals(event.getProperty());
+//			trigger |= PreferenceConstants.GENERAL_ADVANCED_ARTEMIS_PASSWORD.equals(event.getProperty());
+//
+//			if (!trigger) {
+//				return;
+//			}
+//
+//			this.refreshArtemisController(preferenceStore);
+//		});
 	}
 
 	protected boolean nullCheckMembersAndNotify(boolean checkCourseID, boolean checkExerciseID) {

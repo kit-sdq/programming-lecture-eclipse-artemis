@@ -20,6 +20,7 @@ import edu.kit.kastel.eclipse.common.api.artemis.mapping.IExam;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.IExercise;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.ISubmission;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.SubmissionFilter;
+import edu.kit.kastel.eclipse.common.api.controller.IArtemisController;
 import edu.kit.kastel.eclipse.common.api.controller.IAssessmentController;
 import edu.kit.kastel.eclipse.common.api.controller.IGradingArtemisController;
 import edu.kit.kastel.eclipse.common.api.controller.IGradingSystemwideController;
@@ -33,21 +34,16 @@ public class GradingSystemwideController extends SystemwideController implements
 	private ISubmission submission;
 
 	public GradingSystemwideController(final IPreferenceStore preferenceStore) {
-		super(preferenceStore.getString(PreferenceConstants.GENERAL_ARTEMIS_USER), //
-				preferenceStore.getString(PreferenceConstants.GENERAL_ARTEMIS_PASSWORD), //
-				preferenceStore.getString(PreferenceConstants.GENERAL_GIT_TOKEN) //
-		);
-		this.createController(preferenceStore.getString(PreferenceConstants.GENERAL_ARTEMIS_URL), //
-				preferenceStore.getString(PreferenceConstants.GENERAL_ARTEMIS_USER), //
-				preferenceStore.getString(PreferenceConstants.GENERAL_ARTEMIS_PASSWORD) //
-		);
+		super(preferenceStore);
 		this.preferenceStore = preferenceStore;
-
 		this.initPreferenceStoreCallback(preferenceStore);
 	}
 
-	private void createController(final String artemisHost, final String username, final String password) {
-		this.artemisGUIController = new GradingArtemisController(artemisHost, username, password);
+	protected IArtemisController createController(IPreferenceStore preferenceStore) {
+		this.artemisGUIController = new GradingArtemisController(preferenceStore.getString(PreferenceConstants.GENERAL_ARTEMIS_URL),
+				preferenceStore.getString(PreferenceConstants.GENERAL_ADVANCED_ARTEMIS_USER),
+				preferenceStore.getString(PreferenceConstants.GENERAL_ADVANCED_ARTEMIS_PASSWORD));
+		return this.artemisGUIController;
 	}
 
 	private IAssessmentController getAssessmentController(ISubmission submission, ICourse course, IExercise exercise) {
@@ -241,8 +237,8 @@ public class GradingSystemwideController extends SystemwideController implements
 	}
 
 	@Override
-	protected void refreshArtemisController(String url, String user, String pass) {
-		this.createController(url, user, pass);
+	protected void refreshArtemisController(IPreferenceStore preferenceStore) {
+		this.createController(preferenceStore);
 	}
 
 	@Override

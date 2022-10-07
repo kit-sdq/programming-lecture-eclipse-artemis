@@ -7,9 +7,10 @@ package edu.kit.kastel.eclipse.common.api;
 public final class PreferenceConstants {
 
 	public static final String GENERAL_ARTEMIS_URL = "artemisUrl";
-	public static final String GENERAL_ARTEMIS_USER = "artemisUser";
-	public static final String GENERAL_ARTEMIS_PASSWORD = "artemisPassword";
-	public static final String GENERAL_GIT_TOKEN = "gitToken";
+
+	public static final String GENERAL_ADVANCED_ARTEMIS_USER = "artemisUser";
+	public static final String GENERAL_ADVANCED_ARTEMIS_PASSWORD = "artemisPassword";
+	public static final String GENERAL_ADVANCED_GIT_TOKEN = "gitToken";
 
 	public static final String GRADING_ABSOLUTE_CONFIG_PATH = "absoluteConfigPath";
 	public static final String GRADING_VIEW_BUTTONS_IN_COLUMN = "grading_buttons_in_column";

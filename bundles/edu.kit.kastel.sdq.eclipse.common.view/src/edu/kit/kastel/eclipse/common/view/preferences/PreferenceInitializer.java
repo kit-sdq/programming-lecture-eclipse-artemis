@@ -17,9 +17,9 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 	public void initializeDefaultPreferences() {
 		IPreferenceStore store = CommonActivator.getDefault().getPreferenceStore();
 		store.setDefault(PreferenceConstants.GENERAL_ARTEMIS_URL, "");
-		store.setDefault(PreferenceConstants.GENERAL_ARTEMIS_USER, "");
-		store.setDefault(PreferenceConstants.GENERAL_ARTEMIS_PASSWORD, "");
-		store.setDefault(PreferenceConstants.GENERAL_GIT_TOKEN, "");
+		store.setDefault(PreferenceConstants.GENERAL_ADVANCED_ARTEMIS_USER, "");
+		store.setDefault(PreferenceConstants.GENERAL_ADVANCED_ARTEMIS_PASSWORD, "");
+		store.setDefault(PreferenceConstants.GENERAL_ADVANCED_GIT_TOKEN, "");
 
 		store.setDefault(PreferenceConstants.GRADING_ABSOLUTE_CONFIG_PATH, "");
 		store.setDefault(PreferenceConstants.GRADING_VIEW_BUTTONS_IN_COLUMN, 3);

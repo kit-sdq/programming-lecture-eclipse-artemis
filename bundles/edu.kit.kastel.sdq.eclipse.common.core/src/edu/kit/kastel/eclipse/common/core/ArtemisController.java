@@ -18,6 +18,7 @@ import edu.kit.kastel.eclipse.common.api.artemis.mapping.IExam;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.IExercise;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.IExerciseGroup;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.ISubmission;
+import edu.kit.kastel.eclipse.common.api.artemis.mapping.User;
 import edu.kit.kastel.eclipse.common.api.controller.AbstractController;
 import edu.kit.kastel.eclipse.common.api.controller.IArtemisController;
 import edu.kit.kastel.eclipse.common.client.rest.RestClientManager;
@@ -35,6 +36,14 @@ public abstract class ArtemisController extends AbstractController implements IA
 	}
 
 	protected abstract List<ICourse> fetchCourses();
+
+	@Override
+	public User getUserLogin() {
+		var login = this.clientManager.getAuthenticationClient();
+		if (login == null)
+			return null;
+		return login.getUser();
+	}
 
 	@Override
 	public final List<ICourse> getCourses() {

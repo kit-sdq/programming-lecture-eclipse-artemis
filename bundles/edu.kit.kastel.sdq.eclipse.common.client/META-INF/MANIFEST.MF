@@ -29,7 +29,8 @@ Require-Bundle: edu.kit.kastel.sdq.eclipse.common.api,
  org.springframework.spring-web,
  org.springframework.spring-websocket,
  org.springframework.spring-messaging,
- org.glassfish.tyrus.bundles.tyrus-standalone-client
+ org.glassfish.tyrus.bundles.tyrus-standalone-client,
+ org.eclipse.jface
 Export-Package: edu.kit.kastel.eclipse.common.client.git,
  edu.kit.kastel.eclipse.common.client.mappings,
  edu.kit.kastel.eclipse.common.client.mappings.exam,

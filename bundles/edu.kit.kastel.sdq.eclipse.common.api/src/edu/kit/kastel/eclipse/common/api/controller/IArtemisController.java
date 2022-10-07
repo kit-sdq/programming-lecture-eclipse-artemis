@@ -9,6 +9,7 @@ import edu.kit.kastel.eclipse.common.api.artemis.mapping.ICourse;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.IExam;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.IExercise;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.ISubmission;
+import edu.kit.kastel.eclipse.common.api.artemis.mapping.User;
 
 /**
  * Works as an interface from backend to REST-clients
@@ -105,4 +106,6 @@ public interface IArtemisController extends IController {
 	 * @return current time of Artemis-Server
 	 */
 	LocalDateTime getCurrentDate();
+
+	User getUserLogin();
 }
