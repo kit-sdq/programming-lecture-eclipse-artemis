@@ -18,7 +18,6 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
@@ -85,12 +84,15 @@ public final class AssessmentUtilities {
 		return ResourcesPlugin.getWorkspace().getRoot().getProject(projectName).getFile(srcDirectory + path);
 	}
 
+	public static IEditorPart getActiveEditor() {
+		return PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
+	}
+	
 	/**
 	 * @return the class name of the currently active file in the editor
 	 */
 	public static String getClassNameForAnnotation() {
-		final IWorkbenchPart workbenchPart = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart();
-		return workbenchPart.getSite().getPage().getActiveEditor().getEditorInput().getName();
+		return getActiveEditor().getEditorInput().getName();
 	}
 
 	/**
@@ -99,8 +101,7 @@ public final class AssessmentUtilities {
 	 * @return IFile instance of the current open file in the editor
 	 */
 	public static IFile getCurrentlyOpenFile() {
-		final IWorkbenchPart workbenchPart = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart();
-		return workbenchPart.getSite().getPage().getActiveEditor().getEditorInput().getAdapter(IFile.class);
+		return getActiveEditor().getEditorInput().getAdapter(IFile.class);
 	}
 
 	/**
@@ -140,7 +141,7 @@ public final class AssessmentUtilities {
 	 * @return the currently selected text
 	 */
 	public static ITextSelection getTextSelection() {
-		final IEditorPart part = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
+		final IEditorPart part = getActiveEditor();
 		if (part instanceof ITextEditor editor) {
 			final ISelection selection = editor.getSelectionProvider().getSelection();
 			return (ITextSelection) selection;

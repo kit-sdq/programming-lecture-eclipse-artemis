@@ -19,7 +19,10 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.part.ViewPart;
 
 import edu.kit.kastel.eclipse.common.api.PreferenceConstants;
@@ -32,6 +35,7 @@ import edu.kit.kastel.eclipse.common.view.marker.AssessmentMarkerView;
 import edu.kit.kastel.eclipse.common.view.utilities.AssessmentUtilities;
 import edu.kit.kastel.eclipse.common.view.utilities.UIUtilities;
 import edu.kit.kastel.eclipse.grading.view.activator.Activator;
+import edu.kit.kastel.eclipse.grading.view.commands.AddAnnotationCommandHandler;
 import edu.kit.kastel.eclipse.grading.view.controllers.AssessmentViewController;
 import edu.kit.kastel.eclipse.grading.view.listeners.AssessmentMarkerViewDoubleClickListener;
 import edu.kit.kastel.eclipse.grading.view.listeners.KeyboardAwareMouseListener;
@@ -63,6 +67,16 @@ public class ArtemisGradingView extends ViewPart {
 		this.mistakeButtons = new HashMap<>();
 		this.initializeAnnotationEditing();
 		this.addListenerForMarkerDeletion();
+	}
+	
+	@Override
+	public void init(IViewSite site) throws PartInitException {
+		super.init(site);
+		
+		// Set the command handler manually to be able to inject the view controller
+		ICommandService commandService = (ICommandService) getSite().getService(ICommandService.class);
+		var command = commandService.getCommand("edu.kit.kastel.eclipse.grading.assessment.keybindings.addAnnotation");
+		command.setHandler(new AddAnnotationCommandHandler(this.viewController));
 	}
 
 	private void addListenerForMarkerDeletion() {

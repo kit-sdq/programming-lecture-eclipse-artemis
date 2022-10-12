@@ -15,3 +15,7 @@ Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: edu.kit.kastel.eclipse.grading.view.activator.Activator
 Automatic-Module-Name: edu.kit.kastel.sdq.eclipse.grading.view
+Import-Package: org.eclipse.jface.text,
+ org.eclipse.jface.text.source,
+ org.eclipse.ui.editors.text,
+ org.eclipse.ui.texteditor
