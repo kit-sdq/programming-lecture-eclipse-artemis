@@ -82,7 +82,6 @@ public class AddAnnotationCommandHandler extends AbstractHandler {
 	
 	private ISourceViewer getActiveSourceViewer() {
 		try {
-			// I'm sorry
 			var method = AbstractTextEditor.class.getDeclaredMethod("getSourceViewer");
 			method.setAccessible(true);
 			return (ISourceViewer) method.invoke(AssessmentUtilities.getActiveEditor());
