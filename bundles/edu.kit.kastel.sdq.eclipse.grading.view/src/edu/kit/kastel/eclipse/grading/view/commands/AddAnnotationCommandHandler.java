@@ -27,7 +27,6 @@ public class AddAnnotationCommandHandler extends AbstractHandler {
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		if (this.controller.getAssessmentController() != null) {
 			var dialog = new AddAnnotationDialog(AssessmentUtilities.getWindowsShell(), this.controller);
-			//var dialog = new AddAnnotationFilteringDialog(AssessmentUtilities.getWindowsShell(), this.controller);
 			dialog.setBlockOnOpen(true);
 			dialog.create();
 			
