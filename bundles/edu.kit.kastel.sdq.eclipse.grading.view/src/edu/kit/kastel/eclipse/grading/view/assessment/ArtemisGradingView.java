@@ -49,6 +49,7 @@ import edu.kit.kastel.eclipse.grading.view.listeners.KeyboardAwareMouseListener;
  *
  */
 public class ArtemisGradingView extends ViewPart {
+	private static final String ADD_ANNOTATION_COMMAND = "edu.kit.kastel.eclipse.grading.assessment.keybindings.addAnnotation";
 
 	private AssessmentViewController viewController;
 	private Map<String, Group> ratingGroupViewElements;
@@ -75,7 +76,7 @@ public class ArtemisGradingView extends ViewPart {
 		
 		// Set the command handler manually to be able to inject the view controller
 		ICommandService commandService = (ICommandService) getSite().getService(ICommandService.class);
-		var command = commandService.getCommand("edu.kit.kastel.eclipse.grading.assessment.keybindings.addAnnotation");
+		var command = commandService.getCommand(ADD_ANNOTATION_COMMAND);
 		command.setHandler(new AddAnnotationCommandHandler(this.viewController));
 	}
 

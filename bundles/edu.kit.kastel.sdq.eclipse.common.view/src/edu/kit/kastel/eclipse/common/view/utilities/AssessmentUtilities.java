@@ -87,7 +87,7 @@ public final class AssessmentUtilities {
 	public static IEditorPart getActiveEditor() {
 		return PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
 	}
-	
+
 	/**
 	 * @return the class name of the currently active file in the editor
 	 */

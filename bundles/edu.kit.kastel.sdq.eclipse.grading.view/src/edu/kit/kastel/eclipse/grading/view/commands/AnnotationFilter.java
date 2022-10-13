@@ -17,9 +17,15 @@ public class AnnotationFilter extends ViewerFilter {
 	@Override
 	public boolean select(Viewer viewer, Object parent, Object element) {
 		if (this.filter != null) {
-			return Arrays.stream(((IMistakeType) element).getButtonText().toLowerCase().split(" ")).anyMatch(w -> w.startsWith(this.filter));
+			IMistakeType mistake = (IMistakeType) element;
+			return matchesPart(mistake.getButtonText().toLowerCase(), this.filter)
+					|| matchesPart(mistake.getMessage().toLowerCase(), this.filter);
 		} else {
 			return true;
 		}
+	}
+	
+	private boolean matchesPart(String text, String filter) {
+		return Arrays.stream(text.split(" ")).anyMatch(w -> w.startsWith(this.filter));
 	}
 }

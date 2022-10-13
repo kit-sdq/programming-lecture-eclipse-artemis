@@ -4,9 +4,13 @@ import java.util.Optional;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.StyledCellLabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerCell;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -25,6 +29,9 @@ import edu.kit.kastel.eclipse.grading.view.controllers.AssessmentViewController;
 // but I don't like the UX of this dialog, it takes a comparatively long time to open
 // and adding the shift-click listener is hard (I think)
 public class AddAnnotationDialog extends Dialog {
+	private static final int LIST_HEIGHT = 200;
+	private static final int LIST_WIDTH = 300;
+	
 	private final AssessmentViewController controller;
 	private TableViewer displayList;
 	private AnnotationFilter filter;
@@ -48,7 +55,6 @@ public class AddAnnotationDialog extends Dialog {
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite container = (Composite) super.createDialogArea(parent);
-		container.setSize(SWT.DEFAULT, 200);
 		
 		GridLayout layout = new GridLayout();
 		container.setLayout(layout);
@@ -68,6 +74,11 @@ public class AddAnnotationDialog extends Dialog {
 	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		// Removes the ok and close buttons
+	}
+	
+	@Override
+	protected boolean isResizable() {
+		return true;
 	}
 	
 	private void updateDisplayList(String filter) {
@@ -92,8 +103,10 @@ public class AddAnnotationDialog extends Dialog {
 				int index = displayList.getTable().getSelectionIndex();
 				if (e.keyCode == SWT.ARROW_DOWN) {
 					displayList.getTable().select(index + 1);
+					displayList.getTable().showSelection();
 				} else if (e.keyCode == SWT.ARROW_UP) {
 					displayList.getTable().select(index - 1);
+					displayList.getTable().showSelection();
 				}
 			}
 		});
@@ -108,14 +121,17 @@ public class AddAnnotationDialog extends Dialog {
 	}
 	
 	private void createAnnotationList(Composite container) {
-		// List (-> table) of mistake types
 		this.displayList = new TableViewer(container, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL);
 		this.displayList.getTable().setHeaderVisible(false);
 		this.displayList.getTable().setLinesVisible(false);
-		this.displayList.setLabelProvider(new LabelProvider() {
+		this.displayList.setLabelProvider(new StyledCellLabelProvider() {
 			@Override
-			public String getText(Object item) {
-				return ((IMistakeType) item).getButtonText();
+		    public void update(ViewerCell cell) {
+				IMistakeType mistake = (IMistakeType) cell.getElement();
+				cell.setText(mistake.getButtonText() + " " + mistake.getMessage());
+				StyleRange style = new StyleRange(0, mistake.getButtonText().length(), null, null);
+				style.fontStyle = SWT.BOLD;
+				cell.setStyleRanges(new StyleRange[] {style});
 			}
 		});
 		
@@ -133,13 +149,20 @@ public class AddAnnotationDialog extends Dialog {
 		
 		this.filter = new AnnotationFilter();
 		this.displayList.addFilter(this.filter);
+		this.displayList.setComparator(new ViewerComparator() {
+			@Override
+			public int compare(Viewer viewer, Object e1, Object e2) {
+				return ((IMistakeType) e1).getButtonText().compareTo(((IMistakeType) e2).getButtonText());
+			}
+		});
 		
 		this.updateDisplayList("");
 		
 		GridData gridData = new GridData();
 		gridData.verticalAlignment = GridData.FILL;
 		gridData.grabExcessHorizontalSpace = true;
-		gridData.heightHint = 200;
+		gridData.heightHint = LIST_HEIGHT;
+		gridData.widthHint = LIST_WIDTH;
 		gridData.horizontalAlignment = GridData.FILL;
 		this.displayList.getControl().setLayoutData(gridData);
 	}
