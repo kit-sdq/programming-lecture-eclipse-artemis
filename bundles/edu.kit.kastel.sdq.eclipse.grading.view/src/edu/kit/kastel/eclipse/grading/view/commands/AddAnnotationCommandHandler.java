@@ -1,3 +1,4 @@
+/* Licensed under EPL-2.0 2022. */
 package edu.kit.kastel.eclipse.grading.view.commands;
 
 import java.util.Optional;
@@ -48,8 +49,7 @@ public class AddAnnotationCommandHandler extends AbstractHandler {
 		if (selectedMistake.isPresent()) {
 			if (selectedMistake.get().isCustomPenalty()) {
 				CustomButtonDialog customDialog = new CustomButtonDialog(AssessmentUtilities.getWindowsShell(),
-						controller.getAssessmentController().isPositiveFeedbackAllowed(), controller,
-						selectedMistake.get());
+						controller.getAssessmentController().isPositiveFeedbackAllowed(), controller, selectedMistake.get());
 				customDialog.setBlockOnOpen(true);
 				customDialog.create();
 				customDialog.getShell().setLocation(dialogPosition);
@@ -61,16 +61,14 @@ public class AddAnnotationCommandHandler extends AbstractHandler {
 				customDialog.setBlockOnOpen(true);
 				customDialog.create();
 				customDialog.getShell().setLocation(dialogPosition);
-				customDialog.getShell()
-						.setText("Add custom message to penalty \"" + selectedMistake.get().getButtonText() + "\"");
+				customDialog.getShell().setText("Add custom message to penalty \"" + selectedMistake.get().getButtonText() + "\"");
 				customDialog.open();
 				if (customDialog.isClosedByOk()) {
-					AssessmentUtilities.createAssessmentAnnotation(controller.getAssessmentController(),
-							selectedMistake.get(), customDialog.getCustomMessage(), null);
+					AssessmentUtilities.createAssessmentAnnotation(controller.getAssessmentController(), selectedMistake.get(), customDialog.getCustomMessage(),
+							null);
 				}
 			} else {
-				AssessmentUtilities.createAssessmentAnnotation(controller.getAssessmentController(),
-						selectedMistake.get(), null, null);
+				AssessmentUtilities.createAssessmentAnnotation(controller.getAssessmentController(), selectedMistake.get(), null, null);
 			}
 			this.view.updatePenalties();
 		}

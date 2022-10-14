@@ -19,7 +19,7 @@ public final class PreferenceConstants {
 
 	public static final String GENERAL_OVERRIDE_DEFAULT_PREFERENCES = "override_default_preferences";
 	public static final String GENERAL_PREFERRED_LANGUAGE = "preferredLanguageSelector";
-	
+
 	public static final String SEARCH_IN_MISTAKE_MESSAGES = "searchInMistakeMessages";
 
 	private PreferenceConstants() {

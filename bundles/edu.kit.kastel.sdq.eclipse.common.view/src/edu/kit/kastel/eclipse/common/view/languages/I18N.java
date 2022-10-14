@@ -300,7 +300,7 @@ public interface I18N {
 	default String resetPluginState() {
 		return "Reset Plugin State";
 	}
-	
+
 	default String settingsSearchInMistakeMessages() {
 		return "Search in button descriptions";
 	}

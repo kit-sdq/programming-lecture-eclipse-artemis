@@ -345,8 +345,8 @@ class GermanLanguage implements I18N {
 	public String resetPluginState() {
 		return "Plugin zurücksetzen";
 	}
-	
-	@Override 
+
+	@Override
 	public String settingsSearchInMistakeMessages() {
 		return "Button-Beschreibungen in die Suche einbeziehen";
 	}

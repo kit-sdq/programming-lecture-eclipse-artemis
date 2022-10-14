@@ -1,3 +1,4 @@
+/* Licensed under EPL-2.0 2022. */
 package edu.kit.kastel.eclipse.grading.view.commands;
 
 import java.util.Optional;
