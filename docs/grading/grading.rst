@@ -69,6 +69,7 @@ For creating a new annotation do the following:
 * Click on the mistake button in the certain rating group
 * After that you should see the new annotation in the assessment annotation view.
 * **Note: If you Shift-Click or Middle-Click a button, you can provide additional information for the student.**
+* **Note: You can also use a keyboard shortcut for adding annotations (see below).**
 
 .. image:: ../images/gradingedition_grading.png
 
@@ -99,6 +100,21 @@ The assessment annotation view shows the annotations of the downloaded submissio
 The annotation can be deleted by deleting the marker.
 
 .. image:: ../images/gradingedition_annotation.png
+
+..  _keyboard-shortcuts:
+Keyboard Shortcuts
+""""""""""""""""""
+
+* When an editor is active, press Alt+Enter to insert an assessment annotation at the current line.
+  The shortcut opens a dialog where you can search for the desired mistake type.
+  Press Enter to add the annotation or Shift+Enter to add a custom message to the annotation.
+  You can also click or shift-click a mistake type in the list of annotations.
+
+  By default, the dialog will search in the names and descriptions of the mistake types as they are shown on the mistake buttons.
+  You can change the behavior in the settings to include only the name of the mistake type.
+  You can change the keyboard shortcut for adding an assessment annotation in the Eclipse preferences under `General > Keys > <Add annotation commmand>`.
+
+  .. image:: ../images/add_annotation.png
 
 Backend Configuration
 ---------------------
