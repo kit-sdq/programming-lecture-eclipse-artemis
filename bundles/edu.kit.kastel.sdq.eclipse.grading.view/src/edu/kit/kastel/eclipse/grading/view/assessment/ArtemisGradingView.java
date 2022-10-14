@@ -77,7 +77,7 @@ public class ArtemisGradingView extends ViewPart {
 		// Set the command handler manually to be able to inject the view controller
 		ICommandService commandService = (ICommandService) getSite().getService(ICommandService.class);
 		var command = commandService.getCommand(ADD_ANNOTATION_COMMAND);
-		command.setHandler(new AddAnnotationCommandHandler(this.viewController));
+		command.setHandler(new AddAnnotationCommandHandler(this, this.viewController));
 	}
 
 	private void addListenerForMarkerDeletion() {

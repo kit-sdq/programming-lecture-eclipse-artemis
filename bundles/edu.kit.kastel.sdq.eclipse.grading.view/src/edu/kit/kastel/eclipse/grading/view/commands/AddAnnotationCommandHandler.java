@@ -13,6 +13,7 @@ import org.eclipse.ui.texteditor.AbstractTextEditor;
 
 import edu.kit.kastel.eclipse.common.api.model.IMistakeType;
 import edu.kit.kastel.eclipse.common.view.utilities.AssessmentUtilities;
+import edu.kit.kastel.eclipse.grading.view.assessment.ArtemisGradingView;
 import edu.kit.kastel.eclipse.grading.view.assessment.CustomButtonDialog;
 import edu.kit.kastel.eclipse.grading.view.controllers.AssessmentViewController;
 
@@ -20,9 +21,11 @@ public class AddAnnotationCommandHandler extends AbstractHandler {
 	private static final int DIALOG_OFFSET_X = 10; // px
 
 	private final AssessmentViewController controller;
+	private final ArtemisGradingView view;
 
-	public AddAnnotationCommandHandler(AssessmentViewController controller) {
+	public AddAnnotationCommandHandler(ArtemisGradingView view, AssessmentViewController controller) {
 		this.controller = controller;
+		this.view = view;
 	}
 
 	@Override
@@ -69,6 +72,7 @@ public class AddAnnotationCommandHandler extends AbstractHandler {
 				AssessmentUtilities.createAssessmentAnnotation(controller.getAssessmentController(),
 						selectedMistake.get(), null, null);
 			}
+			this.view.updatePenalties();
 		}
 
 		// Prevent insertion of a new line because the default keybinding is alt+enter
