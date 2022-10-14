@@ -30,7 +30,7 @@ import edu.kit.kastel.eclipse.grading.view.controllers.AssessmentViewController;
 // and adding the shift-click listener is hard (I think)
 public class AddAnnotationDialog extends Dialog {
 	private static final int LIST_HEIGHT = 200;
-	private static final int LIST_WIDTH = 300;
+	private static final int LIST_WIDTH = 400;
 
 	private final AssessmentViewController controller;
 	private TableViewer displayList;
