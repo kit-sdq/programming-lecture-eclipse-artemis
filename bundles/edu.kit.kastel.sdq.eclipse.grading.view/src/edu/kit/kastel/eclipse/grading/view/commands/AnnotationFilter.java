@@ -9,11 +9,11 @@ import edu.kit.kastel.eclipse.common.api.model.IMistakeType;
 
 public class AnnotationFilter extends ViewerFilter {
 	private String filter;
-	
+
 	public void setFilterString(String filter) {
 		this.filter = filter.toLowerCase();
 	}
-	
+
 	@Override
 	public boolean select(Viewer viewer, Object parent, Object element) {
 		if (this.filter != null) {
@@ -24,7 +24,7 @@ public class AnnotationFilter extends ViewerFilter {
 			return true;
 		}
 	}
-	
+
 	private boolean matchesPart(String text, String filter) {
 		return Arrays.stream(text.split(" ")).anyMatch(w -> w.startsWith(this.filter));
 	}

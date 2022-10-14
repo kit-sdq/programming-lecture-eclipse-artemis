@@ -31,11 +31,11 @@ import edu.kit.kastel.eclipse.grading.view.controllers.AssessmentViewController;
 public class AddAnnotationDialog extends Dialog {
 	private static final int LIST_HEIGHT = 200;
 	private static final int LIST_WIDTH = 300;
-	
+
 	private final AssessmentViewController controller;
 	private TableViewer displayList;
 	private AnnotationFilter filter;
-	
+
 	private IMistakeType selectedMistake;
 	private boolean customMessageWanted;
 
@@ -43,50 +43,50 @@ public class AddAnnotationDialog extends Dialog {
 		super(parentShell);
 		this.controller = controller;
 	}
-	
+
 	public Optional<IMistakeType> getSelectedMistake() {
 		return Optional.ofNullable(this.selectedMistake);
 	}
-	
+
 	public boolean isCustomMessageWanted() {
 		return this.customMessageWanted;
 	}
-	
+
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite container = (Composite) super.createDialogArea(parent);
-		
+
 		GridLayout layout = new GridLayout();
 		container.setLayout(layout);
-		
+
 		this.createSearchField(container);
 		this.createAnnotationList(container);
-		
+
 		return container;
 	}
-	
+
 	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
 		shell.setText("Add Annotation");
 	}
-	
+
 	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		// Removes the ok and close buttons
 	}
-	
+
 	@Override
 	protected boolean isResizable() {
 		return true;
 	}
-	
+
 	private void updateDisplayList(String filter) {
 		this.filter.setFilterString(filter);
 		this.displayList.refresh();
 		this.displayList.getTable().setSelection(0);
 	}
-	
+
 	private void createSearchField(Composite container) {
 		Text inputField = new Text(container, SWT.SINGLE | SWT.BORDER);
 		inputField.addTraverseListener(e -> {
@@ -112,32 +112,32 @@ public class AddAnnotationDialog extends Dialog {
 		});
 		inputField.addModifyListener(e -> updateDisplayList(inputField.getText()));
 		inputField.setFocus();
-		
+
 		GridData gridData = new GridData();
 		gridData.verticalAlignment = GridData.FILL;
 		gridData.grabExcessHorizontalSpace = true;
 		gridData.horizontalAlignment = GridData.FILL;
 		inputField.setLayoutData(gridData);
 	}
-	
+
 	private void createAnnotationList(Composite container) {
 		this.displayList = new TableViewer(container, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL);
 		this.displayList.getTable().setHeaderVisible(false);
 		this.displayList.getTable().setLinesVisible(false);
 		this.displayList.setLabelProvider(new StyledCellLabelProvider() {
 			@Override
-		    public void update(ViewerCell cell) {
+			public void update(ViewerCell cell) {
 				IMistakeType mistake = (IMistakeType) cell.getElement();
 				cell.setText(mistake.getButtonText() + " " + mistake.getMessage());
 				StyleRange style = new StyleRange(0, mistake.getButtonText().length(), null, null);
 				style.fontStyle = SWT.BOLD;
-				cell.setStyleRanges(new StyleRange[] {style});
+				cell.setStyleRanges(new StyleRange[] { style });
 			}
 		});
-		
+
 		this.displayList.setContentProvider(ArrayContentProvider.getInstance());
 		this.displayList.setInput(this.controller.getAssessmentController().getMistakes());
-		
+
 		// Using the low-level table to detect shift-clicks
 		this.displayList.getTable().addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -146,7 +146,7 @@ public class AddAnnotationDialog extends Dialog {
 				close();
 			}
 		});
-		
+
 		this.filter = new AnnotationFilter();
 		this.displayList.addFilter(this.filter);
 		this.displayList.setComparator(new ViewerComparator() {
@@ -155,9 +155,9 @@ public class AddAnnotationDialog extends Dialog {
 				return ((IMistakeType) e1).getButtonText().compareTo(((IMistakeType) e2).getButtonText());
 			}
 		});
-		
+
 		this.updateDisplayList("");
-		
+
 		GridData gridData = new GridData();
 		gridData.verticalAlignment = GridData.FILL;
 		gridData.grabExcessHorizontalSpace = true;
@@ -166,7 +166,7 @@ public class AddAnnotationDialog extends Dialog {
 		gridData.horizontalAlignment = GridData.FILL;
 		this.displayList.getControl().setLayoutData(gridData);
 	}
-	
+
 	private void processMistakeSelection(boolean customText) {
 		var mistake = (IMistakeType) displayList.getStructuredSelection().getFirstElement();
 		if (mistake != null) {
@@ -174,7 +174,7 @@ public class AddAnnotationDialog extends Dialog {
 			this.customMessageWanted = customText;
 		}
 	}
-	
+
 	private boolean isShiftPressed(int stateMask) {
 		return (stateMask & SWT.MOD2) != 0;
 	}

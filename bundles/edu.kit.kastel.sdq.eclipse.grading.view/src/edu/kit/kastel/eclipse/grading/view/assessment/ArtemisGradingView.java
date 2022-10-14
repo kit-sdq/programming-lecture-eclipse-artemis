@@ -69,11 +69,11 @@ public class ArtemisGradingView extends ViewPart {
 		this.initializeAnnotationEditing();
 		this.addListenerForMarkerDeletion();
 	}
-	
+
 	@Override
 	public void init(IViewSite site) throws PartInitException {
 		super.init(site);
-		
+
 		// Set the command handler manually to be able to inject the view controller
 		ICommandService commandService = (ICommandService) getSite().getService(ICommandService.class);
 		var command = commandService.getCommand(ADD_ANNOTATION_COMMAND);
