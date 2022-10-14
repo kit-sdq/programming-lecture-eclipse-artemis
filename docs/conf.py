@@ -18,9 +18,25 @@ import os
 
 # -- Project information -----------------------------------------------------
 
+from datetime import datetime
+
 project = 'Programming Lecture: Eclipse Artemis'
-copyright = '2022, Software Design and Quality (SDQ)'
+copyright = f"2021-{datetime.now().year}, Software Design and Quality (SDQ)"
 author = 'Software Design and Quality (SDQ)'
+
+# The full version, including alpha/beta/rc tags
+def _find_release():
+    with open(os.path.join(os.path.dirname(__file__), "..", "pom.xml"), "r") as file:
+        for line in file.readlines():
+            line = line.strip()
+            if line.startswith("<version>"):
+                version = line[len("<version>"):].strip()
+                version = version[:version.index("<")].strip()
+                if "-SNAPSHOT" in version:
+                    version = version[0:version.index("-")] + " (dev)"
+                return version
+    return "unknown"
+
 
 from typing import Dict, Any
 
@@ -40,7 +56,7 @@ html_theme_options: Dict[str, Any] = {
 }
 
 # The full version, including alpha/beta/rc tags
-release = '2.5.0'
+release = _find_release()
 
 # -- General configuration ---------------------------------------------------
 

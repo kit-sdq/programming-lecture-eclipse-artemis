@@ -54,8 +54,8 @@ public class AssessmentArtemisClient extends AbstractArtemisClient implements IA
 	@Override
 	public ILockResult startAssessment(ISubmission submission) throws ArtemisClientException {
 		final Response rsp = this.endpoint.path(PROGRAMMING_SUBMISSION_PATHPART).path(String.valueOf(submission.getSubmissionId())).path(LOCK_QUERY_PARAM)
-				.request().header(AUTHORIZATION_NAME, this.token).buildGet().invoke(); // synchronous
-																						// variant
+				.queryParam(CORRECTION_ROUND_QUERY_PARAM, submission.getCorrectionRound()).request().header(AUTHORIZATION_NAME, this.token).buildGet().invoke();
+
 		this.throwIfStatusUnsuccessful(rsp);
 		return this.read(rsp.readEntity(String.class), LockResult.class);
 	}
