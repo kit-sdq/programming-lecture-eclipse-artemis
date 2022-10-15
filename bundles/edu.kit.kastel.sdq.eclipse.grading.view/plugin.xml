@@ -42,8 +42,13 @@
       <key
             commandId="edu.kit.kastel.eclipse.grading.assessment.keybindings.addAnnotation"
             contextId="org.eclipse.ui.textEditorScope"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            schemeId="edu.kit.kastel.sdq.eclipse.scheme"
             sequence="M3+ENTER">
       </key>
+      <scheme
+            id="edu.kit.kastel.sdq.eclipse.scheme"
+            name="Artemis Grading Tool"
+            parentId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </scheme>
    </extension>
 </plugin>
