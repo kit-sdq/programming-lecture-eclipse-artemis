@@ -105,9 +105,11 @@ public class AddAnnotationDialog extends Dialog {
 				if (e.keyCode == SWT.ARROW_DOWN) {
 					displayList.getTable().select(index + 1);
 					displayList.getTable().showSelection();
+					e.doit = false;
 				} else if (e.keyCode == SWT.ARROW_UP) {
 					displayList.getTable().select(index - 1);
 					displayList.getTable().showSelection();
+					e.doit = false;
 				}
 			}
 		});
