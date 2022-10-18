@@ -32,9 +32,9 @@
          </category>
          <command
                categoryId="edu.kit.kastel.eclipse.grading.assessment"
-               description="Add a annotation at the current cursor position"
+               description="Add an annotation at the current cursor position"
                id="edu.kit.kastel.eclipse.grading.assessment.keybindings.addAnnotation"
-               name="Add annotation">
+               name="Add Annotation">
          </command>
    </extension>
    <extension
