@@ -18,7 +18,7 @@ Karlsruhe Institute of Technology (KIT), Software Design and Quality, Karlsruhe,
    </configIni>
 
    <launcherArgs>
-      <programArgs>-perspective edu.kit.kastel.eclipse.grading.view.perspective.Perspective -pluginCustomization=plugin_customization.ini
+      <programArgs>-perspective edu.kit.kastel.eclipse.grading.view.perspective.Perspective
       </programArgs>
       <vmArgs>--add-modules=ALL-SYSTEM -Dosgi.requiredJavaVersion=11 -Xms512m -Xmx2048m
       </vmArgs>
