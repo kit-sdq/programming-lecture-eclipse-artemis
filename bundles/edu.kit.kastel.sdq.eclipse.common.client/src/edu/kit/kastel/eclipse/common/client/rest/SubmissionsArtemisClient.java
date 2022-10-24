@@ -20,12 +20,12 @@ public class SubmissionsArtemisClient extends AbstractArtemisClient implements I
 	private String token;
 	private User assesor;
 
-	public SubmissionsArtemisClient(final String hostName, String token, User assesor) {
+	public SubmissionsArtemisClient(final String hostName, String token, User assessor) {
 		super(hostName);
 
 		this.endpoint = this.getEndpoint(this.getApiRootURL());
 		this.token = token;
-		this.assesor = assesor;
+		this.assesor = assessor;
 	}
 
 	@Override
@@ -35,7 +35,7 @@ public class SubmissionsArtemisClient extends AbstractArtemisClient implements I
 		final Response rsp = this.endpoint.path(EXERCISES_PATHPART).path(String.valueOf(exercise.getExerciseId())).path(PROGRAMMING_SUBMISSION_PATHPART) //
 				.queryParam("assessedByTutor", !isInstructor) //
 				.queryParam("correction-round", correctionRound) //
-				.request().header(AUTHORIZATION_NAME, this.token).buildGet().invoke();
+				.request().cookie(getAuthCookie(this.token)).buildGet().invoke();
 
 		this.throwIfStatusUnsuccessful(rsp);
 
