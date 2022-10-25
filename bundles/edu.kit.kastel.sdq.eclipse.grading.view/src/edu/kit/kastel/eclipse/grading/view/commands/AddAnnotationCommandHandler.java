@@ -32,7 +32,8 @@ public class AddAnnotationCommandHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		// this.controller().getAssessmentController() may return null even if we have a current assessment
+		// this.controller().getAssessmentController() may return null even if we have a
+		// current assessment
 		var assessment = Activator.getDefault().getSystemwideController().getCurrentAssessmentController();
 		if (assessment == null) {
 			Platform.getLog(this.getClass()).warn("Not executing the Add Annotation command because the assessment is null");
@@ -52,24 +53,23 @@ public class AddAnnotationCommandHandler extends AbstractHandler {
 		Optional<IMistakeType> selectedMistake = dialog.getSelectedMistake();
 		if (selectedMistake.isPresent()) {
 			if (selectedMistake.get().isCustomPenalty()) {
-				CustomButtonDialog customDialog = new CustomButtonDialog(AssessmentUtilities.getWindowsShell(),
-						assessment.isPositiveFeedbackAllowed(), controller, selectedMistake.get());
+				CustomButtonDialog customDialog = new CustomButtonDialog(AssessmentUtilities.getWindowsShell(), assessment.isPositiveFeedbackAllowed(),
+						controller, selectedMistake.get());
 				customDialog.setBlockOnOpen(true);
 				customDialog.create();
 				customDialog.getShell().setLocation(dialogPosition);
 				customDialog.open();
 				// The dialog creates the annotation
 			} else if (dialog.isCustomMessageWanted()) {
-				CustomButtonDialog customDialog = new CustomButtonDialog(AssessmentUtilities.getWindowsShell(),
-						assessment.isPositiveFeedbackAllowed(), controller, null);
+				CustomButtonDialog customDialog = new CustomButtonDialog(AssessmentUtilities.getWindowsShell(), assessment.isPositiveFeedbackAllowed(),
+						controller, null);
 				customDialog.setBlockOnOpen(true);
 				customDialog.create();
 				customDialog.getShell().setLocation(dialogPosition);
 				customDialog.getShell().setText("Add custom message to penalty \"" + selectedMistake.get().getButtonText() + "\"");
 				customDialog.open();
 				if (customDialog.isClosedByOk()) {
-					AssessmentUtilities.createAssessmentAnnotation(assessment, selectedMistake.get(), customDialog.getCustomMessage(),
-							null);
+					AssessmentUtilities.createAssessmentAnnotation(assessment, selectedMistake.get(), customDialog.getCustomMessage(), null);
 				}
 			} else {
 				AssessmentUtilities.createAssessmentAnnotation(assessment, selectedMistake.get(), null, null);
