@@ -347,6 +347,11 @@ class GermanLanguage implements I18N {
 	}
 
 	@Override
+	public String settingsSearchInMistakeMessages() {
+		return "Button-Beschreibungen in die Suche einbeziehen";
+	}
+
+	@Override
 	public String languageDisplayName() {
 		return "Deutsch";
 	}

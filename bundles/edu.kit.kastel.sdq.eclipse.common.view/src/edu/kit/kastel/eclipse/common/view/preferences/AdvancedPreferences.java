@@ -47,6 +47,8 @@ public class AdvancedPreferences extends FieldEditorPreferencePage implements IW
 		var overrideDefaultPreferences = new BooleanFieldEditor(PreferenceConstants.GENERAL_OVERRIDE_DEFAULT_PREFERENCES,
 				I18N().settingsTweakEclipsePreferences(), parent);
 
+		var searchInMistakeMessages = new BooleanFieldEditor(PreferenceConstants.SEARCH_IN_MISTAKE_MESSAGES, I18N().settingsSearchInMistakeMessages(), parent);
+
 		var columnsForGradingButtons = new IntegerFieldEditor(PreferenceConstants.GRADING_VIEW_BUTTONS_IN_COLUMN,
 				I18N().settingsAmountOfGradingButtonsInOneRow(), parent);
 		columnsForGradingButtons.setEmptyStringAllowed(false);
@@ -61,6 +63,7 @@ public class AdvancedPreferences extends FieldEditorPreferencePage implements IW
 		this.addField(userPrefersLargePenaltyText);
 		this.addField(userPrefersTextWrappingInPenaltyText);
 		this.addField(overrideDefaultPreferences);
+		this.addField(searchInMistakeMessages);
 
 	}
 
