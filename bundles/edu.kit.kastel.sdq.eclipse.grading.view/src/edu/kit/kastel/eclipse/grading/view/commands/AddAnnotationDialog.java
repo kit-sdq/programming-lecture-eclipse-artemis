@@ -23,8 +23,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import edu.kit.kastel.eclipse.common.api.controller.IAssessmentController;
 import edu.kit.kastel.eclipse.common.api.model.IMistakeType;
-import edu.kit.kastel.eclipse.grading.view.controllers.AssessmentViewController;
 
 // One could also use the FilteredResourcesSelectionDialog (used e.g. for the buit-in Open Type command)
 // but I don't like the UX of this dialog, it takes a comparatively long time to open
@@ -33,14 +33,14 @@ public class AddAnnotationDialog extends Dialog {
 	private static final int LIST_HEIGHT = 200;
 	private static final int LIST_WIDTH = 400;
 
-	private final AssessmentViewController controller;
+	private final IAssessmentController controller;
 	private TableViewer displayList;
 	private AnnotationFilter filter;
 
 	private IMistakeType selectedMistake;
 	private boolean customMessageWanted;
 
-	public AddAnnotationDialog(Shell parentShell, AssessmentViewController controller) {
+	public AddAnnotationDialog(Shell parentShell, IAssessmentController controller) {
 		super(parentShell);
 		this.controller = controller;
 	}
@@ -139,7 +139,7 @@ public class AddAnnotationDialog extends Dialog {
 		});
 
 		this.displayList.setContentProvider(ArrayContentProvider.getInstance());
-		this.displayList.setInput(this.controller.getAssessmentController().getMistakes());
+		this.displayList.setInput(this.controller.getMistakes());
 
 		// Using the low-level table to detect shift-clicks
 		this.displayList.getTable().addSelectionListener(new SelectionAdapter() {
