@@ -301,6 +301,10 @@ public interface I18N {
 		return "Reset Plugin State";
 	}
 
+	default String settingsSearchInMistakeMessages() {
+		return "Search in button descriptions";
+	}
+
 	//
 	// internal
 	//

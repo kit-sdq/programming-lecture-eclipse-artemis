@@ -23,4 +23,27 @@
             name="Artemis Grading">
       </perspective>
    </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+         <category
+         	id="edu.kit.kastel.eclipse.grading.assessment"
+         	name="Assessment"
+         	description="Assessment of the current submission">
+         </category>
+         <command
+               categoryId="edu.kit.kastel.eclipse.grading.assessment"
+               description="Add an annotation at the current cursor position"
+               id="edu.kit.kastel.eclipse.grading.assessment.keybindings.addAnnotation"
+               name="Add Annotation">
+         </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.bindings">
+      <key
+            commandId="edu.kit.kastel.eclipse.grading.assessment.keybindings.addAnnotation"
+            contextId="org.eclipse.ui.textEditorScope"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M3+ENTER">
+      </key>
+   </extension>
 </plugin>
