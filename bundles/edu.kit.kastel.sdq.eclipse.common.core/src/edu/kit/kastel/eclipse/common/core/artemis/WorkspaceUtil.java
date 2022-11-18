@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.List;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -49,7 +50,7 @@ public class WorkspaceUtil {
 		project.open(null);
 		project.setDescription(description, null);
 
-		new UpdateMavenProjectJob(new IProject[] { project }).schedule();
+		new UpdateMavenProjectJob(List.of(project)).schedule();
 	}
 
 	public static final void deleteDirectoryRecursively(final Path directory) throws IOException {
