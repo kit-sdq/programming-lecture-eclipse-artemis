@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="Eclipse Artemis Grading" uid="edu.kit.kastel.sdq.eclipse.grading.product" id="edu.kit.kastel.sdq.eclipse.grading.eclipse.ArtemisGradingEclipse" application="org.eclipse.ui.ide.workbench" version="2.7.0" useFeatures="true" includeLaunchers="true" autoIncludeRequirements="true">
+<product name="Eclipse Artemis Grading" uid="edu.kit.kastel.sdq.eclipse.grading.product" id="edu.kit.kastel.sdq.eclipse.grading.eclipse.ArtemisGradingEclipse" application="org.eclipse.ui.ide.workbench" version="2.7.0" useFeatures="true" includeLaunchers="true">
 
    <aboutInfo>
       <text>
@@ -354,6 +354,7 @@ version(s), and exceptions or additional permissions here}.&quot;
    </features>
 
    <configurations>
+      <plugin id="org.apache.felix.scr" autoStart="true" startLevel="2" />
       <plugin id="org.eclipse.core.runtime" autoStart="true" startLevel="0" />
       <plugin id="org.eclipse.equinox.common" autoStart="true" startLevel="2" />
       <plugin id="org.eclipse.equinox.event" autoStart="true" startLevel="2" />

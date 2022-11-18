@@ -72,6 +72,9 @@
    <bundle id="org.glassfish.jersey.inject.jersey-hk2.source">
       <category name="Eclipse Artemis Dev"/>
    </bundle>
+   <bundle id="com.sun.xml.bind">
+      <category name="Eclipse Artemis Dev"/>
+   </bundle>
    <bundle id="org.eclipse.egit.core">
       <category name="Eclipse Artemis Dev"/>
    </bundle>
