@@ -90,7 +90,7 @@ public class AssessmentTabComposite extends Composite {
 		btnStartRoundTwo = new Button(compositeButtons, SWT.NONE);
 		btnStartRoundTwo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		btnStartRoundTwo.setText(I18N().tabAssessmentStartCorrectionRound(2));
-		
+
 		btnCloseAssessment = new Button(compositeButtons, SWT.NONE);
 		btnCloseAssessment.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		btnCloseAssessment.setText(I18N().closeAssessment());
