@@ -2,6 +2,7 @@
 package edu.kit.kastel.eclipse.common.view.preferences;
 
 import org.eclipse.jface.preference.BooleanFieldEditor;
+import org.eclipse.jface.preference.ComboFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.FileFieldEditor;
 import org.eclipse.jface.preference.IntegerFieldEditor;
@@ -54,6 +55,15 @@ public class AdvancedPreferences extends FieldEditorPreferencePage implements IW
 		columnsForGradingButtons.setEmptyStringAllowed(false);
 		columnsForGradingButtons.setValidRange(1, 10);
 
+		var openFiles = new ComboFieldEditor(
+				PreferenceConstants.OPEN_FILES_ON_ASSESSMENT_START,
+				I18N().settingsOpenFilesOnAssessmentStart(),
+				new String[][] {
+					{I18N().settingsOpenFilesOnAssessmentStartNone(), PreferenceConstants.OPEN_FILES_ON_ASSESSMENT_START_NONE},
+					{I18N().settingsOpenFilesOnAssessmentStartMain(), PreferenceConstants.OPEN_FILES_ON_ASSESSMENT_START_MAIN},
+					{I18N().settingsOpenFilesOnAssessmentStartAll(), PreferenceConstants.OPEN_FILES_ON_ASSESSMENT_START_ALL}
+				}, parent);
+
 		this.addField(artemisUser);
 		this.addField(artemisPassword);
 		this.addField(gitToken);
@@ -64,7 +74,7 @@ public class AdvancedPreferences extends FieldEditorPreferencePage implements IW
 		this.addField(userPrefersTextWrappingInPenaltyText);
 		this.addField(overrideDefaultPreferences);
 		this.addField(searchInMistakeMessages);
-
+		this.addField(openFiles);
 	}
 
 	/*

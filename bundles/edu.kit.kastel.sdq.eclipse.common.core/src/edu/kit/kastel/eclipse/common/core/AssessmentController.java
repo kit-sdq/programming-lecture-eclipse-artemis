@@ -240,4 +240,13 @@ public class AssessmentController extends AbstractController implements IAssessm
 				new AnnotationMapper(exercise, submission, getAnnotations(), getRatingGroups(), null, null);
 		return mapper.calculatePointsForRatingGroup(ratingGroup).points();
 	}
+	
+	@Override
+	public File getSubmissionFile() {
+		File projectFile = this.systemWideController.projectFileNamingStrategy.getProjectFileInWorkspace(
+				new File(""), 
+				this.exercise, 
+				this.submission);
+		return this.systemWideController.projectFileNamingStrategy.getAssignmentFileInProjectDirectory(projectFile);
+	}
 }

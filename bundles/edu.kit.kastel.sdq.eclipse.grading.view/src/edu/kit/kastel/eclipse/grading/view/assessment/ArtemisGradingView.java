@@ -8,6 +8,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -33,6 +38,7 @@ import edu.kit.kastel.eclipse.common.api.model.IRatingGroup;
 import edu.kit.kastel.eclipse.common.view.activator.CommonActivator;
 import edu.kit.kastel.eclipse.common.view.marker.AssessmentMarkerView;
 import edu.kit.kastel.eclipse.common.view.utilities.AssessmentUtilities;
+import edu.kit.kastel.eclipse.common.view.utilities.JDTUtilities;
 import edu.kit.kastel.eclipse.common.view.utilities.UIUtilities;
 import edu.kit.kastel.eclipse.grading.view.activator.Activator;
 import edu.kit.kastel.eclipse.grading.view.commands.AddAnnotationCommandHandler;
@@ -354,6 +360,7 @@ public class ArtemisGradingView extends ViewPart {
 		this.viewController.createAnnotationsMarkers();
 		this.viewController.getRatingGroups().forEach(ratingGroup -> this.updatePenalty(ratingGroup.getDisplayName()));
 		this.result.loadFeedbackForExcerise();
+		this.addListenerForFileOpening();
 	}
 
 	@Override
@@ -451,6 +458,43 @@ public class ArtemisGradingView extends ViewPart {
 	private void resetCombos() {
 		this.assessmentTab.resetCombos();
 		this.viewController.getCourseShortNames().forEach(courseShortName -> this.assessmentTab.comboCourse.add(courseShortName));
+	}
+	
+	private void addListenerForFileOpening() {
+		var projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+		if (projects.length == 0) {
+			return;
+		}
+		
+		var page = ArtemisGradingView.this.getSite().getPage();
+		try {
+			// Expand all packages
+			var packagePaths = JDTUtilities.getAllCompilationUnits(projects[0])
+					.stream()
+					.map(ICompilationUnit::getResource)
+					.toList();
+			Display.getDefault().asyncExec(() -> {
+				AssessmentUtilities.getProjectExplorer(page).selectReveal(new StructuredSelection(packagePaths));
+			});
+			
+			// Open the desired types
+			switch (CommonActivator.getDefault().getPreferenceStore().getString(PreferenceConstants.OPEN_FILES_ON_ASSESSMENT_START)) {
+				case PreferenceConstants.OPEN_FILES_ON_ASSESSMENT_START_ALL -> {
+					JDTUtilities.getAllCompilationUnits(projects[0]).forEach(c -> AssessmentUtilities.openJavaElement(c, page));
+					
+				}
+				case PreferenceConstants.OPEN_FILES_ON_ASSESSMENT_START_MAIN -> {
+					var mainType = JDTUtilities.findMainClass(projects[0]);
+					if (mainType.isPresent()) {
+						AssessmentUtilities.openJavaElement(mainType.get(), page);
+					} else {
+						Platform.getLog(ArtemisGradingView.this.getClass()).warn("No main class found");
+					}
+				}
+			}
+		} catch (JavaModelException e) {
+			Platform.getLog(ArtemisGradingView.this.getClass()).error("JDT failure", e);
+		}
 	}
 
 	public boolean isPositiveFeedbackAllowed() {

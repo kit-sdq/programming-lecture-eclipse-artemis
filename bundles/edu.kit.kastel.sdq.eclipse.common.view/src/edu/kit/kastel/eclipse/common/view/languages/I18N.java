@@ -304,6 +304,22 @@ public interface I18N {
 	default String settingsSearchInMistakeMessages() {
 		return "Search in button descriptions";
 	}
+	
+	default String settingsOpenFilesOnAssessmentStart() {
+	    return "Open files automatically";
+	}
+	
+	default String settingsOpenFilesOnAssessmentStartNone() {
+	    return "None";
+	}
+	
+	default String settingsOpenFilesOnAssessmentStartMain() {
+        return "Main Class";
+    }
+	
+	default String settingsOpenFilesOnAssessmentStartAll() {
+        return "All Types";
+    }
 
 	//
 	// internal

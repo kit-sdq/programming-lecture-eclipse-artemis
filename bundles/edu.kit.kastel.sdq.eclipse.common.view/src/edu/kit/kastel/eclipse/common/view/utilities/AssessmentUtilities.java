@@ -9,10 +9,13 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -20,8 +23,10 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.ITextEditor;
+import org.eclipse.ui.navigator.resources.ProjectExplorer;
 
 import edu.kit.kastel.eclipse.common.api.ArtemisClientException;
 import edu.kit.kastel.eclipse.common.api.controller.IAssessmentController;
@@ -333,5 +338,19 @@ public final class AssessmentUtilities {
 			return mistake.getMessage();
 		}
 	}
-
+	
+	public static void openJavaElement(IJavaElement element, IWorkbenchPage page) {
+		var path = element.getPath();
+		Display.getDefault().asyncExec(() -> {
+			try {
+				IDE.openEditor(page, ResourcesPlugin.getWorkspace().getRoot().getFile(path));
+			} catch (Exception e) {
+				Platform.getLog(AssessmentUtilities.class).error("Failed to open the java code element", e);
+			}
+		});
+	}
+	
+	public static ProjectExplorer getProjectExplorer(IWorkbenchPage page) {
+		return (ProjectExplorer) page.findView("org.eclipse.ui.navigator.ProjectExplorer");
+	}
 }
