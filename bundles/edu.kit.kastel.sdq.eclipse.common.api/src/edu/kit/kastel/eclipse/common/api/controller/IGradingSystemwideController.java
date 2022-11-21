@@ -38,6 +38,12 @@ public interface IGradingSystemwideController extends ISystemwideController {
 	 * first! Has the same effect as {@link #startAssessment()} otherwise.
 	 */
 	void loadAgain();
+	
+	/**
+	 * <B>BACKLOG</B><br/>
+	 * <li>Deletes local project.
+	 */
+	void closeAssessment();
 
 	/**
 	 * <B>ASSESSMENT</B><br/>
