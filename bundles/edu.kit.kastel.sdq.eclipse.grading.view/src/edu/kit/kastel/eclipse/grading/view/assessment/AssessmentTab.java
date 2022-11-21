@@ -42,6 +42,7 @@ public class AssessmentTab extends AssessmentTabComposite {
 		comboBacklogSubmission.setEnabled(exerciseSelected && !assessmentStarted);
 		btnBacklogRefreshSubmissions.setEnabled(exerciseSelected && !assessmentStarted);
 		btnBacklogLoadSubmission.setEnabled(exerciseSelected && !assessmentStarted);
+		btnBacklogCloseAssessment.setEnabled(assessmentStarted);
 
 	}
 
