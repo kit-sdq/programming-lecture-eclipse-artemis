@@ -31,6 +31,7 @@ public class AssessmentTab extends AssessmentTabComposite {
 		btnReload.setEnabled(assessmentStarted);
 		btnSave.setEnabled(assessmentStarted);
 		btnSubmit.setEnabled(assessmentStarted);
+		btnCloseAssessment.setEnabled(assessmentStarted);
 
 		btnStartRoundOne.setEnabled(exerciseSelected && !assessmentStarted);
 		btnStartRoundTwo.setEnabled(exerciseSelected && !assessmentStarted && secondCorrectionRoundEnabled);
@@ -42,7 +43,6 @@ public class AssessmentTab extends AssessmentTabComposite {
 		comboBacklogSubmission.setEnabled(exerciseSelected && !assessmentStarted);
 		btnBacklogRefreshSubmissions.setEnabled(exerciseSelected && !assessmentStarted);
 		btnBacklogLoadSubmission.setEnabled(exerciseSelected && !assessmentStarted);
-		btnBacklogCloseAssessment.setEnabled(assessmentStarted);
 
 	}
 

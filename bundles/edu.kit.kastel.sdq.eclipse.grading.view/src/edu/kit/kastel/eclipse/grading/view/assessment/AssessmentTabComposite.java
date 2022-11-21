@@ -27,6 +27,7 @@ public class AssessmentTabComposite extends Composite {
 	protected Button btnSubmit;
 	protected Button btnStartRoundOne;
 	protected Button btnStartRoundTwo;
+	protected Button btnCloseAssessment;
 	protected Button btnResetPluginState;
 	protected Label lblStatisticsInformation;
 	protected Label lblPluginVersion;
@@ -37,7 +38,6 @@ public class AssessmentTabComposite extends Composite {
 	protected Combo comboBacklogSubmission;
 	protected Button btnBacklogRefreshSubmissions;
 	protected Button btnBacklogLoadSubmission;
-	protected Button btnBacklogCloseAssessment;
 
 	/**
 	 * Create the composite.
@@ -90,6 +90,10 @@ public class AssessmentTabComposite extends Composite {
 		btnStartRoundTwo = new Button(compositeButtons, SWT.NONE);
 		btnStartRoundTwo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		btnStartRoundTwo.setText(I18N().tabAssessmentStartCorrectionRound(2));
+		
+		btnCloseAssessment = new Button(compositeButtons, SWT.NONE);
+		btnCloseAssessment.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		btnCloseAssessment.setText(I18N().closeAssessment());
 
 		btnResetPluginState = new Button(compositeButtons, SWT.NONE);
 		btnResetPluginState.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
@@ -126,7 +130,7 @@ public class AssessmentTabComposite extends Composite {
 		comboBacklogSubmission.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
 		Composite compositeBacklogButtons = new Composite(grpBacklog, SWT.NONE);
-		compositeBacklogButtons.setLayout(new GridLayout(3, true));
+		compositeBacklogButtons.setLayout(new GridLayout(2, true));
 		compositeBacklogButtons.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false, 2, 1));
 
 		btnBacklogRefreshSubmissions = new Button(compositeBacklogButtons, SWT.NONE);
@@ -136,10 +140,6 @@ public class AssessmentTabComposite extends Composite {
 		btnBacklogLoadSubmission = new Button(compositeBacklogButtons, SWT.NONE);
 		btnBacklogLoadSubmission.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		btnBacklogLoadSubmission.setText(I18N().reload());
-
-		btnBacklogCloseAssessment = new Button(compositeBacklogButtons, SWT.NONE);
-		btnBacklogCloseAssessment.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-		btnBacklogCloseAssessment.setText(I18N().closeAssessment());
 
 		Composite bottomComposite = new Composite(this, SWT.NONE);
 		bottomComposite.setLayoutData(new GridData(SWT.FILL, SWT.BOTTOM, true, true, 2, 1));

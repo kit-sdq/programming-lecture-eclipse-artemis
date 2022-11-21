@@ -162,7 +162,6 @@ public class ArtemisGradingView extends ViewPart {
 		var filterCombo = assessmentTab.comboBacklogFilter;
 		var refreshButton = assessmentTab.btnBacklogRefreshSubmissions;
 		var btnLoadAgain = assessmentTab.btnBacklogLoadSubmission;
-		var btnClose = assessmentTab.btnBacklogCloseAssessment;
 
 		for (SubmissionFilter filter : SubmissionFilter.values()) {
 			assessmentTab.comboBacklogFilter.add(filter.name());
@@ -171,7 +170,6 @@ public class ArtemisGradingView extends ViewPart {
 		this.addSelectionListenerForFilterCombo(backlogCombo, filterCombo);
 		this.addSelectionListenerForRefreshButton(refreshButton, backlogCombo, filterCombo);
 		this.addSelectionListenerForLoadFromBacklogButton(backlogCombo, btnLoadAgain);
-		this.addSelectionListenerForCloseAssessmentButton(btnClose);
 	}
 
 	private void createResultTab(TabFolder tabFolder) {
@@ -232,6 +230,7 @@ public class ArtemisGradingView extends ViewPart {
 		this.addSelectionListenerForStartFirstRound(this.assessmentTab.btnStartRoundOne);
 		this.addSelectionListenerForStartSecondRound(this.assessmentTab.btnStartRoundTwo);
 		this.addSelectionListenerForSubmitButton(this.assessmentTab.btnSubmit);
+		this.addSelectionListenerForCloseAssessmentButton(this.assessmentTab.btnCloseAssessment);
 		this.addSelectionListenerForRefreshArtemisStateButton(this.assessmentTab.btnResetPluginState);
 
 		setVersionText(this.assessmentTab.lblPluginVersion);
