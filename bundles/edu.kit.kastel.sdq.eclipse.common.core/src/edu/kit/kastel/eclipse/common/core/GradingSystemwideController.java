@@ -227,6 +227,17 @@ public class GradingSystemwideController extends SystemwideController implements
 		}
 	}
 
+	@Override
+	public void closeAssessment() {
+		if (this.nullCheckMembersAndNotify(true, true, true)) {
+			return;
+		}
+
+		this.getCurrentAssessmentController().deleteEclipseProject(this.projectFileNamingStrategy);
+		this.assessmentControllers.remove(this.submission.getSubmissionId());
+		this.submission = null;
+	}
+
 	private boolean nullCheckMembersAndNotify(boolean checkCourseID, boolean checkExerciseID, boolean checkSubmissionID) {
 		boolean somethingNull = this.nullCheckMembersAndNotify(checkCourseID, checkExerciseID);
 		if (checkSubmissionID && this.submission == null) {

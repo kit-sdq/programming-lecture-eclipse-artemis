@@ -37,6 +37,7 @@ public class AssessmentTabComposite extends Composite {
 	protected Combo comboBacklogSubmission;
 	protected Button btnBacklogRefreshSubmissions;
 	protected Button btnBacklogLoadSubmission;
+	protected Button btnBacklogCloseAssessment;
 
 	/**
 	 * Create the composite.
@@ -135,6 +136,10 @@ public class AssessmentTabComposite extends Composite {
 		btnBacklogLoadSubmission = new Button(compositeBacklogButtons, SWT.NONE);
 		btnBacklogLoadSubmission.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		btnBacklogLoadSubmission.setText(I18N().reload());
+
+		btnBacklogCloseAssessment = new Button(compositeBacklogButtons, SWT.NONE);
+		btnBacklogCloseAssessment.setLayoutData(new GridDate(SWT.FILL, SWT.CENTER, false, 1, 1));
+		btnBacklogCloseAssessment.setText(I18N().closeAssessment());
 
 		Composite bottomComposite = new Composite(this, SWT.NONE);
 		bottomComposite.setLayoutData(new GridData(SWT.FILL, SWT.BOTTOM, true, true, 2, 1));

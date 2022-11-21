@@ -101,6 +101,10 @@ public interface I18N {
 		return "Refresh Submissions";
 	}
 
+	default String closeAssessment() {
+		return "Close Assessment";
+	}
+
 	default String tabGrading() {
 		return "Grading";
 	}

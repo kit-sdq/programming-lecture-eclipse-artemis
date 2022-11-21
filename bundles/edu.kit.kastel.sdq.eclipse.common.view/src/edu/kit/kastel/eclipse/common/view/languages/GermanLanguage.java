@@ -112,6 +112,11 @@ class GermanLanguage implements I18N {
 	}
 
 	@Override
+	public String closeAssessment() {
+		return "Korrektur schließen";
+	}
+
+	@Override
 	public String tabGrading() {
 		return "Bewerten";
 	}
