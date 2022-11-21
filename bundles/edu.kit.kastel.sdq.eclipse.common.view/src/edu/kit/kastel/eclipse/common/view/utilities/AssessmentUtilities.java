@@ -24,9 +24,9 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.navigator.resources.ProjectExplorer;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.ITextEditor;
-import org.eclipse.ui.navigator.resources.ProjectExplorer;
 
 import edu.kit.kastel.eclipse.common.api.ArtemisClientException;
 import edu.kit.kastel.eclipse.common.api.controller.IAssessmentController;
@@ -338,7 +338,13 @@ public final class AssessmentUtilities {
 			return mistake.getMessage();
 		}
 	}
-	
+
+	/**
+	 * Opens the given Java element in a new editor as part of the given page.
+	 *
+	 * @param element the element to open
+	 * @param page    the page as part of which the editor will be opened
+	 */
 	public static void openJavaElement(IJavaElement element, IWorkbenchPage page) {
 		var path = element.getPath();
 		Display.getDefault().asyncExec(() -> {
@@ -349,7 +355,13 @@ public final class AssessmentUtilities {
 			}
 		});
 	}
-	
+
+	/**
+	 * Retrieves the global project explorer of Eclipse
+	 *
+	 * @param page the page to search in
+	 * @return the global project explorer
+	 */
 	public static ProjectExplorer getProjectExplorer(IWorkbenchPage page) {
 		return (ProjectExplorer) page.findView("org.eclipse.ui.navigator.ProjectExplorer");
 	}
