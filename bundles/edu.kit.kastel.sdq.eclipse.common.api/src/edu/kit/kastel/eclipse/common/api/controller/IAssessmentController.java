@@ -99,10 +99,11 @@ public interface IAssessmentController extends IController {
 	double getCurrentPenaltyForRatingGroup(IRatingGroup ratingGroup);
 
 	boolean isPositiveFeedbackAllowed();
-	
+
 	/**
 	 *
-	 * @return The path to the current assignment relative to the current workspace root folder.
+	 * @return The path to the current assignment relative to the current workspace
+	 *         root folder.
 	 */
 	File getSubmissionFile();
 }
