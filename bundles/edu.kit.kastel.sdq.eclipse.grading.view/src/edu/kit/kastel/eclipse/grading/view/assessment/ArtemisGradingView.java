@@ -459,38 +459,35 @@ public class ArtemisGradingView extends ViewPart {
 		this.assessmentTab.resetCombos();
 		this.viewController.getCourseShortNames().forEach(courseShortName -> this.assessmentTab.comboCourse.add(courseShortName));
 	}
-	
+
 	private void addListenerForFileOpening() {
 		var projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		if (projects.length == 0) {
 			return;
 		}
-		
+
 		var page = ArtemisGradingView.this.getSite().getPage();
 		try {
 			// Expand all packages
-			var packagePaths = JDTUtilities.getAllCompilationUnits(projects[0])
-					.stream()
-					.map(ICompilationUnit::getResource)
-					.toList();
+			var packagePaths = JDTUtilities.getAllCompilationUnits(projects[0]).stream().map(ICompilationUnit::getResource).toList();
 			Display.getDefault().asyncExec(() -> {
 				AssessmentUtilities.getProjectExplorer(page).selectReveal(new StructuredSelection(packagePaths));
 			});
-			
+
 			// Open the desired types
 			switch (CommonActivator.getDefault().getPreferenceStore().getString(PreferenceConstants.OPEN_FILES_ON_ASSESSMENT_START)) {
-				case PreferenceConstants.OPEN_FILES_ON_ASSESSMENT_START_ALL -> {
-					JDTUtilities.getAllCompilationUnits(projects[0]).forEach(c -> AssessmentUtilities.openJavaElement(c, page));
-					
+			case PreferenceConstants.OPEN_FILES_ON_ASSESSMENT_START_ALL -> {
+				JDTUtilities.getAllCompilationUnits(projects[0]).forEach(c -> AssessmentUtilities.openJavaElement(c, page));
+
+			}
+			case PreferenceConstants.OPEN_FILES_ON_ASSESSMENT_START_MAIN -> {
+				var mainType = JDTUtilities.findMainClass(projects[0]);
+				if (mainType.isPresent()) {
+					AssessmentUtilities.openJavaElement(mainType.get(), page);
+				} else {
+					Platform.getLog(ArtemisGradingView.this.getClass()).warn("No main class found");
 				}
-				case PreferenceConstants.OPEN_FILES_ON_ASSESSMENT_START_MAIN -> {
-					var mainType = JDTUtilities.findMainClass(projects[0]);
-					if (mainType.isPresent()) {
-						AssessmentUtilities.openJavaElement(mainType.get(), page);
-					} else {
-						Platform.getLog(ArtemisGradingView.this.getClass()).warn("No main class found");
-					}
-				}
+			}
 			}
 		} catch (JavaModelException e) {
 			Platform.getLog(ArtemisGradingView.this.getClass()).error("JDT failure", e);

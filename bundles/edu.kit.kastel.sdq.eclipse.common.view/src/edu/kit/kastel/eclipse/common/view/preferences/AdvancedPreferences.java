@@ -55,14 +55,11 @@ public class AdvancedPreferences extends FieldEditorPreferencePage implements IW
 		columnsForGradingButtons.setEmptyStringAllowed(false);
 		columnsForGradingButtons.setValidRange(1, 10);
 
-		var openFiles = new ComboFieldEditor(
-				PreferenceConstants.OPEN_FILES_ON_ASSESSMENT_START,
-				I18N().settingsOpenFilesOnAssessmentStart(),
-				new String[][] {
-					{I18N().settingsOpenFilesOnAssessmentStartNone(), PreferenceConstants.OPEN_FILES_ON_ASSESSMENT_START_NONE},
-					{I18N().settingsOpenFilesOnAssessmentStartMain(), PreferenceConstants.OPEN_FILES_ON_ASSESSMENT_START_MAIN},
-					{I18N().settingsOpenFilesOnAssessmentStartAll(), PreferenceConstants.OPEN_FILES_ON_ASSESSMENT_START_ALL}
-				}, parent);
+		var openFiles = new ComboFieldEditor(PreferenceConstants.OPEN_FILES_ON_ASSESSMENT_START, I18N().settingsOpenFilesOnAssessmentStart(),
+				new String[][] { { I18N().settingsOpenFilesOnAssessmentStartNone(), PreferenceConstants.OPEN_FILES_ON_ASSESSMENT_START_NONE },
+						{ I18N().settingsOpenFilesOnAssessmentStartMain(), PreferenceConstants.OPEN_FILES_ON_ASSESSMENT_START_MAIN },
+						{ I18N().settingsOpenFilesOnAssessmentStartAll(), PreferenceConstants.OPEN_FILES_ON_ASSESSMENT_START_ALL } },
+				parent);
 
 		this.addField(artemisUser);
 		this.addField(artemisPassword);
