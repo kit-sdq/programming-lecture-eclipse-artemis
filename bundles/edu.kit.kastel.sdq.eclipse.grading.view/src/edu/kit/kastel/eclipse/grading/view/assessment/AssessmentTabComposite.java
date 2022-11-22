@@ -67,37 +67,48 @@ public class AssessmentTabComposite extends Composite {
 		comboExercise = new Combo(this, SWT.READ_ONLY);
 		comboExercise.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
-		Composite compositeButtons = new Composite(this, SWT.NONE);
-		compositeButtons.setLayout(new GridLayout(3, true));
-		compositeButtons.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false, 2, 1));
+		Composite compositeButtons = new Composite(this, SWT.BORDER);
+		compositeButtons.setLayout(new GridLayout(1, true));
+		compositeButtons.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
 
-		btnReload = new Button(compositeButtons, SWT.NONE);
-		btnReload.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-		btnReload.setText(I18N().reload());
+		Group grpGeneral = new Group(compositeButtons, SWT.NONE);
+		grpGeneral.setText(I18N().general());
+		grpGeneral.setLayout(new GridLayout(3, true));
+		GridData gd_grpGeneral = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
+		grpGeneral.setLayoutData(gd_grpGeneral);
 
-		btnSave = new Button(compositeButtons, SWT.NONE);
-		btnSave.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-		btnSave.setText(I18N().save());
+		btnStartRoundOne = new Button(grpGeneral, SWT.NONE);
+		btnStartRoundOne.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		btnStartRoundOne.setText(I18N().tabAssessmentStartGradingRound(1));
 
-		btnSubmit = new Button(compositeButtons, SWT.NONE);
-		btnSubmit.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-		btnSubmit.setText(I18N().submit());
+		btnStartRoundTwo = new Button(grpGeneral, SWT.NONE);
+		btnStartRoundTwo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		btnStartRoundTwo.setText(I18N().tabAssessmentStartGradingRound(2));
 
-		btnStartRoundOne = new Button(compositeButtons, SWT.NONE);
-		btnStartRoundOne.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-		btnStartRoundOne.setText(I18N().tabAssessmentStartCorrectionRound(1));
-
-		btnStartRoundTwo = new Button(compositeButtons, SWT.NONE);
-		btnStartRoundTwo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-		btnStartRoundTwo.setText(I18N().tabAssessmentStartCorrectionRound(2));
-
-		btnCloseAssessment = new Button(compositeButtons, SWT.NONE);
-		btnCloseAssessment.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-		btnCloseAssessment.setText(I18N().closeAssessment());
-
-		btnResetPluginState = new Button(compositeButtons, SWT.NONE);
-		btnResetPluginState.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		btnResetPluginState = new Button(grpGeneral, SWT.NONE);
+		btnResetPluginState.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		btnResetPluginState.setText(I18N().resetPluginState());
+
+		Group grpAssessment = new Group(compositeButtons, SWT.NONE);
+		grpAssessment.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		grpAssessment.setText(I18N().assessment());
+		grpAssessment.setLayout(new GridLayout(2, true));
+
+		btnSave = new Button(grpAssessment, SWT.NONE);
+		btnSave.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		btnSave.setText(I18N().saveAssessment());
+
+		btnSubmit = new Button(grpAssessment, SWT.NONE);
+		btnSubmit.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		btnSubmit.setText(I18N().submitAssessment());
+
+		btnReload = new Button(grpAssessment, SWT.NONE);
+		btnReload.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		btnReload.setText(I18N().reloadAssessment());
+
+		btnCloseAssessment = new Button(grpAssessment, SWT.NONE);
+		btnCloseAssessment.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		btnCloseAssessment.setText(I18N().closeAssessment());
 
 		Group grpMetaInformation = new Group(this, SWT.NONE);
 		grpMetaInformation.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
@@ -139,7 +150,7 @@ public class AssessmentTabComposite extends Composite {
 
 		btnBacklogLoadSubmission = new Button(compositeBacklogButtons, SWT.NONE);
 		btnBacklogLoadSubmission.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-		btnBacklogLoadSubmission.setText(I18N().reload());
+		btnBacklogLoadSubmission.setText(I18N().reloadAssessment());
 
 		Composite bottomComposite = new Composite(this, SWT.NONE);
 		bottomComposite.setLayoutData(new GridData(SWT.FILL, SWT.BOTTOM, true, true, 2, 1));

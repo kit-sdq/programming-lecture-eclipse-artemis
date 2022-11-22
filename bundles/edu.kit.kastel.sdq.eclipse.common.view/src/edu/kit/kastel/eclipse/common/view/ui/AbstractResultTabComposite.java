@@ -50,7 +50,7 @@ class AbstractResultTabComposite extends Composite {
 
 		btnReload = new Button(this, SWT.NONE);
 		btnReload.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		btnReload.setText(I18N().reload());
+		btnReload.setText(I18N().reloadAssessment());
 
 		Composite compositeOverview = new Composite(this, SWT.BORDER);
 		compositeOverview.setLayout(new GridLayout(2, false));
