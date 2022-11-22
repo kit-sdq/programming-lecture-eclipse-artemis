@@ -14,4 +14,4 @@ The Update Site is located here: https://kit-sdq.github.io/programming-lecture-e
 Please take a look at our [Docs](https://kit-sdq.github.io/programming-lecture-eclipse-artemis.docs/).
 
 ### Update the Versions
-See [Tycho Plugin](https://www.eclipse.org/tycho/sitedocs/tycho-release/tycho-versions-plugin/set-version-mojo.html#tycho-versions-set-version). Run with `products` profile: `mvn -Pproducts -DnewVersion=X.X.X tycho-versions:set-version`
+See [Tycho Plugin](https://www.eclipse.org/tycho/sitedocs/tycho-release/tycho-versions-plugin/set-version-mojo.html#tycho-versions-set-version). Run with `products` profile.
