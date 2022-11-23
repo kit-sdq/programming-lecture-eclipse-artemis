@@ -82,7 +82,7 @@ class GermanLanguage implements I18N {
 	}
 
 	@Override
-	public String tabAssessmentStartCorrectionRound(int i) {
+	public String tabAssessmentStartGradingRound(int i) {
 		return String.format("Korrekturrunde %d beginnen", i);
 	}
 
@@ -109,6 +109,11 @@ class GermanLanguage implements I18N {
 	@Override
 	public String backlogRefresh() {
 		return "Abgaben neu laden";
+	}
+
+	@Override
+	public String closeAssessment() {
+		return "Korrektur schließen";
 	}
 
 	@Override
@@ -262,18 +267,18 @@ class GermanLanguage implements I18N {
 	}
 
 	@Override
-	public String reload() {
-		return "Neuladen";
+	public String reloadAssessment() {
+		return "Bewertung neuladen";
 	}
 
 	@Override
-	public String save() {
-		return "Speichern";
+	public String saveAssessment() {
+		return "Bewertung speichern";
 	}
 
 	@Override
-	public String submit() {
-		return "Abgeben";
+	public String submitAssessment() {
+		return "Bewertung abgeben";
 	}
 
 	@Override
@@ -369,6 +374,16 @@ class GermanLanguage implements I18N {
 	@Override
 	public String settingsOpenFilesOnAssessmentStartAll() {
 		return "Alle Typen";
+	}
+	
+	@Override
+	public String general() {
+		return "Allgemein";
+	}
+
+	@Override
+	public String assessment() {
+		return "Bewertung";
 	}
 
 	@Override
