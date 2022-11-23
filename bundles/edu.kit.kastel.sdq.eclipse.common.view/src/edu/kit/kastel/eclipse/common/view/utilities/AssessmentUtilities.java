@@ -8,6 +8,7 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdt.core.IJavaElement;
@@ -54,6 +55,8 @@ public final class AssessmentUtilities {
 	public static final String MARKER_VIEW_ID = "edu.kit.kastel.eclipse.common.view.annotationMarkerGenerator";
 
 	public static final int BACKLOG_COMBO_WIDTH = 300;
+
+	private static final ILog LOG = Platform.getLog(AssessmentUtilities.class);
 
 	private AssessmentUtilities() {
 		throw new IllegalAccessError();
@@ -351,7 +354,7 @@ public final class AssessmentUtilities {
 			try {
 				IDE.openEditor(page, ResourcesPlugin.getWorkspace().getRoot().getFile(path));
 			} catch (Exception e) {
-				Platform.getLog(AssessmentUtilities.class).error("Failed to open the java code element", e);
+				LOG.error("Failed to open the java code element", e);
 			}
 		});
 	}

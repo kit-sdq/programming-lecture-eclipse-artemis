@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.JavaModelException;
@@ -57,6 +58,8 @@ import edu.kit.kastel.eclipse.grading.view.listeners.KeyboardAwareMouseListener;
 public class ArtemisGradingView extends ViewPart {
 	private static final String ADD_ANNOTATION_COMMAND = "edu.kit.kastel.eclipse.grading.assessment.keybindings.addAnnotation";
 
+	private static final ILog LOG = Platform.getLog(ArtemisGradingView.class);
+
 	private AssessmentViewController viewController;
 	private Map<String, Group> ratingGroupViewElements;
 	private Map<String, Button> mistakeButtons;
@@ -81,7 +84,7 @@ public class ArtemisGradingView extends ViewPart {
 		super.init(site);
 
 		// Set the command handler manually to be able to inject the view controller
-		ICommandService commandService = (ICommandService) getSite().getService(ICommandService.class);
+		ICommandService commandService = getSite().getService(ICommandService.class);
 		var command = commandService.getCommand(ADD_ANNOTATION_COMMAND);
 		command.setHandler(new AddAnnotationCommandHandler(this, this.viewController));
 	}
@@ -494,12 +497,12 @@ public class ArtemisGradingView extends ViewPart {
 				if (mainType.isPresent()) {
 					AssessmentUtilities.openJavaElement(mainType.get(), page);
 				} else {
-					Platform.getLog(ArtemisGradingView.this.getClass()).warn("No main class found");
+					LOG.warn("No main class found");
 				}
 			}
 			}
 		} catch (JavaModelException e) {
-			Platform.getLog(ArtemisGradingView.this.getClass()).error("JDT failure", e);
+			LOG.error("JDT failure", e);
 		}
 	}
 
