@@ -480,26 +480,38 @@ public class ArtemisGradingView extends ViewPart {
 
 		var page = ArtemisGradingView.this.getSite().getPage();
 		try {
+			var explorer = AssessmentUtilities.getProjectExplorer(page);
+
 			// Expand all packages
 			var packagePaths = JDTUtilities.getAllCompilationUnits(projects[0]).stream().map(ICompilationUnit::getResource).toList();
 			Display.getDefault().asyncExec(() -> {
-				AssessmentUtilities.getProjectExplorer(page).selectReveal(new StructuredSelection(packagePaths));
+				// Select all packages to reveal them...
+				explorer.ifPresent(e -> e.selectReveal(new StructuredSelection(packagePaths)));
+				// ... and deselect them once they are expanded
+				explorer.ifPresent(e -> e.selectReveal(new StructuredSelection()));
 			});
 
-			// Open the desired types
-			switch (CommonActivator.getDefault().getPreferenceStore().getString(PreferenceConstants.OPEN_FILES_ON_ASSESSMENT_START)) {
-			case PreferenceConstants.OPEN_FILES_ON_ASSESSMENT_START_ALL -> {
-				JDTUtilities.getAllCompilationUnits(projects[0]).forEach(c -> AssessmentUtilities.openJavaElement(c, page));
+			String openPreference = CommonActivator.getDefault().getPreferenceStore().getString(PreferenceConstants.OPEN_FILES_ON_ASSESSMENT_START);
 
+			// Open all types if desired
+			if (openPreference.equals(PreferenceConstants.OPEN_FILES_ON_ASSESSMENT_START_ALL)) {
+				JDTUtilities.getAllCompilationUnits(projects[0]).forEach(c -> AssessmentUtilities.openJavaElement(c, page));
 			}
-			case PreferenceConstants.OPEN_FILES_ON_ASSESSMENT_START_MAIN -> {
+
+			// Open/focus the main class
+			if (!openPreference.equals(PreferenceConstants.OPEN_FILES_ON_ASSESSMENT_START_NONE)) {
 				var mainType = JDTUtilities.findMainClass(projects[0]);
 				if (mainType.isPresent()) {
+					// Open/focus the main class in the editor...
 					AssessmentUtilities.openJavaElement(mainType.get(), page);
+
+					// ... and focus it in the package explorer
+					Display.getDefault().asyncExec(() -> {
+						explorer.ifPresent(e -> e.selectReveal(new StructuredSelection(mainType.get().getResource())));
+					});
 				} else {
 					LOG.warn("No main class found");
 				}
-			}
 			}
 		} catch (JavaModelException e) {
 			LOG.error("JDT failure", e);

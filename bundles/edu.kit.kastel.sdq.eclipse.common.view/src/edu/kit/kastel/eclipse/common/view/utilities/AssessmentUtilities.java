@@ -1,6 +1,7 @@
 /* Licensed under EPL-2.0 2022. */
 package edu.kit.kastel.eclipse.common.view.utilities;
 
+import java.util.Optional;
 import java.util.Scanner;
 
 import org.eclipse.core.resources.IFile;
@@ -51,6 +52,7 @@ public final class AssessmentUtilities {
 	public static final String MARKER_ATTRIBUTE_CUSTOM_MESSAGE = "customMessage";
 	public static final String MARKER_ATTRIBUTE_START = "start";
 	public static final String MARKER_ATTRIBUTE_END = "end";
+	private static final String PROJECT_EXPLORER_ID = "org.eclipse.ui.navigator.ProjectExplorer";
 
 	public static final String MARKER_VIEW_ID = "edu.kit.kastel.eclipse.common.view.annotationMarkerGenerator";
 
@@ -360,12 +362,13 @@ public final class AssessmentUtilities {
 	}
 
 	/**
-	 * Retrieves the global project explorer of Eclipse
+	 * Retrieves the global project explorer of Eclipse if it is open.
 	 *
 	 * @param page the page to search in
-	 * @return the global project explorer
+	 * @return the global project explorer or an empty optional if no project
+	 *         explorer has been found
 	 */
-	public static ProjectExplorer getProjectExplorer(IWorkbenchPage page) {
-		return (ProjectExplorer) page.findView("org.eclipse.ui.navigator.ProjectExplorer");
+	public static Optional<ProjectExplorer> getProjectExplorer(IWorkbenchPage page) {
+		return Optional.ofNullable((ProjectExplorer) page.findView(PROJECT_EXPLORER_ID));
 	}
 }
