@@ -324,7 +324,7 @@ public interface I18N {
 	default String settingsOpenFilesOnAssessmentStartAll() {
 		return "All Types";
 	}
-		
+
 	default String general() {
 		return "General";
 	}

@@ -375,7 +375,7 @@ class GermanLanguage implements I18N {
 	public String settingsOpenFilesOnAssessmentStartAll() {
 		return "Alle Typen";
 	}
-	
+
 	@Override
 	public String general() {
 		return "Allgemein";
