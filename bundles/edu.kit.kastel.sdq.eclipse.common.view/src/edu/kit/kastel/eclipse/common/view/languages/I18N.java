@@ -69,11 +69,11 @@ public interface I18N {
 	}
 
 	/**
-	 * @param i the number of the correction round
-	 * @return the correction-round message with the correct number
+	 * @param i the number of the grading round
+	 * @return the grading round message with the correct number
 	 */
-	default String tabAssessmentStartCorrectionRound(int i) {
-		return String.format("Start Correction Round %d", i);
+	default String tabAssessmentStartGradingRound(int i) {
+		return String.format("Start Grading Round %d", i);
 	}
 
 	/**
@@ -99,6 +99,10 @@ public interface I18N {
 
 	default String backlogRefresh() {
 		return "Refresh Submissions";
+	}
+
+	default String closeAssessment() {
+		return "Close Assessment";
 	}
 
 	default String tabGrading() {
@@ -233,16 +237,16 @@ public interface I18N {
 		return "Exercise";
 	}
 
-	default String reload() {
-		return "Reload";
+	default String reloadAssessment() {
+		return "Reload Assessment";
 	}
 
-	default String save() {
-		return "Save";
+	default String saveAssessment() {
+		return "Save Assessment";
 	}
 
-	default String submit() {
-		return "Submit";
+	default String submitAssessment() {
+		return "Submit Assessment";
 	}
 
 	default String submissions() {
@@ -303,6 +307,14 @@ public interface I18N {
 
 	default String settingsSearchInMistakeMessages() {
 		return "Search in button descriptions";
+	}
+
+	default String general() {
+		return "General";
+	}
+
+	default String assessment() {
+		return "Assessment";
 	}
 
 	//

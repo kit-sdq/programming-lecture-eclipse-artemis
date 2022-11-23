@@ -230,6 +230,7 @@ public class ArtemisGradingView extends ViewPart {
 		this.addSelectionListenerForStartFirstRound(this.assessmentTab.btnStartRoundOne);
 		this.addSelectionListenerForStartSecondRound(this.assessmentTab.btnStartRoundTwo);
 		this.addSelectionListenerForSubmitButton(this.assessmentTab.btnSubmit);
+		this.addSelectionListenerForCloseAssessmentButton(this.assessmentTab.btnCloseAssessment);
 		this.addSelectionListenerForRefreshArtemisStateButton(this.assessmentTab.btnResetPluginState);
 
 		setVersionText(this.assessmentTab.lblPluginVersion);
@@ -245,6 +246,14 @@ public class ArtemisGradingView extends ViewPart {
 
 	private void addSelectionListenerForRefreshArtemisStateButton(Button btnRefreshArtemisState) {
 		btnRefreshArtemisState.addListener(SWT.Selection, e -> this.refreshArtemisState());
+	}
+
+	private void addSelectionListenerForCloseAssessmentButton(Button btnCloseAssessment) {
+		btnCloseAssessment.addListener(SWT.Selection, e -> {
+			this.viewController.onCloseAssessment();
+			this.updateState();
+			this.result.reset();
+		});
 	}
 
 	private void fillGradingTab() {

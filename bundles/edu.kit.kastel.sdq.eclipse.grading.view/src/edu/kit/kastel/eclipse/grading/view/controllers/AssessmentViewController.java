@@ -141,6 +141,13 @@ public class AssessmentViewController extends AbstractArtemisViewController<IGra
 	}
 
 	/**
+	 * Closes the current assessment
+	 */
+	public void onCloseAssessment() {
+		this.systemwideController.closeAssessment();
+	}
+
+	/**
 	 * @param projectName (of the selected assessment)
 	 */
 	public void setAssessedSubmission(String projectName) {
