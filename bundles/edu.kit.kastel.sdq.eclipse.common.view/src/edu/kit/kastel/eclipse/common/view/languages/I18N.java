@@ -309,6 +309,22 @@ public interface I18N {
 		return "Search in button descriptions";
 	}
 
+	default String settingsOpenFilesOnAssessmentStart() {
+		return "Open files automatically";
+	}
+
+	default String settingsOpenFilesOnAssessmentStartNone() {
+		return "None";
+	}
+
+	default String settingsOpenFilesOnAssessmentStartMain() {
+		return "Main Class";
+	}
+
+	default String settingsOpenFilesOnAssessmentStartAll() {
+		return "All Types";
+	}
+
 	default String general() {
 		return "General";
 	}

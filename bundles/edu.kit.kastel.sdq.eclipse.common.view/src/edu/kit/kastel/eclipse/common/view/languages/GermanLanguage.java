@@ -357,6 +357,26 @@ class GermanLanguage implements I18N {
 	}
 
 	@Override
+	public String settingsOpenFilesOnAssessmentStart() {
+		return "Dateien automatisch öffnen";
+	}
+
+	@Override
+	public String settingsOpenFilesOnAssessmentStartNone() {
+		return "Keine";
+	}
+
+	@Override
+	public String settingsOpenFilesOnAssessmentStartMain() {
+		return "Main-Klasse";
+	}
+
+	@Override
+	public String settingsOpenFilesOnAssessmentStartAll() {
+		return "Alle Typen";
+	}
+
+	@Override
 	public String general() {
 		return "Allgemein";
 	}
