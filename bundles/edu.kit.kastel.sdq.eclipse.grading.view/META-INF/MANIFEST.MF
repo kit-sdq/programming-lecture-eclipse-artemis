@@ -10,7 +10,11 @@ Require-Bundle: org.eclipse.ui,
  edu.kit.kastel.sdq.eclipse.common.api,
  edu.kit.kastel.sdq.eclipse.common.client,
  edu.kit.kastel.sdq.eclipse.common.core,
- edu.kit.kastel.sdq.eclipse.common.view
+ edu.kit.kastel.sdq.eclipse.common.view,
+ org.eclipse.jdt.core,
+ org.eclipse.jdt.ui,
+ org.eclipse.ui.navigator,
+ org.eclipse.ui.navigator.resources
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: edu.kit.kastel.eclipse.grading.view.activator.Activator
