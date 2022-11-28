@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="Eclipse Artemis Grading" uid="edu.kit.kastel.sdq.eclipse.grading.product" id="edu.kit.kastel.sdq.eclipse.grading.eclipse.ArtemisGradingEclipse" application="org.eclipse.ui.ide.workbench" version="2.7.0" useFeatures="true" includeLaunchers="true">
+<product name="Eclipse Artemis Grading" uid="edu.kit.kastel.sdq.eclipse.grading.product" id="edu.kit.kastel.sdq.eclipse.grading.eclipse.ArtemisGradingEclipse" application="org.eclipse.ui.ide.workbench" version="2.7.0" useFeatures="true" includeLaunchers="true" autoIncludeRequirements="true">
 
    <aboutInfo>
       <text>
@@ -345,7 +345,6 @@ version(s), and exceptions or additional permissions here}.&quot;
       <feature id="org.eclipse.e4.rcp" installMode="root"/>
       <feature id="org.eclipse.jdt" installMode="root"/>
       <feature id="org.eclipse.m2e.feature" installMode="root"/>
-      <feature id="org.eclipse.egit" installMode="root"/>
       <feature id="org.eclipse.jgit" installMode="root"/>
       <feature id="org.eclipse.jgit.http.apache" installMode="root"/>
       <feature id="org.eclipse.jgit.ssh.apache" installMode="root"/>

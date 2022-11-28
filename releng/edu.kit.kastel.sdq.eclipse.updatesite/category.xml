@@ -12,9 +12,6 @@
    <feature id="edu.kit.kastel.sdq.eclipse.student.feature.source" version="2.7.0">
       <category name="Eclipse Artemis Student"/>
    </feature>
-   <feature id="org.eclipse.jgit">
-      <category name="Eclipse Artemis Dev"/>
-   </feature>
    <feature id="org.eclipse.pde">
       <category name="Eclipse Artemis Dev"/>
    </feature>
@@ -25,6 +22,12 @@
       <category name="Eclipse Artemis Dev"/>
    </feature>
    <feature id="org.eclipse.m2e.feature">
+      <category name="Eclipse Artemis Dev"/>
+   </feature>
+   <feature id="org.eclipse.jgit">
+      <category name="Eclipse Artemis Dev"/>
+   </feature>
+      <feature id="org.eclipse.jgit.source">
       <category name="Eclipse Artemis Dev"/>
    </feature>
    <bundle id="com.fasterxml.jackson.core.jackson-annotations">
@@ -70,9 +73,6 @@
       <category name="Eclipse Artemis Dev"/>
    </bundle>
    <bundle id="org.glassfish.jersey.inject.jersey-hk2.source">
-      <category name="Eclipse Artemis Dev"/>
-   </bundle>
-   <bundle id="org.eclipse.egit.core">
       <category name="Eclipse Artemis Dev"/>
    </bundle>
    <bundle id="org.eclipse.jface.text">
