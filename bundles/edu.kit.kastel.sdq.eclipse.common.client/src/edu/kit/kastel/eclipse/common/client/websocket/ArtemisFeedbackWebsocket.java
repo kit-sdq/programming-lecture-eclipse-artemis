@@ -15,7 +15,6 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
-import javax.websocket.WebSocketContainer;
 
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.Platform;
@@ -34,6 +33,7 @@ import edu.kit.kastel.eclipse.common.api.client.websocket.ArtemisWebsocketExcept
 import edu.kit.kastel.eclipse.common.api.client.websocket.IWebsocketClient;
 import edu.kit.kastel.eclipse.common.api.client.websocket.WebsocketCallback;
 import edu.kit.kastel.eclipse.common.api.messages.Messages;
+import jakarta.websocket.WebSocketContainer;
 
 public class ArtemisFeedbackWebsocket implements IWebsocketClient {
 	private static final ILog log = Platform.getLog(ArtemisFeedbackWebsocket.class);
@@ -59,7 +59,7 @@ public class ArtemisFeedbackWebsocket implements IWebsocketClient {
 		try {
 			WebSocketHttpHeaders headers = new WebSocketHttpHeaders();
 			headers.add(WebSocketHttpHeaders.COOKIE, TOKEN_COOKIE_NAME + "=" + token);
-			stompClient.connect(stompUrl, headers, new ArtemisSockJsSessionHandler(callback)).get();
+			stompClient.connectAsync(stompUrl, headers, new ArtemisSockJsSessionHandler(callback)).get();
 		} catch (InterruptedException | ExecutionException e) {
 			throw new ArtemisWebsocketException(Messages.CLIENT_NO_WEBSOCKET, e);
 		}
