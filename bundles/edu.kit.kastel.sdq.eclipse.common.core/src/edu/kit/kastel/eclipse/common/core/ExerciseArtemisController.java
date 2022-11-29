@@ -8,7 +8,6 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 
 import edu.kit.kastel.eclipse.common.api.ArtemisClientException;
 import edu.kit.kastel.eclipse.common.api.PreferenceConstants;
@@ -19,6 +18,7 @@ import edu.kit.kastel.eclipse.common.api.artemis.mapping.ISubmission;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.User;
 import edu.kit.kastel.eclipse.common.api.controller.AbstractController;
 import edu.kit.kastel.eclipse.common.api.controller.IExerciseArtemisController;
+import edu.kit.kastel.eclipse.common.client.git.GitCredentials;
 import edu.kit.kastel.eclipse.common.client.git.GitException;
 import edu.kit.kastel.eclipse.common.client.git.GitHandler;
 import edu.kit.kastel.eclipse.common.core.artemis.WorkspaceUtil;
@@ -73,7 +73,7 @@ public class ExerciseArtemisController extends AbstractController implements IEx
 				throw new ArtemisClientException("Could not clone project " + projectDirectory.getName() + ", " + "directory already exists!");
 			}
 
-			var credentials = new UsernamePasswordCredentialsProvider(this.username, this.gitPassword);
+			var credentials = new GitCredentials(this.username, this.gitPassword);
 			// Download test repository
 			GitHandler.cloneRepo(projectDirectory, exercise.getTestRepositoryUrl(), credentials);
 			// download submission inside the exercise project directory
@@ -92,7 +92,7 @@ public class ExerciseArtemisController extends AbstractController implements IEx
 			}
 
 			// Download test repository
-			var credentials = new UsernamePasswordCredentialsProvider(this.username, this.gitPassword);
+			var credentials = new GitCredentials(this.username, this.gitPassword);
 			GitHandler.cloneRepo(projectDirectory, repoUrl, credentials);
 		} catch (GitException e) {
 			throw new ArtemisClientException("Unable to download exercise: " + e.getMessage(), e);
@@ -117,7 +117,7 @@ public class ExerciseArtemisController extends AbstractController implements IEx
 		File exerciseRepo = projectNaming.getProjectFileInWorkspace(eclipseWorkspaceRoot, exercise, null);
 		File gitFileInRepo = projectNaming.getGitFileInProjectDirectory(exerciseRepo);
 		try {
-			GitHandler.pullExercise(this.username, this.gitPassword, exerciseRepo);
+			GitHandler.pullExercise(exerciseRepo, new GitCredentials(username, gitPassword));
 			GitHandler.commitExercise(this.username, this.username, this.createCommitMsg(course, exercise), gitFileInRepo);
 		} catch (GitException e) {
 			throw new ArtemisClientException("Can't save selected exercise " + exercise.getShortName() //
@@ -125,7 +125,7 @@ public class ExerciseArtemisController extends AbstractController implements IEx
 		}
 
 		try {
-			var credentials = new UsernamePasswordCredentialsProvider(this.username, this.gitPassword);
+			var credentials = new GitCredentials(this.username, this.gitPassword);
 			GitHandler.pushExercise(gitFileInRepo, credentials);
 		} catch (GitException e) {
 			throw new ArtemisClientException("Can't upload solution. Please check if submissions are still possible.", e);

@@ -22,19 +22,19 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <xtext.version>2.19.0</xtext.version>
-        <tycho.version>2.7.0</tycho.version>
+        <tycho.version>3.0.0</tycho.version>
         <spotless.version>2.20.2</spotless.version>
     </properties>
 
     <repositories>
         <repository>
             <id>Eclipse</id>
-            <url>http://download.eclipse.org/releases/2021-12</url>
+            <url>https://download.eclipse.org/releases/2022-09</url>
             <layout>p2</layout>
         </repository>
         <repository>
             <id>Eclipse Orbit</id>
-            <url>https://download.eclipse.org/tools/orbit/downloads/drops/R20210602031627/repository</url>
+            <url>https://download.eclipse.org/tools/orbit/downloads/drops/R20220830213456/repository</url>
             <layout>p2</layout>
         </repository>
         <repository>
@@ -84,20 +84,12 @@
                         <goals>
                             <goal>plugin-source</goal>
                         </goals>
+                        <phase>package</phase>
                     </execution>
-                </executions>
-            </plugin>
-
-            <!-- Creates source versions of features -->
-            <plugin>
-                <groupId>org.eclipse.tycho.extras</groupId>
-                <artifactId>tycho-source-feature-plugin</artifactId>
-                <version>${tycho.version}</version>
-                <executions>
                     <execution>
-                        <id>source-feature</id>
+                        <id>feature-source</id>
                         <goals>
-                            <goal>source-feature</goal>
+                            <goal>feature-source</goal>
                         </goals>
                         <phase>package</phase>
                     </execution>
