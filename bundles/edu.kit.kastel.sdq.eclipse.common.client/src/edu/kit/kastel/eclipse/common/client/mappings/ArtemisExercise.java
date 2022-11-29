@@ -35,6 +35,8 @@ public class ArtemisExercise implements IExercise {
 	private double maxPoints;
 	@JsonProperty
 	private Date dueDate = null;
+	@JsonProperty
+	private Date startDate = null;
 
 	private String participantUrl;
 
@@ -115,6 +117,11 @@ public class ArtemisExercise implements IExercise {
 	@Override
 	public Date getDueDate() {
 		return dueDate;
+	}
+
+	@Override
+	public Date getStartDate() {
+		return startDate;
 	}
 
 	@Override
