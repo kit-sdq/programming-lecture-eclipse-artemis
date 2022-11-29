@@ -350,7 +350,7 @@ version(s), and exceptions or additional permissions here}.&quot;
       <feature id="org.eclipse.jgit.ssh.apache" installMode="root"/>
       <feature id="org.eclipse.jgit.gpg.bc" installMode="root"/>
       <feature id="org.springframework.websocket-messaging.feature" installMode="root"/>
-      <feature id="org.glassfish.tyrus.client.feature" version="1.9.0" installMode="root"/>
+      <feature id="org.glassfish.tyrus.client.feature" installMode="root"/>
       <feature id="net.sf.eclipsecs" installMode="root"/>
    </features>
 
