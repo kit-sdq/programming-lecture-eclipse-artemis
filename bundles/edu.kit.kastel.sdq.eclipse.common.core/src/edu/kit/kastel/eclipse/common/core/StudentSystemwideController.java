@@ -287,7 +287,8 @@ public class StudentSystemwideController extends SystemwideController implements
 			if (c.getShortName().equals(courseShortName)) {
 				this.course = c;
 				var allProgrammingExercises = c.getExercises().stream().filter(IExercise::isProgramming).toList();
-				var allStartedExercises = allProgrammingExercises.stream().filter(e -> e.getStartDate() == null || e.getStartDate().before(new Date())).toList();
+				var allStartedExercises = allProgrammingExercises.stream().filter(e -> e.getStartDate() == null || e.getStartDate().before(new Date()))
+						.toList();
 				return allStartedExercises.stream().map(IExercise::getShortName).toList();
 			}
 		}
