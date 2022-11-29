@@ -221,10 +221,19 @@ public class GradingSystemwideController extends SystemwideController implements
 		}
 
 		if (this.artemisGUIController.saveAssessment(this.getCurrentAssessmentController(), this.exercise, this.submission, true)) {
-			this.getCurrentAssessmentController().deleteEclipseProject(this.projectFileNamingStrategy);
-			this.assessmentControllers.remove(this.submission.getSubmissionId());
-			this.submission = null;
+			this.closeAssessment();
 		}
+	}
+
+	@Override
+	public void closeAssessment() {
+		if (this.nullCheckMembersAndNotify(true, true, true)) {
+			return;
+		}
+
+		this.getCurrentAssessmentController().deleteEclipseProject(this.projectFileNamingStrategy);
+		this.assessmentControllers.remove(this.submission.getSubmissionId());
+		this.submission = null;
 	}
 
 	private boolean nullCheckMembersAndNotify(boolean checkCourseID, boolean checkExerciseID, boolean checkSubmissionID) {

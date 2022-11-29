@@ -2,20 +2,21 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: edu.kit.kastel.sdq.eclipse.grading.view
 Bundle-SymbolicName: edu.kit.kastel.sdq.eclipse.grading.view;singleton:=true
-Bundle-Version: 2.6.0
+Bundle-Version: 2.8.0
 Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.ide,
  org.eclipse.core.runtime,
  org.eclipse.core.resources,
  edu.kit.kastel.sdq.eclipse.common.api,
- edu.kit.kastel.sdq.eclipse.common.client,
  edu.kit.kastel.sdq.eclipse.common.core,
- edu.kit.kastel.sdq.eclipse.common.view
+ edu.kit.kastel.sdq.eclipse.common.view,
+ org.eclipse.ui.navigator,
+ org.eclipse.ui.navigator.resources,
+ org.eclipse.jdt.core,
+ org.eclipse.jface.text
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: edu.kit.kastel.eclipse.grading.view.activator.Activator
 Automatic-Module-Name: edu.kit.kastel.sdq.eclipse.grading.view
-Import-Package: org.eclipse.jface.text,
- org.eclipse.jface.text.source,
- org.eclipse.ui.editors.text,
+Import-Package: org.eclipse.jface.text.source,
  org.eclipse.ui.texteditor

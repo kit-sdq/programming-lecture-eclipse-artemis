@@ -51,7 +51,7 @@ The assessment tab has the following functions:
 * Start assessment (correction round 1 or 2)
 * Refresh Artemis state (if something changed)
 
-After a new assessment is started, it is possible to reload, save or submit the started assessment (using the buttons).
+After a new assessment is started, it is possible to reload, save, close or submit the started assessment (using the buttons).
 
 .. image:: ../images/gradingedition_assessment.png
 

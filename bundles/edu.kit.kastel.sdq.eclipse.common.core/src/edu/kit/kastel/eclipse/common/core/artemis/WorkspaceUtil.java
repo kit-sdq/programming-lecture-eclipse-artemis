@@ -8,7 +8,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.List;
 
+import org.eclipse.core.internal.events.BuildCommand;
+import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -42,6 +45,10 @@ public class WorkspaceUtil {
 
 		final String[] natures = { JavaCore.NATURE_ID, IMavenConstants.NATURE_ID };
 		description.setNatureIds(natures);
+		description.setBuildSpec(new ICommand[] { //
+				createBuildCommand("org.eclipse.jdt.core.javabuilder"), //
+				createBuildCommand("org.eclipse.m2e.core.maven2Builder") //
+		});
 
 		// and save it
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
@@ -49,7 +56,13 @@ public class WorkspaceUtil {
 		project.open(null);
 		project.setDescription(description, null);
 
-		new UpdateMavenProjectJob(new IProject[] { project }).schedule();
+		new UpdateMavenProjectJob(List.of(project)).schedule();
+	}
+
+	private static ICommand createBuildCommand(String name) {
+		BuildCommand command = new BuildCommand();
+		command.setBuilderName(name);
+		return command;
 	}
 
 	public static final void deleteDirectoryRecursively(final Path directory) throws IOException {

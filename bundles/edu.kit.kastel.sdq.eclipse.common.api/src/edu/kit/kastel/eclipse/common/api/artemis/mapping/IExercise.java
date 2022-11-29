@@ -30,6 +30,8 @@ public interface IExercise extends Serializable {
 
 	Date getDueDate();
 
+	Date getStartDate();
+
 	boolean isAutomaticAssessment();
 
 	boolean isProgramming();

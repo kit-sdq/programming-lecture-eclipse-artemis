@@ -1,6 +1,7 @@
 /* Licensed under EPL-2.0 2022. */
 package edu.kit.kastel.eclipse.common.view.utilities;
 
+import java.util.Optional;
 import java.util.Scanner;
 
 import org.eclipse.core.resources.IFile;
@@ -8,11 +9,15 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -20,6 +25,8 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.navigator.resources.ProjectExplorer;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.ITextEditor;
 
@@ -45,10 +52,13 @@ public final class AssessmentUtilities {
 	public static final String MARKER_ATTRIBUTE_CUSTOM_MESSAGE = "customMessage";
 	public static final String MARKER_ATTRIBUTE_START = "start";
 	public static final String MARKER_ATTRIBUTE_END = "end";
+	private static final String PROJECT_EXPLORER_ID = "org.eclipse.ui.navigator.ProjectExplorer";
 
 	public static final String MARKER_VIEW_ID = "edu.kit.kastel.eclipse.common.view.annotationMarkerGenerator";
 
 	public static final int BACKLOG_COMBO_WIDTH = 300;
+
+	private static final ILog LOG = Platform.getLog(AssessmentUtilities.class);
 
 	private AssessmentUtilities() {
 		throw new IllegalAccessError();
@@ -334,4 +344,31 @@ public final class AssessmentUtilities {
 		}
 	}
 
+	/**
+	 * Opens the given Java element in a new editor as part of the given page.
+	 *
+	 * @param element the element to open
+	 * @param page    the page as part of which the editor will be opened
+	 */
+	public static void openJavaElement(IJavaElement element, IWorkbenchPage page) {
+		var path = element.getPath();
+		Display.getDefault().asyncExec(() -> {
+			try {
+				IDE.openEditor(page, ResourcesPlugin.getWorkspace().getRoot().getFile(path));
+			} catch (Exception e) {
+				LOG.error("Failed to open the java code element", e);
+			}
+		});
+	}
+
+	/**
+	 * Retrieves the global project explorer of Eclipse if it is open.
+	 *
+	 * @param page the page to search in
+	 * @return the global project explorer or an empty optional if no project
+	 *         explorer has been found
+	 */
+	public static Optional<ProjectExplorer> getProjectExplorer(IWorkbenchPage page) {
+		return Optional.ofNullable((ProjectExplorer) page.findView(PROJECT_EXPLORER_ID));
+	}
 }

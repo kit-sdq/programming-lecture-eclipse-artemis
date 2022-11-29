@@ -12,12 +12,14 @@ import org.eclipse.jgit.api.PullResult;
 import org.eclipse.jgit.api.PushCommand;
 import org.eclipse.jgit.api.ResetCommand.ResetType;
 import org.eclipse.jgit.api.Status;
+import org.eclipse.jgit.api.TransportCommand;
+import org.eclipse.jgit.api.TransportConfigCallback;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.errors.NoWorkTreeException;
 import org.eclipse.jgit.lib.Repository;
-import org.eclipse.jgit.transport.CredentialsProvider;
+import org.eclipse.jgit.transport.Transport;
+import org.eclipse.jgit.transport.TransportHttp;
 import org.eclipse.jgit.transport.URIish;
-import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.eclipse.jgit.util.FileUtils;
 
 import edu.kit.kastel.eclipse.common.api.messages.Messages;
@@ -26,16 +28,17 @@ public final class GitHandler {
 
 	private static final String REMOTE_NAME = "origin";
 
-	public static void cloneRepo(final File destination, String repoURL, CredentialsProvider credentials) throws GitException {
+	public static void cloneRepo(final File destination, String repoURL, GitCredentials credentials) throws GitException {
 		Repository repository = null;
 		try {
 			CloneCommand cloneRepository = Git.cloneRepository();
 			cloneRepository.setDirectory(destination);
 			cloneRepository.setRemote(REMOTE_NAME);
 			cloneRepository.setURI(String.valueOf(new URIish(repoURL)));
-			cloneRepository.setCredentialsProvider(credentials);
 			cloneRepository.setCloneAllBranches(true);
 			cloneRepository.setCloneSubmodules(false);
+			makeAuth(cloneRepository, credentials);
+
 			Git git = cloneRepository.call();
 			repository = git.getRepository();
 		} catch (final Exception e) {
@@ -67,12 +70,12 @@ public final class GitHandler {
 
 	}
 
-	public static void pushExercise(File exerciseRepo, CredentialsProvider credentials) throws GitException {
+	public static void pushExercise(File exerciseRepo, GitCredentials credentials) throws GitException {
 		Git git = openGit(exerciseRepo);
 
 		PushCommand pushCommand = git.push();
-		pushCommand.setCredentialsProvider(credentials);
-		// you can add more settings here if needed
+		makeAuth(pushCommand, credentials);
+
 		try {
 			pushCommand.call().iterator().next();
 		} catch (GitAPIException e) {
@@ -83,12 +86,12 @@ public final class GitHandler {
 
 	}
 
-	public static void pullExercise(String gitUsername, String gitPassword, File exerciseRepo) throws GitException {
+	public static void pullExercise(File exerciseRepo, GitCredentials credentials) throws GitException {
 		Git git = openGit(exerciseRepo);
 
 		PullCommand pullCommand = git.pull();
-		pullCommand.setCredentialsProvider(new UsernamePasswordCredentialsProvider(gitUsername, gitPassword));
-		// you can add more settings here if needed
+		makeAuth(pullCommand, credentials);
+
 		try {
 			PullResult result = pullCommand.call();
 			if (!result.isSuccessful()) {
@@ -124,6 +127,21 @@ public final class GitHandler {
 		} catch (IOException e) {
 			throw new GitException(Messages.GIT_OPEN_FAILED + repo.getPath(), e);
 		}
+	}
+
+	private static void makeAuth(TransportCommand<?, ?> command, GitCredentials credentials) {
+		if (credentials == null)
+			return;
+		command.setCredentialsProvider(credentials.toCredentialsProvider());
+		command.setTransportConfigCallback(new TransportConfigCallback() {
+			@Override
+			public void configure(Transport transport) {
+				if (!(transport instanceof TransportHttp httpTransport))
+					return;
+				if (credentials != null)
+					httpTransport.setPreemptiveBasicAuthentication(credentials.username(), credentials.password());
+			}
+		});
 	}
 
 	private GitHandler() {

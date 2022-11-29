@@ -41,6 +41,13 @@ public interface IGradingSystemwideController extends ISystemwideController {
 
 	/**
 	 * <B>ASSESSMENT</B><br/>
+	 * <li>Deletes local project.
+	 * 
+	 */
+	void closeAssessment();
+
+	/**
+	 * <B>ASSESSMENT</B><br/>
 	 * <li>Deletes local project. Renews the lock and downloads the submission
 	 * project again.
 	 *

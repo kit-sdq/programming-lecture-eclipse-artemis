@@ -22,6 +22,11 @@ public final class PreferenceConstants {
 
 	public static final String SEARCH_IN_MISTAKE_MESSAGES = "searchInMistakeMessages";
 
+	public static final String OPEN_FILES_ON_ASSESSMENT_START = "openFilesOnAssessmentStart";
+	public static final String OPEN_FILES_ON_ASSESSMENT_START_ALL = "all";
+	public static final String OPEN_FILES_ON_ASSESSMENT_START_MAIN = "main";
+	public static final String OPEN_FILES_ON_ASSESSMENT_START_NONE = "none";
+
 	private PreferenceConstants() {
 		throw new IllegalAccessError();
 	}

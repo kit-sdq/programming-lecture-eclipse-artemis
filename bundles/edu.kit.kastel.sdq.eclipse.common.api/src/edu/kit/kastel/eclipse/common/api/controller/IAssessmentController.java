@@ -1,6 +1,7 @@
 /* Licensed under EPL-2.0 2022. */
 package edu.kit.kastel.eclipse.common.api.controller;
 
+import java.io.File;
 import java.util.List;
 import java.util.Optional;
 
@@ -98,4 +99,11 @@ public interface IAssessmentController extends IController {
 	double getCurrentPenaltyForRatingGroup(IRatingGroup ratingGroup);
 
 	boolean isPositiveFeedbackAllowed();
+
+	/**
+	 *
+	 * @return The path to the current assignment relative to the current workspace
+	 *         root folder.
+	 */
+	File getSubmissionFile();
 }
