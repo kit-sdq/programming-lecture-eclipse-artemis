@@ -25,8 +25,6 @@ public interface IStudentSystemwideController extends ISystemwideController {
 
 	/**
 	 * Cleans status of the selected exercise
-	 *
-	 * @return
 	 */
 	boolean cleanWorkspace();
 
@@ -39,45 +37,31 @@ public interface IStudentSystemwideController extends ISystemwideController {
 
 	/**
 	 * True if the selected exercise is in the past.
-	 *
-	 * @return
 	 */
 	boolean isSelectedExerciseExpired();
 
 	/**
 	 * Returns the selected exercise.
-	 *
-	 * @return
 	 */
 	IExercise getCurrentSelectedExercise();
 
 	/**
 	 * Sets the exam as selected and returns it.
-	 *
-	 * @param examName
-	 * @return
 	 */
 	IExam setExam(String examName);
 
 	/**
 	 * Sets the exercise as selected. Exercise has to be an exercise of an exam.
-	 *
-	 * @param exerciseShortName
-	 * @throws ArtemisClientException
 	 */
 	void setExerciseIdWithSelectedExam(String exerciseShortName) throws ArtemisClientException;
 
 	/**
 	 * Returns the selected exam.
-	 *
-	 * @return
 	 */
 	IStudentExam getExam();
 
 	/**
 	 * Starts the selected exam and returns it.
-	 *
-	 * @return
 	 */
 	IStudentExam startExam();
 
@@ -116,15 +100,11 @@ public interface IStudentSystemwideController extends ISystemwideController {
 	/**
 	 * Deletes the currently selected exercise from workspace and clones it again
 	 * from origin.
-	 *
-	 * @return
 	 */
 	boolean resetSelectedExercise();
 
 	/**
 	 * True if exercise is in local workspace.
-	 *
-	 * @return
 	 */
 	boolean isSelectedExerciseInWorkspace();
 

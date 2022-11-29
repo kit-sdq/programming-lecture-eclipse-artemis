@@ -105,7 +105,7 @@ public interface IGradingSystemwideController extends ISystemwideController {
 	 * @param submissionIds
 	 * @return whether download was successful or not
 	 */
-	boolean downloadExerciseAndSubmission(ICourse courseID, IExercise exerciseID, ISubmission submissionID, IProjectFileNamingStrategy projectNaming);
+	boolean downloadExerciseAndSubmission(ICourse course, IExercise exercise, ISubmission submission, IProjectFileNamingStrategy projectNaming);
 
 	boolean isAssessmentStarted();
 

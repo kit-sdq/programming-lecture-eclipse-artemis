@@ -14,11 +14,9 @@ import edu.kit.kastel.eclipse.common.core.model.MistakeType;
 import edu.kit.kastel.eclipse.common.core.model.RatingGroup;
 
 /**
- * A mapped config file (from {@link JsonFileConfigDao})
- *
+ * A mapped config file (from {@link JsonFileConfigDAO})
  */
-@JsonDeserialize(converter = ExerciseConfigConverter.class) // used for adding associations between
-															// mistakeType and RatingGroup
+@JsonDeserialize(converter = ExerciseConfigConverter.class)
 public class ExerciseConfig {
 
 	@JsonProperty("shortName")

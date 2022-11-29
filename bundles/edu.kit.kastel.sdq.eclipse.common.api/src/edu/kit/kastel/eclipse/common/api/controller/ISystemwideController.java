@@ -6,17 +6,8 @@ import java.util.List;
 import edu.kit.kastel.eclipse.common.api.ArtemisClientException;
 
 public interface ISystemwideController extends IController {
-	/**
-	 *
-	 * @return the one artemis gui controller.
-	 */
-	IArtemisController getArtemisController();
 
-	/**
-	 * 
-	 * @return the one exercise controller to load submit and clean exercises.
-	 */
-	IExerciseArtemisController getExerciseArtemisController();
+	IArtemisController getArtemisController();
 
 	/**
 	 *

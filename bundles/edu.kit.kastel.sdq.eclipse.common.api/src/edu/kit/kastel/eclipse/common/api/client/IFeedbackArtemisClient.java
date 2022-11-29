@@ -16,11 +16,6 @@ public interface IFeedbackArtemisClient {
 	 * is bound to a specific exercise. If the result does not exist or forbidden or
 	 * if the user does not have permissions to access the participation it throws
 	 * ArtmisClientException.
-	 * 
-	 * @param participation
-	 * @param result
-	 * @return All feedbacks.
-	 * @throws ArtemisClientException
 	 */
 	Feedback[] getFeedbackForResult(ParticipationDTO participation, ResultsDTO result) throws ArtemisClientException;
 }

@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import edu.kit.kastel.eclipse.common.api.model.IAnnotation;
 import edu.kit.kastel.eclipse.common.api.model.IMistakeType;
 import edu.kit.kastel.eclipse.common.api.model.IRatingGroup;
+import edu.kit.kastel.eclipse.common.core.model.rule.PenaltyRule;
 
 public class MistakeType implements IMistakeType {
 	private String shortName;

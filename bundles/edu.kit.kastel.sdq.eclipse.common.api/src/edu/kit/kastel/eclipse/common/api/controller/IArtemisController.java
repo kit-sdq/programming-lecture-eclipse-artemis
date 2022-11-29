@@ -25,7 +25,6 @@ public interface IArtemisController extends IController {
 
 	/**
 	 *
-	 * @param exerciseID
 	 * @return all submissions of the given @link {@link IExercise}, that have been
 	 *         started, saved or submitted by the caller.
 	 */
@@ -51,16 +50,6 @@ public interface IArtemisController extends IController {
 	List<String> getExamTitles(String courseShortName);
 
 	/**
-	 * Convenience method. Search the given ids in the given courses.
-	 *
-	 * @param courses    the data in which to search for the exercise
-	 * @param courseID
-	 * @param exerciseID
-	 * @return the exercise, if found. null else.
-	 */
-	IExercise getExerciseFromCourses(List<ICourse> courses, int courseID, int exerciseID);
-
-	/**
 	 *
 	 * Returns all exercises for the given course.
 	 *
@@ -81,24 +70,9 @@ public interface IArtemisController extends IController {
 
 	/**
 	 *
-	 * @return the {@link IExercise#getShortName()}s of the given {@link ICourse}
-	 */
-	List<String> getExerciseShortNames(String courseShortName);
-
-	/**
-	 *
 	 * @return the {@link IExercise#getShortName()}s of the given {@link IExam}
 	 */
 	List<String> getExerciseShortNamesFromExam(String examTitle);
-
-	/**
-	 * Pre-condition: You need to have called startAssessment or startNextAssessment
-	 * prior to calling this method!
-	 *
-	 * @return all auto feedbacks gotten by starting the assessment (junit test
-	 *         results).
-	 */
-	List<Feedback> getPrecalculatedAutoFeedbacks(ISubmission submission);
 
 	/**
 	 * Fetches current local time of artemis backend via REST.

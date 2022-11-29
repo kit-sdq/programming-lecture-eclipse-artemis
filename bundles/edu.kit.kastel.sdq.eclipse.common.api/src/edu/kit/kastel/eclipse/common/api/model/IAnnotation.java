@@ -29,10 +29,6 @@ public interface IAnnotation {
 
 	int getEndLine();
 
-	/**
-	 *
-	 * @return the type of mistake that this annotation is an occurance of.
-	 */
 	IMistakeType getMistakeType();
 
 	String getUUID();

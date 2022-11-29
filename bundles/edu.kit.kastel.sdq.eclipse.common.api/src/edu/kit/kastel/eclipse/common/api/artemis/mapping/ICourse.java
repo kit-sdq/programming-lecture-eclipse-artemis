@@ -6,19 +6,14 @@ import java.util.List;
 
 import edu.kit.kastel.eclipse.common.api.ArtemisClientException;
 
-/**
- * This Class represents an artemis course.
- */
 public interface ICourse extends Serializable {
 	int getCourseId();
 
-	List<IExam> getExams() throws ArtemisClientException;
+	String getShortName();
 
 	List<IExercise> getExercises() throws ArtemisClientException;
 
-	String getShortName();
-
-	String getTitle();
+	List<IExam> getExams() throws ArtemisClientException;
 
 	boolean isInstructor(User assessor);
 }

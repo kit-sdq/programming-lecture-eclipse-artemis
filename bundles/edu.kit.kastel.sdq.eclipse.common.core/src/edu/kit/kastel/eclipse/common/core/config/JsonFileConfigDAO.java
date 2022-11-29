@@ -11,29 +11,25 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * Implementation of {@link GradingDAO} using a json file.
  *
  */
-public class JsonFileConfigDao implements GradingDAO {
+public class JsonFileConfigDAO implements GradingDAO {
 
 	private ExerciseConfig exerciseConfig;
 
 	private final File configFile;
 	private final ObjectMapper oom = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-	public JsonFileConfigDao(File configFile) {
+	public JsonFileConfigDAO(File configFile) {
 		this.configFile = configFile;
 	}
 
 	@Override
-	public ExerciseConfig getExerciseConfig() throws IOException {
-		this.parseIfNotAlreadyParsed();
+	public ExerciseConfig getExerciseConfig() throws IOException, ExerciseConfigConverterException {
+		if (this.exerciseConfig == null)
+			this.parse();
 		return this.exerciseConfig;
 	}
 
-	private void parseIfNotAlreadyParsed() throws IOException {
-		if (this.exerciseConfig != null) {
-			return;
-		}
-
-		ExerciseConfig config = oom.readValue(this.configFile, ExerciseConfig.class);
-		this.exerciseConfig = config;
+	private void parse() throws IOException, ExerciseConfigConverterException {
+		this.exerciseConfig = oom.readValue(this.configFile, ExerciseConfig.class);
 	}
 }

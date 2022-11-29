@@ -65,11 +65,6 @@ public class ArtemisCourse implements ICourse, Serializable {
 	}
 
 	@Override
-	public String getTitle() {
-		return this.title;
-	}
-
-	@Override
 	public boolean isInstructor(User assessor) {
 		return (assessor != null) && assessor.getGroups().contains(this.instructorGroup);
 	}
