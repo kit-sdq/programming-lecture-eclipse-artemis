@@ -33,8 +33,8 @@ import edu.kit.kastel.eclipse.common.api.model.IMistakeType;
 import edu.kit.kastel.eclipse.common.api.util.Pair;
 import edu.kit.kastel.eclipse.common.core.artemis.AnnotationDeserializer;
 import edu.kit.kastel.eclipse.common.core.artemis.WorkspaceUtil;
-import edu.kit.kastel.eclipse.common.core.model.annotation.AnnotationException;
 import edu.kit.kastel.eclipse.common.core.model.annotation.AnnotationDAO;
+import edu.kit.kastel.eclipse.common.core.model.annotation.AnnotationException;
 import edu.kit.kastel.eclipse.common.core.model.annotation.IAnnotationDAO;
 
 public class StudentSystemwideController extends SystemwideController implements IStudentSystemwideController {
@@ -52,6 +52,7 @@ public class StudentSystemwideController extends SystemwideController implements
 		this.initPreferenceStoreCallback(preferenceStore);
 	}
 
+	@Override
 	protected IArtemisController createController(IPreferenceStore preferenceStore) {
 		this.artemisHost = preferenceStore.getString(PreferenceConstants.GENERAL_ARTEMIS_URL);
 		StudentArtemisController controller = new StudentArtemisController(this.artemisHost,
@@ -285,7 +286,9 @@ public class StudentSystemwideController extends SystemwideController implements
 		for (ICourse c : this.getArtemisController().getCourses()) {
 			if (c.getShortName().equals(courseShortName)) {
 				this.course = c;
-				return c.getExercises().stream().filter(IExercise::isProgramming).map(IExercise::getShortName).toList();
+				var allProgrammingExercises = c.getExercises().stream().filter(IExercise::isProgramming).toList();
+				var allStartedExercises = allProgrammingExercises.stream().filter(e -> e.getStartDate() == null || e.getStartDate().before(new Date())).toList();
+				return allStartedExercises.stream().map(IExercise::getShortName).toList();
 			}
 		}
 		this.error("No Course with the given shortName \"" + courseShortName + "\" found.", null);
