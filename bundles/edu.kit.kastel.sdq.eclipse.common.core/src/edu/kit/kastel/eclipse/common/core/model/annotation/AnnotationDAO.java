@@ -17,13 +17,13 @@ public class AnnotationDAO implements IAnnotationDAO {
 	}
 
 	@Override
-	public void addAnnotation(String annotationID, IMistakeType mistakeType, int startLine, int endLine, String fullyClassifiedClassName, String customMessage,
+	public void addAnnotation(String annotationId, IMistakeType mistakeType, int startLine, int endLine, String fullyClassifiedClassName, String customMessage,
 			Double customPenalty) throws AnnotationException {
-		if (this.idExists(annotationID)) {
-			throw new AnnotationException("ID " + annotationID + " already exists!");
+		if (this.idExists(annotationId)) {
+			throw new AnnotationException("ID " + annotationId + " already exists!");
 		}
 
-		this.annotations.add(new Annotation(annotationID, mistakeType, startLine, endLine, fullyClassifiedClassName, customMessage, customPenalty));
+		this.annotations.add(new Annotation(annotationId, mistakeType, startLine, endLine, fullyClassifiedClassName, customMessage, customPenalty));
 	}
 
 	@Override
@@ -36,8 +36,8 @@ public class AnnotationDAO implements IAnnotationDAO {
 		return Collections.unmodifiableSet(this.annotations);
 	}
 
-	private boolean idExists(String annotationID) {
-		return this.annotations.stream().anyMatch(annotation -> annotation.getUUID().equals(annotationID));
+	private boolean idExists(String annotationId) {
+		return this.annotations.stream().anyMatch(annotation -> annotation.getUUID().equals(annotationId));
 	}
 
 	@Override

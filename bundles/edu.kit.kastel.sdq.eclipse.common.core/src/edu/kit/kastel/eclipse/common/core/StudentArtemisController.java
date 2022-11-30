@@ -79,7 +79,7 @@ public class StudentArtemisController extends ArtemisController implements IStud
 
 		if (participation.isEmpty()) {
 			try {
-				participation = Optional.of(this.clientManager.getParticipationArtemisClient().startParticipationForExercise(course, exercise));
+				participation = Optional.of(this.clientManager.getParticipationArtemisClient().startParticipation(course, exercise));
 			} catch (ArtemisClientException | ConnectException e) {
 				return Optional.empty();
 			}
@@ -97,7 +97,7 @@ public class StudentArtemisController extends ArtemisController implements IStud
 		ParticipationDTO participationWithResults;
 		try {
 			participationWithResults = this.clientManager.getParticipationArtemisClient()
-					.getParticipationWithLatestResultForExercise(participationOpt.get().getParticipationID());
+					.getParticipationWithLatestResult(participationOpt.get().getParticipationId());
 		} catch (ArtemisClientException e) {
 			this.error(
 					"Can't load results for selected exercise " + exercise.getShortName() + ".\n No results found. Please check if a solution was submitted.",
@@ -140,7 +140,7 @@ public class StudentArtemisController extends ArtemisController implements IStud
 			return List.of();
 		}
 		try {
-			return this.clientManager.getCourseArtemisClient().getCoursesForDashboard();
+			return this.clientManager.getCourseArtemisClient().getCoursesForStudent();
 		} catch (final ArtemisClientException e) {
 			this.error(e.getMessage(), e);
 			return List.of();
@@ -163,7 +163,7 @@ public class StudentArtemisController extends ArtemisController implements IStud
 
 	private Optional<ParticipationDTO> getParticipationForExercise(ICourse course, IExercise exercise) {
 		try {
-			return Optional.of(this.clientManager.getParticipationArtemisClient().getParticipationForExercise(course, exercise));
+			return Optional.of(this.clientManager.getParticipationArtemisClient().getParticipation(course, exercise));
 		} catch (ArtemisClientException e) {
 			return Optional.empty();
 		}

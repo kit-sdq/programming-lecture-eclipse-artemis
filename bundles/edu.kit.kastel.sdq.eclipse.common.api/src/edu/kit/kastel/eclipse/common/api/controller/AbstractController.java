@@ -21,11 +21,11 @@ public abstract class AbstractController implements IController {
 	 * @param cause
 	 */
 	protected void error(String errorMsg, Throwable cause) {
-		final Throwable nonNullCause = cause == null ? new Exception() : cause;
 		if (this.viewInteractionHandler != null) {
-			this.viewInteractionHandler.error(errorMsg, nonNullCause);
+			this.viewInteractionHandler.error(errorMsg, cause);
+		} else {
+			this.log.error(errorMsg, cause);
 		}
-		this.printToConsoleIfNoObserversRegistered(errorMsg, nonNullCause);
 	}
 
 	/**
@@ -36,8 +36,9 @@ public abstract class AbstractController implements IController {
 	protected void info(String infoMsg) {
 		if (this.viewInteractionHandler != null) {
 			this.viewInteractionHandler.info(infoMsg);
+		} else {
+			this.log.info(infoMsg);
 		}
-		this.printToConsoleIfNoObserversRegistered(infoMsg, null);
 	}
 
 	/**
@@ -48,8 +49,9 @@ public abstract class AbstractController implements IController {
 	protected void warn(String warningMsg) {
 		if (this.viewInteractionHandler != null) {
 			this.viewInteractionHandler.warn(warningMsg);
+		} else {
+			this.log.error(warningMsg);
 		}
-		this.printToConsoleIfNoObserversRegistered(warningMsg, null);
 	}
 
 	public boolean confirm(String msg) {
@@ -57,12 +59,6 @@ public abstract class AbstractController implements IController {
 			return this.viewInteractionHandler.confirm(msg);
 		}
 		return false;
-	}
-
-	private void printToConsoleIfNoObserversRegistered(String msg, Throwable cause) {
-		if (this.viewInteractionHandler == null) {
-			this.log.error(msg, cause);
-		}
 	}
 
 	public final IViewInteraction getViewInteractionHandler() {

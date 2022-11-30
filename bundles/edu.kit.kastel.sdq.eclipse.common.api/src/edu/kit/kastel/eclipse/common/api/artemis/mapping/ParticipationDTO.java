@@ -9,7 +9,7 @@ public class ParticipationDTO implements Serializable {
 	private static final long serialVersionUID = -9151262219739630658L;
 
 	@JsonProperty("id")
-	private int participationID;
+	private int participationId;
 	@JsonProperty
 	private String participantIdentifier;
 	@JsonProperty
@@ -23,8 +23,8 @@ public class ParticipationDTO implements Serializable {
 		// NOP
 	}
 
-	public int getParticipationID() {
-		return this.participationID;
+	public int getParticipationId() {
+		return this.participationId;
 	}
 
 	public String getParticipantIdentifier() {

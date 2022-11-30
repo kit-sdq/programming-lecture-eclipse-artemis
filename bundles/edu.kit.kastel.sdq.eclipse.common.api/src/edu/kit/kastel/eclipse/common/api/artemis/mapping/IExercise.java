@@ -24,8 +24,6 @@ public interface IExercise extends Serializable {
 
 	ICourse getCourse();
 
-	String getParticipantUrl();
-
 	ISubmission getSubmission(int id) throws ArtemisClientException;
 
 	Date getDueDate();

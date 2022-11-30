@@ -59,7 +59,7 @@ public class LoginManager extends AbstractArtemisClient implements IAuthenticati
 	}
 
 	@Override
-	public boolean isReady() {
+	public boolean isLoggedIn() {
 		return this.token != null;
 	}
 

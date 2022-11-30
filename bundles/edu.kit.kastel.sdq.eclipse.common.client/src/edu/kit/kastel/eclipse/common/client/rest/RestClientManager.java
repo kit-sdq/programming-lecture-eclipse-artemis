@@ -29,7 +29,7 @@ public class RestClientManager {
 	}
 
 	public boolean isReady() {
-		return this.loginManager.isReady();
+		return this.loginManager.isLoggedIn();
 	}
 
 	public String getArtemisUrl() {

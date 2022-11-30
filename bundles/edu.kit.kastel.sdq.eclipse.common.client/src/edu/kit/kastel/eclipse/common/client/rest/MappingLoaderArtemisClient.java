@@ -61,7 +61,7 @@ public class MappingLoaderArtemisClient extends AbstractArtemisClient implements
 	}
 
 	@Override
-	public List<ICourse> getCoursesForDashboard() throws ArtemisClientException {
+	public List<ICourse> getCoursesForStudent() throws ArtemisClientException {
 		Response rsp;
 
 		try {

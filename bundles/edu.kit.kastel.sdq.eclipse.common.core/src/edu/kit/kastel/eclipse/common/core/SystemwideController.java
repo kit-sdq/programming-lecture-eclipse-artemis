@@ -29,30 +29,14 @@ public abstract class SystemwideController extends AbstractController implements
 
 	protected abstract void refreshArtemisController(IPreferenceStore preferenceStore);
 
-	protected void initPreferenceStoreCallback(final IPreferenceStore preferenceStore) {
-		// TODO DTHF1: For now we disable that as it causes problems with the login
-//		this.preferenceStore.addPropertyChangeListener(event -> {
-//			boolean trigger = false;
-//			trigger |= PreferenceConstants.GENERAL_ARTEMIS_URL.equals(event.getProperty());
-//			trigger |= PreferenceConstants.GENERAL_ADVANCED_ARTEMIS_USER.equals(event.getProperty());
-//			trigger |= PreferenceConstants.GENERAL_ADVANCED_ARTEMIS_PASSWORD.equals(event.getProperty());
-//
-//			if (!trigger) {
-//				return;
-//			}
-//
-//			this.refreshArtemisController(preferenceStore);
-//		});
-	}
-
-	protected boolean nullCheckMembersAndNotify(boolean checkCourseID, boolean checkExerciseID) {
+	protected boolean nullCheckMembersAndNotify(boolean checkCourseId, boolean checkExerciseId) {
 		String alert = "[";
 		boolean somethingNull = false;
-		if (checkCourseID && this.course == null) {
+		if (checkCourseId && this.course == null) {
 			alert += "Course is not set ";
 			somethingNull = true;
 		}
-		if (checkExerciseID && this.exercise == null) {
+		if (checkExerciseId && this.exercise == null) {
 			alert += "Exercise is not set ";
 			somethingNull = true;
 		}
@@ -62,10 +46,4 @@ public abstract class SystemwideController extends AbstractController implements
 		}
 		return somethingNull;
 	}
-
-	@Override
-	public IExerciseArtemisController getExerciseArtemisController() {
-		return exerciseController;
-	}
-
 }

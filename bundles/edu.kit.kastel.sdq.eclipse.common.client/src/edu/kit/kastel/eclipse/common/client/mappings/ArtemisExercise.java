@@ -38,8 +38,6 @@ public class ArtemisExercise implements IExercise {
 	@JsonProperty
 	private Date startDate = null;
 
-	private String participantUrl;
-
 	private transient IMappingLoader client;
 	private transient ICourse course;
 	private transient Optional<IExam> exam;
@@ -107,11 +105,6 @@ public class ArtemisExercise implements IExercise {
 	@Override
 	public boolean hasSecondCorrectionRound() {
 		return this.exam.map(IExam::hasSecondCorrectionRound).orElse(false);
-	}
-
-	@Override
-	public String getParticipantUrl() {
-		return participantUrl;
 	}
 
 	@Override

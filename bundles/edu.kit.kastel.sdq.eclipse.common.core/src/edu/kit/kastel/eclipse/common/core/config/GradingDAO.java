@@ -4,11 +4,8 @@ package edu.kit.kastel.eclipse.common.core.config;
 import java.io.IOException;
 
 /**
- * Encapsulates read access to Config sources, which might come from a file
- *
- * A Config is
+ * Encapsulates read access to config sources, which might come from a file
  */
 public interface GradingDAO {
-
-	ExerciseConfig getExerciseConfig() throws IOException;
+	ExerciseConfig getExerciseConfig() throws IOException, ExerciseConfigConverterException;
 }

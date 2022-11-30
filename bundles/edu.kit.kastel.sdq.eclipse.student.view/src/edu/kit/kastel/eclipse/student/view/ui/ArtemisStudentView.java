@@ -453,7 +453,7 @@ public class ArtemisStudentView extends ViewPart {
 
 	private void handleExerciseComboListEvent(Combo exerciseCombo) {
 		String exerciseShortName = exerciseCombo.getItem(exerciseCombo.getSelectionIndex());
-		this.viewController.setExerciseID(exerciseShortName);
+		this.viewController.setExerciseId(exerciseShortName);
 		this.callAllTabsForExerciseEvent();
 		this.updateButtons(exerciseShortName);
 	}

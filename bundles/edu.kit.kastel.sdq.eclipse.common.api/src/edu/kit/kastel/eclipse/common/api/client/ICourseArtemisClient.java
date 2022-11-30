@@ -16,11 +16,11 @@ public interface ICourseArtemisClient {
 	 * @return all available courses, containing exercises and exams.
 	 * @throws ArtemisClientException if some errors occur while parsing the result.
 	 */
-	List<ICourse> getCoursesForDashboard() throws ArtemisClientException;
+	List<ICourse> getCoursesForStudent() throws ArtemisClientException;
 
 	/**
 	 * Returns all courses for current user. Needs extra rights to be called. If
-	 * user is student please use above.
+	 * user is student please use {@link #getCoursesForStudent()}.
 	 *
 	 * @return all available courses, containing exercises and available submissions
 	 * @throws ArtemisClientException if some errors occur while parsing the result.

@@ -27,7 +27,7 @@ public class LockResult implements ILockResult {
 			@JsonProperty("participation") ParticipationDTO participation) {
 
 		this.submissionId = submissionId;
-		this.participationId = participation.getParticipationID();
+		this.participationId = participation.getParticipationId();
 
 		this.latestFeedback = new ArrayList<>();
 		LockCallAssessmentResult latestResult = previousAssessmentResults.isEmpty() //

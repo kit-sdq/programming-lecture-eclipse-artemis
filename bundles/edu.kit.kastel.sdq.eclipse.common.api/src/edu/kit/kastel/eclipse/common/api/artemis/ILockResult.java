@@ -15,7 +15,7 @@ public interface ILockResult extends Serializable {
 
 	/**
 	 *
-	 * @return the participationID this submissionID belongs to (one participation
+	 * @return the participationId this submissionId belongs to (one participation
 	 *         has one or many submissions).
 	 */
 	int getParticipationId();
@@ -30,7 +30,7 @@ public interface ILockResult extends Serializable {
 
 	/**
 	 *
-	 * @return the submissionID this result belongs to (one participation has one or
+	 * @return the submissionId this result belongs to (one participation has one or
 	 *         many submissions).
 	 */
 	int getSubmissionId();

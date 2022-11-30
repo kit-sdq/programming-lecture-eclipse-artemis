@@ -34,5 +34,5 @@ public interface IAuthenticationArtemisClient {
 
 	void login() throws ArtemisClientException;
 
-	boolean isReady();
+	boolean isLoggedIn();
 }

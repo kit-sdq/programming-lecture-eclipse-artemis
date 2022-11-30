@@ -221,7 +221,7 @@ public class ArtemisGradingView extends ViewPart {
 			this.updateState();
 		});
 		examExerciseCombo.addListener(SWT.Selection, e -> {
-			this.viewController.setExerciseID(examExerciseCombo.getItem(examExerciseCombo.getSelectionIndex()));
+			this.viewController.setExerciseId(examExerciseCombo.getItem(examExerciseCombo.getSelectionIndex()));
 			this.updateState();
 		});
 	}

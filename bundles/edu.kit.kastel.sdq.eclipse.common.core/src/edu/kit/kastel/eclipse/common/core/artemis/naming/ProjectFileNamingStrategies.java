@@ -8,15 +8,15 @@ import edu.kit.kastel.eclipse.common.api.artemis.IProjectFileNamingStrategy;
 public enum ProjectFileNamingStrategies implements Supplier<IProjectFileNamingStrategy> {
 	DEFAULT(new DefaultProjectFileNamingStrategy());
 
-	private final DefaultProjectFileNamingStrategy pfns;
+	private final DefaultProjectFileNamingStrategy projectFileNamingStrategy;
 
-	ProjectFileNamingStrategies(DefaultProjectFileNamingStrategy pfns) {
-		this.pfns = pfns;
+	ProjectFileNamingStrategies(DefaultProjectFileNamingStrategy projectFileNamingStrategy) {
+		this.projectFileNamingStrategy = projectFileNamingStrategy;
 	}
 
 	@Override
 	public IProjectFileNamingStrategy get() {
-		return pfns;
+		return projectFileNamingStrategy;
 	}
 
 }

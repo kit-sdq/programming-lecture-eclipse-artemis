@@ -25,7 +25,7 @@ public class ParticipationArtemisClient extends AbstractArtemisClient implements
 	}
 
 	@Override
-	public ParticipationDTO startParticipationForExercise(ICourse couse, IExercise exercise) throws ArtemisClientException, ConnectException {
+	public ParticipationDTO startParticipation(ICourse couse, IExercise exercise) throws ArtemisClientException, ConnectException {
 		final Response exercisesRsp = this.endpoint.path(EXERCISES_PATHPART).path(String.valueOf(exercise.getExerciseId())).path("participations").request()
 				.cookie(getAuthCookie(this.token)).buildPost(null).invoke();
 
@@ -35,17 +35,7 @@ public class ParticipationArtemisClient extends AbstractArtemisClient implements
 	}
 
 	@Override
-	public ParticipationDTO resumeParticipationForExercise(ICourse couse, IExercise exercise) throws ArtemisClientException {
-		final Response exercisesRsp = this.endpoint.path(EXERCISES_PATHPART).path(String.valueOf(exercise.getExerciseId()))
-				.path("resume-programming-participation").request().cookie(getAuthCookie(this.token)).buildPut(null).invoke();
-
-		this.throwIfStatusUnsuccessful(exercisesRsp);
-
-		return this.read(exercisesRsp.readEntity(String.class), ParticipationDTO.class);
-	}
-
-	@Override
-	public ParticipationDTO getParticipationForExercise(ICourse couse, IExercise exercise) throws ArtemisClientException {
+	public ParticipationDTO getParticipation(ICourse couse, IExercise exercise) throws ArtemisClientException {
 		final Response exercisesRsp = this.endpoint.path(EXERCISES_PATHPART).path(String.valueOf(exercise.getExerciseId())).path("participation").request()
 				.cookie(getAuthCookie(this.token)).buildGet().invoke();
 
@@ -55,7 +45,7 @@ public class ParticipationArtemisClient extends AbstractArtemisClient implements
 	}
 
 	@Override
-	public ParticipationDTO getParticipationWithLatestResultForExercise(int participationId) throws ArtemisClientException {
+	public ParticipationDTO getParticipationWithLatestResult(int participationId) throws ArtemisClientException {
 		final Response exercisesRsp = this.endpoint.path(PARTICIPATION_PATHPART).path(Integer.toString(participationId)).path("withLatestResult").request()
 				.cookie(getAuthCookie(this.token)).buildGet().invoke();
 

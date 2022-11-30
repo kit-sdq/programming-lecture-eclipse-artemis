@@ -43,11 +43,6 @@ public class ArtemisSubmission implements ISubmission, Serializable {
 	}
 
 	@Override
-	public String getParticipantName() {
-		return this.participation.getParticipantName();
-	}
-
-	@Override
 	public String getRepositoryUrl() {
 		String studentsUrl = this.participation.getRepositoryUrl();
 		String studentId = this.participation.getParticipantIdentifier();

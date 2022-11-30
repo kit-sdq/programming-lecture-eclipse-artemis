@@ -36,7 +36,6 @@ public class GradingSystemwideController extends SystemwideController implements
 	public GradingSystemwideController(final IPreferenceStore preferenceStore) {
 		super(preferenceStore);
 		this.preferenceStore = preferenceStore;
-		this.initPreferenceStoreCallback(preferenceStore);
 	}
 
 	protected IArtemisController createController(IPreferenceStore preferenceStore) {
@@ -189,13 +188,13 @@ public class GradingSystemwideController extends SystemwideController implements
 			return false;
 		}
 
-		Optional<ISubmission> optionalSubmissionID = this.artemisGUIController.startNextAssessment(this.exercise, correctionRound);
-		if (optionalSubmissionID.isEmpty()) {
+		Optional<ISubmission> optionalSubmission = this.artemisGUIController.startNextAssessment(this.exercise, correctionRound);
+		if (optionalSubmission.isEmpty()) {
 			// revert!
 			this.info("No more submissions available for Correction Round " + (correctionRound + 1) + "!");
 			return false;
 		}
-		this.submission = optionalSubmissionID.get();
+		this.submission = optionalSubmission.get();
 
 		// perform download. Revert state if that fails.
 		if (!this.downloadExerciseAndSubmission(this.course, this.exercise, this.submission, this.projectFileNamingStrategy)) {
@@ -236,9 +235,9 @@ public class GradingSystemwideController extends SystemwideController implements
 		this.submission = null;
 	}
 
-	private boolean nullCheckMembersAndNotify(boolean checkCourseID, boolean checkExerciseID, boolean checkSubmissionID) {
-		boolean somethingNull = this.nullCheckMembersAndNotify(checkCourseID, checkExerciseID);
-		if (checkSubmissionID && this.submission == null) {
+	private boolean nullCheckMembersAndNotify(boolean checkCourseId, boolean checkExerciseId, boolean checkSubmissionId) {
+		boolean somethingNull = this.nullCheckMembersAndNotify(checkCourseId, checkExerciseId);
+		if (checkSubmissionId && this.submission == null) {
 			this.warn("Submission is not set ");
 			somethingNull = true;
 		}

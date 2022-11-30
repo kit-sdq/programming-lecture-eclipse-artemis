@@ -1,5 +1,5 @@
 /* Licensed under EPL-2.0 2022. */
-package edu.kit.kastel.eclipse.common.core.model;
+package edu.kit.kastel.eclipse.common.core.model.rule;
 
 import java.util.List;
 
@@ -34,5 +34,5 @@ public abstract class PenaltyRule {
 	 */
 	public abstract String getTooltip(List<IAnnotation> annotations);
 
-	protected abstract boolean isCustomPenalty();
+	public abstract boolean isCustomPenalty();
 }
