@@ -12,7 +12,6 @@ import java.util.Map.Entry;
 import edu.kit.kastel.eclipse.common.api.ArtemisClientException;
 import edu.kit.kastel.eclipse.common.api.artemis.ILockResult;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.Feedback;
-import edu.kit.kastel.eclipse.common.api.artemis.mapping.FeedbackType;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.ICourse;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.IExam;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.IExercise;
@@ -57,7 +56,7 @@ public abstract class ArtemisController extends AbstractController implements IA
 	public List<Feedback> getAllFeedbacksGottenFromLocking(ISubmission submission) {
 		ILockResult lockResult = this.lockResults.get(submission.getSubmissionId());
 		if (lockResult == null) {
-			this.error("No Lock found for submissionID=" + submission.getSubmissionId(), null);
+			this.error("No Lock found for submission=" + submission.getSubmissionId(), null);
 			return List.of();
 		}
 		return lockResult.getLatestFeedback();
@@ -86,20 +85,6 @@ public abstract class ArtemisController extends AbstractController implements IA
 		return filteredCourses.iterator().next();
 	}
 
-	private ICourse getCourseFromCourses(List<ICourse> courses, int courseID) {
-		final List<ICourse> coursesWithCorrectID = courses.stream().filter(course -> (course.getCourseId() == courseID)).toList();
-		if (coursesWithCorrectID.isEmpty()) {
-			this.error("No course found for courseID=" + courseID, null);
-			return null;
-		}
-		if (coursesWithCorrectID.size() > 1) {
-			this.error("Multiple courses found for courseID=" + courseID, null);
-			return null;
-		}
-		return coursesWithCorrectID.iterator().next();
-
-	}
-
 	@Override
 	public List<String> getCourseShortNames() {
 		return this.getCourses().stream().map(ICourse::getShortName).toList();
@@ -118,26 +103,6 @@ public abstract class ArtemisController extends AbstractController implements IA
 			this.error(e.getMessage(), e);
 			return List.of();
 		}
-	}
-
-	@Override
-	public IExercise getExerciseFromCourses(List<ICourse> courses, int courseID, int exerciseID) {
-		ICourse course = this.getCourseFromCourses(courses, courseID);
-		if (course == null) {
-			this.error("No course found for courseID=" + courseID, null);
-			return null;
-		}
-		final List<IExercise> filteredExercises = this.getExercises(course, true).stream().filter(exercise -> (exercise.getExerciseId() == exerciseID))
-				.toList();
-		if (filteredExercises.isEmpty()) {
-			this.error("No exercise found for courseID=" + courseID + " and exerciseID=" + exerciseID, null);
-			return null;
-		}
-		if (filteredExercises.size() > 1) {
-			this.error("Multiple submissions found for courseID=" + courseID + " and exerciseID=" + exerciseID, null);
-			return null;
-		}
-		return filteredExercises.iterator().next();
 	}
 
 	@Override
@@ -225,27 +190,6 @@ public abstract class ArtemisController extends AbstractController implements IA
 			}
 		}
 		return null;
-	}
-
-	@Override
-	public List<String> getExerciseShortNames(final String courseShortName) {
-		ICourse course = this.getCourseByShortName(courseShortName);
-		if (course == null) {
-			return List.of();
-		}
-
-		try {
-			return course.getExercises().stream().map(IExercise::getShortName).toList();
-		} catch (ArtemisClientException e) {
-			this.error(e.getMessage(), e);
-			return List.of();
-		}
-	}
-
-	@Override
-	public List<Feedback> getPrecalculatedAutoFeedbacks(ISubmission submission) {
-		return this.lockResults.get(submission.getSubmissionId()).getLatestFeedback().stream()
-				.filter(feedback -> FeedbackType.AUTOMATIC.equals(feedback.getFeedbackType())).toList();
 	}
 
 	private void loginOrNotify() {

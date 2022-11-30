@@ -9,10 +9,8 @@ import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 public record GitCredentials(String username, String password) {
 
 	public GitCredentials(String username, String password) {
-		Objects.requireNonNull(username);
-		Objects.requireNonNull(password);
-		this.username = username;
-		this.password = password;
+		this.username = Objects.requireNonNull(username);
+		this.password = Objects.requireNonNull(password);
 	}
 
 	public CredentialsProvider toCredentialsProvider() {

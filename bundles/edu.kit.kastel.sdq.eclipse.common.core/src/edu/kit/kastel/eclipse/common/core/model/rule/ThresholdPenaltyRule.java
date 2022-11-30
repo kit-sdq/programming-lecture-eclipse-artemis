@@ -1,5 +1,5 @@
 /* Licensed under EPL-2.0 2022. */
-package edu.kit.kastel.eclipse.common.core.model;
+package edu.kit.kastel.eclipse.common.core.model.rule;
 
 import java.util.List;
 import java.util.Objects;
@@ -52,7 +52,7 @@ public class ThresholdPenaltyRule extends PenaltyRule {
 	}
 
 	@Override
-	protected boolean isCustomPenalty() {
+	public boolean isCustomPenalty() {
 		return false;
 	}
 

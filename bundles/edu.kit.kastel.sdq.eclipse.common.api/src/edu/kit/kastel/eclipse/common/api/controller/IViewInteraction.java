@@ -9,10 +9,6 @@ package edu.kit.kastel.eclipse.common.api.controller;
  *
  */
 public interface IViewInteraction {
-
-	/**
-	 * @param cause, can be <b>null</b>
-	 */
 	void error(String errorMsg, Throwable cause);
 
 	void info(String infoMsg);

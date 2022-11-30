@@ -1,12 +1,10 @@
 /* Licensed under EPL-2.0 2022. */
 package edu.kit.kastel.eclipse.common.api.controller;
 
-import java.io.File;
 import java.util.List;
 import java.util.Optional;
 
 import edu.kit.kastel.eclipse.common.api.artemis.IProjectFileNamingStrategy;
-import edu.kit.kastel.eclipse.common.api.artemis.mapping.ICourse;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.IExercise;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.ISubmission;
 import edu.kit.kastel.eclipse.common.api.model.IAnnotation;
@@ -23,7 +21,7 @@ public interface IAssessmentController extends IController {
 	 * Add an annotation to the current assessment.<br>
 	 * <b>e.g. a ThresholdPenaltyRule will not consider custom penalties</b>
 	 *
-	 * @param annotationID             a unique annotation ID.
+	 * @param annotationId             a unique annotation ID.
 	 * @param mistakeType              the mistake type
 	 * @param startLine                annotation start
 	 * @param endLine                  annotation end
@@ -35,45 +33,38 @@ public interface IAssessmentController extends IController {
 	 *
 	 *
 	 */
-	void addAnnotation(String annotationID, IMistakeType mistakeType, int startLine, int endLine, String fullyClassifiedClassName, String customMessage,
+	void addAnnotation(String annotationId, IMistakeType mistakeType, int startLine, int endLine, String fullyClassifiedClassName, String customMessage,
 			Double customPenalty);
 
 	/**
 	 * Modify an existent annotation
 	 *
-	 * @param annatationID  unique annotation identifier
+	 * @param annatationId  unique annotation identifier
 	 * @param customMessage new custom message
 	 * @param customPenalty new custom penalty. This may or may not have an effect,
 	 *                      depending on the MistakeType's PenaltyRule
 	 */
-	void modifyAnnotation(String annatationID, String customMessage, Double customPenalty);
+	void modifyAnnotation(String annatationId, String customMessage, Double customPenalty);
 
 	/**
 	 * Remove an existent annotation
 	 *
-	 * @param annatationID unique annotation identifier
+	 * @param annatationId unique annotation identifier
 	 */
-	void removeAnnotation(String annatationID);
+	void removeAnnotation(String annatationId);
 
 	/**
 	 * All annotations already made with this AssessmentController.
 	 */
 	List<IAnnotation> getAnnotations();
 
-	Optional<IAnnotation> getAnnotationByID(String id);
-
-	/**
-	 * All annotations already made for the given class.
-	 */
-	List<IAnnotation> getAnnotations(String className);
+	Optional<IAnnotation> getAnnotationById(String annotationId);
 
 	/**
 	 * Deletes the eclipse project this assessment belongs to. Also deletes it on
 	 * file system.
 	 */
 	void deleteEclipseProject(IProjectFileNamingStrategy projectNaming);
-
-	ICourse getCourse();
 
 	IExercise getExercise();
 
@@ -82,8 +73,6 @@ public interface IAssessmentController extends IController {
 	List<IMistakeType> getMistakes();
 
 	IRatingGroup getRatingGroupByDisplayName(String displayName);
-
-	IRatingGroup getRatingGroupByShortName(String shortName);
 
 	List<IRatingGroup> getRatingGroups();
 
@@ -99,11 +88,4 @@ public interface IAssessmentController extends IController {
 	double getCurrentPenaltyForRatingGroup(IRatingGroup ratingGroup);
 
 	boolean isPositiveFeedbackAllowed();
-
-	/**
-	 *
-	 * @return The path to the current assignment relative to the current workspace
-	 *         root folder.
-	 */
-	File getSubmissionFile();
 }

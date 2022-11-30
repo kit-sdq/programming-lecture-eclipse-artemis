@@ -13,10 +13,6 @@ import edu.kit.kastel.eclipse.common.api.util.Pair;
  *
  */
 public interface IRatingGroup {
-	/**
-	 *
-	 * @return A more elaborate name.
-	 */
 	String getDisplayName();
 
 	/**

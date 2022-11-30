@@ -8,7 +8,6 @@ public interface IWebsocketController {
 	/**
 	 * Connect to websocket and subscribe to topic for submission and result.
 	 * 
-	 * @param callback
 	 * @return true if successful.
 	 */
 	boolean connectToWebsocket(WebsocketCallback callback);

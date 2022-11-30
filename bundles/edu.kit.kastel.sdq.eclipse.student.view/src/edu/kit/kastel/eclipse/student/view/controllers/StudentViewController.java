@@ -61,7 +61,7 @@ public class StudentViewController extends AbstractArtemisViewController<IStuden
 	}
 
 	@Override
-	public void setExerciseID(final String exerciseShortName) {
+	public void setExerciseId(final String exerciseShortName) {
 		try {
 			this.systemwideController.setExerciseIdWithSelectedExam(exerciseShortName);
 		} catch (ArtemisClientException e) {

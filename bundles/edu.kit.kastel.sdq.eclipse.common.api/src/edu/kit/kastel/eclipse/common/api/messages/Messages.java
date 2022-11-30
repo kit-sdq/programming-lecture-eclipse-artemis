@@ -8,7 +8,6 @@ public class Messages {
 
 	public static final String CLIENT_COMMUNICATION_ERROR_FORMAT = "Communication with \" %s \" failed with status \"%s: %s\".";
 	public static final String CLIENT_CONNECTION_REFUSED = "Connection refused. Maybe check your VPN connection.";
-	public static final String CLIENT_NO_CREDENTIALS = "No credentials set in the preferences tab.";
 	public static final String CLIENT_NO_SUBMISSION_FOUND_FORMAT = "Submission %d not found!";
 	public static final String CLIENT_NO_BASE_URL = "Base URL or Token is empty";
 	public static final String CLIENT_NO_WEBSOCKET = "Cannot connecto to WebSocket";
@@ -28,7 +27,6 @@ public class Messages {
 	public static final String STUDENT_ARTMIS_EXAM_NOT_SUBMITTED = "You have not handed in the exam in time. It will be graded with 0 Points!";
 
 	public static final String ASSESSMENT_COULD_NOT_BE_STARTED_MESSAGE = "Assessment could not be started: ";
-	public static final String ASSESSMENT_JSON_PARSE_ERROR_MESSAGE = "Error parsing json: Corrupted Json Structure";
 
 	public static final String GIT_OPEN_FAILED = "Git open failed for path: ";
 	public static final String GIT_CLONE_FAILED = "Git clone failed with exception: ";

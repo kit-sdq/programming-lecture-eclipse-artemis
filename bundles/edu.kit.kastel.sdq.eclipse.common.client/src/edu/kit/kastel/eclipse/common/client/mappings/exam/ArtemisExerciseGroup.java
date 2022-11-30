@@ -35,18 +35,8 @@ public class ArtemisExerciseGroup implements IExerciseGroup, Serializable {
 	}
 
 	@Override
-	public int getExerciseGroupId() {
-		return this.exerciseGroupId;
-	}
-
-	@Override
 	public List<IExercise> getExercises() {
 		return new ArrayList<>(this.exercises);
-	}
-
-	@Override
-	public String getTitle() {
-		return this.title;
 	}
 
 	public void init(IMappingLoader client, ICourse course, IExam exam) {
@@ -62,10 +52,4 @@ public class ArtemisExerciseGroup implements IExerciseGroup, Serializable {
 			artemisExercise.init(client, course, Optional.of(exam));
 		}
 	}
-
-	@Override
-	public boolean isMandatory() {
-		return this.isMandatory;
-	}
-
 }

@@ -87,16 +87,4 @@ public class ArtemisExam implements IExam, Serializable {
 	public ICourse getCourse() {
 		return this.course;
 	}
-
-	@Override
-	public boolean isExamExpired(Date currentDate) {
-		boolean result = false;
-		if (this.startDate != null) {
-			result = this.startDate.after(currentDate);
-		}
-		if (this.endDate != null) {
-			result = this.endDate.before(currentDate);
-		}
-		return result;
-	}
 }

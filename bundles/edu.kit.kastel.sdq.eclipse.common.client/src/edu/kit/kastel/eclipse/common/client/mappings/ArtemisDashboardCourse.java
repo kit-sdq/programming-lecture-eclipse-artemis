@@ -65,11 +65,6 @@ public class ArtemisDashboardCourse implements ICourse, Serializable {
 	}
 
 	@Override
-	public String getTitle() {
-		return title;
-	}
-
-	@Override
 	public boolean isInstructor(User assessor) {
 		return false;
 	}

@@ -81,7 +81,7 @@ public abstract class AbstractArtemisViewController<C extends ISystemwideControl
 	 *
 	 * @param exerciseShortName (of the selected exercise in the combo)
 	 */
-	public void setExerciseID(String exerciseShortName) {
+	public void setExerciseId(String exerciseShortName) {
 		try {
 			this.systemwideController.setExerciseId(exerciseShortName);
 		} catch (ArtemisClientException e) {

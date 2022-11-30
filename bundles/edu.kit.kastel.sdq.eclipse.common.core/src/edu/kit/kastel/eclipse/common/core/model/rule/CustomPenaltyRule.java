@@ -1,5 +1,5 @@
 /* Licensed under EPL-2.0 2022. */
-package edu.kit.kastel.eclipse.common.core.model;
+package edu.kit.kastel.eclipse.common.core.model.rule;
 
 import java.util.List;
 
@@ -40,7 +40,7 @@ public class CustomPenaltyRule extends PenaltyRule {
 	}
 
 	@Override
-	protected boolean isCustomPenalty() {
+	public boolean isCustomPenalty() {
 		return true;
 	}
 

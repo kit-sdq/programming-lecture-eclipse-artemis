@@ -7,8 +7,6 @@ public interface ISubmission extends Serializable {
 
 	String getParticipantIdentifier();
 
-	String getParticipantName();
-
 	String getRepositoryUrl();
 
 	int getSubmissionId();

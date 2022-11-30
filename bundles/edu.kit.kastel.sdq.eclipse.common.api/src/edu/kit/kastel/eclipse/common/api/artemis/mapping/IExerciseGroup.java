@@ -10,12 +10,5 @@ import java.util.List;
  * in exercise groups.
  */
 public interface IExerciseGroup extends Serializable {
-
-	int getExerciseGroupId();
-
 	List<IExercise> getExercises();
-
-	String getTitle();
-
-	boolean isMandatory();
 }

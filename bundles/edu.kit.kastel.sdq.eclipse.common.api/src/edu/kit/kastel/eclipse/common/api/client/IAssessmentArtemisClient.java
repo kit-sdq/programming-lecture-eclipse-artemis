@@ -13,22 +13,6 @@ import edu.kit.kastel.eclipse.common.api.artemis.mapping.ISubmission;
  * REST-Client to execute calls concerning assessment.
  */
 public interface IAssessmentArtemisClient {
-	/**
-	 * Submit the assessment to Artemis. Must have been started by
-	 * {@link #startAssessment(int)} or {@link #startNextAssessment(int, int)}
-	 * before!
-	 *
-	 * @param participation THOU SHALT NOT PROVIDE THE SUBMISSIONID, HERE! The
-	 *                      participationID can be gotten from the
-	 *                      {@link ILockResult}, via {@link #startAssessment(int)}
-	 *                      or {@link #startNextAssessment(int, int)}! * @param
-	 *                      submit determine whether the assessment should be
-	 *                      submitted or just saved.
-	 * @param assessment    the assessment
-	 *
-	 * @throws ArtemisClientException
-	 */
-	void saveAssessment(int participationId, boolean submit, AssessmentResult assessment) throws ArtemisClientException;
 
 	/**
 	 * Starts an assessment for the given submission. Acquires a lock in the
@@ -54,5 +38,20 @@ public interface IAssessmentArtemisClient {
 	 *                                or if authentication fails.
 	 */
 	Optional<ILockResult> startNextAssessment(IExercise exercise, int correctionRound) throws ArtemisClientException;
+
+	/**
+	 * Submit the assessment to Artemis. Must have been started by
+	 * {@link #startAssessment(int)} or {@link #startNextAssessment(int, int)}
+	 * before!
+	 *
+	 * @param participation YOU SHALL NOT PROVIDE THE SUBMISSIONID, HERE! The
+	 *                      participationId can be gotten from the
+	 *                      {@link ILockResult}, via {@link #startAssessment(int)}
+	 *                      or {@link #startNextAssessment(int, int)}!
+	 * @param submit        determine whether the assessment should be submitted or
+	 *                      just saved.
+	 * @param assessment    the assessment
+	 */
+	void saveAssessment(int participationId, boolean submit, AssessmentResult assessment) throws ArtemisClientException;
 
 }

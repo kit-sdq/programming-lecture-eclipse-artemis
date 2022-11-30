@@ -49,7 +49,6 @@ public class StudentSystemwideController extends SystemwideController implements
 	public StudentSystemwideController(final IPreferenceStore preferenceStore) {
 		super(preferenceStore);
 		this.preferenceStore = preferenceStore;
-		this.initPreferenceStoreCallback(preferenceStore);
 	}
 
 	@Override
@@ -185,10 +184,10 @@ public class StudentSystemwideController extends SystemwideController implements
 		}
 	}
 
-	private void addAnnotation(String annotationID, IMistakeType mistakeType, int startLine, int endLine, String fullyClassifiedClassName, String customMessage,
+	private void addAnnotation(String annotationId, IMistakeType mistakeType, int startLine, int endLine, String fullyClassifiedClassName, String customMessage,
 			Double customPenalty) {
 		try {
-			this.annotationDao.addAnnotation(annotationID, mistakeType, startLine, endLine, fullyClassifiedClassName, customMessage, customPenalty);
+			this.annotationDao.addAnnotation(annotationId, mistakeType, startLine, endLine, fullyClassifiedClassName, customMessage, customPenalty);
 		} catch (AnnotationException e) {
 			this.error(e.getMessage(), e);
 		}
@@ -286,8 +285,10 @@ public class StudentSystemwideController extends SystemwideController implements
 		for (ICourse c : this.getArtemisController().getCourses()) {
 			if (c.getShortName().equals(courseShortName)) {
 				this.course = c;
+				var now = getCurrentDate();
 				var allProgrammingExercises = c.getExercises().stream().filter(IExercise::isProgramming).toList();
-				var allStartedExercises = allProgrammingExercises.stream().filter(e -> e.getStartDate() == null || e.getStartDate().before(new Date()))
+				var allStartedExercises = allProgrammingExercises.stream()
+						.filter(e -> e.getStartDate() == null || e.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime().isBefore(now))
 						.toList();
 				return allStartedExercises.stream().map(IExercise::getShortName).toList();
 			}

@@ -28,29 +28,15 @@ public interface IGradingArtemisController extends IArtemisController {
 	/**
 	 * Starts an assessment for the given submission. Acquires a lock in the
 	 * process.
-	 * 
-	 * @param submissionID
 	 */
-	void startAssessment(ISubmission submissionID);
-
-	/**
-	 * Starts the next assessment. Which one is smh determined by artemis.
-	 * Correction Round is set to 0.
-	 * 
-	 * @param exerciseID the exerciseID (found in your ICourse-Collection gotten via
-	 *                   IArtemisController::getCourses())
-	 * @return
-	 *         <li>the submissionID which defines what is assessed.
-	 *         <li>Optional.empty(), if no assessment is left!
-	 */
-	Optional<ISubmission> startNextAssessment(IExercise exercise);
+	void startAssessment(ISubmission submissionId);
 
 	/**
 	 * Starts the next assessment of the given correction round. Which one is smh
 	 * determined by artemis.
 	 * 
-	 * @param exerciseID      the exerciseID (found in your ICourse-Collection
-	 *                        gotten via IArtemisController::getCourses())
+	 * @param exercise        the exercise (found in your ICourse-Collection gotten
+	 *                        via IArtemisController::getCourses())
 	 * @param correctionRound for non-exams: 0. For exams: either 0 or 1
 	 * @return
 	 *         <li>the submissionID which defines what is assessed.

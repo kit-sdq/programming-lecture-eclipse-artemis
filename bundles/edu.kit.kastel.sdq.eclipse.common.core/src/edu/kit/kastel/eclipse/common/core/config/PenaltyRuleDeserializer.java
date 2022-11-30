@@ -9,10 +9,10 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 
-import edu.kit.kastel.eclipse.common.core.model.CustomPenaltyRule;
-import edu.kit.kastel.eclipse.common.core.model.PenaltyRule;
-import edu.kit.kastel.eclipse.common.core.model.StackingPenaltyRule;
-import edu.kit.kastel.eclipse.common.core.model.ThresholdPenaltyRule;
+import edu.kit.kastel.eclipse.common.core.model.rule.CustomPenaltyRule;
+import edu.kit.kastel.eclipse.common.core.model.rule.PenaltyRule;
+import edu.kit.kastel.eclipse.common.core.model.rule.StackingPenaltyRule;
+import edu.kit.kastel.eclipse.common.core.model.rule.ThresholdPenaltyRule;
 
 /**
  * Deserialize a PenaltyRule which is not trivial since PenaltyRule is abstract
@@ -72,7 +72,6 @@ public class PenaltyRuleDeserializer extends StdDeserializer<PenaltyRule> {
 
 	@Override
 	public PenaltyRule deserialize(JsonParser parser, DeserializationContext ctxt) throws IOException {
-
 		final JsonNode penaltyRuleNode = parser.getCodec().readTree(parser);
 		final String penaltyRuleShortName = penaltyRuleNode.get("shortName").asText();
 
