@@ -490,8 +490,7 @@ public class ArtemisGradingView extends ViewPart {
 					var explorer = AssessmentUtilities.getProjectExplorer(page);
 
 					// Expand all packages
-					var packagePaths = JDTUtilities.getAllCompilationUnits(projects[0]).stream()
-							.map(ICompilationUnit::getResource).toList();
+					var packagePaths = JDTUtilities.getAllCompilationUnits(projects[0]).stream().map(ICompilationUnit::getResource).toList();
 					Display.getDefault().asyncExec(() -> {
 						// Select all packages to reveal them...
 						explorer.ifPresent(e -> e.selectReveal(new StructuredSelection(packagePaths)));
@@ -499,13 +498,11 @@ public class ArtemisGradingView extends ViewPart {
 						explorer.ifPresent(e -> e.selectReveal(new StructuredSelection()));
 					});
 
-					String openPreference = CommonActivator.getDefault().getPreferenceStore()
-							.getString(PreferenceConstants.OPEN_FILES_ON_ASSESSMENT_START);
+					String openPreference = CommonActivator.getDefault().getPreferenceStore().getString(PreferenceConstants.OPEN_FILES_ON_ASSESSMENT_START);
 
 					// Open all types if desired
 					if (openPreference.equals(PreferenceConstants.OPEN_FILES_ON_ASSESSMENT_START_ALL)) {
-						JDTUtilities.getAllCompilationUnits(projects[0])
-								.forEach(c -> AssessmentUtilities.openJavaElement(c, page));
+						JDTUtilities.getAllCompilationUnits(projects[0]).forEach(c -> AssessmentUtilities.openJavaElement(c, page));
 					}
 
 					// Open/focus the main class
@@ -517,8 +514,7 @@ public class ArtemisGradingView extends ViewPart {
 
 							// ... and focus it in the package explorer
 							Display.getDefault().asyncExec(() -> {
-								explorer.ifPresent(
-										e -> e.selectReveal(new StructuredSelection(mainType.get().getResource())));
+								explorer.ifPresent(e -> e.selectReveal(new StructuredSelection(mainType.get().getResource())));
 							});
 						} else {
 							LOG.warn("No main class found");
