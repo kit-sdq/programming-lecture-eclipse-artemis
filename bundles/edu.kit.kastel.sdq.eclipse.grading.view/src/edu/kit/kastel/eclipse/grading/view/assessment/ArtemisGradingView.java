@@ -8,13 +8,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jdt.core.ElementChangedEvent;
 import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.IElementChangedListener;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
@@ -481,52 +480,53 @@ public class ArtemisGradingView extends ViewPart {
 			return;
 		}
 
+		// Make sure that the JDT is ready by forcing a build now
+		try {
+			projects[0].build(IncrementalProjectBuilder.INCREMENTAL_BUILD, null);
+		} catch (CoreException e) {
+			LOG.error("Build failed", e);
+			// Don't try to open any files as we might make the compilation problems worse
+			return;
+		}
+
 		var page = ArtemisGradingView.this.getSite().getPage();
+		try {
+			var explorer = AssessmentUtilities.getProjectExplorer(page);
 
-		IElementChangedListener listener = new IElementChangedListener() {
-			@Override
-			public void elementChanged(ElementChangedEvent event) {
-				try {
-					var explorer = AssessmentUtilities.getProjectExplorer(page);
+			// Expand all packages
+			var packagePaths = JDTUtilities.getAllCompilationUnits(projects[0]).stream().map(ICompilationUnit::getResource).toList();
+			Display.getDefault().asyncExec(() -> {
+				// Select all packages to reveal them...
+				explorer.ifPresent(e -> e.selectReveal(new StructuredSelection(packagePaths)));
+				// ... and deselect them once they are expanded
+				explorer.ifPresent(e -> e.selectReveal(new StructuredSelection()));
+			});
 
-					// Expand all packages
-					var packagePaths = JDTUtilities.getAllCompilationUnits(projects[0]).stream().map(ICompilationUnit::getResource).toList();
-					Display.getDefault().asyncExec(() -> {
-						// Select all packages to reveal them...
-						explorer.ifPresent(e -> e.selectReveal(new StructuredSelection(packagePaths)));
-						// ... and deselect them once they are expanded
-						explorer.ifPresent(e -> e.selectReveal(new StructuredSelection()));
-					});
+			String openPreference = CommonActivator.getDefault().getPreferenceStore().getString(PreferenceConstants.OPEN_FILES_ON_ASSESSMENT_START);
 
-					String openPreference = CommonActivator.getDefault().getPreferenceStore().getString(PreferenceConstants.OPEN_FILES_ON_ASSESSMENT_START);
-
-					// Open all types if desired
-					if (openPreference.equals(PreferenceConstants.OPEN_FILES_ON_ASSESSMENT_START_ALL)) {
-						JDTUtilities.getAllCompilationUnits(projects[0]).forEach(c -> AssessmentUtilities.openJavaElement(c, page));
-					}
-
-					// Open/focus the main class
-					if (!openPreference.equals(PreferenceConstants.OPEN_FILES_ON_ASSESSMENT_START_NONE)) {
-						var mainType = JDTUtilities.findMainClass(projects[0]);
-						if (mainType.isPresent()) {
-							// Open/focus the main class in the editor...
-							AssessmentUtilities.openJavaElement(mainType.get(), page);
-
-							// ... and focus it in the package explorer
-							Display.getDefault().asyncExec(() -> {
-								explorer.ifPresent(e -> e.selectReveal(new StructuredSelection(mainType.get().getResource())));
-							});
-						} else {
-							LOG.warn("No main class found");
-						}
-					}
-				} catch (JavaModelException e) {
-					LOG.error("JDT failure", e);
-				}
-				JavaCore.removeElementChangedListener(this);
+			// Open all types if desired
+			if (openPreference.equals(PreferenceConstants.OPEN_FILES_ON_ASSESSMENT_START_ALL)) {
+				JDTUtilities.getAllCompilationUnits(projects[0]).forEach(c -> AssessmentUtilities.openJavaElement(c, page));
 			}
-		};
-		JavaCore.addElementChangedListener(listener, ElementChangedEvent.POST_CHANGE);
+
+			// Open/focus the main class
+			if (!openPreference.equals(PreferenceConstants.OPEN_FILES_ON_ASSESSMENT_START_NONE)) {
+				var mainType = JDTUtilities.findMainClass(projects[0]);
+				if (mainType.isPresent()) {
+					// Open/focus the main class in the editor...
+					AssessmentUtilities.openJavaElement(mainType.get(), page);
+
+					// ... and focus it in the package explorer
+					Display.getDefault().asyncExec(() -> {
+						explorer.ifPresent(e -> e.selectReveal(new StructuredSelection(mainType.get().getResource())));
+					});
+				} else {
+					LOG.warn("No main class found");
+				}
+			}
+		} catch (JavaModelException e) {
+			LOG.error("JDT failure", e);
+		}
 	}
 
 	public boolean isPositiveFeedbackAllowed() {
