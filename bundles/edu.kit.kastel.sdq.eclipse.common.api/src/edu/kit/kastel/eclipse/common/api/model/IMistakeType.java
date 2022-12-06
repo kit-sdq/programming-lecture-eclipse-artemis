@@ -2,6 +2,7 @@
 package edu.kit.kastel.eclipse.common.api.model;
 
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Represents one type of mistakes from a rating group.
@@ -30,10 +31,24 @@ public interface IMistakeType {
 	String getMessage();
 
 	/**
+	 * defaults to German
+	 * 
+	 * @return a more elaborate explanation of what the mistake is in the respective
+	 *         Language.
+	 */
+	String getMessage(Locale locale);
+
+	/**
 	 *
 	 * @return what should be shown on the button.
 	 */
 	String getButtonText();
+
+	/**
+	 *
+	 * @return what should be shown on the button in the respective Language.
+	 */
+	String getButtonText(Locale locale);
 
 	/**
 	 *

@@ -1,7 +1,10 @@
 /* Licensed under EPL-2.0 2022. */
 package edu.kit.kastel.eclipse.common.core.model;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -13,9 +16,12 @@ import edu.kit.kastel.eclipse.common.api.model.IRatingGroup;
 import edu.kit.kastel.eclipse.common.core.model.rule.PenaltyRule;
 
 public class MistakeType implements IMistakeType {
+	private static final Locale DEFAULT_LOCALE = Locale.GERMAN;
+
 	private String shortName;
-	private String name;
-	private String message;
+
+	private Map<Locale, String> names;
+	private Map<Locale, String> messages;
 
 	// used for deserialization
 	private String appliesTo;
@@ -28,15 +34,26 @@ public class MistakeType implements IMistakeType {
 	 * having to add
 	 * <li>the rating group
 	 * <li>this object to the rating Group
+	 * 
+	 * @since 2.7
 	 */
 	@JsonCreator
 	public MistakeType(@JsonProperty("shortName") String shortName, @JsonProperty("button") String buttonName, @JsonProperty("message") String message,
-			@JsonProperty("penaltyRule") PenaltyRule penaltyRule, @JsonProperty("appliesTo") String appliesTo) {
+			@JsonProperty("engButton") String englishButton, @JsonProperty("engMessage") String englishMessage,
+			@JsonProperty("penaltyRule") PenaltyRule penaltyRule, @JsonProperty("appliesTo") String appliesTo) { // Map(string, string)
 		this.shortName = shortName;
-		this.name = buttonName;
-		this.message = message;
-		this.penaltyRule = penaltyRule;
 
+		// locale -> getCountry
+
+		messages = new HashMap<>();
+		messages.put(Locale.US, englishMessage);
+		messages.put(Locale.GERMAN, message);
+
+		names = new HashMap<>();
+		names.put(Locale.US, englishButton);
+		names.put(Locale.GERMAN, buttonName);
+
+		this.penaltyRule = penaltyRule;
 		this.appliesTo = appliesTo;
 
 	}
@@ -57,12 +74,21 @@ public class MistakeType implements IMistakeType {
 
 	@Override
 	public String getMessage() {
-		return this.message;
+		return this.messages.get(DEFAULT_LOCALE);
+	}
+
+	public String getMessage(Locale locale) {
+		return this.messages.get(locale);
 	}
 
 	@Override
 	public String getButtonText() {
-		return this.name;
+		return this.names.get(DEFAULT_LOCALE);
+	}
+
+	public String getButtonText(Locale locale) {
+		return this.names.get(locale);
+
 	}
 
 	@Override
@@ -91,7 +117,7 @@ public class MistakeType implements IMistakeType {
 	@Override
 	public String getTooltip(List<IAnnotation> annotations) {
 		String penaltyText = this.penaltyRule.getTooltip(annotations);
-		return this.message + "\n" + penaltyText;
+		return this.getMessage() + "\n" + penaltyText;
 	}
 
 	/**
@@ -108,8 +134,8 @@ public class MistakeType implements IMistakeType {
 
 	@Override
 	public String toString() {
-		return "MistakeType [shortName=" + this.shortName + ", name=" + this.name + ", message=" + this.message + ", ratingGroup=" + this.ratingGroup
-				+ ", penaltyRule=" + this.penaltyRule + "]";
+		return "MistakeType [shortName=" + this.shortName + ", name=" + this.getButtonText() + ", message=" + this.getMessage() + ", ratingGroup="
+				+ this.ratingGroup + ", penaltyRule=" + this.penaltyRule + "]";
 	}
 
 	@Override

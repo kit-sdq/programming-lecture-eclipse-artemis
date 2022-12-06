@@ -14,15 +14,16 @@ import edu.kit.kastel.eclipse.common.api.util.Pair;
  */
 public interface IRatingGroup {
 	String getDisplayName();
-	
+
 	/**
 	 * Not suitable for official annotations
+	 * 
 	 * @default is the official German name
 	 * @since 2.7
 	 * @return A more elaborate name in the respective language
 	 */
 	String getLanguageSensitiveDisplayName(String language);
-	
+
 	/**
 	 *
 	 * @return the MistakeTypes that define this RatingGroup as its rating group.
@@ -46,9 +47,5 @@ public interface IRatingGroup {
 	 * @return the <i>unique</> shortName of this ratingGroup
 	 */
 	String getShortName();
-
-	
-
-	
 
 }

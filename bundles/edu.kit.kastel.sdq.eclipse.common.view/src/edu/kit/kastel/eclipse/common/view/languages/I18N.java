@@ -1,6 +1,8 @@
 /* Licensed under EPL-2.0 2022. */
 package edu.kit.kastel.eclipse.common.view.languages;
 
+import java.util.Locale;
+
 /**
  * This interface contains a method for every string used in the UI. All methods
  * are defaulted to an English text and can be overwritten by sub-classes. If a
@@ -345,6 +347,14 @@ public interface I18N {
 	 */
 	default String languageDisplayName() {
 		return "English";
+	}
+
+	/**
+	 * 
+	 * @return the corresponding Locale
+	 */
+	default Locale getLocale() {
+		return Locale.US;
 	}
 
 }

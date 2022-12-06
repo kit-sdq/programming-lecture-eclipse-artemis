@@ -38,7 +38,7 @@ public class RatingGroup implements IRatingGroup {
 	public String getDisplayName() {
 		return this.displayName;
 	}
-	
+
 	@Override
 	/**
 	 * @since 2.7
@@ -46,12 +46,12 @@ public class RatingGroup implements IRatingGroup {
 	public String getLanguageSensitiveDisplayName(String language) {
 		// TODO Auto-generated method stub
 		switch (language) {
-			case "English":
-				return engDisplayName;
-			case "Deutsch":
-				return displayName;
-			default:
-				return getDisplayName();
+		case "English":
+			return engDisplayName;
+		case "Deutsch":
+			return displayName;
+		default:
+			return getDisplayName();
 		}
 	}
 

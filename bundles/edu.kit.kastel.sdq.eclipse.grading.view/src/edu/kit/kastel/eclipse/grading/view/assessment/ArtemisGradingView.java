@@ -293,7 +293,7 @@ public class ArtemisGradingView extends ViewPart {
 						return;
 					}
 					final Button mistakeButton = new Button(rgDisplay, SWT.PUSH);
-					mistakeButton.setText(mistake.getButtonText());
+					mistakeButton.setText(mistake.getButtonText(I18N().getLocale()));
 					mistakeButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 
 					this.mistakeButtons.put(mistake.getId(), mistakeButton);
