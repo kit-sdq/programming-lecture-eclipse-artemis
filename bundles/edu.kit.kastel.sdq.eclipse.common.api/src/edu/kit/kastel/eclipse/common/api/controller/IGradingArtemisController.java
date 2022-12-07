@@ -3,6 +3,7 @@ package edu.kit.kastel.eclipse.common.api.controller;
 
 import java.util.Optional;
 
+import edu.kit.kastel.eclipse.common.api.ArtemisClientException;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.IExercise;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.ISubmission;
 
@@ -43,5 +44,13 @@ public interface IGradingArtemisController extends IArtemisController {
 	 *         <li>Optional.empty(), if no assessment is left!
 	 */
 	Optional<ISubmission> startNextAssessment(IExercise exercise, int correctionRound);
+
+	/**
+	 * Get statistics for exercise.
+	 * 
+	 * @param exercise the exercise
+	 * @return the statistics
+	 */
+	ExerciseStats getStats(IExercise exercise) throws ArtemisClientException;
 
 }
