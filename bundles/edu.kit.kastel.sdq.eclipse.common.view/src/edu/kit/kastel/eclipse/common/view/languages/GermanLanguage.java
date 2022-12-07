@@ -87,8 +87,8 @@ class GermanLanguage implements I18N {
 	}
 
 	@Override
-	public String tabAssessmentStartedSubmitted(int started, int submitted) {
-		return String.format("Begonnene Abgaben: %d  Bewertet: %d", started, submitted);
+	public String tabAssessmentStartedSubmitted(int totalAssessments, int totalSubmissions, int locked, int submittedByTutor) {
+		return String.format("Einreichungen: %d/%d  Gesperrt: %d  Deine Bewertungen: %d", totalAssessments, totalSubmissions, locked, submittedByTutor);
 	}
 
 	@Override

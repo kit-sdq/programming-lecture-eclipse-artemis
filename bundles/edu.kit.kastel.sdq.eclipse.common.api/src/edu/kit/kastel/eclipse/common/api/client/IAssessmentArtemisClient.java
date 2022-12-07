@@ -8,6 +8,7 @@ import edu.kit.kastel.eclipse.common.api.artemis.AssessmentResult;
 import edu.kit.kastel.eclipse.common.api.artemis.ILockResult;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.IExercise;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.ISubmission;
+import edu.kit.kastel.eclipse.common.api.controller.ExerciseStats;
 
 /**
  * REST-Client to execute calls concerning assessment.
@@ -54,4 +55,11 @@ public interface IAssessmentArtemisClient {
 	 */
 	void saveAssessment(int participationId, boolean submit, AssessmentResult assessment) throws ArtemisClientException;
 
+	/**
+	 * Get statistics for exercise.
+	 * 
+	 * @param exercise the exercise
+	 * @return the statistics
+	 */
+	ExerciseStats getStats(IExercise exercise) throws ArtemisClientException;
 }

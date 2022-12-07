@@ -111,4 +111,6 @@ public interface IGradingSystemwideController extends ISystemwideController {
 
 	Optional<IExercise> getSelectedExercise();
 
+	ExerciseStats getStats();
+
 }
