@@ -5,7 +5,7 @@ This section is about the development in the grading (but also for the student) 
 Setting up Eclipse
 ------------------
 
-0. Use `Eclipse 2022-09 <https://www.eclipse.org/downloads/packages/>`_ for development.
+0. Use `Eclipse 2022-12 <https://www.eclipse.org/downloads/packages/>`_ for development.
 
 1. In general, you can use any distribution of eclipse. We'd suggest to you to use "eclipse for eclipse committers" for Plugin development.
 
