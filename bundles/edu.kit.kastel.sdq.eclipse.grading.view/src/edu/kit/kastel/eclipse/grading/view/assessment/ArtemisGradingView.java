@@ -11,7 +11,10 @@ import java.util.Map;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jdt.core.ElementChangedEvent;
 import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IElementChangedListener;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
@@ -479,43 +482,51 @@ public class ArtemisGradingView extends ViewPart {
 		}
 
 		var page = ArtemisGradingView.this.getSite().getPage();
-		try {
-			var explorer = AssessmentUtilities.getProjectExplorer(page);
 
-			// Expand all packages
-			var packagePaths = JDTUtilities.getAllCompilationUnits(projects[0]).stream().map(ICompilationUnit::getResource).toList();
-			Display.getDefault().asyncExec(() -> {
-				// Select all packages to reveal them...
-				explorer.ifPresent(e -> e.selectReveal(new StructuredSelection(packagePaths)));
-				// ... and deselect them once they are expanded
-				explorer.ifPresent(e -> e.selectReveal(new StructuredSelection()));
-			});
+		IElementChangedListener listener = new IElementChangedListener() {
+			@Override
+			public void elementChanged(ElementChangedEvent event) {
+				try {
+					var explorer = AssessmentUtilities.getProjectExplorer(page);
 
-			String openPreference = CommonActivator.getDefault().getPreferenceStore().getString(PreferenceConstants.OPEN_FILES_ON_ASSESSMENT_START);
-
-			// Open all types if desired
-			if (openPreference.equals(PreferenceConstants.OPEN_FILES_ON_ASSESSMENT_START_ALL)) {
-				JDTUtilities.getAllCompilationUnits(projects[0]).forEach(c -> AssessmentUtilities.openJavaElement(c, page));
-			}
-
-			// Open/focus the main class
-			if (!openPreference.equals(PreferenceConstants.OPEN_FILES_ON_ASSESSMENT_START_NONE)) {
-				var mainType = JDTUtilities.findMainClass(projects[0]);
-				if (mainType.isPresent()) {
-					// Open/focus the main class in the editor...
-					AssessmentUtilities.openJavaElement(mainType.get(), page);
-
-					// ... and focus it in the package explorer
+					// Expand all packages
+					var packagePaths = JDTUtilities.getAllCompilationUnits(projects[0]).stream().map(ICompilationUnit::getResource).toList();
 					Display.getDefault().asyncExec(() -> {
-						explorer.ifPresent(e -> e.selectReveal(new StructuredSelection(mainType.get().getResource())));
+						// Select all packages to reveal them...
+						explorer.ifPresent(e -> e.selectReveal(new StructuredSelection(packagePaths)));
+						// ... and deselect them once they are expanded
+						explorer.ifPresent(e -> e.selectReveal(new StructuredSelection()));
 					});
-				} else {
-					LOG.warn("No main class found");
+
+					String openPreference = CommonActivator.getDefault().getPreferenceStore().getString(PreferenceConstants.OPEN_FILES_ON_ASSESSMENT_START);
+
+					// Open all types if desired
+					if (openPreference.equals(PreferenceConstants.OPEN_FILES_ON_ASSESSMENT_START_ALL)) {
+						JDTUtilities.getAllCompilationUnits(projects[0]).forEach(c -> AssessmentUtilities.openJavaElement(c, page));
+					}
+
+					// Open/focus the main class
+					if (!openPreference.equals(PreferenceConstants.OPEN_FILES_ON_ASSESSMENT_START_NONE)) {
+						var mainType = JDTUtilities.findMainClass(projects[0]);
+						if (mainType.isPresent()) {
+							// Open/focus the main class in the editor...
+							AssessmentUtilities.openJavaElement(mainType.get(), page);
+
+							// ... and focus it in the package explorer
+							Display.getDefault().asyncExec(() -> {
+								explorer.ifPresent(e -> e.selectReveal(new StructuredSelection(mainType.get().getResource())));
+							});
+						} else {
+							LOG.warn("No main class found");
+						}
+					}
+				} catch (JavaModelException e) {
+					LOG.error("JDT failure", e);
 				}
+				JavaCore.removeElementChangedListener(this);
 			}
-		} catch (JavaModelException e) {
-			LOG.error("JDT failure", e);
-		}
+		};
+		JavaCore.addElementChangedListener(listener, ElementChangedEvent.POST_CHANGE);
 	}
 
 	public boolean isPositiveFeedbackAllowed() {
