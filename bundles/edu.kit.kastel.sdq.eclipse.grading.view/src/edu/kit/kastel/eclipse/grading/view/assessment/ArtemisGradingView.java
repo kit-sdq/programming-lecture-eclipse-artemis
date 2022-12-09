@@ -8,7 +8,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdt.core.ElementChangedEvent;
@@ -454,9 +456,9 @@ public class ArtemisGradingView extends ViewPart {
 	private void updateCorrectedSubmissionCount() {
 		if (this.assessmentTab.comboExercise.getSelectionIndex() != -1) {
 			IGradingSystemwideController sc = Activator.getDefault().getSystemwideController();
-			this.assessmentTab.lblStatisticsInformation
-					.setText(I18N().tabAssessmentStartedSubmitted(sc.getBegunSubmissionsProjectNames(SubmissionFilter.ALL).size(),
-							sc.getBegunSubmissionsProjectNames(SubmissionFilter.SAVED_AND_SUBMITTED).size()));
+			var stats = sc.getStats();
+			this.assessmentTab.lblStatisticsInformation.setText(
+					I18N().tabAssessmentStartedSubmitted(stats.totalAssessments(), stats.totalSubmissions(), stats.locked(), stats.submittedByTutor()));
 		} else {
 			this.assessmentTab.lblStatisticsInformation.setText("");
 		}
@@ -478,6 +480,15 @@ public class ArtemisGradingView extends ViewPart {
 	private void addListenerForFileOpening() {
 		var projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		if (projects.length == 0) {
+			return;
+		}
+
+		// Make sure that the JDT is ready by forcing a build now
+		try {
+			projects[0].build(IncrementalProjectBuilder.INCREMENTAL_BUILD, null);
+		} catch (CoreException e) {
+			LOG.error("Build failed", e);
+			// Don't try to open any files as we might make the compilation problems worse
 			return;
 		}
 

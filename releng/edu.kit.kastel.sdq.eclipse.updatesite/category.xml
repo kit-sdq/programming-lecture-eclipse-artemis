@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/edu.kit.kastel.sdq.eclipse.grading.feature_2.8.0.jar" id="edu.kit.kastel.sdq.eclipse.grading.feature" version="2.8.0">
+   <feature url="features/edu.kit.kastel.sdq.eclipse.grading.feature_2.9.0.jar" id="edu.kit.kastel.sdq.eclipse.grading.feature" version="2.9.0">
       <category name="Eclipse Artemis Grading"/>
    </feature>
-   <feature id="edu.kit.kastel.sdq.eclipse.grading.feature.source" version="2.8.0">
+   <feature id="edu.kit.kastel.sdq.eclipse.grading.feature.source" version="2.9.0">
       <category name="Eclipse Artemis Grading"/>
    </feature>
-   <feature url="features/edu.kit.kastel.sdq.eclipse.student.feature_2.8.0.jar" id="edu.kit.kastel.sdq.eclipse.student.feature" version="2.8.0">
+   <feature url="features/edu.kit.kastel.sdq.eclipse.student.feature_2.9.0.jar" id="edu.kit.kastel.sdq.eclipse.student.feature" version="2.9.0">
       <category name="Eclipse Artemis Student"/>
    </feature>
-   <feature id="edu.kit.kastel.sdq.eclipse.student.feature.source" version="2.8.0">
+   <feature id="edu.kit.kastel.sdq.eclipse.student.feature.source" version="2.9.0">
       <category name="Eclipse Artemis Student"/>
    </feature>
    <feature id="org.eclipse.pde">
@@ -27,7 +27,7 @@
    <feature id="org.eclipse.jgit">
       <category name="Eclipse Artemis Dev"/>
    </feature>
-      <feature id="org.eclipse.jgit.source">
+   <feature id="org.eclipse.jgit.source">
       <category name="Eclipse Artemis Dev"/>
    </feature>
    <bundle id="com.fasterxml.jackson.core.jackson-annotations">
@@ -89,4 +89,5 @@
       </description>
    </category-def>
    <category-def name="Eclipse Artemis Dev" label="Eclipse Artemis Development"/>
+   <repository-reference location="https://kit-sdq.github.io/programming-lecture-eclipse-artemis.p2" enabled="true" />
 </site>

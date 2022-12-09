@@ -77,12 +77,14 @@ public interface I18N {
 	}
 
 	/**
-	 * @param started   the amount of started submissions
-	 * @param submitted the amount of submitted submissions
+	 * @param totalAssessments the amount of assessments done
+	 * @param totalSubmissions the amount of submissions to be assessed
+	 * @param locked           the amount of locked submissions
+	 * @param submittedByTutor the amount of submitted submissions (of the tutor)
 	 * @return the started/submitted message with the correct amounts
 	 */
-	default String tabAssessmentStartedSubmitted(int started, int submitted) {
-		return String.format("Started submissions: %d  Submitted: %d", started, submitted);
+	default String tabAssessmentStartedSubmitted(int totalAssessments, int totalSubmissions, int locked, int submittedByTutor) {
+		return String.format("Submissions: %d/%d  Locked: %d  Your Assessments: %d", totalAssessments, totalSubmissions, locked, submittedByTutor);
 	}
 
 	default String backlog() {

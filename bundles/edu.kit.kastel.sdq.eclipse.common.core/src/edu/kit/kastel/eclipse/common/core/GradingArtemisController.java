@@ -10,6 +10,7 @@ import edu.kit.kastel.eclipse.common.api.artemis.ILockResult;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.ICourse;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.IExercise;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.ISubmission;
+import edu.kit.kastel.eclipse.common.api.controller.ExerciseStats;
 import edu.kit.kastel.eclipse.common.api.controller.IAssessmentController;
 import edu.kit.kastel.eclipse.common.api.controller.IGradingArtemisController;
 import edu.kit.kastel.eclipse.common.api.messages.Messages;
@@ -101,6 +102,11 @@ public class GradingArtemisController extends ArtemisController implements IGrad
 			this.error(Messages.ASSESSMENT_COULD_NOT_BE_STARTED_MESSAGE + e.getMessage(), e);
 			return Optional.empty();
 		}
+	}
+
+	@Override
+	public ExerciseStats getStats(IExercise exercise) throws ArtemisClientException {
+		return this.clientManager.getAssessmentArtemisClient().getStats(exercise);
 	}
 
 }
