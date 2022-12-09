@@ -81,7 +81,7 @@ public class AssessmentArtemisClient extends AbstractArtemisClient implements IA
 	@Override
 	public ExerciseStats getStats(IExercise exercise) throws ArtemisClientException {
 		final Response rsp = this.endpoint.path(EXERCISES_PATHPART).path(String.valueOf(exercise.getExerciseId())).path(STATS_PATH).request()
-				.header(AUTHORIZATION_NAME, this.token).buildGet().invoke();
+				.cookie(getAuthCookie(this.token)).buildGet().invoke();
 		if (!this.isStatusSuccessful(rsp)) {
 			return null;
 		}
@@ -113,7 +113,7 @@ public class AssessmentArtemisClient extends AbstractArtemisClient implements IA
 		final Response rsp = this.endpoint.path(EXERCISES_PATHPART).path(String.valueOf(exercise.getExerciseId())).path(PROGRAMMING_SUBMISSION_PATHPART) //
 				.queryParam("assessedByTutor", true) //
 				.queryParam("correction-round", correctionRound) //
-				.request().header(AUTHORIZATION_NAME, this.token).buildGet().invoke();
+				.request().cookie(getAuthCookie(this.token)).buildGet().invoke();
 
 		if (!this.isStatusSuccessful(rsp)) {
 			return 0;
