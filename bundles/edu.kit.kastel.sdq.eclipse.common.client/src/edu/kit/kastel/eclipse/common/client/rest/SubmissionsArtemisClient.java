@@ -20,12 +20,12 @@ public class SubmissionsArtemisClient extends AbstractArtemisClient implements I
 	private String token;
 	private User assesor;
 
-	public SubmissionsArtemisClient(final String hostName, String token, User assesor) {
+	public SubmissionsArtemisClient(final String hostName, String token, User assessor) {
 		super(hostName);
 
 		this.endpoint = this.getEndpoint(this.getApiRootURL());
 		this.token = token;
-		this.assesor = assesor;
+		this.assesor = assessor;
 	}
 
 	@Override

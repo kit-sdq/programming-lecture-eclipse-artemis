@@ -453,9 +453,9 @@ public class ArtemisGradingView extends ViewPart {
 	private void updateCorrectedSubmissionCount() {
 		if (this.assessmentTab.comboExercise.getSelectionIndex() != -1) {
 			IGradingSystemwideController sc = Activator.getDefault().getSystemwideController();
-			this.assessmentTab.lblStatisticsInformation
-					.setText(I18N().tabAssessmentStartedSubmitted(sc.getBegunSubmissionsProjectNames(SubmissionFilter.ALL).size(),
-							sc.getBegunSubmissionsProjectNames(SubmissionFilter.SAVED_AND_SUBMITTED).size()));
+			var stats = sc.getStats();
+			this.assessmentTab.lblStatisticsInformation.setText(
+					I18N().tabAssessmentStartedSubmitted(stats.totalAssessments(), stats.totalSubmissions(), stats.locked(), stats.submittedByTutor()));
 		} else {
 			this.assessmentTab.lblStatisticsInformation.setText("");
 		}

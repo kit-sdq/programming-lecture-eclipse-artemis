@@ -20,6 +20,7 @@ import edu.kit.kastel.eclipse.common.api.artemis.mapping.IExam;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.IExercise;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.ISubmission;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.SubmissionFilter;
+import edu.kit.kastel.eclipse.common.api.controller.ExerciseStats;
 import edu.kit.kastel.eclipse.common.api.controller.IArtemisController;
 import edu.kit.kastel.eclipse.common.api.controller.IAssessmentController;
 import edu.kit.kastel.eclipse.common.api.controller.IGradingArtemisController;
@@ -29,7 +30,7 @@ import edu.kit.kastel.eclipse.common.core.artemis.WorkspaceUtil;
 public class GradingSystemwideController extends SystemwideController implements IGradingSystemwideController {
 
 	private final Map<Integer, IAssessmentController> assessmentControllers = new HashMap<>();
-	private IGradingArtemisController artemisGUIController;
+	private IGradingArtemisController artemisController;
 
 	private ISubmission submission;
 
@@ -39,10 +40,10 @@ public class GradingSystemwideController extends SystemwideController implements
 	}
 
 	protected IArtemisController createController(IPreferenceStore preferenceStore) {
-		this.artemisGUIController = new GradingArtemisController(preferenceStore.getString(PreferenceConstants.GENERAL_ARTEMIS_URL),
+		this.artemisController = new GradingArtemisController(preferenceStore.getString(PreferenceConstants.GENERAL_ARTEMIS_URL),
 				preferenceStore.getString(PreferenceConstants.GENERAL_ADVANCED_ARTEMIS_USER),
 				preferenceStore.getString(PreferenceConstants.GENERAL_ADVANCED_ARTEMIS_PASSWORD));
-		return this.artemisGUIController;
+		return this.artemisController;
 	}
 
 	private IAssessmentController getAssessmentController(ISubmission submission, ICourse course, IExercise exercise) {
@@ -58,6 +59,19 @@ public class GradingSystemwideController extends SystemwideController implements
 		}
 
 		return this.getArtemisController().getBegunSubmissions(this.exercise).stream().filter(submissionFilter).toList();
+	}
+
+	@Override
+	public ExerciseStats getStats() {
+		if (this.nullCheckMembersAndNotify(true, true, false)) {
+			return new ExerciseStats(0, 0, 0, 0);
+		}
+		try {
+			return this.getArtemisController().getStats(exercise);
+		} catch (ArtemisClientException e) {
+			this.error(e.getMessage(), e);
+			return new ExerciseStats(0, 0, 0, 0);
+		}
 	}
 
 	@Override
@@ -112,7 +126,7 @@ public class GradingSystemwideController extends SystemwideController implements
 			return;
 		}
 
-		this.artemisGUIController.startAssessment(this.submission);
+		this.artemisController.startAssessment(this.submission);
 		this.downloadExerciseAndSubmission(this.course, this.exercise, this.submission, this.projectFileNamingStrategy);
 	}
 
@@ -148,7 +162,7 @@ public class GradingSystemwideController extends SystemwideController implements
 			return;
 		}
 
-		this.artemisGUIController.saveAssessment(this.getCurrentAssessmentController(), this.exercise, this.submission, false);
+		this.artemisController.saveAssessment(this.getCurrentAssessmentController(), this.exercise, this.submission, false);
 	}
 
 	@Override
@@ -188,7 +202,7 @@ public class GradingSystemwideController extends SystemwideController implements
 			return false;
 		}
 
-		Optional<ISubmission> optionalSubmission = this.artemisGUIController.startNextAssessment(this.exercise, correctionRound);
+		Optional<ISubmission> optionalSubmission = this.artemisController.startNextAssessment(this.exercise, correctionRound);
 		if (optionalSubmission.isEmpty()) {
 			// revert!
 			this.info("No more submissions available for Correction Round " + (correctionRound + 1) + "!");
@@ -219,7 +233,7 @@ public class GradingSystemwideController extends SystemwideController implements
 			return;
 		}
 
-		if (this.artemisGUIController.saveAssessment(this.getCurrentAssessmentController(), this.exercise, this.submission, true)) {
+		if (this.artemisController.saveAssessment(this.getCurrentAssessmentController(), this.exercise, this.submission, true)) {
 			this.closeAssessment();
 		}
 	}
@@ -269,7 +283,7 @@ public class GradingSystemwideController extends SystemwideController implements
 
 	@Override
 	public IGradingArtemisController getArtemisController() {
-		return this.artemisGUIController;
+		return this.artemisController;
 	}
 
 	@Override
