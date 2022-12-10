@@ -13,6 +13,7 @@ import edu.kit.kastel.eclipse.common.api.model.IAnnotation;
 import edu.kit.kastel.eclipse.common.api.model.IMistakeType;
 import edu.kit.kastel.eclipse.common.api.model.IRatingGroup;
 import edu.kit.kastel.eclipse.common.view.controllers.AbstractArtemisViewController;
+import static edu.kit.kastel.eclipse.common.view.languages.LanguageSettings.I18N;
 import edu.kit.kastel.eclipse.common.view.utilities.AssessmentUtilities;
 import edu.kit.kastel.eclipse.grading.view.activator.Activator;
 
@@ -93,7 +94,7 @@ public class AssessmentViewController extends AbstractArtemisViewController<IGra
 	 * @return tooltip for the mistake type button
 	 */
 	public String getToolTipForMistakeType(IMistakeType mistakeType) {
-		return this.assessmentController.getTooltipForMistakeType(mistakeType);
+		return this.assessmentController.getTooltipForMistakeType(I18N().getLocale(), mistakeType);
 
 	}
 

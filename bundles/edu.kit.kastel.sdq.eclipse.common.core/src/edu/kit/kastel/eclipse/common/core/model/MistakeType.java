@@ -88,7 +88,6 @@ public class MistakeType implements IMistakeType {
 
 	public String getButtonText(Locale locale) {
 		return this.names.get(locale);
-
 	}
 
 	@Override
@@ -115,6 +114,11 @@ public class MistakeType implements IMistakeType {
 	}
 
 	@Override
+	public String getTooltip(Locale locale, List<IAnnotation> annotations) {
+		String penaltyText = this.penaltyRule.getTooltip(annotations);
+		return this.getMessage(locale) + "\n" + penaltyText;
+	}
+	
 	public String getTooltip(List<IAnnotation> annotations) {
 		String penaltyText = this.penaltyRule.getTooltip(annotations);
 		return this.getMessage() + "\n" + penaltyText;

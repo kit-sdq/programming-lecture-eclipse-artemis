@@ -4,6 +4,7 @@ package edu.kit.kastel.eclipse.common.core;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -170,9 +171,9 @@ public class AssessmentController extends AbstractController implements IAssessm
 	}
 
 	@Override
-	public String getTooltipForMistakeType(IMistakeType mistakeType) {
+	public String getTooltipForMistakeType(Locale locale, IMistakeType mistakeType) {
 		List<IAnnotation> annotations = this.getAnnotations().stream().filter(annotation -> annotation.getMistakeType().equals(mistakeType)).toList();
-		return mistakeType.getTooltip(annotations);
+		return mistakeType.getTooltip(locale, annotations);
 	}
 
 	private void initializeWithDeserializedAnnotations() throws IOException {

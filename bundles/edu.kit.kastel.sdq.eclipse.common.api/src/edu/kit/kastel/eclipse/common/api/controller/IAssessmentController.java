@@ -2,6 +2,7 @@
 package edu.kit.kastel.eclipse.common.api.controller;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 import edu.kit.kastel.eclipse.common.api.artemis.IProjectFileNamingStrategy;
@@ -76,7 +77,7 @@ public interface IAssessmentController extends IController {
 
 	List<IRatingGroup> getRatingGroups();
 
-	String getTooltipForMistakeType(IMistakeType mistakeType);
+	String getTooltipForMistakeType(Locale locale, IMistakeType mistakeType);
 
 	/**
 	 * Reset annotations by re-locking and reloading from Artemis state. Do so with

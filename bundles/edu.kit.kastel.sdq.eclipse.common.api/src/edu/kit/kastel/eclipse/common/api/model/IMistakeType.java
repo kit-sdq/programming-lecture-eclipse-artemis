@@ -69,7 +69,7 @@ public interface IMistakeType {
 	 * @return tooltip for hovering over the button. Shows rating status information
 	 *         based on the given annotation.
 	 */
-	String getTooltip(List<IAnnotation> annotations);
+	String getTooltip(Locale locale, List<IAnnotation> annotations);
 
 	/**
 	 * Indicates whether this is a custom penalty.
