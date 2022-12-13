@@ -16,9 +16,13 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.m2e.core.internal.IMavenConstants;
 import org.eclipse.m2e.core.ui.internal.UpdateMavenProjectJob;
+
+import edu.kit.kastel.eclipse.common.api.controller.ISubmissionLifecycleCallback;
 
 @SuppressWarnings("restriction")
 public class WorkspaceUtil {
@@ -28,10 +32,11 @@ public class WorkspaceUtil {
 	 * EXISTING project in the workspace. Natures are Maven and Java
 	 *
 	 * @param projectDirectory
+	 * @param buildCallbacks   Are called when the triggered build has completed
 	 * @throws CoreException
 	 */
-	public static final void createEclipseProject(final File projectDirectory) throws CoreException {
-		createEclipseProject(projectDirectory.getName());
+	public static final void createEclipseProject(final File projectDirectory, List<ISubmissionLifecycleCallback> buildCallbacks) throws CoreException {
+		createEclipseProject(projectDirectory.getName(), buildCallbacks);
 	}
 
 	/**
@@ -39,8 +44,9 @@ public class WorkspaceUtil {
 	 * EXISTING project in the workspace. Natures are Maven and Java
 	 *
 	 * @param projectName
+	 * @param buildCallbacks Are called when the triggered build has completed
 	 */
-	public static final void createEclipseProject(final String projectName) throws CoreException {
+	public static final void createEclipseProject(final String projectName, List<ISubmissionLifecycleCallback> buildCallbacks) throws CoreException {
 		final IProjectDescription description = ResourcesPlugin.getWorkspace().newProjectDescription(projectName);
 
 		final String[] natures = { JavaCore.NATURE_ID, IMavenConstants.NATURE_ID };
@@ -56,7 +62,15 @@ public class WorkspaceUtil {
 		project.open(null);
 		project.setDescription(description, null);
 
-		new UpdateMavenProjectJob(List.of(project)).schedule();
+		var job = new UpdateMavenProjectJob(List.of(project));
+		job.addJobChangeListener(new JobChangeAdapter() {
+			@Override
+			public void done(IJobChangeEvent e) {
+				buildCallbacks.forEach(c -> c.onPhaseCompleted(project));
+			}
+		});
+		;
+		job.schedule();
 	}
 
 	private static ICommand createBuildCommand(String name) {

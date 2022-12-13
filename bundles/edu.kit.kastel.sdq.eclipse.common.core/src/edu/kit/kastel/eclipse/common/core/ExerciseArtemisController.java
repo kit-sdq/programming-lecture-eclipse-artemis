@@ -3,6 +3,7 @@ package edu.kit.kastel.eclipse.common.core;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -57,7 +58,7 @@ public class ExerciseArtemisController extends AbstractController implements IEx
 			throw new ArtemisClientException("Error, can not download exercise.", e);
 		}
 		try {
-			WorkspaceUtil.createEclipseProject(projectNaming.getProjectFileInWorkspace(eclipseWorkspaceRoot, exercise, null));
+			WorkspaceUtil.createEclipseProject(projectNaming.getProjectFileInWorkspace(eclipseWorkspaceRoot, exercise, null), List.of());
 		} catch (CoreException e) {
 			throw new ArtemisClientException("Error, can not create project.", e);
 		}
