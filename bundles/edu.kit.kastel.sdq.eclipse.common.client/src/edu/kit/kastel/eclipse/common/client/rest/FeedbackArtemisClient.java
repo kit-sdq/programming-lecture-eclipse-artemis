@@ -24,7 +24,7 @@ public class FeedbackArtemisClient extends AbstractArtemisClient implements IFee
 	@Override
 	public Feedback[] getFeedbackForResult(ParticipationDTO participation, ResultsDTO result) throws ArtemisClientException {
 		final Response exercisesRsp = this.endpoint.path(PARTICIPATION_PATHPART).path(Integer.toString(participation.getParticipationId()))
-				.path(RESULT_PATHPART).path(Integer.toString(result.id)).path("details").request().header(AUTHORIZATION_NAME, this.token).buildGet().invoke();
+				.path(RESULT_PATHPART).path(Integer.toString(result.id)).path("details").request().cookie(getAuthCookie(this.token)).buildGet().invoke();
 
 		this.throwIfStatusUnsuccessful(exercisesRsp);
 

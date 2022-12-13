@@ -46,7 +46,7 @@ public class MappingLoaderArtemisClient extends AbstractArtemisClient implements
 	public List<ICourse> getCoursesForAssessment() throws ArtemisClientException, ProcessingException {
 		Response rsp;
 		try {
-			rsp = this.endpoint.path(COURSES_PATHPART).request().header(AUTHORIZATION_NAME, this.token).buildGet().invoke();
+			rsp = this.endpoint.path(COURSES_PATHPART).request().cookie(getAuthCookie(this.token)).buildGet().invoke();
 		} catch (ProcessingException e) {
 			throw new ArtemisClientException(Messages.CLIENT_CONNECTION_REFUSED);
 		}
@@ -65,7 +65,7 @@ public class MappingLoaderArtemisClient extends AbstractArtemisClient implements
 		Response rsp;
 
 		try {
-			rsp = this.endpoint.path(COURSES_PATHPART).path("for-dashboard").request().header(AUTHORIZATION_NAME, this.token).buildGet().invoke();
+			rsp = this.endpoint.path(COURSES_PATHPART).path("for-dashboard").request().cookie(getAuthCookie(this.token)).buildGet().invoke();
 		} catch (ProcessingException e) {
 			throw new ArtemisClientException(Messages.CLIENT_CONNECTION_REFUSED);
 		}
@@ -83,7 +83,7 @@ public class MappingLoaderArtemisClient extends AbstractArtemisClient implements
 	@Override
 	public List<IExerciseGroup> getExerciseGroupsForExam(IExam artemisExam, ICourse course) throws ArtemisClientException {
 		final Response rsp = this.endpoint.path(COURSES_PATHPART).path(String.valueOf(course.getCourseId())).path(EXAMS_PATHPART)
-				.path(String.valueOf(artemisExam.getExamId())).path("exam-for-assessment-dashboard").request().header(AUTHORIZATION_NAME, this.token).buildGet()
+				.path(String.valueOf(artemisExam.getExamId())).path("exam-for-assessment-dashboard").request().cookie(getAuthCookie(this.token)).buildGet()
 				.invoke();
 		this.throwIfStatusUnsuccessful(rsp);
 
@@ -99,7 +99,7 @@ public class MappingLoaderArtemisClient extends AbstractArtemisClient implements
 	@Override
 	public List<IExam> getExamsForCourse(ICourse artemisCourse) throws ArtemisClientException {
 		final Response examsRsp = this.endpoint.path(COURSES_PATHPART).path(String.valueOf(artemisCourse.getCourseId())).path(EXAMS_PATHPART).request()
-				.header(AUTHORIZATION_NAME, this.token).buildGet().invoke();
+				.cookie(getAuthCookie(this.token)).buildGet().invoke();
 		this.throwIfStatusUnsuccessful(examsRsp);
 
 		ArtemisExam[] examsArray = this.read(examsRsp.readEntity(String.class), ArtemisExam[].class);
@@ -112,7 +112,7 @@ public class MappingLoaderArtemisClient extends AbstractArtemisClient implements
 	@Override
 	public List<IExercise> getStudentExercisesForCourse(ICourse artemisCourse) throws ArtemisClientException {
 		final Response eexerciseRsp = this.endpoint.path(COURSES_PATHPART).path(String.valueOf(artemisCourse.getCourseId())).path(EXERCISES_PATHPART).request()
-				.header(AUTHORIZATION_NAME, this.token).buildGet().invoke();
+				.cookie(getAuthCookie(this.token)).buildGet().invoke();
 		this.throwIfStatusUnsuccessful(eexerciseRsp);
 
 		ArtemisExercise[] excerciseArray = this.read(eexerciseRsp.readEntity(String.class), ArtemisExercise[].class);
@@ -125,7 +125,7 @@ public class MappingLoaderArtemisClient extends AbstractArtemisClient implements
 	@Override
 	public List<IExercise> getGradingExercisesForCourse(ICourse artemisCourse) throws ArtemisClientException {
 		final Response exercisesRsp = this.endpoint.path(COURSES_PATHPART).path(String.valueOf(artemisCourse.getCourseId())).path("with-exercises").request()
-				.header(AUTHORIZATION_NAME, this.token).buildGet().invoke();
+				.cookie(getAuthCookie(this.token)).buildGet().invoke();
 
 		this.throwIfStatusUnsuccessful(exercisesRsp);
 

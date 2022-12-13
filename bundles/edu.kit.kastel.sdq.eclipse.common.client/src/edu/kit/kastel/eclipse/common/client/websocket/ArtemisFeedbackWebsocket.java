@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.Platform;
 import org.glassfish.tyrus.client.ClientManager;
 import org.glassfish.tyrus.container.grizzly.client.GrizzlyClientContainer;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
+import org.springframework.web.socket.WebSocketHttpHeaders;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
 import org.springframework.web.socket.sockjs.client.SockJsClient;
@@ -38,7 +39,7 @@ public class ArtemisFeedbackWebsocket implements IWebsocketClient {
 	private static final ILog log = Platform.getLog(ArtemisFeedbackWebsocket.class);
 
 	private static final String WEBSOCKET_PATH = "/websocket/tracker";
-	private static final String TOKEN_QUERY_PATH = "access_token";
+	private static final String TOKEN_COOKIE_NAME = "jwt";
 
 	private String baseUrl;
 
@@ -51,12 +52,14 @@ public class ArtemisFeedbackWebsocket implements IWebsocketClient {
 		if (this.nullOrEmpty(this.baseUrl) || this.nullOrEmpty(token)) {
 			throw new ArtemisWebsocketException(Messages.CLIENT_NO_BASE_URL);
 		}
-		String stompUrl = this.buildStompUrl(token);
+		String stompUrl = this.baseUrl + WEBSOCKET_PATH;
 		StandardWebSocketClient simpleWebSocketClient = this.configureStandartWebsocketClientWithSSL();
 		SockJsClient sockJsClient = this.configureSockJsClient(simpleWebSocketClient);
 		WebSocketStompClient stompClient = this.configureStompClient(sockJsClient);
 		try {
-			stompClient.connectAsync(stompUrl, new ArtemisSockJsSessionHandler(callback)).get();
+			WebSocketHttpHeaders headers = new WebSocketHttpHeaders();
+			headers.add(WebSocketHttpHeaders.COOKIE, TOKEN_COOKIE_NAME + "=" + token);
+			stompClient.connectAsync(stompUrl, headers, new ArtemisSockJsSessionHandler(callback)).get();
 		} catch (InterruptedException | ExecutionException e) {
 			throw new ArtemisWebsocketException(Messages.CLIENT_NO_WEBSOCKET, e);
 		}
@@ -104,10 +107,6 @@ public class ArtemisFeedbackWebsocket implements IWebsocketClient {
 		HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
 
 		return sc;
-	}
-
-	private String buildStompUrl(String token) {
-		return this.baseUrl + WEBSOCKET_PATH + "?" + TOKEN_QUERY_PATH + "=" + token;
 	}
 
 	private boolean nullOrEmpty(String str) {
