@@ -16,4 +16,5 @@ Export-Package: edu.kit.kastel.eclipse.common.api,
 Require-Bundle: com.fasterxml.jackson.core.jackson-annotations,
  org.eclipse.core.runtime
 Automatic-Module-Name: edu.kit.kastel.sdq.eclipse.common.api
+Import-Package: org.eclipse.core.resources
 
