@@ -2,6 +2,7 @@
 package edu.kit.kastel.eclipse.common.core;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -299,5 +300,10 @@ public class GradingSystemwideController extends SystemwideController implements
 
 	public final IPreferenceStore getPreferences() {
 		return this.preferenceStore;
+	}
+
+	@Override
+	public Path getCurrentProjectPath() {
+		return this.projectFileNamingStrategy.getProjectFileInWorkspace(WorkspaceUtil.getWorkspaceFile(), exercise, submission).toPath();
 	}
 }

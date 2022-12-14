@@ -373,6 +373,7 @@ public class ArtemisGradingView extends ViewPart {
 		this.viewController.createAnnotationsMarkers();
 		this.viewController.getRatingGroups().forEach(ratingGroup -> this.updatePenalty(ratingGroup.getDisplayName()));
 		this.result.loadFeedbackForExcerise();
+		AutograderUtil.runAutograder(this.viewController.getAssessmentController(), Activator.getDefault().getSystemwideController().getCurrentProjectPath().resolve("assignment").resolve("src"), success -> this.updatePenalties());
 	}
 
 	@Override

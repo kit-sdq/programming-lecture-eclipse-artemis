@@ -1,6 +1,7 @@
 /* Licensed under EPL-2.0 2022. */
 package edu.kit.kastel.eclipse.common.api.controller;
 
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,7 +43,7 @@ public interface IGradingSystemwideController extends ISystemwideController {
 	/**
 	 * <B>ASSESSMENT</B><br/>
 	 * <li>Deletes local project.
-	 * 
+	 *
 	 */
 	void closeAssessment();
 
@@ -112,5 +113,11 @@ public interface IGradingSystemwideController extends ISystemwideController {
 	Optional<IExercise> getSelectedExercise();
 
 	ExerciseStats getStats();
+
+	/**
+	 *
+	 * @return the path to the current project
+	 */
+	Path getCurrentProjectPath();
 
 }

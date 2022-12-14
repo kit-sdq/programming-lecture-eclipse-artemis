@@ -266,7 +266,7 @@ public final class AssessmentUtilities {
 			}
 
 		} catch (Exception e) {
-			throw new ArtemisClientException(e.getMessage());
+			throw new ArtemisClientException(e.getMessage(), e);
 		}
 	}
 
