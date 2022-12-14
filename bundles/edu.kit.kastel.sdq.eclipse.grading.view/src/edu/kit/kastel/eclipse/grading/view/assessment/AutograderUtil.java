@@ -1,3 +1,4 @@
+/* Licensed under EPL-2.0 2022. */
 package edu.kit.kastel.eclipse.grading.view.assessment;
 
 import java.io.File;
@@ -40,14 +41,8 @@ public class AutograderUtil {
 			try {
 				monitor.beginTask("Autograder", 7); // Compile, PMD, CPD, SpotBugs, Spoon, integrated, parsing
 
-				ProcessBuilder processBuilder = new ProcessBuilder(
-						"java",
-						"-jar",
-						getResource("resources/autograder-cmd.jar").getAbsolutePath(),
-						getResource("resources/autograder_config.yaml").getAbsolutePath(),
-						path.toString(),
-						"-s",
-						"--output-json");
+				ProcessBuilder processBuilder = new ProcessBuilder("java", "-jar", getResource("resources/autograder-cmd.jar").getAbsolutePath(),
+						getResource("resources/autograder_config.yaml").getAbsolutePath(), path.toString(), "-s", "--output-json");
 				var process = processBuilder.start();
 				Scanner autograderOutput = new Scanner(process.getInputStream());
 
@@ -68,8 +63,9 @@ public class AutograderUtil {
 				if (!errorOutput.isBlank()) {
 					LOG.warn("Autograder failed: " + errorOutput);
 					onCompletion.accept(false);
-					Display.getDefault().asyncExec(() -> MessageDialog.openWarning(AssessmentUtilities.getWindowsShell(), "Autograder failed", "Autograder failed. Please assess the submission normally. Additional information can be found in the Eclipse log"));
-				} else  {
+					Display.getDefault().asyncExec(() -> MessageDialog.openWarning(AssessmentUtilities.getWindowsShell(), "Autograder failed",
+							"Autograder failed. Please assess the submission normally. Additional information can be found in the Eclipse log"));
+				} else {
 					LOG.info("Autograder completed successfully");
 
 					List<AutograderAnnotation> annotations = Arrays.asList(new ObjectMapper().readValue(problems, AutograderAnnotation[].class));
@@ -78,8 +74,10 @@ public class AutograderUtil {
 						var type = mapAnnotation(assessmentController, annotation);
 						if (type.isPresent()) {
 							String id = IAnnotation.createID();
-							assessmentController.addAnnotation(id, type.get(), annotation.startLine() - 1, annotation.endLine() - 1, annotation.file().replace("/", "."), annotation.message(), type.get().isCustomPenalty() ? 0.0 : null);
-							AssessmentUtilities.createMarkerByAnnotation(assessmentController.getAnnotationById(id).get(), Activator.getDefault().getSystemwideController().getCurrentProjectName(), "assignment/src/");
+							assessmentController.addAnnotation(id, type.get(), annotation.startLine() - 1, annotation.endLine() - 1,
+									annotation.file().replace("/", "."), annotation.message(), type.get().isCustomPenalty() ? 0.0 : null);
+							AssessmentUtilities.createMarkerByAnnotation(assessmentController.getAnnotationById(id).get(),
+									Activator.getDefault().getSystemwideController().getCurrentProjectName(), "assignment/src/");
 						} else {
 							LOG.warn("No mistake type found for autograder annotation type " + annotation.type());
 						}
@@ -87,7 +85,8 @@ public class AutograderUtil {
 					onCompletion.accept(true);
 
 					monitor.done();
-					Display.getDefault().asyncExec(() -> MessageDialog.openInformation(AssessmentUtilities.getWindowsShell(), "Autograder succeeded", String.format("Autograder found %d issues. Please check that there are no false-positives.", annotations.size())));
+					Display.getDefault().asyncExec(() -> MessageDialog.openInformation(AssessmentUtilities.getWindowsShell(), "Autograder succeeded",
+							String.format("Autograder found %d issues. Please check that there are no false-positives.", annotations.size())));
 				}
 			} catch (Exception ex) {
 				LOG.warn(ex.getMessage());
@@ -168,7 +167,8 @@ public class AutograderUtil {
 		default -> "customComment";
 		};
 		assessmentController.getMistakes();
-		return assessmentController.getMistakes().stream().filter(m -> m.getId().equals(id)).findAny().or(() -> assessmentController.getMistakes().stream().filter(m -> m.getId().equals("customComment")).findAny());
+		return assessmentController.getMistakes().stream().filter(m -> m.getId().equals(id)).findAny()
+				.or(() -> assessmentController.getMistakes().stream().filter(m -> m.getId().equals("customComment")).findAny());
 	}
 
 	public record AutograderAnnotation(String type, String message, String file, int startLine, int endLine) {
