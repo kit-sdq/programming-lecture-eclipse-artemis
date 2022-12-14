@@ -354,7 +354,7 @@ public interface I18N {
 	 * @return the corresponding Locale
 	 */
 	default Locale getLocale() {
-		return Locale.US;
+		return Locale.ENGLISH;
 	}
 
 }

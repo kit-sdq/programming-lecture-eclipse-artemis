@@ -46,11 +46,11 @@ public class MistakeType implements IMistakeType {
 		// locale -> getCountry
 
 		messages = new HashMap<>();
-		messages.put(Locale.US, englishMessage);
+		messages.put(Locale.ENGLISH, englishMessage);
 		messages.put(Locale.GERMAN, message);
 
 		names = new HashMap<>();
-		names.put(Locale.US, englishButton);
+		names.put(Locale.ENGLISH, englishButton);
 		names.put(Locale.GERMAN, buttonName);
 
 		this.penaltyRule = penaltyRule;
@@ -118,7 +118,7 @@ public class MistakeType implements IMistakeType {
 		String penaltyText = this.penaltyRule.getTooltip(annotations);
 		return this.getMessage(locale) + "\n" + penaltyText;
 	}
-	
+
 	public String getTooltip(List<IAnnotation> annotations) {
 		String penaltyText = this.penaltyRule.getTooltip(annotations);
 		return this.getMessage() + "\n" + penaltyText;
