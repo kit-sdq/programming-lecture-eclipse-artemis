@@ -165,7 +165,8 @@ public class AutograderUtil {
 		case "DEFAULT_PACKAGE_USED" -> "customComment";
 		case "EMPTY_BLOCK" -> "emptyBlock";
 		case "UNUSED_CODE_ELEMENT" -> "unused";
-		case "REPEATED_MATH_OPERATION" -> "unnecessaryComplex";
+		case "STATIC_FIELD_SHOULD_BE_INSTANCE" -> "staticAttribute";
+		case "FIELD_SHOULD_BE_FINAL" -> "finalAttribute";
 		default -> "customComment";
 		};
 		assessmentController.getMistakes();
