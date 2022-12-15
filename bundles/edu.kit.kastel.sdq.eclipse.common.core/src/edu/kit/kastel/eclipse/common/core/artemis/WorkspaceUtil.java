@@ -16,6 +16,8 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jdt.core.JavaCore;
@@ -26,6 +28,7 @@ import edu.kit.kastel.eclipse.common.api.controller.ISubmissionLifecycleCallback
 
 @SuppressWarnings("restriction")
 public class WorkspaceUtil {
+	private static final ILog LOG = Platform.getLog(WorkspaceUtil.class);
 
 	/**
 	 * Create a new eclipse project given a projectName which corresponds to an
@@ -66,6 +69,7 @@ public class WorkspaceUtil {
 		job.addJobChangeListener(new JobChangeAdapter() {
 			@Override
 			public void done(IJobChangeEvent e) {
+				LOG.info("Maven update & build completed. Notifying " + buildCallbacks.size() + " listeners");
 				buildCallbacks.forEach(c -> c.onPhaseCompleted(project));
 			}
 		});

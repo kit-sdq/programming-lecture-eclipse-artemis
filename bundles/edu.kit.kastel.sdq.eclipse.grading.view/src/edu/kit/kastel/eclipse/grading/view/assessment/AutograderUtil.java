@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
@@ -39,12 +40,15 @@ public class AutograderUtil {
 
 		Job.create("Autograder", monitor -> {
 			try {
+				// Store the current exercise
+				var submission = assessmentController.getSubmission();
+
 				monitor.beginTask("Autograder", 7); // Compile, PMD, CPD, SpotBugs, Spoon, integrated, parsing
 
-				ProcessBuilder processBuilder = new ProcessBuilder("java", "-jar", getResource("resources/autograder-cmd.jar").getAbsolutePath(),
+				ProcessBuilder processBuilder = new ProcessBuilder("java", "-DFile.Encoding=UTF-8", "-jar", getResource("resources/autograder-cmd.jar").getAbsolutePath(),
 						getResource("resources/autograder_config.yaml").getAbsolutePath(), path.toString(), "-s", "--output-json");
 				var process = processBuilder.start();
-				Scanner autograderOutput = new Scanner(process.getInputStream());
+				Scanner autograderOutput = new Scanner(process.getInputStream(), StandardCharsets.UTF_8);
 
 				LOG.info("Autograder started");
 
@@ -65,7 +69,10 @@ public class AutograderUtil {
 					onCompletion.accept(false);
 					Display.getDefault().asyncExec(() -> MessageDialog.openWarning(AssessmentUtilities.getWindowsShell(), "Autograder failed",
 							"Autograder failed. Please assess the submission normally. Additional information can be found in the Eclipse log"));
-				} else {
+				} else if (assessmentController.getSubmission().getSubmissionId() != submission.getSubmissionId()) {
+					Display.getDefault().asyncExec(() -> MessageDialog.openWarning(AssessmentUtilities.getWindowsShell(), "Submission changed",
+							"Autograder completed successfully, but the current submission has changed during analysis, so no annotations will be created."));
+				}else {
 					LOG.info("Autograder completed successfully");
 
 					List<AutograderAnnotation> annotations = Arrays.asList(new ObjectMapper().readValue(problems, AutograderAnnotation[].class));

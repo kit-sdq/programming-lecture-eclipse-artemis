@@ -77,6 +77,7 @@ public class ArtemisGradingView extends ViewPart {
 		this.mistakeButtons = new HashMap<>();
 		this.initializeAnnotationEditing();
 		this.addListenerForMarkerDeletion();
+		Activator.getDefault().getSystemwideController().addSubmissionBuildListener(this::openPackagesAndFiles);
 	}
 
 	@Override
@@ -87,7 +88,6 @@ public class ArtemisGradingView extends ViewPart {
 		ICommandService commandService = getSite().getService(ICommandService.class);
 		var command = commandService.getCommand(ADD_ANNOTATION_COMMAND);
 		command.setHandler(new AddAnnotationCommandHandler(this, this.viewController));
-		Activator.getDefault().getSystemwideController().addSubmissionBuildListener(this::openPackagesAndFiles);
 	}
 
 	private void addListenerForMarkerDeletion() {
@@ -464,6 +464,7 @@ public class ArtemisGradingView extends ViewPart {
 
 	private void refreshArtemisState() {
 		this.viewController = new AssessmentViewController();
+		Activator.getDefault().getSystemwideController().addSubmissionBuildListener(this::openPackagesAndFiles);
 		this.result.setController(Activator.getDefault().getSystemwideController());
 		this.result.reset();
 		this.resetCombos();
