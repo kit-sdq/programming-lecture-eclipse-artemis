@@ -38,37 +38,27 @@ public class MistakeType implements IMistakeType {
 	 * 
 	 * @since 2.7
 	 */
-	@JsonCreator
-	public MistakeType(@JsonProperty("shortName") String shortName, @JsonProperty("button") String buttonName, @JsonProperty("message") String message,
-			@JsonProperty("engButton") String englishButton, @JsonProperty("engMessage") String englishMessage,
-			@JsonProperty("penaltyRule") PenaltyRule penaltyRule, @JsonProperty("appliesTo") String appliesTo) {
-//		@JsonCreator
-//		public MistakeType(@JsonProperty("shortName") String shortName, @JsonProperty("button") Map<String, String> buttons, @JsonProperty("message") Map<String, String> messages,
-//				@JsonProperty("penaltyRule") PenaltyRule penaltyRule, @JsonProperty("appliesTo") String appliesTo) {	
-		// Map<string, string>
+		@JsonCreator
+		public MistakeType(@JsonProperty("shortName") String shortName, @JsonProperty("button") Map<String, String> buttons, @JsonProperty("message") Map<String, String> messages,
+				@JsonProperty("penaltyRule") PenaltyRule penaltyRule, @JsonProperty("appliesTo") String appliesTo) {	
+
 		this.shortName = shortName;
 
 		// locale -> getCountry
 		
 		names = new HashMap<>();
 		this.messages = new HashMap<>();
-		//old:
-		messages.put(Locale.ENGLISH, englishMessage);
-		messages.put(Locale.GERMAN, message);
-		
-		names.put(Locale.ENGLISH, englishButton);
-		names.put(Locale.GERMAN, buttonName);
 		
 		//new:
-//		Set<String> messageKeys = messages.keySet();
-//		for (String key : messageKeys) {
-//			this.messages.put(new Locale(key), messages.get(key));
-//		}
-//		
-//		Set<String> nameKeys = buttons.keySet();
-//		for (String key : nameKeys) {
-//			names.put(new Locale(key), buttons.get(key));
-//		}
+		Set<String> messageKeys = messages.keySet();
+		for (String key : messageKeys) {
+			this.messages.put(new Locale(key), messages.get(key));
+		}
+		
+		Set<String> nameKeys = buttons.keySet();
+		for (String key : nameKeys) {
+			names.put(new Locale(key), buttons.get(key));
+		}
 
 		this.penaltyRule = penaltyRule;
 		this.appliesTo = appliesTo;
