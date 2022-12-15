@@ -45,8 +45,9 @@ public class AutograderUtil {
 
 				monitor.beginTask("Autograder", 7); // Compile, PMD, CPD, SpotBugs, Spoon, integrated, parsing
 
-				ProcessBuilder processBuilder = new ProcessBuilder("java", "-DFile.Encoding=UTF-8", "-jar", getResource("resources/autograder-cmd.jar").getAbsolutePath(),
-						getResource("resources/autograder_config.yaml").getAbsolutePath(), path.toString(), "-s", "--output-json");
+				ProcessBuilder processBuilder = new ProcessBuilder("java", "-DFile.Encoding=UTF-8", "-jar",
+						getResource("resources/autograder-cmd.jar").getAbsolutePath(), getResource("resources/autograder_config.yaml").getAbsolutePath(),
+						path.toString(), "-s", "--output-json");
 				var process = processBuilder.start();
 				Scanner autograderOutput = new Scanner(process.getInputStream(), StandardCharsets.UTF_8);
 
@@ -72,7 +73,7 @@ public class AutograderUtil {
 				} else if (assessmentController.getSubmission().getSubmissionId() != submission.getSubmissionId()) {
 					Display.getDefault().asyncExec(() -> MessageDialog.openWarning(AssessmentUtilities.getWindowsShell(), "Submission changed",
 							"Autograder completed successfully, but the current submission has changed during analysis, so no annotations will be created."));
-				}else {
+				} else {
 					LOG.info("Autograder completed successfully");
 
 					List<AutograderAnnotation> annotations = Arrays.asList(new ObjectMapper().readValue(problems, AutograderAnnotation[].class));
