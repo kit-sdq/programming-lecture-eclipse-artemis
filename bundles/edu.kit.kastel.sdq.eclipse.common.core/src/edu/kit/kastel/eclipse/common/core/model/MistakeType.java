@@ -39,8 +39,8 @@ public class MistakeType implements IMistakeType {
 	 * @since 2.7
 	 */
 		@JsonCreator
-		public MistakeType(@JsonProperty("shortName") String shortName, @JsonProperty("button") String buttonName, @JsonProperty("buttons") Map<String, String> buttons, 
-				@JsonProperty("message") String message, @JsonProperty("messages") Map<String, String> messages,
+		public MistakeType(@JsonProperty("shortName") String shortName, @JsonProperty("button") String buttonName, @JsonProperty(value="buttons", required=false) Map<String, String> buttons, 
+				@JsonProperty("message") String message, @JsonProperty(value="messages", required=false) Map<String, String> messages,
 				@JsonProperty("penaltyRule") PenaltyRule penaltyRule, @JsonProperty("appliesTo") String appliesTo) {	
 
 		this.shortName = shortName;
@@ -88,6 +88,9 @@ public class MistakeType implements IMistakeType {
 	}
 
 	public String getMessage(Locale locale) {
+		if (!messages.containsKey(locale)) {
+			return getMessage();
+		}
 		return this.messages.get(locale);
 	}
 
@@ -97,6 +100,9 @@ public class MistakeType implements IMistakeType {
 	}
 
 	public String getButtonText(Locale locale) {
+		if (!names.containsKey(locale)) {
+			return getMessage();
+		}
 		return this.names.get(locale);
 	}
 
