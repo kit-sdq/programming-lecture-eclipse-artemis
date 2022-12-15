@@ -31,11 +31,13 @@
     "mistakeTypes": [
         {
             "shortName": "custom",
-            "button": {
+            "button": "",
+            "message": "",
+            "buttons": {
                 "de": "Custom Penalty",
                 "en": "Custom Penalty"
             },
-            "message": {
+            "messages": {
                 "de": "",
                 "en": ""
             },
@@ -46,11 +48,13 @@
         },
         {
             "shortName": "jdEmpty",
-            "button": {
+            "button": "",
+            "message": "",
+            "buttons": {
                 "de": "JavaDoc Leer",
                 "en": "JavaDoc Empty"
             },
-            "message": {
+            "messages": {
                 "de": "JavaDoc ist leer oder nicht vorhanden",
                 "en": "JavaDoc is empty or does not exist"
             },
@@ -63,11 +67,13 @@
         },
         {
             "shortName": "jdTrivial",
-            "button": {
+            "button": "",
+            "message": "",
+            "buttons": {
                 "de": "JavaDoc Trivial",
                 "en": "JavaDoc Trivial"
             },
-            "message": {
+            "messages": {
                 "de": "JavaDoc beschreibt nur triviales und die Fehlerfälle werden nicht beachtet",
                 "en": "JavaDoc describes only trivial things and Error Cases are neglected"
             },
@@ -80,6 +86,8 @@
         },
         {
             "shortName": "complexCode",
+            "button": "",
+            "message": "",
             "button": {
                 "de": "schwieriger Code",
                 "en": "complicated Code"

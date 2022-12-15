@@ -39,7 +39,8 @@ public class MistakeType implements IMistakeType {
 	 * @since 2.7
 	 */
 		@JsonCreator
-		public MistakeType(@JsonProperty("shortName") String shortName, @JsonProperty("button") Map<String, String> buttons, @JsonProperty("message") Map<String, String> messages,
+		public MistakeType(@JsonProperty("shortName") String shortName, @JsonProperty("button") String buttonName, @JsonProperty("buttons") Map<String, String> buttons, 
+				@JsonProperty("message") String message, @JsonProperty("messages") Map<String, String> messages,
 				@JsonProperty("penaltyRule") PenaltyRule penaltyRule, @JsonProperty("appliesTo") String appliesTo) {	
 
 		this.shortName = shortName;
@@ -49,7 +50,9 @@ public class MistakeType implements IMistakeType {
 		names = new HashMap<>();
 		this.messages = new HashMap<>();
 		
-		//new:
+		this.messages.put(Locale.GERMAN, message);
+		names.put(Locale.GERMAN, buttonName);
+		
 		Set<String> messageKeys = messages.keySet();
 		for (String key : messageKeys) {
 			this.messages.put(new Locale(key), messages.get(key));
