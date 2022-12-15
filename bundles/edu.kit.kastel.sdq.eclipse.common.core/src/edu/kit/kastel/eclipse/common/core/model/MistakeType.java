@@ -39,9 +39,8 @@ public class MistakeType implements IMistakeType {
 	 * @since 2.7
 	 */
 	@JsonCreator
-	public MistakeType(@JsonProperty("shortName") String shortName, @JsonProperty("button") String buttonName,
-			@JsonProperty(value = "buttons", required = false) Map<String, String> buttons, @JsonProperty("message") String message,
-			@JsonProperty(value = "messages", required = false) Map<String, String> messages, @JsonProperty("penaltyRule") PenaltyRule penaltyRule,
+	public MistakeType(@JsonProperty("shortName") String shortName, @JsonProperty(value = "button") Map<String, String> buttons,
+			@JsonProperty(value = "message") Map<String, String> messages, @JsonProperty("penaltyRule") PenaltyRule penaltyRule,
 			@JsonProperty("appliesTo") String appliesTo) {
 
 		this.shortName = shortName;
@@ -51,17 +50,18 @@ public class MistakeType implements IMistakeType {
 		names = new HashMap<>();
 		this.messages = new HashMap<>();
 
-		this.messages.put(Locale.GERMAN, message);
-		names.put(Locale.GERMAN, buttonName);
-
-		Set<String> messageKeys = messages.keySet();
-		for (String key : messageKeys) {
-			this.messages.put(new Locale(key), messages.get(key));
+		if (messages != null) {
+			Set<String> messageKeys = messages.keySet();
+			for (String key : messageKeys) {
+				this.messages.put(new Locale(key), messages.get(key));
+			}
 		}
 
-		Set<String> nameKeys = buttons.keySet();
-		for (String key : nameKeys) {
-			names.put(new Locale(key), buttons.get(key));
+		if (buttons != null) {
+			Set<String> nameKeys = buttons.keySet();
+			for (String key : nameKeys) {
+				names.put(new Locale(key), buttons.get(key));
+			}
 		}
 
 		this.penaltyRule = penaltyRule;

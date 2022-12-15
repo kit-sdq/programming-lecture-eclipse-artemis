@@ -31,12 +31,12 @@
     "mistakeTypes": [
         {
             "shortName": "custom",
-            "button": "Custom Penalty",
-            "message": "",
-            "buttons": {
+            "button": {
+                "de": "Custom Penalty",
                 "en": "Custom Penalty"
             },
-            "messages": {
+            "message": {
+                "de": "",
                 "en": ""
             },
             "penaltyRule": {
@@ -46,12 +46,12 @@
         },
         {
             "shortName": "jdEmpty",
-            "button": "JavaDoc Leer",
-            "message": "JavaDoc ist leer oder nicht vorhanden",
-            "buttons": {
+            "button": {
+                "de": "JavaDoc Leer",
                 "en": "JavaDoc Empty"
             },
-            "messages": {
+            "message": {
+                "de": "JavaDoc ist leer oder nicht vorhanden",
                 "en": "JavaDoc is empty or does not exist"
             },
             "penaltyRule": {
@@ -63,12 +63,12 @@
         },
         {
             "shortName": "jdTrivial",
-            "button": "JavaDoc Trivial",
-            "message": "JavaDoc beschreibt nur triviales und die Fehlerfälle werden nicht beachtet",
-            "buttons": {
+            "button": {
+                "de": "JavaDoc Trivial",
                 "en": "JavaDoc Trivial"
             },
-            "messages": {
+            "message": {
+                "de": "JavaDoc beschreibt nur triviales und die Fehlerfälle werden nicht beachtet",
                 "en": "JavaDoc describes only trivial things and Error Cases are neglected"
             },
             "penaltyRule": {
@@ -80,12 +80,12 @@
         },
         {
             "shortName": "complexCode",
-            "button": "schwieriger Code",
-            "message": "Sehr komplexe Codestelle; es fehlt ein erklärender Kommentar oder der Code sollte durch geeignete Hilfsmethoden strukturiert werden",
-            "buttons": {
-                "en": "complicated Code"
+            "button": {
+                "de": "schwieriger Code",
+                "en": "Complex Code"
             },
-            "messages": {
+            "message": {
+                "de": "Sehr komplexe Codestelle; es fehlt ein erklärender Kommentar oder der Code sollte durch geeignete Hilfsmethoden strukturiert werden",
                 "en": "Very complex part of the Code; explanatory Comment missing or suitable helping Methods should be utilized"
             },
             "penaltyRule": {
