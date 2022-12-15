@@ -3,7 +3,6 @@ package edu.kit.kastel.eclipse.common.client.rest;
 
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status.Family;
 
@@ -31,7 +30,7 @@ public abstract class AbstractArtemisClient {
 	protected static final String RESULT_PATHPART = "results";
 	protected static final String STUDENT_EXAM_PATH = "student-exams";
 
-	private static final String COOKIE_NAME_JWT = "jwt";
+	protected static final String AUTHORIZATION_NAME = "Authorization";
 
 	protected final String hostname;
 	private ObjectMapper orm;
@@ -96,10 +95,6 @@ public abstract class AbstractArtemisClient {
 
 	private ObjectMapper createObjectMapper() {
 		return new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false).setSerializationInclusion(Include.NON_NULL);
-	}
-
-	protected final Cookie getAuthCookie(String jwtToken) {
-		return new Cookie(COOKIE_NAME_JWT, jwtToken);
 	}
 
 }

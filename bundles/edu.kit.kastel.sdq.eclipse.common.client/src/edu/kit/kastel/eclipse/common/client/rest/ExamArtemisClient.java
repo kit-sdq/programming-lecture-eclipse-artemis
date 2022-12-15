@@ -26,7 +26,7 @@ public class ExamArtemisClient extends AbstractArtemisClient implements IExamArt
 	public IStudentExam findExamForSummary(ICourse course, IExam exam) throws ArtemisClientException {
 		// "/courses/{courseId}/exams/{examId}/start"
 		final Response exercisesRsp = this.endpoint.path(COURSES_PATHPART).path(String.valueOf(course.getCourseId())).path(EXAMS_PATHPART)
-				.path(String.valueOf(exam.getExamId())).path("start").request().cookie(getAuthCookie(this.token)).buildGet().invoke();
+				.path(String.valueOf(exam.getExamId())).path("start").request().header(AUTHORIZATION_NAME, this.token).buildGet().invoke();
 		this.throwIfStatusUnsuccessful(exercisesRsp);
 		// get the part of the json that we want to deserialize
 		return this.read(exercisesRsp.readEntity(String.class), ArtemisStudentExam.class);
@@ -35,7 +35,7 @@ public class ExamArtemisClient extends AbstractArtemisClient implements IExamArt
 	@Override
 	public IStudentExam startExam(ICourse course, IExam exam) throws ArtemisClientException {
 		final Response exercisesRsp = this.endpoint.path(COURSES_PATHPART).path(String.valueOf(course.getCourseId())).path(EXAMS_PATHPART)
-				.path(String.valueOf(exam.getExamId())).path(STUDENT_EXAM_PATH).path("conduction").request().cookie(getAuthCookie(this.token)).buildGet()
+				.path(String.valueOf(exam.getExamId())).path(STUDENT_EXAM_PATH).path("conduction").request().header(AUTHORIZATION_NAME, this.token).buildGet()
 				.invoke();
 		this.throwIfStatusUnsuccessful(exercisesRsp);
 		return this.read(exercisesRsp.readEntity(String.class), ArtemisStudentExam.class);

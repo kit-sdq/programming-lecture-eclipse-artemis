@@ -32,6 +32,7 @@ public class ArtemisSockJsSessionHandler extends StompSessionHandlerAdapter {
 
 	@Override
 	public void handleFrame(StompHeaders headers, Object payload) {
+		log.info("Websocket - received frame!");
 		List<String> topics = headers.get("destination");
 		if (!topics.isEmpty() && topics.get(0).equals(TOPIC_NEW_RESULT)) {
 			log.info("Websocket - new result received!");
@@ -39,8 +40,6 @@ public class ArtemisSockJsSessionHandler extends StompSessionHandlerAdapter {
 		} else if (!topics.isEmpty() && topics.get(0).equals(TOPIC_NEW_SUBMISSION)) {
 			log.info("Websocket - new submission received!");
 			this.callback.handleSubmission(payload);
-		} else {
-			log.error("Websocket - received unknown frame");
 		}
 	}
 
