@@ -61,6 +61,9 @@ public class AdvancedPreferences extends FieldEditorPreferencePage implements IW
 						{ I18N().settingsOpenFilesOnAssessmentStartAll(), PreferenceConstants.OPEN_FILES_ON_ASSESSMENT_START_ALL } },
 				parent);
 
+		var autograderJarPath = new FileFieldEditor(PreferenceConstants.AUTOGRADER_JAR_PATH, "Autograder JAR file", parent);
+		var autograderConfigPath = new FileFieldEditor(PreferenceConstants.AUTOGRADER_CONFIG_PATH, "Autograder config file", parent);
+
 		this.addField(artemisUser);
 		this.addField(artemisPassword);
 		this.addField(gitToken);
@@ -72,6 +75,9 @@ public class AdvancedPreferences extends FieldEditorPreferencePage implements IW
 		this.addField(overrideDefaultPreferences);
 		this.addField(searchInMistakeMessages);
 		this.addField(openFiles);
+
+		this.addField(autograderJarPath);
+		this.addField(autograderConfigPath);
 	}
 
 	/*

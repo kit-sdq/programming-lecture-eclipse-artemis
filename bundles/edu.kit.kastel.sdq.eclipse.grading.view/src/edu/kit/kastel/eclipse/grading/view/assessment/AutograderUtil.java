@@ -2,9 +2,6 @@
 package edu.kit.kastel.eclipse.grading.view.assessment;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -13,20 +10,19 @@ import java.util.Optional;
 import java.util.Scanner;
 import java.util.function.Consumer;
 
-import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
-import org.osgi.framework.Bundle;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import edu.kit.kastel.eclipse.common.api.PreferenceConstants;
 import edu.kit.kastel.eclipse.common.api.controller.IAssessmentController;
 import edu.kit.kastel.eclipse.common.api.model.IAnnotation;
 import edu.kit.kastel.eclipse.common.api.model.IMistakeType;
+import edu.kit.kastel.eclipse.common.view.activator.CommonActivator;
 import edu.kit.kastel.eclipse.common.view.utilities.AssessmentUtilities;
 import edu.kit.kastel.eclipse.grading.view.activator.Activator;
 
@@ -35,7 +31,13 @@ public class AutograderUtil {
 
 	public static void runAutograder(IAssessmentController assessmentController, Path path, Consumer<Boolean> onCompletion) {
 		if (!assessmentController.getAnnotations().isEmpty()) {
+			LOG.info("Skipping autograder as there already annotation present");
 			return; // Don't run the autograder if there are already annotations
+		}
+
+		if (CommonActivator.getDefault().getPreferenceStore().getString(PreferenceConstants.AUTOGRADER_JAR_PATH).isBlank()) {
+			LOG.warn("Autograder path not set");
+			return;
 		}
 
 		Job.create("Autograder", monitor -> {
@@ -45,9 +47,11 @@ public class AutograderUtil {
 
 				monitor.beginTask("Autograder", 7); // Compile, PMD, CPD, SpotBugs, Spoon, integrated, parsing
 
-				ProcessBuilder processBuilder = new ProcessBuilder("java", "-DFile.Encoding=UTF-8", "-jar",
-						getResource("resources/autograder-cmd.jar").getAbsolutePath(), getResource("resources/autograder_config.yaml").getAbsolutePath(),
-						path.toString(), "-s", "--output-json");
+				File autograderJar = new File(CommonActivator.getDefault().getPreferenceStore().getString(PreferenceConstants.AUTOGRADER_JAR_PATH));
+				File autograderConfig = new File(CommonActivator.getDefault().getPreferenceStore().getString(PreferenceConstants.AUTOGRADER_CONFIG_PATH));
+
+				ProcessBuilder processBuilder = new ProcessBuilder("java", "-DFile.Encoding=UTF-8", "-jar", autograderJar.getAbsolutePath(),
+						autograderConfig.getAbsolutePath(), path.toString(), "-s", "--output-json");
 				var process = processBuilder.start();
 				Scanner autograderOutput = new Scanner(process.getInputStream(), StandardCharsets.UTF_8);
 
@@ -100,16 +104,6 @@ public class AutograderUtil {
 				LOG.warn(ex.getMessage());
 			}
 		}).schedule();
-	}
-
-	private static File getResource(String name) throws IOException {
-		Bundle bundle = Platform.getBundle("edu.kit.kastel.sdq.eclipse.grading.view");
-		URL url = FileLocator.toFileURL(FileLocator.find(bundle, new org.eclipse.core.runtime.Path(name)));
-		try {
-			return URIUtil.toFile(URIUtil.toURI(url));
-		} catch (URISyntaxException ex) {
-			throw new IOException(ex);
-		}
 	}
 
 	private static Optional<IMistakeType> mapAnnotation(IAssessmentController assessmentController, AutograderAnnotation annotation) {
