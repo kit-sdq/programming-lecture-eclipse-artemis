@@ -157,8 +157,14 @@ A mistake type belongs to a rating group and has a penalty rule that defines the
     "mistakeTypes" : [
         {
             "shortName": "custom",
-            "button": "Custom Penalty",
-            "message": "",
+            "button": {
+		"de": "Custom Penalty",
+		"en": "Custom Penalty"
+	    },
+            "message": {
+		"de": "",
+		"en": ""
+	    },
             "penaltyRule": {
                 "shortName": "customPenalty"
             },
@@ -166,8 +172,15 @@ A mistake type belongs to a rating group and has a penalty rule that defines the
         },
         {
             "shortName": "jdEmpty",
-            "button": "JavaDoc Leer",
-            "message": "JavaDoc ist leer oder nicht vorhanden",
+            "button": {
+		"de": "JavaDoc Leer",
+		"en": "JavaDoc empty"
+	    },
+            "message": 
+{
+		"de": "JavaDoc ist leer oder nicht vorhanden",
+		"en": "JavaDoc empty or missing"
+	    },
             "penaltyRule": {
                 "shortName": "thresholdPenalty",
                 "threshold": 1,
@@ -177,8 +190,14 @@ A mistake type belongs to a rating group and has a penalty rule that defines the
         },
         {
             "shortName": "stackingXY",
-            "button": "Stacking (XY)",
-            "message": "Hier wird mehrmals abgezogen",
+            "button": {
+		"de": "Stacking (XY)",
+		"en": "Stacking (XY)"
+	    },
+            "message": {
+		"de": "Hier wird mehrmals abgezogen",
+		"en": "Here deductions are made multiple times"
+	    },
             "penaltyRule": {
               "shortName": "stackingPenalty",
               "penalty": 0.5,

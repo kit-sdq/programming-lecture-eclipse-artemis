@@ -152,8 +152,14 @@ Creating a new PenaltyRule
         "mistakeTypes" : [
             {
                 "shortName": "idk",
-                "button": "MyMistakeType",
-                "message": "You made a grave mistake.",
+                "button": {
+		    "de": "MeinFehlerTyp",
+		    "en": "MyMistakeType"
+	    	},
+                "message": {
+		    "de": "Du machst einen schweren Fehler",
+		    "en": "You made a grave mistake."
+	    	},
                 "penaltyRule": {
                     "shortName": "myNewPenaltyRule",
                     "penalty": 5,
@@ -169,7 +175,7 @@ Controllers
 ^^^^^^^^^^^
 There are three Controllers:
 
-* The AssessmentController controlls a single assessment in terms of managing annotations. It provides Methods like
+* The AssessmentController controls a single assessment in terms of managing annotations. It provides Methods like
     * *addAnnotation(..)*
     * *getAnnotations()*
     * *resetAndRestartAssessment()*
