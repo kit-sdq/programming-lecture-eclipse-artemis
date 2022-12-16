@@ -86,8 +86,8 @@ public class AutograderUtil {
 						var type = mapAnnotation(assessmentController, annotation);
 						if (type.isPresent()) {
 							String id = IAnnotation.createID();
-							assessmentController.addAnnotation(id, type.get(), annotation.startLine() - 1, annotation.endLine() - 1,
-									annotation.file().replace("/", "."), annotation.message(), type.get().isCustomPenalty() ? 0.0 : null);
+							assessmentController.addAnnotation(id, type.get(), annotation.startLine() - 1, annotation.endLine() - 1, annotation.file(),
+									annotation.message(), type.get().isCustomPenalty() ? 0.0 : null);
 							AssessmentUtilities.createMarkerByAnnotation(assessmentController.getAnnotationById(id).get(),
 									Activator.getDefault().getSystemwideController().getCurrentProjectName(), "assignment/src/");
 						} else {
@@ -167,6 +167,7 @@ public class AutograderUtil {
 		case "UNUSED_CODE_ELEMENT" -> "unused";
 		case "STATIC_FIELD_SHOULD_BE_INSTANCE" -> "staticAttribute";
 		case "FIELD_SHOULD_BE_FINAL" -> "finalAttribute";
+		case "STRING_COMPARE_BY_REFERENCE" -> "customComment";
 		default -> "customComment";
 		};
 		assessmentController.getMistakes();
