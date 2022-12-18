@@ -86,10 +86,10 @@ public class AutograderUtil {
 						var type = mapAnnotation(assessmentController, annotation);
 						if (type.isPresent()) {
 							String id = IAnnotation.createID();
-							assessmentController.addAnnotation(id, type.get(), annotation.startLine() - 1, annotation.endLine() - 1, annotation.file(),
+							assessmentController.addAnnotation(id, type.get(), annotation.startLine() - 1, annotation.endLine() - 1, "src/" + annotation.file(),
 									annotation.message(), type.get().isCustomPenalty() ? 0.0 : null);
 							AssessmentUtilities.createMarkerByAnnotation(assessmentController.getAnnotationById(id).get(),
-									Activator.getDefault().getSystemwideController().getCurrentProjectName(), "assignment/src/");
+									Activator.getDefault().getSystemwideController().getCurrentProjectName(), "assignment/");
 						} else {
 							LOG.warn("No mistake type found for autograder annotation type " + annotation.type());
 						}
@@ -108,10 +108,10 @@ public class AutograderUtil {
 
 	private static Optional<IMistakeType> mapAnnotation(IAssessmentController assessmentController, AutograderAnnotation annotation) {
 		String id = switch (annotation.type()) {
-		case "DEPRECATED_COLLECTION_USED" -> "customComment";
+		case "DEPRECATED_COLLECTION_USED" -> "customPenalty";
 		case "COLLECTION_IS_EMPTY_REIMPLEMENTED" -> "unnecessaryComplex";
 		case "STRING_IS_EMPTY_REIMPLEMENTED" -> "unnecessaryComplex";
-		case "INVALID_AUTHOR_TAG" -> "customComment";
+		case "INVALID_AUTHOR_TAG" -> "customPenalty";
 		case "COMMENTED_OUT_CODE" -> "todo";
 		case "INCONSISTENT_COMMENT_LANGUAGE" -> "wrongLanguage";
 		case "INVALID_COMMENT_LANGUAGE" -> "wrongLanguage";
@@ -122,7 +122,7 @@ public class AutograderUtil {
 		case "JAVADOC_MISSING_PARAMETER_TAG" -> "jdTrivial";
 		case "JAVADOC_UNKNOWN_PARAMETER_TAG" -> "jdTrivial";
 		case "JAVADOC_INCOMPLETE_RETURN_TAG" -> "jdTrivial";
-		case "UNUSED_DIAMOND_OPERATOR" -> "customComment";
+		case "UNUSED_DIAMOND_OPERATOR" -> "customPenalty";
 		case "EXPLICITLY_EXTENDS_OBJECT" -> "unnecessaryComplex";
 		case "FOR_WITH_MULTIPLE_VARIABLES" -> "complexCode";
 		case "REDUNDANT_DEFAULT_CONSTRUCTOR" -> "emptyConstructor";
@@ -132,24 +132,24 @@ public class AutograderUtil {
 		case "REDUNDANT_SELF_ASSIGNMENT" -> "unnecessaryComplex";
 		case "REDUNDANT_LOCAL_BEFORE_RETURN" -> "unnecessaryComplex";
 		case "UNUSED_IMPORT" -> "unnecessaryComplex";
-		case "PRIMITIVE_WRAPPER_INSTANTIATION" -> "customComment";
+		case "PRIMITIVE_WRAPPER_INSTANTIATION" -> "customPenalty";
 		case "ASSERT" -> "assertIF";
-		case "EXCEPTION_PRINT_STACK_TRACE" -> "customComment";
-		case "CUSTOM_EXCEPTION_INHERITS_RUNTIME_EXCEPTION" -> "customComment";
-		case "CUSTOM_EXCEPTION_INHERITS_ERROR" -> "customComment";
+		case "EXCEPTION_PRINT_STACK_TRACE" -> "customPenalty";
+		case "CUSTOM_EXCEPTION_INHERITS_RUNTIME_EXCEPTION" -> "customPenalty";
+		case "CUSTOM_EXCEPTION_INHERITS_ERROR" -> "customPenalty";
 		case "EMPTY_CATCH" -> "emptyBlock";
 		case "EXCEPTION_CAUGHT_IN_SURROUNDING_BLOCK" -> "exceptionControlFlow";
-		case "RUNTIME_EXCEPTION_OR_ERROR_CAUGHT" -> "customComment";
+		case "RUNTIME_EXCEPTION_OR_ERROR_CAUGHT" -> "customPenalty";
 		case "OBJECTS_COMPARED_VIA_TO_STRING" -> "javaAPI";
 		case "CONSTANT_NOT_STATIC_OR_NOT_UPPER_CAMEL_CASE" -> "identifierNaming";
-		case "CONSTANT_IN_INTERFACE" -> "customComment";
+		case "CONSTANT_IN_INTERFACE" -> "customPenalty";
 		case "DUPLICATE_CODE" -> "codeCopyHelper";
-		case "REASSIGNED_PARAMETER" -> "customComment";
-		case "DOUBLE_BRACE_INITIALIZATION" -> "customComment";
-		case "NON_COMPLIANT_EQUALS" -> "customComment";
+		case "REASSIGNED_PARAMETER" -> "customPenalty";
+		case "DOUBLE_BRACE_INITIALIZATION" -> "customPenalty";
+		case "NON_COMPLIANT_EQUALS" -> "customPenalty";
 		case "INSTANCE_FIELD_CAN_BE_LOCAL" -> "unnecessaryComplex";
 		case "FOR_CAN_BE_FOREACH" -> "wrongLoopType";
-		case "OVERRIDE_ANNOTATION_MISSING" -> "customComment";
+		case "OVERRIDE_ANNOTATION_MISSING" -> "customPenalty";
 		case "SYSTEM_SPECIFIC_LINE_BREAK" -> "lineSeparator";
 		case "BOOLEAN_GETTER_NOT_CALLED_IS" -> "identifierNaming";
 		case "MEANINGLESS_CONSTANT_NAME" -> "meaninglessConstants";
@@ -162,17 +162,16 @@ public class AutograderUtil {
 		case "UTILITY_CLASS_NOT_FINAL" -> "utilityPrivate";
 		case "UTILITY_CLASS_INVALID_CONSTRUCTOR" -> "utilityPrivate";
 		case "UTILITY_CLASS_MUTABLE_FIELD" -> "utilityPrivate";
-		case "DEFAULT_PACKAGE_USED" -> "customComment";
+		case "DEFAULT_PACKAGE_USED" -> "customPenalty";
 		case "EMPTY_BLOCK" -> "emptyBlock";
 		case "UNUSED_CODE_ELEMENT" -> "unused";
 		case "STATIC_FIELD_SHOULD_BE_INSTANCE" -> "staticAttribute";
 		case "FIELD_SHOULD_BE_FINAL" -> "finalAttribute";
-		case "STRING_COMPARE_BY_REFERENCE" -> "customComment";
-		default -> "customComment";
+		case "STRING_COMPARE_BY_REFERENCE" -> "customPenalty";
+		default -> "customPenalty";
 		};
-		assessmentController.getMistakes();
 		return assessmentController.getMistakes().stream().filter(m -> m.getId().equals(id)).findAny()
-				.or(() -> assessmentController.getMistakes().stream().filter(m -> m.getId().equals("customComment")).findAny());
+				.or(() -> assessmentController.getMistakes().stream().filter(m -> m.getId().equals("customPenalty")).findAny());
 	}
 
 	public record AutograderAnnotation(String type, String message, String file, int startLine, int endLine) {
