@@ -69,7 +69,6 @@ public class WorkspaceUtil {
 				buildCallbacks.forEach(c -> c.onPhaseCompleted(project));
 			}
 		});
-		;
 		job.schedule();
 	}
 
