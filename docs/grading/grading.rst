@@ -176,8 +176,7 @@ A mistake type belongs to a rating group and has a penalty rule that defines the
 		"de": "JavaDoc Leer",
 		"en": "JavaDoc empty"
 	    },
-            "message": 
-{
+            "message": {
 		"de": "JavaDoc ist leer oder nicht vorhanden",
 		"en": "JavaDoc empty or missing"
 	    },
