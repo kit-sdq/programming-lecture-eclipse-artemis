@@ -1,6 +1,7 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.core.model;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -36,12 +37,13 @@ public class MistakeType implements IMistakeType {
 	 * <li>the rating group
 	 * <li>this object to the rating Group
 	 * 
+	 * @throws IOException if the JSON File is not build correctly
 	 * @since 2.7
 	 */
 	@JsonCreator
 	public MistakeType(@JsonProperty("shortName") String shortName, @JsonProperty(value = "button") Map<String, String> buttons,
 			@JsonProperty(value = "message") Map<String, String> messages, @JsonProperty("penaltyRule") PenaltyRule penaltyRule,
-			@JsonProperty("appliesTo") String appliesTo) {
+			@JsonProperty("appliesTo") String appliesTo) throws IOException {
 
 		this.shortName = shortName;
 
@@ -49,12 +51,14 @@ public class MistakeType implements IMistakeType {
 
 		names = new HashMap<>();
 		this.messages = new HashMap<>();
+		boolean germanMessageExists = false;
 
 		if (messages != null) {
 			Set<String> messageKeys = messages.keySet();
 			for (String key : messageKeys) {
 				this.messages.put(new Locale(key), messages.get(key));
 			}
+			germanMessageExists = messageKeys.contains("de");
 		}
 
 		if (buttons != null) {
@@ -66,6 +70,10 @@ public class MistakeType implements IMistakeType {
 
 		this.penaltyRule = penaltyRule;
 		this.appliesTo = appliesTo;
+
+		if (!germanMessageExists) {
+			throw new IOException("German message is missing for Feedback");
+		}
 
 	}
 
