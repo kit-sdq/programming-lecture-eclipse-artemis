@@ -108,10 +108,10 @@ public class AutograderUtil {
 
 	private static Optional<IMistakeType> mapAnnotation(IAssessmentController assessmentController, AutograderAnnotation annotation) {
 		String id = switch (annotation.type()) {
-		case "DEPRECATED_COLLECTION_USED" -> "customPenalty";
+		case "DEPRECATED_COLLECTION_USED" -> "custom";
 		case "COLLECTION_IS_EMPTY_REIMPLEMENTED" -> "unnecessaryComplex";
 		case "STRING_IS_EMPTY_REIMPLEMENTED" -> "unnecessaryComplex";
-		case "INVALID_AUTHOR_TAG" -> "customPenalty";
+		case "INVALID_AUTHOR_TAG" -> "custom";
 		case "COMMENTED_OUT_CODE" -> "todo";
 		case "INCONSISTENT_COMMENT_LANGUAGE" -> "wrongLanguage";
 		case "INVALID_COMMENT_LANGUAGE" -> "wrongLanguage";
@@ -122,7 +122,7 @@ public class AutograderUtil {
 		case "JAVADOC_MISSING_PARAMETER_TAG" -> "jdTrivial";
 		case "JAVADOC_UNKNOWN_PARAMETER_TAG" -> "jdTrivial";
 		case "JAVADOC_INCOMPLETE_RETURN_TAG" -> "jdTrivial";
-		case "UNUSED_DIAMOND_OPERATOR" -> "customPenalty";
+		case "UNUSED_DIAMOND_OPERATOR" -> "custom";
 		case "EXPLICITLY_EXTENDS_OBJECT" -> "unnecessaryComplex";
 		case "FOR_WITH_MULTIPLE_VARIABLES" -> "complexCode";
 		case "REDUNDANT_DEFAULT_CONSTRUCTOR" -> "emptyConstructor";
@@ -132,24 +132,24 @@ public class AutograderUtil {
 		case "REDUNDANT_SELF_ASSIGNMENT" -> "unnecessaryComplex";
 		case "REDUNDANT_LOCAL_BEFORE_RETURN" -> "unnecessaryComplex";
 		case "UNUSED_IMPORT" -> "unnecessaryComplex";
-		case "PRIMITIVE_WRAPPER_INSTANTIATION" -> "customPenalty";
+		case "PRIMITIVE_WRAPPER_INSTANTIATION" -> "custom";
 		case "ASSERT" -> "assertIF";
-		case "EXCEPTION_PRINT_STACK_TRACE" -> "customPenalty";
-		case "CUSTOM_EXCEPTION_INHERITS_RUNTIME_EXCEPTION" -> "customPenalty";
-		case "CUSTOM_EXCEPTION_INHERITS_ERROR" -> "customPenalty";
+		case "EXCEPTION_PRINT_STACK_TRACE" -> "custom";
+		case "CUSTOM_EXCEPTION_INHERITS_RUNTIME_EXCEPTION" -> "custom";
+		case "CUSTOM_EXCEPTION_INHERITS_ERROR" -> "custom";
 		case "EMPTY_CATCH" -> "emptyBlock";
 		case "EXCEPTION_CAUGHT_IN_SURROUNDING_BLOCK" -> "exceptionControlFlow";
-		case "RUNTIME_EXCEPTION_OR_ERROR_CAUGHT" -> "customPenalty";
+		case "RUNTIME_EXCEPTION_OR_ERROR_CAUGHT" -> "custom";
 		case "OBJECTS_COMPARED_VIA_TO_STRING" -> "javaAPI";
 		case "CONSTANT_NOT_STATIC_OR_NOT_UPPER_CAMEL_CASE" -> "identifierNaming";
-		case "CONSTANT_IN_INTERFACE" -> "customPenalty";
+		case "CONSTANT_IN_INTERFACE" -> "custom";
 		case "DUPLICATE_CODE" -> "codeCopyHelper";
-		case "REASSIGNED_PARAMETER" -> "customPenalty";
-		case "DOUBLE_BRACE_INITIALIZATION" -> "customPenalty";
-		case "NON_COMPLIANT_EQUALS" -> "customPenalty";
+		case "REASSIGNED_PARAMETER" -> "custom";
+		case "DOUBLE_BRACE_INITIALIZATION" -> "custom";
+		case "NON_COMPLIANT_EQUALS" -> "custom";
 		case "INSTANCE_FIELD_CAN_BE_LOCAL" -> "unnecessaryComplex";
 		case "FOR_CAN_BE_FOREACH" -> "wrongLoopType";
-		case "OVERRIDE_ANNOTATION_MISSING" -> "customPenalty";
+		case "OVERRIDE_ANNOTATION_MISSING" -> "custom";
 		case "SYSTEM_SPECIFIC_LINE_BREAK" -> "lineSeparator";
 		case "BOOLEAN_GETTER_NOT_CALLED_IS" -> "identifierNaming";
 		case "MEANINGLESS_CONSTANT_NAME" -> "meaninglessConstants";
@@ -161,17 +161,21 @@ public class AutograderUtil {
 		case "METHOD_USES_PLACEHOLDER_IMPLEMENTATION" -> "comment";
 		case "UTILITY_CLASS_NOT_FINAL" -> "utilityPrivate";
 		case "UTILITY_CLASS_INVALID_CONSTRUCTOR" -> "utilityPrivate";
-		case "UTILITY_CLASS_MUTABLE_FIELD" -> "utilityPrivate";
-		case "DEFAULT_PACKAGE_USED" -> "customPenalty";
+		case "UTILITY_CLASS_MUTABLE_FIELD" -> "unnecessaryUtility";
+		case "DEFAULT_PACKAGE_USED" -> "custom";
 		case "EMPTY_BLOCK" -> "emptyBlock";
 		case "UNUSED_CODE_ELEMENT" -> "unused";
 		case "STATIC_FIELD_SHOULD_BE_INSTANCE" -> "staticAttribute";
 		case "FIELD_SHOULD_BE_FINAL" -> "finalAttribute";
-		case "STRING_COMPARE_BY_REFERENCE" -> "customPenalty";
-		default -> "customPenalty";
+		case "STRING_COMPARE_BY_REFERENCE" -> "custom";
+		case "REDUNDANT_NEGATION" -> "unnecessaryComplex";
+		case "JAVADOC_UNEXPECTED_TAG" -> "custom";
+		case "REDUNDANT_ARRAY_INIT" -> "unnecessaryComplex";
+		case "USE_OPERATOR_ASSIGNMENT" -> "unnecessaryComplex";
+		default -> "custom";
 		};
 		return assessmentController.getMistakes().stream().filter(m -> m.getId().equals(id)).findAny()
-				.or(() -> assessmentController.getMistakes().stream().filter(m -> m.getId().equals("customPenalty")).findAny());
+				.or(() -> assessmentController.getMistakes().stream().filter(m -> m.getId().equals("custom")).findAny());
 	}
 
 	public record AutograderAnnotation(String type, String message, String file, int startLine, int endLine) {
