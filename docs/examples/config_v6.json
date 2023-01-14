@@ -31,8 +31,12 @@
     "mistakeTypes": [
         {
             "shortName": "custom",
-            "button": "Custom Penalty",
-            "message": "",
+            "button": {
+                "de": "Custom Penalty"
+            },
+            "message": {
+                "de": ""
+            },
             "penaltyRule": {
                 "shortName": "customPenalty"
             },
@@ -40,8 +44,12 @@
         },
         {
             "shortName": "jdEmpty",
-            "button": "JavaDoc Leer",
-            "message": "JavaDoc ist leer oder nicht vorhanden",
+            "button": {
+                "de": "JavaDoc Leer"
+            },
+            "message": {
+                "de": "JavaDoc ist leer oder nicht vorhanden"
+            },
             "penaltyRule": {
                 "shortName": "thresholdPenalty",
                 "threshold": 1,
@@ -51,8 +59,12 @@
         },
         {
             "shortName": "jdTrivial",
-            "button": "JavaDoc Trivial",
-            "message": "JavaDoc beschreibt nur triviales und die Fehlerfälle werden nicht beachtet",
+            "button": {
+                "de": "JavaDoc Trivial"
+            },
+            "message": {
+                "de": "JavaDoc beschreibt nur triviales und die Fehlerfälle werden nicht beachtet"
+            },
             "penaltyRule": {
                 "shortName": "thresholdPenalty",
                 "threshold": 1,
@@ -62,8 +74,12 @@
         },
         {
             "shortName": "complexCode",
-            "button": "schwieriger Code",
-            "message": "Sehr komplexe Codestelle; es fehlt ein erklärender Kommentar oder der Code sollte durch geeignete Hilfsmethoden strukturiert werden",
+            "button": {
+                "de": "schwieriger Code"
+            },
+            "message": {
+                "de": "Sehr komplexe Codestelle; es fehlt ein erklärender Kommentar oder der Code sollte durch geeignete Hilfsmethoden strukturiert werden"
+            },
             "penaltyRule": {
                 "shortName": "thresholdPenalty",
                 "threshold": 1,
@@ -73,8 +89,12 @@
         },
         {
             "shortName": "magicNumber",
-            "button": "Magic Number",
-            "message": "Magic Numbers / Strings",
+            "button": {
+                "de": "Magic Number"
+            },
+            "message": {
+                "de": "Magic Numbers / Strings"
+            },
             "penaltyRule": {
                 "shortName": "thresholdPenalty",
                 "threshold": 1,
@@ -84,8 +104,12 @@
         },
         {
             "shortName": "identifierNaming",
-            "button": "Schlechte Bezeichner",
-            "message": "Schlechte Bezeichner/Methodennamen oder unnötige Abkürzungen",
+            "button": {
+                "de": "Schlechte Bezeichner"
+            },
+            "message": {
+                "de": "Schlechte Bezeichner/Methodennamen oder unnötige Abkürzungen"
+            },
             "penaltyRule": {
                 "shortName": "thresholdPenalty",
                 "threshold": 1,
@@ -95,8 +119,12 @@
         },
         {
             "shortName": "toDO",
-            "button": "Kommentare",
-            "message": "Code enthält TODOs, auskommentierte Methoden, unnötige Ausagen",
+            "button": {
+                "de": "Kommentare"
+            },
+            "message": {
+                "de": "Code enthält TODOs, auskommentierte Methoden, unnötige Ausagen"
+            },
             "penaltyRule": {
                 "shortName": "thresholdPenalty",
                 "threshold": 1,
@@ -106,8 +134,12 @@
         },
         {
             "shortName": "staticCode",
-            "button": "Statische Methode",
-            "message": "statische Hilfsmethode in Klasse A sollte eigentlich Instanzmethode sein",
+            "button": {
+                "de": "Statische Methode"
+            },
+            "message": {
+                "de": "statische Hilfsmethode in Klasse A sollte eigentlich Instanzmethode sein"
+            },
             "penaltyRule": {
                 "shortName": "thresholdPenalty",
                 "threshold": 1,
@@ -117,8 +149,12 @@
         },
         {
             "shortName": "publicprivate",
-            "button": "Sichtbarkeit",
-            "message": "Falsche Sichtbarkeit. Methode/Attribut sollte eigentlich eine andere Sichtbarkeit haben.",
+            "button": {
+                "de": "Sichtbarkeit"
+            },
+            "message": {
+                "de": "Falsche Sichtbarkeit. Methode/Attribut sollte eigentlich eine andere Sichtbarkeit haben."
+            },
             "penaltyRule": {
                 "shortName": "thresholdPenalty",
                 "threshold": 1,
@@ -128,8 +164,12 @@
         },
         {
             "shortName": "getterSetter",
-            "button": "getterSetter für Listen",
-            "message": "(generierte) getter- und setter- für Implementierungsdetails (Kapselung verletzt), z.B. ArrayList",
+            "button": {
+                "de": "getterSetter für Listen"
+            },
+            "message": {
+                "de": "(generierte) getter- und setter- für Implementierungsdetails (Kapselung verletzt), z.B. ArrayList"
+            },
             "penaltyRule": {
                 "shortName": "thresholdPenalty",
                 "threshold": 1,
@@ -139,8 +179,12 @@
         },
         {
             "shortName": "runtimeExcpetion",
-            "button": "Runtime Exceptions",
-            "message": "ArrayIndexOutOfBoundsException oder NullPointerException fangen statt Größe von Array zu prüfen oder auf null zu prüfen.",
+            "button": {
+                "de": "Runtime Exceptions"
+            },
+            "message": {
+                "de": "ArrayIndexOutOfBoundsException oder NullPointerException fangen statt Größe von Array zu prüfen oder auf null zu prüfen."
+            },
             "penaltyRule": {
                 "shortName": "thresholdPenalty",
                 "threshold": 1,
@@ -150,8 +194,12 @@
         },
         {
             "shortName": "codeCopyInheritance",
-            "button": "Code Kopien Vererbung",
-            "message": "Code-Kopien, statt gemeinsame Funktionalität in Oberklasse",
+            "button": {
+                "de": "Code Kopien Vererbung"
+            },
+            "message": {
+                "de": "Code-Kopien, statt gemeinsame Funktionalität in Oberklasse"
+            },
             "penaltyRule": {
                 "shortName": "thresholdPenalty",
                 "threshold": 1,
@@ -161,8 +209,12 @@
         },
         {
             "shortName": "codeCopyHelper",
-            "button": "Code Kopien Hilfsmethode",
-            "message": "Code-Kopien, statt gemeinsame Funktionalität in Hilfsmethode",
+            "button": {
+                "de": "Code Kopien Hilfsmethode"
+            },
+            "message": {
+                "de": "Code-Kopien, statt gemeinsame Funktionalität in Hilfsmethode"
+            },
             "penaltyRule": {
                 "shortName": "thresholdPenalty",
                 "threshold": 1,
@@ -172,8 +224,12 @@
         },
         {
             "shortName": "wrongEnum",
-            "button": "Enum/Vererbung",
-            "message": "Enum, wenn eigentlich Inheritance das richtige Mittel gewesen wäre",
+            "button": {
+                "de": "Enum/Vererbung"
+            },
+            "message": {
+                "de": "Enum, wenn eigentlich Inheritance das richtige Mittel gewesen wäre"
+            },
             "penaltyRule": {
                 "shortName": "thresholdPenalty",
                 "threshold": 1,
@@ -183,8 +239,12 @@
         },
         {
             "shortName": "uiIO",
-            "button": "IO/UI",
-            "message": "Ausgaben auf Terminal sind nicht in einer UI-Klasse verkapselt, sondern über die Domänenklassen verteilt, oder stark gemischt mit Logik",
+            "button": {
+                "de": "IO/UI"
+            },
+            "message": {
+                "de": "Ausgaben auf Terminal sind nicht in einer UI-Klasse verkapselt, sondern über die Domänenklassen verteilt, oder stark gemischt mit Logik"
+            },
             "penaltyRule": {
                 "shortName": "thresholdPenalty",
                 "threshold": 1,
@@ -194,8 +254,12 @@
         },
         {
             "shortName": "objectConcrete",
-            "button": "Object",
-            "message": "Object statt konkrete Klasse verwendet",
+            "button": {
+                "de": "Object"
+            },
+            "message": {
+                "de": "Object statt konkrete Klasse verwendet"
+            },
             "penaltyRule": {
                 "shortName": "thresholdPenalty",
                 "threshold": 1,
@@ -205,8 +269,12 @@
         },
         {
             "shortName": "instanceOf",
-            "button": "instanceof",
-            "message": "instanceof wird verwendet",
+            "button": {
+                "de": "instanceof"
+            },
+            "message": {
+                "de": "instanceof wird verwendet"
+            },
             "penaltyRule": {
                 "shortName": "thresholdPenalty",
                 "threshold": 1,
@@ -216,8 +284,12 @@
         },
         {
             "shortName": "setList",
-            "button": "List statt set",
-            "message": "Statt mit einem Set mit einer List gearbeitet und immer auf contains geprüft.",
+            "button": {
+                "de": "List statt set"
+            },
+            "message": {
+                "de": "Statt mit einem Set mit einer List gearbeitet und immer auf contains geprüft."
+            },
             "penaltyRule": {
                 "shortName": "thresholdPenalty",
                 "threshold": 1,
@@ -227,8 +299,12 @@
         },
         {
             "shortName": "depthMethod",
-            "button": "Verschachtelungstiefe",
-            "message": "Zu tiefe Verschachtelungstiefe die trivialerweise und sinnvoll in eine private Untermethode verpackt hätte werden können",
+            "button": {
+                "de": "Verschachtelungstiefe"
+            },
+            "message": {
+                "de": "Zu tiefe Verschachtelungstiefe die trivialerweise und sinnvoll in eine private Untermethode verpackt hätte werden können"
+            },
             "penaltyRule": {
                 "shortName": "thresholdPenalty",
                 "threshold": 1,
@@ -238,8 +314,12 @@
         },
         {
             "shortName": "operationDomain",
-            "button": "Operationen statt Domain",
-            "message": "Funktionalität ist nach Operationen aufgeteilt (d.h. bspw. Klasse für Finden, Ausgeben, Validieren von Entitäten aller verschiedenen Typen) statt Aufteilen in Domäne",
+            "button": {
+                "de": "Operationen statt Domain"
+            },
+            "message": {
+                "de": "Funktionalität ist nach Operationen aufgeteilt (d.h. bspw. Klasse für Finden, Ausgeben, Validieren von Entitäten aller verschiedenen Typen) statt Aufteilen in Domäne"
+            },
             "penaltyRule": {
                 "shortName": "thresholdPenalty",
                 "threshold": 1,
@@ -249,8 +329,12 @@
         },
         {
             "shortName": "finalAttribute",
-            "button": "Final",
-            "message": "nicht-finale Attribute, die eigtl. final sein sollten",
+            "button": {
+                "de": "Final"
+            },
+            "message": {
+                "de": "nicht-finale Attribute, die eigtl. final sein sollten"
+            },
             "penaltyRule": {
                 "shortName": "thresholdPenalty",
                 "threshold": 1,
@@ -260,8 +344,12 @@
         },
         {
             "shortName": "hardcodedLogic",
-            "button": "Logik hartkodiert",
-            "message": "Keine Variabilität in der implementierten Logik, bspw. Parameter hartkodiert",
+            "button": {
+                "de": "Logik hartkodiert"
+            },
+            "message": {
+                "de": "Keine Variabilität in der implementierten Logik, bspw. Parameter hartkodiert"
+            },
             "penaltyRule": {
                 "shortName": "thresholdPenalty",
                 "threshold": 1,
@@ -271,8 +359,12 @@
         },
         {
             "shortName": "utilityClassPrivateConstructor",
-            "button": "Utility-Class: Konstruktor",
-            "message": "Utility-Klasse muss einen privaten Konstruktor haben",
+            "button": {
+                "de": "Utility-Class: Konstruktor"
+            },
+            "message": {
+                "de": "Utility-Klasse muss einen privaten Konstruktor haben"
+            },
             "penaltyRule": {
                 "shortName": "thresholdPenalty",
                 "threshold": 1,
@@ -282,8 +374,12 @@
         },
         {
             "shortName": "stringReference",
-            "button": "Stringreferenzen",
-            "message": "Objekte werden über Strings referenziert, anstatt über typisierte Java-Referenzen.",
+            "button": {
+                "de": "Stringreferenzen"
+            },
+            "message": {
+                "de": "Objekte werden über Strings referenziert, anstatt über typisierte Java-Referenzen."
+            },
             "penaltyRule": {
                 "shortName": "thresholdPenalty",
                 "threshold": 1,
@@ -293,8 +389,12 @@
         },
         {
             "shortName": "staticAttribute",
-            "button": "statisches Attribut",
-            "message": "statisches Attribut sollte Instanzattribut sein",
+            "button": {
+                "de": "statisches Attribut"
+            },
+            "message": {
+                "de": "statisches Attribut sollte Instanzattribut sein"
+            },
             "penaltyRule": {
                 "shortName": "thresholdPenalty",
                 "threshold": 1,
@@ -304,8 +404,12 @@
         },
         {
             "shortName": "assertIF",
-            "button": "assert if",
-            "message": "assert werden statt if verwendet",
+            "button": {
+                "de": "assert if"
+            },
+            "message": {
+                "de": "assert werden statt if verwendet"
+            },
             "penaltyRule": {
                 "shortName": "thresholdPenalty",
                 "threshold": 1,
@@ -315,8 +419,12 @@
         },
         {
             "shortName": "exceptionControlFlow",
-            "button": "Exceptions Kontrollfluss",
-            "message": "Exceptions werden für Kontrollfluss verwendet",
+            "button": {
+                "de": "Exceptions Kontrollfluss"
+            },
+            "message": {
+                "de": "Exceptions werden für Kontrollfluss verwendet"
+            },
             "penaltyRule": {
                 "shortName": "thresholdPenalty",
                 "threshold": 1,
@@ -326,8 +434,12 @@
         },
         {
             "shortName": "tryCatch",
-            "button": "try/catch Blöcke",
-            "message": "Try/catch Blöcke sind sehr groß und umfassen nicht nur die nötigen Konstrukte",
+            "button": {
+                "de": "try/catch Blöcke"
+            },
+            "message": {
+                "de": "Try/catch Blöcke sind sehr groß und umfassen nicht nur die nötigen Konstrukte"
+            },
             "penaltyRule": {
                 "shortName": "thresholdPenalty",
                 "threshold": 1,
@@ -337,8 +449,12 @@
         },
         {
             "shortName": "javaAPI",
-            "button": "JavaAPI",
-            "message": "Es wurde Funktionalität selber entwickelt, die bereits durch die Java-API zur Verfügung gestellt wird. z.B. eigene Listen statt java.util.List",
+            "button": {
+                "de": "JavaAPI"
+            },
+            "message": {
+                "de": "Es wurde Funktionalität selber entwickelt, die bereits durch die Java-API zur Verfügung gestellt wird. z.B. eigene Listen statt java.util.List"
+            },
             "penaltyRule": {
                 "shortName": "thresholdPenalty",
                 "threshold": 1,
@@ -348,8 +464,12 @@
         },
         {
             "shortName": "javaDatastructure",
-            "button": "Java-Datenstrukturen",
-            "message": "Es wurden nicht die aus der Java-API vorgegebenen Datenstrukturen (z.B. Listen, Set...) verwendet",
+            "button": {
+                "de": "Java-Datenstrukturen"
+            },
+            "message": {
+                "de": "Es wurden nicht die aus der Java-API vorgegebenen Datenstrukturen (z.B. Listen, Set...) verwendet"
+            },
             "penaltyRule": {
                 "shortName": "thresholdPenalty",
                 "threshold": 1,
@@ -359,8 +479,12 @@
         },
         {
             "shortName": "javaSorting",
-            "button": "Java-Sortierung",
-            "message": "Es wurden nicht die in der Java-API vorgegebenen Sortierwerkzeuge verwendet",
+            "button": {
+                "de": "Java-Sortierung"
+            },
+            "message": {
+                "de": "Es wurden nicht die in der Java-API vorgegebenen Sortierwerkzeuge verwendet"
+            },
             "penaltyRule": {
                 "shortName": "thresholdPenalty",
                 "threshold": 1,
@@ -370,8 +494,12 @@
         },
         {
             "shortName": "wildcardImports",
-            "button": "Wildcard Import",
-            "message": "Verwendung von Wildcards bei Importanweisung: z.B. import some.package.*;",
+            "button": {
+                "de": "Wildcard Import"
+            },
+            "message": {
+                "de": "Verwendung von Wildcards bei Importanweisung: z.B. import some.package.*;"
+            },
             "penaltyRule": {
                 "shortName": "thresholdPenalty",
                 "threshold": 1,
@@ -381,8 +509,12 @@
         },
         {
             "shortName": "wrongLoopType",
-            "button": "Falscher Schleifentyp",
-            "message": "Nicht den geeignetsten Schleifentyp gewählt, z.B. While statt For oder For statt ForEach.",
+            "button": {
+                "de": "Falscher Schleifentyp"
+            },
+            "message": {
+                "de": "Nicht den geeignetsten Schleifentyp gewählt, z.B. While statt For oder For statt ForEach."
+            },
             "penaltyRule": {
                 "shortName": "thresholdPenalty",
                 "threshold": 1,
@@ -392,8 +524,12 @@
         },
         {
             "shortName": "enumForRange",
-            "button": "Enum/Mengen",
-            "message": "Enum für abgeschlossene Mengen",
+            "button": {
+                "de": "Enum/Mengen"
+            },
+            "message": {
+                "de": "Enum für abgeschlossene Mengen"
+            },
             "penaltyRule": {
                 "shortName": "thresholdPenalty",
                 "threshold": 1,
@@ -403,8 +539,12 @@
         },
         {
             "shortName": "interfaceAgainst",
-            "button": "Interface",
-            "message": "Interface statt konkrete Klasse verwenden",
+            "button": {
+                "de": "Interface"
+            },
+            "message": {
+                "de": "Interface statt konkrete Klasse verwenden"
+            },
             "penaltyRule": {
                 "shortName": "thresholdPenalty",
                 "threshold": 1,
@@ -414,8 +554,12 @@
         },
         {
             "shortName": "wrongLanguage",
-            "button": "einheitliche Sprache",
-            "message": "Einheitliche Sprache für Kommentare/Ausgabe verwenden",
+            "button": {
+                "de": "einheitliche Sprache"
+            },
+            "message": {
+                "de": "Einheitliche Sprache für Kommentare/Ausgabe verwenden"
+            },
             "penaltyRule": {
                 "shortName": "thresholdPenalty",
                 "threshold": 1,
@@ -425,8 +569,12 @@
         },
         {
             "shortName": "sideAffectDocumention",
-            "button": "Seiteneffekte",
-            "message": "Undokumentierte Seiteneffekte",
+            "button": {
+                "de": "Seiteneffekte"
+            },
+            "message": {
+                "de": "Undokumentierte Seiteneffekte"
+            },
             "penaltyRule": {
                 "shortName": "thresholdPenalty",
                 "threshold": 1,
@@ -436,8 +584,12 @@
         },
         {
             "shortName": "unnecessaryComplex",
-            "button": "unnötige Komplexität",
-            "message": "Codestelle ist unnötig komplex",
+            "button": {
+                "de": "unnötige Komplexität"
+            },
+            "message": {
+                "de": "Codestelle ist unnötig komplex"
+            },
             "penaltyRule": {
                 "shortName": "thresholdPenalty",
                 "threshold": 1,
@@ -447,8 +599,12 @@
         },
         {
             "shortName": "unnecessary",
-            "button": "Quatsch (C) JK",
-            "message": "Ungeschickte Lösung",
+            "button": {
+                "de": "Quatsch (C) JK"
+            },
+            "message": {
+                "de": "Ungeschickte Lösung"
+            },
             "penaltyRule": {
                 "shortName": "thresholdPenalty",
                 "threshold": 1,
@@ -458,8 +614,12 @@
         },
         {
             "shortName": "parseInt",
-            "button": "parseInt",
-            "message": "Keine Fehlerbehandlung beim Parsen von Strings zu Integer",
+            "button": {
+                "de": "parseInt"
+            },
+            "message": {
+                "de": "Keine Fehlerbehandlung beim Parsen von Strings zu Integer"
+            },
             "penaltyRule": {
                 "shortName": "thresholdPenalty",
                 "threshold": 1,
@@ -469,8 +629,12 @@
         },
         {
             "shortName": "errrorMessage",
-            "button": "Fehlermeldung",
-            "message": "Fehlermeldung zu unspezifisch, z.B. nur Error, Fehler",
+            "button": {
+                "de": "Fehlermeldung"
+            },
+            "message": {
+                "de": "Fehlermeldung zu unspezifisch, z.B. nur Error, Fehler"
+            },
             "penaltyRule": {
                 "shortName": "thresholdPenalty",
                 "threshold": 1,
@@ -480,8 +644,12 @@
         },
         {
             "shortName": "package",
-            "button": "Pakete",
-            "message": "bessere Aufteilung in Pakete",
+            "button": {
+                "de": "Pakete"
+            },
+            "message": {
+                "de": "bessere Aufteilung in Pakete"
+            },
             "penaltyRule": {
                 "shortName": "thresholdPenalty",
                 "threshold": 1,
@@ -491,8 +659,12 @@
         },
         {
             "shortName": "emptyCatch",
-            "button": "Leeres Catch",
-            "message": "Leerer Catch-Block",
+            "button": {
+                "de": "Leeres Catch"
+            },
+            "message": {
+                "de": "Leerer Catch-Block"
+            },
             "penaltyRule": {
                 "shortName": "thresholdPenalty",
                 "threshold": 1,
