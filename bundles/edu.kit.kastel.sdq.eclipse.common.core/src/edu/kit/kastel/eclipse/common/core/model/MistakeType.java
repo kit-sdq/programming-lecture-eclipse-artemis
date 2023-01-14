@@ -38,7 +38,7 @@ public class MistakeType implements IMistakeType {
 	 * <li>this object to the rating Group
 	 * 
 	 * @throws IOException if the JSON File is not build correctly
-	 * @since 2.7
+	 * @since 2.9
 	 */
 	@JsonCreator
 	public MistakeType(@JsonProperty("shortName") String shortName, @JsonProperty(value = "button") Map<String, String> buttons,

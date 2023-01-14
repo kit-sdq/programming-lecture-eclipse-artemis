@@ -31,7 +31,7 @@ public interface IMistakeType {
 	String getMessage();
 
 	/**
-	 * defaults to German
+	 * if {@param Locale} does not have an entry, returns the specified default language entry
 	 * 
 	 * @return a more elaborate explanation of what the mistake is in the respective
 	 *         Language.
