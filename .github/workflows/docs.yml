@@ -3,7 +3,7 @@ name: Documentation
 on:
   push:
     paths:
-      - 'docs'
+      - 'docs/**'
       - '.github/workflows/docs.yml'
   workflow_dispatch:
 
@@ -11,7 +11,7 @@ jobs:
   docs:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3.1.0
+      - uses: actions/checkout@v3.3.0
       - name: Fix Deployment for GH Pages
         run: mkdir -p _build/dirhtml/ && touch _build/dirhtml/.nojekyll
       - uses: actions/setup-java@v3
