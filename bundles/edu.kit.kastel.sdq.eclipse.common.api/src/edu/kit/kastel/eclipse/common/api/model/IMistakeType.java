@@ -31,8 +31,10 @@ public interface IMistakeType {
 	String getMessage();
 
 	/**
-	 * if {@param Locale} does not have an entry, returns the specified default language entry
+	 * if the given Locale does not have an entry, returns the specified default
+	 * language entry
 	 * 
+	 * @param locale the Language requested for this message
 	 * @return a more elaborate explanation of what the mistake is in the respective
 	 *         Language.
 	 */
@@ -46,6 +48,7 @@ public interface IMistakeType {
 
 	/**
 	 *
+	 * @param locale the Language requested for this message
 	 * @return what should be shown on the button in the respective Language.
 	 */
 	String getButtonText(Locale locale);
