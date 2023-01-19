@@ -51,7 +51,6 @@ public class MistakeType implements IMistakeType {
 
 		names = new HashMap<>();
 		this.messages = new HashMap<>();
-		boolean defaultMessageExists = false;
 
 		if (messages != null) {
 			Set<String> messageKeys = messages.keySet();
@@ -66,12 +65,12 @@ public class MistakeType implements IMistakeType {
 				names.put(new Locale(key), buttons.get(key));
 			}
 		}
-		defaultMessageExists = this.messages.containsKey(DEFAULT_LOCALE);
+		boolean defaultExists = this.messages.containsKey(DEFAULT_LOCALE) && this.names.containsKey(DEFAULT_LOCALE);
 		this.penaltyRule = penaltyRule;
 		this.appliesTo = appliesTo;
 
-		if (!defaultMessageExists) {
-			throw new IOException("Default message (" + DEFAULT_LOCALE.toString() + ") is missing for Feedback");
+		if (!defaultExists) {
+			throw new IOException("Default (" + DEFAULT_LOCALE.toString() + ") message or name is missing for Feedback");
 		}
 
 	}
