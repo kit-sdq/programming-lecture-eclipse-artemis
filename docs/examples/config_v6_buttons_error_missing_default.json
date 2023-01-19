@@ -1,0 +1,98 @@
+{
+    "shortName": "Final Task 2",
+    "allowedExercises": [
+        42
+    ],
+    "positiveFeedbackAllowed": true,
+    "ratingGroups": [
+        {
+            "shortName": "functionality",
+            "displayName": "Funktionalität",
+            "negativeLimit": -20,
+            "positiveLimit": null
+        },
+        {
+            "shortName": "modelling",
+            "displayName": "OO-Modellierung",
+            "negativeLimit": -16,
+            "positiveLimit": null
+        },
+        {
+            "shortName": "understandability",
+            "displayName": "Verständlichkeit/Komplexität"
+        },
+        {
+            "shortName": "style",
+            "displayName": "Programmierstil",
+            "negativeLimit": -7,
+            "positiveLimit": null
+        }
+    ],
+    "mistakeTypes": [
+        {
+            "shortName": "custom",
+            "button": {
+                "de": "Custom Penalty",
+                "en": "Custom Penalty"
+            },
+            "message": {
+                "en": ""
+            },
+            "penaltyRule": {
+                "shortName": "customPenalty"
+            },
+            "appliesTo": "style"
+        },
+        {
+            "shortName": "jdEmpty",
+            "button": {
+                "de": "JavaDoc Leer",
+                "en": "JavaDoc Empty"
+            },
+            "message": {
+                "de": "JavaDoc ist leer oder nicht vorhanden",
+                "en": "JavaDoc is empty or does not exist"
+            },
+            "penaltyRule": {
+                "shortName": "thresholdPenalty",
+                "threshold": 1,
+                "penalty": 5
+            },
+            "appliesTo": "style"
+        },
+        {
+            "shortName": "jdTrivial",
+            "button": {
+                "de": "JavaDoc Trivial",
+                "en": "JavaDoc Trivial"
+            },
+            "message": {
+                "de": "JavaDoc beschreibt nur triviales und die Fehlerfälle werden nicht beachtet",
+                "en": "JavaDoc describes only trivial things and Error Cases are neglected"
+            },
+            "penaltyRule": {
+                "shortName": "thresholdPenalty",
+                "threshold": 1,
+                "penalty": 5
+            },
+            "appliesTo": "style"
+        },
+        {
+            "shortName": "complexCode",
+            "button": {
+                "de": "schwieriger Code",
+                "en": "Complex Code"
+            },
+            "message": {
+                "de": "Sehr komplexe Codestelle; es fehlt ein erklärender Kommentar oder der Code sollte durch geeignete Hilfsmethoden strukturiert werden",
+                "en": "Very complex part of the Code; explanatory Comment missing or suitable helping Methods should be utilized"
+            },
+            "penaltyRule": {
+                "shortName": "thresholdPenalty",
+                "threshold": 1,
+                "penalty": 5
+            },
+            "appliesTo": "understandability"
+        }
+    ]
+}
