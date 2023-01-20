@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.core;
 
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -10,6 +10,7 @@ import edu.kit.kastel.eclipse.common.api.controller.AbstractController;
 import edu.kit.kastel.eclipse.common.api.controller.IArtemisController;
 import edu.kit.kastel.eclipse.common.api.controller.IExerciseArtemisController;
 import edu.kit.kastel.eclipse.common.api.controller.ISystemwideController;
+import edu.kit.kastel.eclipse.common.api.controller.IViewInteraction;
 import edu.kit.kastel.eclipse.common.core.artemis.naming.ProjectFileNamingStrategies;
 
 public abstract class SystemwideController extends AbstractController implements ISystemwideController {
@@ -19,13 +20,14 @@ public abstract class SystemwideController extends AbstractController implements
 	protected IProjectFileNamingStrategy projectFileNamingStrategy;
 	protected IExerciseArtemisController exerciseController;
 
-	protected SystemwideController(IPreferenceStore preferenceStore) {
+	protected SystemwideController(IPreferenceStore preferenceStore, IViewInteraction handler) {
+		super(handler);
 		this.projectFileNamingStrategy = ProjectFileNamingStrategies.DEFAULT.get();
-		var loginController = createController(preferenceStore);
-		exerciseController = new ExerciseArtemisController(loginController.getUserLogin(), preferenceStore);
+		var loginController = createController(preferenceStore, handler);
+		exerciseController = new ExerciseArtemisController(handler, loginController.getUserLogin(), preferenceStore);
 	}
 
-	protected abstract IArtemisController createController(IPreferenceStore preferenceStore);
+	protected abstract IArtemisController createController(IPreferenceStore preferenceStore, IViewInteraction handler);
 
 	protected abstract void refreshArtemisController(IPreferenceStore preferenceStore);
 

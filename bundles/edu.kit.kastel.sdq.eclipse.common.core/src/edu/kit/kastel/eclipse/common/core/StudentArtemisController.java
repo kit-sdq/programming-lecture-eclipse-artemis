@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.core;
 
 import java.net.ConnectException;
@@ -23,6 +23,7 @@ import edu.kit.kastel.eclipse.common.api.client.websocket.ArtemisWebsocketExcept
 import edu.kit.kastel.eclipse.common.api.client.websocket.IWebsocketClient;
 import edu.kit.kastel.eclipse.common.api.client.websocket.WebsocketCallback;
 import edu.kit.kastel.eclipse.common.api.controller.IStudentArtemisController;
+import edu.kit.kastel.eclipse.common.api.controller.IViewInteraction;
 import edu.kit.kastel.eclipse.common.api.controller.IWebsocketController;
 import edu.kit.kastel.eclipse.common.api.messages.Messages;
 import edu.kit.kastel.eclipse.common.api.util.Pair;
@@ -33,8 +34,8 @@ public class StudentArtemisController extends ArtemisController implements IStud
 	private static final ILog log = Platform.getLog(ArtemisFeedbackWebsocket.class);
 	private final IWebsocketClient websocketClient;
 
-	protected StudentArtemisController(String host, String username, String password) {
-		super(host, username, password);
+	protected StudentArtemisController(String host, String username, String password, IViewInteraction handler) {
+		super(host, username, password, handler);
 		this.websocketClient = new ArtemisFeedbackWebsocket(this.clientManager.getArtemisUrl());
 	}
 
