@@ -2,7 +2,6 @@
 package edu.kit.kastel.eclipse.common.core;
 
 import java.net.ConnectException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map.Entry;
@@ -117,22 +116,18 @@ public class StudentArtemisController extends ArtemisController implements IStud
 			return Pair.empty();
 		}
 
-		if (Boolean.TRUE.equals(result.hasFeedback)) {
-			try {
-				Feedback[] feedbacks = this.clientManager.getFeedbackArtemisClient().getFeedbackForResult(participationOpt.get(), result);
-				return new Pair<>(result, Arrays.asList(feedbacks));
-			} catch (ArtemisClientException e) {
-				log.error(e.getMessage(), e);
-			}
-		} else {
-			return new Pair<>(result, new ArrayList<>());
+		try {
+			Feedback[] feedbacks = this.clientManager.getFeedbackArtemisClient().getFeedbackForResult(participationOpt.get(), result);
+			return new Pair<>(result, Arrays.asList(feedbacks));
+		} catch (ArtemisClientException e) {
+			log.error(e.getMessage(), e);
 		}
 
 		this.error(
 				"Can't load any feedback for selected exercise " + exercise.getShortName() + ".\n No feedback found. Please check if a solution was submitted.",
 				null);
 
-		return Pair.empty();
+		return new Pair<>(result, List.of());
 	}
 
 	@Override
