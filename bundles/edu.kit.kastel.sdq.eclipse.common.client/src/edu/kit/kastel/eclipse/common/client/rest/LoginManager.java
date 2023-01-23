@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.client.rest;
 
 import java.io.Serializable;
@@ -70,7 +70,7 @@ public class LoginManager extends AbstractArtemisClient implements IAuthenticati
 
 	@Override
 	public String getBearerToken() {
-		return "Bearer " + this.token;
+		return this.token;
 	}
 
 	@Override
@@ -79,7 +79,7 @@ public class LoginManager extends AbstractArtemisClient implements IAuthenticati
 	}
 
 	private User fetchAssessor() throws ArtemisClientException {
-		final Response rsp = this.endpoint.path("account").request().header(AUTHORIZATION_NAME, this.getBearerToken()).buildGet().invoke();
+		final Response rsp = this.endpoint.path("account").request().cookie(getAuthCookie(this.getBearerToken())).buildGet().invoke();
 		this.throwIfStatusUnsuccessful(rsp);
 		return this.read(rsp.readEntity(String.class), User.class);
 	}

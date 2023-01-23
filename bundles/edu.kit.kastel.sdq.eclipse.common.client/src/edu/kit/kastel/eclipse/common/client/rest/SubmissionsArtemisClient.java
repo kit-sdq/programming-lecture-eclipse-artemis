@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.client.rest;
 
 import java.util.Arrays;
@@ -35,7 +35,7 @@ public class SubmissionsArtemisClient extends AbstractArtemisClient implements I
 		final Response rsp = this.endpoint.path(EXERCISES_PATHPART).path(String.valueOf(exercise.getExerciseId())).path(PROGRAMMING_SUBMISSION_PATHPART) //
 				.queryParam("assessedByTutor", !isInstructor) //
 				.queryParam("correction-round", correctionRound) //
-				.request().header(AUTHORIZATION_NAME, this.token).buildGet().invoke();
+				.request().cookie(getAuthCookie(this.token)).buildGet().invoke();
 
 		this.throwIfStatusUnsuccessful(rsp);
 

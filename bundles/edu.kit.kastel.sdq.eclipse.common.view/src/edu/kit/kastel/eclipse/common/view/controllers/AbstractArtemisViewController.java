@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.view.controllers;
 
 import java.util.List;
@@ -23,14 +23,11 @@ public abstract class AbstractArtemisViewController<C extends ISystemwideControl
 
 	protected AbstractArtemisViewController(C systemwideController) {
 		this.systemwideController = systemwideController;
-		this.viewObserver = new SWTViewHandler();
+		this.viewObserver = systemwideController.getViewInteractionHandler();
 	}
 
 	protected void initializeControllersAndObserver() {
-		this.systemwideController.setViewInteractionHandler(this.viewObserver);
-
 		this.artemisController = this.systemwideController.getArtemisController();
-		this.artemisController.setViewInteractionHandler(this.viewObserver);
 	}
 
 	/**

@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.core;
 
 import java.io.File;
@@ -25,6 +25,7 @@ import edu.kit.kastel.eclipse.common.api.controller.IArtemisController;
 import edu.kit.kastel.eclipse.common.api.controller.IAssessmentController;
 import edu.kit.kastel.eclipse.common.api.controller.IGradingArtemisController;
 import edu.kit.kastel.eclipse.common.api.controller.IGradingSystemwideController;
+import edu.kit.kastel.eclipse.common.api.controller.IViewInteraction;
 import edu.kit.kastel.eclipse.common.core.artemis.WorkspaceUtil;
 
 public class GradingSystemwideController extends SystemwideController implements IGradingSystemwideController {
@@ -34,15 +35,16 @@ public class GradingSystemwideController extends SystemwideController implements
 
 	private ISubmission submission;
 
-	public GradingSystemwideController(final IPreferenceStore preferenceStore) {
-		super(preferenceStore);
+	public GradingSystemwideController(final IPreferenceStore preferenceStore, IViewInteraction handler) {
+		super(preferenceStore, handler);
 		this.preferenceStore = preferenceStore;
 	}
 
-	protected IArtemisController createController(IPreferenceStore preferenceStore) {
+	@Override
+	protected IArtemisController createController(IPreferenceStore preferenceStore, IViewInteraction handler) {
 		this.artemisController = new GradingArtemisController(preferenceStore.getString(PreferenceConstants.GENERAL_ARTEMIS_URL),
 				preferenceStore.getString(PreferenceConstants.GENERAL_ADVANCED_ARTEMIS_USER),
-				preferenceStore.getString(PreferenceConstants.GENERAL_ADVANCED_ARTEMIS_PASSWORD));
+				preferenceStore.getString(PreferenceConstants.GENERAL_ADVANCED_ARTEMIS_PASSWORD), handler);
 		return this.artemisController;
 	}
 
@@ -260,7 +262,7 @@ public class GradingSystemwideController extends SystemwideController implements
 
 	@Override
 	protected void refreshArtemisController(IPreferenceStore preferenceStore) {
-		this.createController(preferenceStore);
+		this.createController(preferenceStore, this.getViewInteractionHandler());
 	}
 
 	@Override

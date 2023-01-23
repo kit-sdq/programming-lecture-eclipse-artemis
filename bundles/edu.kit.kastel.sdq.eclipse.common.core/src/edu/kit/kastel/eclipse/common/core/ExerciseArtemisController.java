@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.core;
 
 import java.io.File;
@@ -18,6 +18,7 @@ import edu.kit.kastel.eclipse.common.api.artemis.mapping.ISubmission;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.User;
 import edu.kit.kastel.eclipse.common.api.controller.AbstractController;
 import edu.kit.kastel.eclipse.common.api.controller.IExerciseArtemisController;
+import edu.kit.kastel.eclipse.common.api.controller.IViewInteraction;
 import edu.kit.kastel.eclipse.common.client.git.GitCredentials;
 import edu.kit.kastel.eclipse.common.client.git.GitException;
 import edu.kit.kastel.eclipse.common.client.git.GitHandler;
@@ -27,7 +28,8 @@ public class ExerciseArtemisController extends AbstractController implements IEx
 	private String username;
 	private String gitPassword;
 
-	public ExerciseArtemisController(User user, IPreferenceStore preferenceStore) {
+	public ExerciseArtemisController(IViewInteraction viewInteractionHandler, User user, IPreferenceStore preferenceStore) {
+		super(viewInteractionHandler);
 		this.username = user == null ? null : user.getLogin();
 		String password = preferenceStore.getString(PreferenceConstants.GENERAL_ADVANCED_ARTEMIS_PASSWORD);
 		String gitToken = preferenceStore.getString(PreferenceConstants.GENERAL_ADVANCED_GIT_TOKEN);

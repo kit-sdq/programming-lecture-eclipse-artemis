@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.core;
 
 import java.time.LocalDateTime;
@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import edu.kit.kastel.eclipse.common.api.ArtemisClientException;
+import edu.kit.kastel.eclipse.common.api.EclipseArtemisConstants;
 import edu.kit.kastel.eclipse.common.api.artemis.ILockResult;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.Feedback;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.ICourse;
@@ -20,6 +21,7 @@ import edu.kit.kastel.eclipse.common.api.artemis.mapping.ISubmission;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.User;
 import edu.kit.kastel.eclipse.common.api.controller.AbstractController;
 import edu.kit.kastel.eclipse.common.api.controller.IArtemisController;
+import edu.kit.kastel.eclipse.common.api.controller.IViewInteraction;
 import edu.kit.kastel.eclipse.common.client.rest.RestClientManager;
 
 public abstract class ArtemisController extends AbstractController implements IArtemisController {
@@ -27,10 +29,12 @@ public abstract class ArtemisController extends AbstractController implements IA
 	protected final RestClientManager clientManager;
 	protected List<ICourse> courses;
 
-	protected ArtemisController(final String host, final String username, final String password) {
+	protected ArtemisController(final String host, final String username, final String password, final IViewInteraction handler) {
+		super(handler);
 		this.clientManager = new RestClientManager(host, username, password);
 		this.lockResults = new HashMap<>();
 
+		this.checkVersion();
 		this.loginOrNotify();
 	}
 
@@ -198,5 +202,29 @@ public abstract class ArtemisController extends AbstractController implements IA
 		} catch (ArtemisClientException e) {
 			this.error(e.getMessage(), e);
 		}
+	}
+
+	private void checkVersion() {
+		try {
+			var currentVersion = this.clientManager.getUtilArtemisClient().getVersion();
+			if (currentVersion.compareTo(EclipseArtemisConstants.MINIMUM_ARTEMIS_VERSION_INCLUSIVE) == -1) {
+				String response = """
+						This version of Eclipse Artemis has Artemis %s as minimum requirement.
+						Your Artemis instance runs %s
+						Proceed on your own responsibility.
+						""";
+				this.warn(response.formatted(EclipseArtemisConstants.MINIMUM_ARTEMIS_VERSION_INCLUSIVE, currentVersion));
+			} else if (currentVersion.compareTo(EclipseArtemisConstants.MAXIMUM_ARTEMIS_VERSION_EXCLUSIVE) != -1) {
+				String response = """
+						This version of Eclipse Artemis has Artemis %s as maximum (exclusive) requirement.
+						Your Artemis instance runs %s
+						Proceed on your own responsibility.
+						""";
+				this.warn(response.formatted(EclipseArtemisConstants.MAXIMUM_ARTEMIS_VERSION_EXCLUSIVE, currentVersion));
+			}
+		} catch (ArtemisClientException e) {
+			this.error(e.getMessage(), e);
+		}
+
 	}
 }

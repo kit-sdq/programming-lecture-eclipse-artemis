@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.grading.view.controllers;
 
 import java.util.List;
@@ -160,7 +160,6 @@ public class AssessmentViewController extends AbstractArtemisViewController<IGra
 	 */
 	public void setCurrentAssessmentController() {
 		this.assessmentController = this.systemwideController.getCurrentAssessmentController();
-		this.assessmentController.setViewInteractionHandler(this.viewObserver);
 	}
 
 	public IAssessmentController getAssessmentController() {
