@@ -38,7 +38,7 @@ import jakarta.websocket.WebSocketContainer;
 public class ArtemisFeedbackWebsocket implements IWebsocketClient {
 	private static final ILog log = Platform.getLog(ArtemisFeedbackWebsocket.class);
 
-	private static final String WEBSOCKET_PATH = "/websocket/tracker";
+	private static final String WEBSOCKET_PATH = "/websocket";
 	private static final String TOKEN_COOKIE_NAME = "jwt";
 
 	private String baseUrl;
