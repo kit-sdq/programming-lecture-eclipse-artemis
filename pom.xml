@@ -171,7 +171,7 @@
                         <includes>src/**/*.java</includes>
                         <removeUnusedImports></removeUnusedImports>
                         <licenseHeader>
-                            <file>${maven.multiModuleProjectDirectory}/license-header.txt</file>
+                            <file>${maven.multiModuleProjectDirectory}/.l-header.txt</file>
                         </licenseHeader>
                     </java>
                     <pom>
