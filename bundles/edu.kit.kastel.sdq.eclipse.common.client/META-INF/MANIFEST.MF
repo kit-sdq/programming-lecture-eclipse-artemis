@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: edu.kit.kastel.sdq.eclipse.common.client
 Bundle-SymbolicName: edu.kit.kastel.sdq.eclipse.common.client;singleton:=true
-Bundle-Version: 3.0.0
+Bundle-Version: 3.1.0
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Require-Bundle: edu.kit.kastel.sdq.eclipse.common.api,
  com.fasterxml.jackson.core.jackson-annotations,
