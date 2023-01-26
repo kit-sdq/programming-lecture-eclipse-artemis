@@ -40,7 +40,6 @@ public class GradingSystemwideController extends SystemwideController implements
 		this.preferenceStore = preferenceStore;
 	}
 
-
 	@Override
 	protected IArtemisController createController(IPreferenceStore preferenceStore, IViewInteraction handler) {
 		this.artemisController = new GradingArtemisController(preferenceStore.getString(PreferenceConstants.GENERAL_ARTEMIS_URL),

@@ -82,7 +82,6 @@ public class AssessmentArtemisClient extends AbstractArtemisClient implements IA
 	public ExerciseStats getStats(IExercise exercise) throws ArtemisClientException {
 		final Response rsp = this.endpoint.path(EXERCISES_PATHPART).path(String.valueOf(exercise.getExerciseId())).path(STATS_PATH).request()
 				.cookie(getAuthCookie(this.token)).buildGet().invoke();
-
 		if (!this.isStatusSuccessful(rsp)) {
 			return null;
 		}
