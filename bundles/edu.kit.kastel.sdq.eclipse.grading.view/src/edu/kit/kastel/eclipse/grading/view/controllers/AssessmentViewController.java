@@ -161,7 +161,6 @@ public class AssessmentViewController extends AbstractArtemisViewController<IGra
 	 */
 	public void setCurrentAssessmentController() {
 		this.assessmentController = this.systemwideController.getCurrentAssessmentController();
-		this.assessmentController.setViewInteractionHandler(this.viewObserver);
 	}
 
 	public IAssessmentController getAssessmentController() {

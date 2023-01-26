@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.client;
 
 import java.util.Objects;
@@ -8,9 +8,9 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTError;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.browser.Browser;
-import org.eclipse.swt.browser.BrowserFunction;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -26,8 +26,6 @@ public class BrowserLogin extends Dialog {
 	private static final long MIN_TIME_TO_LOGIN_IN_MS = 5000;
 	private static final long POLL_INTERVAL = 1000;
 
-	private static final String CALLBACK_NAME = "tokenCallback";
-
 	private static final ILog log = Platform.getLog(BrowserLogin.class);
 
 	private final String hostname;
@@ -38,12 +36,13 @@ public class BrowserLogin extends Dialog {
 
 	private long lastSuccessWasAlreadyLoggedIn;
 
-	public BrowserLogin(String hostname) {
+	public BrowserLogin(String fullURL) {
 		super((Shell) null);
-		this.hostname = hostname;
+		this.hostname = fullURL;
 		this.setShellStyle((SWT.DIALOG_TRIM | SWT.RESIZE | SWT.MODELESS | SWT.ON_TOP) & ~SWT.CLOSE);
 	}
 
+	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		newShell.setText("Artemis Login");
@@ -56,6 +55,7 @@ public class BrowserLogin extends Dialog {
 		newShell.setLocation(newLeftPos, newTopPos);
 	}
 
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		final Composite comp = (Composite) super.createDialogArea(parent);
 		final GridLayout layout = (GridLayout) comp.getLayout();
@@ -69,15 +69,6 @@ public class BrowserLogin extends Dialog {
 		browser.setJavascriptEnabled(true);
 		browser.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		browser.setUrl(hostname);
-
-		new BrowserFunction(browser, CALLBACK_NAME) {
-			@Override
-			public Object function(Object[] parameters) {
-				handleTokenCallback(parameters);
-				return null;
-			}
-		};
-
 		return comp;
 	}
 
@@ -118,7 +109,7 @@ public class BrowserLogin extends Dialog {
 
 		log.info("Opened Browser. Waiting for token");
 		Display.getDefault().syncExec(() -> this.open());
-		log.info("Got Token");
+		log.info("Got Token: " + (token != null));
 		return this.token;
 	}
 
@@ -127,7 +118,7 @@ public class BrowserLogin extends Dialog {
 			var display = Display.getDefault();
 			while (!closed) {
 				Thread.sleep(POLL_INTERVAL);
-				display.asyncExec(() -> callBrowserFunction());
+				display.asyncExec(() -> readCookieAndSetToken());
 			}
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
@@ -135,35 +126,28 @@ public class BrowserLogin extends Dialog {
 
 	}
 
-	private void handleTokenCallback(Object[] parameters) {
-		if (parameters == null || parameters.length != 1 || !(parameters[0]instanceof String newToken)) {
-			if (token != null) {
+	private void readCookieAndSetToken() {
+		try {
+			String jwtToken = Browser.getCookie("jwt", hostname);
+
+			if (jwtToken == null && token != null) {
 				log.info("Logout occured");
 				token = null;
+				return;
 			}
-			return;
-		}
 
-		// Crop '"' at beginning and end
-		newToken = newToken.substring(1, newToken.length() - 1);
+			if (jwtToken == null || Objects.equals(token, jwtToken))
+				return;
 
-		if (!Objects.equals(token, newToken)) {
-			log.info("Got a new Token");
-		}
+			log.info("Got a new Token: " + jwtToken);
+			token = jwtToken;
 
-		token = newToken;
-
-		// Close Dialog
-		if (!wasAlreadyLoggedIn()) {
-			Display.getDefault().asyncExec(() -> BrowserLogin.this.okPressed());
-		}
-	}
-
-	private void callBrowserFunction() {
-		try {
-			browser.execute(CALLBACK_NAME + "(localStorage.getItem(\"jhi-authenticationtoken\"));");
-		} catch (SWTException e) {
-			if (e.getMessage().equals("Widget is disposed")) {
+			// Close Dialog
+			if (!wasAlreadyLoggedIn()) {
+				Display.getDefault().asyncExec(() -> BrowserLogin.this.okPressed());
+			}
+		} catch (SWTException | SWTError e) {
+			if (e.getMessage().equals("Widget is disposed") || e.getMessage().contains("cookie access requires a Browser instance")) {
 				return;
 			}
 			log.error(e.getMessage(), e);

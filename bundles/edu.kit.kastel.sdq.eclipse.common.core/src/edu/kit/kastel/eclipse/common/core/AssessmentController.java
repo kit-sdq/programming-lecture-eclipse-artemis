@@ -51,6 +51,7 @@ public class AssessmentController extends AbstractController implements IAssessm
 	 *                     file).
 	 */
 	protected AssessmentController(GradingSystemwideController systemWideController, ICourse course, IExercise exercise, ISubmission submission) {
+		super(systemWideController.getViewInteractionHandler());
 		this.systemWideController = systemWideController;
 
 		this.course = course;

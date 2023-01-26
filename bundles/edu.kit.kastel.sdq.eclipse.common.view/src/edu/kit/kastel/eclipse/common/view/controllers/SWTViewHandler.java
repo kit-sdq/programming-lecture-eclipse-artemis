@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.view.controllers;
 
 import org.eclipse.core.runtime.ILog;
@@ -13,7 +13,7 @@ import edu.kit.kastel.eclipse.common.view.utilities.AssessmentUtilities;
  * opens a dialog. An info, error or warning can be displayed.
  *
  */
-final class SWTViewHandler implements IViewInteraction {
+public final class SWTViewHandler implements IViewInteraction {
 
 	private static final ILog log = Platform.getLog(SWTViewHandler.class);
 
