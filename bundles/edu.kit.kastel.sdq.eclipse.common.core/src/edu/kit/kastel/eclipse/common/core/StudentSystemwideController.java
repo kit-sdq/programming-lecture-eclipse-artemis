@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.core;
 
 import java.io.IOException;
@@ -26,6 +26,7 @@ import edu.kit.kastel.eclipse.common.api.client.websocket.WebsocketCallback;
 import edu.kit.kastel.eclipse.common.api.controller.IArtemisController;
 import edu.kit.kastel.eclipse.common.api.controller.IStudentArtemisController;
 import edu.kit.kastel.eclipse.common.api.controller.IStudentSystemwideController;
+import edu.kit.kastel.eclipse.common.api.controller.IViewInteraction;
 import edu.kit.kastel.eclipse.common.api.controller.IWebsocketController;
 import edu.kit.kastel.eclipse.common.api.messages.Messages;
 import edu.kit.kastel.eclipse.common.api.model.IAnnotation;
@@ -46,17 +47,17 @@ public class StudentSystemwideController extends SystemwideController implements
 
 	private IAnnotationDAO annotationDao;
 
-	public StudentSystemwideController(final IPreferenceStore preferenceStore) {
-		super(preferenceStore);
+	public StudentSystemwideController(final IPreferenceStore preferenceStore, IViewInteraction handler) {
+		super(preferenceStore, handler);
 		this.preferenceStore = preferenceStore;
 	}
 
 	@Override
-	protected IArtemisController createController(IPreferenceStore preferenceStore) {
+	protected IArtemisController createController(IPreferenceStore preferenceStore, IViewInteraction handler) {
 		this.artemisHost = preferenceStore.getString(PreferenceConstants.GENERAL_ARTEMIS_URL);
 		StudentArtemisController controller = new StudentArtemisController(this.artemisHost,
 				preferenceStore.getString(PreferenceConstants.GENERAL_ADVANCED_ARTEMIS_USER),
-				preferenceStore.getString(PreferenceConstants.GENERAL_ADVANCED_ARTEMIS_PASSWORD));
+				preferenceStore.getString(PreferenceConstants.GENERAL_ADVANCED_ARTEMIS_PASSWORD), handler);
 		this.artemisGUIController = controller;
 		this.websocketController = controller;
 		this.annotationDao = new AnnotationDAO();
@@ -299,7 +300,7 @@ public class StudentSystemwideController extends SystemwideController implements
 
 	@Override
 	protected void refreshArtemisController(IPreferenceStore preferenceStore) {
-		this.createController(preferenceStore);
+		this.createController(preferenceStore, this.getViewInteractionHandler());
 	}
 
 	@Override

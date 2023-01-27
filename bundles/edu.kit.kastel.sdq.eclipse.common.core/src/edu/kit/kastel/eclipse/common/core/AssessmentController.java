@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.core;
 
 import java.io.File;
@@ -50,6 +50,7 @@ public class AssessmentController extends AbstractController implements IAssessm
 	 *                     file).
 	 */
 	protected AssessmentController(GradingSystemwideController systemWideController, ICourse course, IExercise exercise, ISubmission submission) {
+		super(systemWideController.getViewInteractionHandler());
 		this.systemWideController = systemWideController;
 
 		this.course = course;

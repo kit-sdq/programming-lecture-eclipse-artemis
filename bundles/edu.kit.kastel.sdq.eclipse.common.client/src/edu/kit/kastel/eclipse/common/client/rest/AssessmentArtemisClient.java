@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.client.rest;
 
 import java.util.Optional;
@@ -51,7 +51,7 @@ public class AssessmentArtemisClient extends AbstractArtemisClient implements IA
 		final Response rsp = this.endpoint.path(PARTICIPATION_PATHPART).path(String.valueOf(participationId)) //
 				.path(MANUAL_RESULT_PATHPART) //
 				.queryParam(SUBMIT_QUERY_PARAM, submit) //
-				.request().header(AUTHORIZATION_NAME, this.token).buildPut(Entity.json(assessmentPayload)).invoke();
+				.request().cookie(getAuthCookie(this.token)).buildPut(Entity.json(assessmentPayload)).invoke();
 		this.throwIfStatusUnsuccessful(rsp);
 
 	}
@@ -59,7 +59,7 @@ public class AssessmentArtemisClient extends AbstractArtemisClient implements IA
 	@Override
 	public ILockResult startAssessment(ISubmission submission) throws ArtemisClientException {
 		final Response rsp = this.endpoint.path(PROGRAMMING_SUBMISSION_PATHPART).path(String.valueOf(submission.getSubmissionId())).path(LOCK_QUERY_PARAM)
-				.queryParam(CORRECTION_ROUND_QUERY_PARAM, submission.getCorrectionRound()).request().header(AUTHORIZATION_NAME, this.token).buildGet().invoke();
+				.queryParam(CORRECTION_ROUND_QUERY_PARAM, submission.getCorrectionRound()).request().cookie(getAuthCookie(this.token)).buildGet().invoke();
 
 		this.throwIfStatusUnsuccessful(rsp);
 		return this.read(rsp.readEntity(String.class), LockResult.class);
@@ -68,7 +68,7 @@ public class AssessmentArtemisClient extends AbstractArtemisClient implements IA
 	@Override
 	public Optional<ILockResult> startNextAssessment(IExercise exercise, int correctionRound) throws ArtemisClientException {
 		final Response rsp = this.endpoint.path(EXERCISES_PATHPART).path(String.valueOf(exercise.getExerciseId())).path(SUBMISSION_WIHOUT_ASSESSMENT_PATH)
-				.queryParam(CORRECTION_ROUND_QUERY_PARAM, correctionRound).queryParam(LOCK_QUERY_PARAM, true).request().header(AUTHORIZATION_NAME, this.token)
+				.queryParam(CORRECTION_ROUND_QUERY_PARAM, correctionRound).queryParam(LOCK_QUERY_PARAM, true).request().cookie(getAuthCookie(this.token))
 				.buildGet().invoke();
 
 		if (!this.isStatusSuccessful(rsp)) {
@@ -81,7 +81,7 @@ public class AssessmentArtemisClient extends AbstractArtemisClient implements IA
 	@Override
 	public ExerciseStats getStats(IExercise exercise) throws ArtemisClientException {
 		final Response rsp = this.endpoint.path(EXERCISES_PATHPART).path(String.valueOf(exercise.getExerciseId())).path(STATS_PATH).request()
-				.header(AUTHORIZATION_NAME, this.token).buildGet().invoke();
+				.cookie(getAuthCookie(this.token)).buildGet().invoke();
 		if (!this.isStatusSuccessful(rsp)) {
 			return null;
 		}
@@ -113,7 +113,7 @@ public class AssessmentArtemisClient extends AbstractArtemisClient implements IA
 		final Response rsp = this.endpoint.path(EXERCISES_PATHPART).path(String.valueOf(exercise.getExerciseId())).path(PROGRAMMING_SUBMISSION_PATHPART) //
 				.queryParam("assessedByTutor", true) //
 				.queryParam("correction-round", correctionRound) //
-				.request().header(AUTHORIZATION_NAME, this.token).buildGet().invoke();
+				.request().cookie(getAuthCookie(this.token)).buildGet().invoke();
 
 		if (!this.isStatusSuccessful(rsp)) {
 			return 0;

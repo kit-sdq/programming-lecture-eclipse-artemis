@@ -28,7 +28,7 @@ jobs:
         working-directory: docs
 
       - name: Deploy 🚀
-        if: github.ref == 'refs/heads/main'
+        if: startsWith(github.ref, 'refs/tags/v')
         uses: JamesIves/github-pages-deploy-action@v4.4.1
         with:
           branch: gh-pages

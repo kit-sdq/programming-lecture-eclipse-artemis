@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.api.artemis.mapping;
 
 import java.io.Serializable;
@@ -17,8 +17,6 @@ public class ResultsDTO implements Serializable {
 	public int id;
 	@JsonProperty
 	public Date completionDate;
-	@JsonProperty
-	public Boolean hasFeedback;
 	@JsonProperty
 	public Feedback[] feedbacks;
 	@JsonProperty

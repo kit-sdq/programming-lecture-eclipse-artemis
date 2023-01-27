@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.client.mappings;
 
 import java.io.Serializable;
@@ -80,7 +80,8 @@ public class ArtemisSubmission implements ISubmission, Serializable {
 			ResultsDTO lastResult = this.results[this.results.length - 1];
 
 			this.hasSubmittedAssessment = lastResult.completionDate != null;
-			this.hasSavedAssessment = lastResult.hasFeedback != null && lastResult.hasFeedback;
+			// TODO Determine what to do here .. hasFeedback has been removed
+			this.hasSavedAssessment = false; // lastResult.hasFeedback != null && lastResult.hasFeedback;
 		}
 	}
 

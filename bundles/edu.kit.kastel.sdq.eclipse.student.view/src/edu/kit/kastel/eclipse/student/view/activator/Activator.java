@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.student.view.activator;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -7,6 +7,7 @@ import org.osgi.framework.BundleContext;
 import edu.kit.kastel.eclipse.common.api.controller.IStudentSystemwideController;
 import edu.kit.kastel.eclipse.common.core.StudentSystemwideController;
 import edu.kit.kastel.eclipse.common.view.activator.CommonActivator;
+import edu.kit.kastel.eclipse.common.view.controllers.SWTViewHandler;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -53,7 +54,7 @@ public class Activator extends AbstractUIPlugin {
 	 * Creates a new instance of the SystemWideController
 	 */
 	public IStudentSystemwideController createSystemWideController() {
-		this.systemwideController = new StudentSystemwideController(CommonActivator.getDefault().getPreferenceStore());
+		this.systemwideController = new StudentSystemwideController(CommonActivator.getDefault().getPreferenceStore(), new SWTViewHandler());
 		return this.systemwideController;
 	}
 

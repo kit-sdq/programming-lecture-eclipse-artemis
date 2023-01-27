@@ -4,7 +4,7 @@
 
     <groupId>edu.kit.kastel.sdq.artemis</groupId>
     <artifactId>parent</artifactId>
-    <version>2.9.0</version>
+    <version>3.1.0</version>
     <packaging>pom</packaging>
     <name>Artemis Eclipse Importer</name>
 
@@ -171,7 +171,7 @@
                         <includes>src/**/*.java</includes>
                         <removeUnusedImports></removeUnusedImports>
                         <licenseHeader>
-                            <file>${maven.multiModuleProjectDirectory}/license-header.txt</file>
+                            <file>${maven.multiModuleProjectDirectory}/.l-header.txt</file>
                         </licenseHeader>
                     </java>
                     <pom>

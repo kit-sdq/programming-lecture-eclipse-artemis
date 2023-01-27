@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.core;
 
 import java.io.IOException;
@@ -13,6 +13,7 @@ import edu.kit.kastel.eclipse.common.api.artemis.mapping.ISubmission;
 import edu.kit.kastel.eclipse.common.api.controller.ExerciseStats;
 import edu.kit.kastel.eclipse.common.api.controller.IAssessmentController;
 import edu.kit.kastel.eclipse.common.api.controller.IGradingArtemisController;
+import edu.kit.kastel.eclipse.common.api.controller.IViewInteraction;
 import edu.kit.kastel.eclipse.common.api.messages.Messages;
 import edu.kit.kastel.eclipse.common.api.model.IAnnotation;
 import edu.kit.kastel.eclipse.common.api.model.IRatingGroup;
@@ -20,8 +21,8 @@ import edu.kit.kastel.eclipse.common.core.artemis.AnnotationMapper;
 
 public class GradingArtemisController extends ArtemisController implements IGradingArtemisController {
 
-	public GradingArtemisController(String host, String username, String password) {
-		super(host, username, password);
+	public GradingArtemisController(String host, String username, String password, IViewInteraction handler) {
+		super(host, username, password, handler);
 	}
 
 	@Override
