@@ -27,7 +27,7 @@ public abstract class SystemwideController extends AbstractController implements
 	protected IExerciseArtemisController exerciseController;
 
 	protected SystemwideController(IPreferenceStore preferenceStore, IViewInteraction handler) {
-        super(handler);
+		super(handler);
 		this.buildCompletedCallbacks = new ArrayList<>();
 		this.projectFileNamingStrategy = ProjectFileNamingStrategies.DEFAULT.get();
 		var loginController = createController(preferenceStore, handler);
