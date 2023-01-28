@@ -16,9 +16,15 @@ on:
 jobs:
   build:
     name: "Full build of all distributions"
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
 
     steps:
+
+    - name: Install build utils
+      run: |
+        sudo DEBIAN_FRONTEND="noninteractive" apt-get update
+        sudo DEBIAN_FRONTEND="noninteractive" apt-get install -y eatmydata
+
     - uses: actions/checkout@v3.3.0
 
     - name: Set up JDK
@@ -34,8 +40,14 @@ jobs:
         key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
         restore-keys: ${{ runner.os }}-maven-
 
+    - name: Cache Distributions
+      uses: actions/cache@v3
+      with:
+        path: ./dist
+        key: cache-dist-${{github.run_id}}
+
     - name: Build with Maven
-      run: mvn -U -B -Pproducts package
+      run: eatmydata mvn -U -B -Pproducts package
 
     - name: Move Distributions
       run: |
@@ -50,7 +62,19 @@ jobs:
         mv releng/edu.kit.kastel.sdq.eclipse.student.product/target/products/*-linux.*.aarch64.zip dist/Artemis_Student_Linux_aarch64.zip
         mv releng/edu.kit.kastel.sdq.eclipse.student.product/target/products/*-macosx.*.x86_64.zip dist/Artemis_Student_MacOS_x86_64.zip
         mv releng/edu.kit.kastel.sdq.eclipse.student.product/target/products/*-macosx.*.aarch64.zip dist/Artemis_Student_MacOS_aarch64.zip
-        
+  
+  upload-mac:
+    name: "Sign and upload of macos distributions"
+    runs-on: macos-latest
+    needs: build
+
+    steps:
+
+    - name: Load Distributions from cache
+      uses: actions/cache@v3
+      with:
+        path: ./dist
+        key: cache-dist-${{github.run_id}}
 
     - name: Sign MacOS Eclipse Distribution (Grading)
       if: startsWith(github.ref, 'refs/tags/v')
@@ -94,25 +118,64 @@ jobs:
         rm dist/Artemis_Student_MacOS_aarch64.zip
         ditto -c -k --sequesterRsrc --keepParent Eclipse.app dist/Artemis_Student_MacOS_aarch64.zip    
 
+    - name: Save Eclipse Distribution (MacOS)
+      uses: actions/upload-artifact@v3
+      with:
+        name: "Eclipse Distribution MacOS"
+        path: "dist/Artemis_*_MacOS*.zip"
+
+  upload-windows:
+    name: "Upload of windows distributions"
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+
+    - name: Load Distributions from cache
+      uses: actions/cache@v3
+      with:
+        path: ./dist
+        key: cache-dist-${{github.run_id}}
+
     - name: Save Eclipse Distribution (Windows)
       uses: actions/upload-artifact@v3
       with:
         name: "Eclipse Distribution Windows"
         path: "dist/Artemis_*_Windows.zip"
-    
+
+  upload-linux:
+    name: "Upload of linux distributions"
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+
+    - name: Load Distributions from cache
+      uses: actions/cache@v3
+      with:
+        path: ./dist
+        key: cache-dist-${{github.run_id}}
+
+
     - name: Save Eclipse Distribution (Linux)
       uses: actions/upload-artifact@v3
       with:
         name: "Eclipse Distribution Linux"
         path: "dist/Artemis_*_Linux*.zip"
 
-    - name: Save Eclipse Distribution (MacOS)
-      uses: actions/upload-artifact@v3
+  release:
+    name: "Create release"
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+
+    - name: Load Distributions from cache
+      uses: actions/cache@v3
       with:
-        name: "Eclipse Distribution MacOS"
-        path: "dist/Artemis_*_MacOS*.zip"
-  
-          
+        path: ./dist
+        key: cache-dist-${{github.run_id}}
+
     - name: Release
       uses: softprops/action-gh-release@v1
       if: startsWith(github.ref, 'refs/tags/v')
