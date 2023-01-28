@@ -4,9 +4,6 @@ package edu.kit.kastel.eclipse.common.client.rest;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.Response;
-
 import edu.kit.kastel.eclipse.common.api.ArtemisClientException;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.IExercise;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.ISubmission;
@@ -14,34 +11,29 @@ import edu.kit.kastel.eclipse.common.api.artemis.mapping.User;
 import edu.kit.kastel.eclipse.common.api.client.ISubmissionsArtemisClient;
 import edu.kit.kastel.eclipse.common.api.messages.Messages;
 import edu.kit.kastel.eclipse.common.client.mappings.ArtemisSubmission;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 
 public class SubmissionsArtemisClient extends AbstractArtemisClient implements ISubmissionsArtemisClient {
-	private WebTarget endpoint;
-	private String token;
-	private User assesor;
+	private final OkHttpClient client;
+	private User assessor;
 
 	public SubmissionsArtemisClient(final String hostName, String token, User assessor) {
 		super(hostName);
-
-		this.endpoint = this.getEndpoint(this.getApiRootURL());
-		this.token = token;
-		this.assesor = assessor;
+		this.client = this.createClient(token);
+		this.assessor = assessor;
 	}
 
 	@Override
 	public List<ISubmission> getSubmissions(IExercise exercise, int correctionRound) throws ArtemisClientException {
-		boolean isInstructor = exercise.getCourse().isInstructor(this.assesor);
+		boolean isInstructor = exercise.getCourse().isInstructor(this.assessor);
+		Request request = new Request.Builder() //
+				.url(this.path(EXERCISES_PATHPART, exercise.getExerciseId(), PROGRAMMING_SUBMISSION_PATHPART).newBuilder()
+						.addQueryParameter("assessedByTutor", String.valueOf(!isInstructor))
+						.addQueryParameter("correction-round", String.valueOf(correctionRound)).build())
+				.get().build();
 
-		final Response rsp = this.endpoint.path(EXERCISES_PATHPART).path(String.valueOf(exercise.getExerciseId())).path(PROGRAMMING_SUBMISSION_PATHPART) //
-				.queryParam("assessedByTutor", !isInstructor) //
-				.queryParam("correction-round", correctionRound) //
-				.request().cookie(getAuthCookie(this.token)).buildGet().invoke();
-
-		this.throwIfStatusUnsuccessful(rsp);
-
-		final String rspEntity = rsp.readEntity(String.class);
-		ArtemisSubmission[] submissionsArray = this.read(rspEntity, ArtemisSubmission[].class);
-
+		ArtemisSubmission[] submissionsArray = this.call(this.client, request, ArtemisSubmission[].class);
 		for (ArtemisSubmission submission : submissionsArray) {
 			submission.init(correctionRound);
 		}

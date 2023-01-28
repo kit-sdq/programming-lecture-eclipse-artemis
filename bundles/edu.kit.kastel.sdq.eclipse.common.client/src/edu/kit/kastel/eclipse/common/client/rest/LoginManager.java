@@ -1,12 +1,8 @@
 /* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.client.rest;
 
+import java.io.IOException;
 import java.io.Serializable;
-
-import javax.ws.rs.ProcessingException;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.Response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -14,25 +10,25 @@ import edu.kit.kastel.eclipse.common.api.ArtemisClientException;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.User;
 import edu.kit.kastel.eclipse.common.api.client.IAuthenticationArtemisClient;
 import edu.kit.kastel.eclipse.common.client.BrowserLogin;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class LoginManager extends AbstractArtemisClient implements IAuthenticationArtemisClient {
 	private String username;
 	private String password;
 	private String token;
-	private WebTarget endpoint;
-	private User assessor;
 
-	public LoginManager(String hostname, String token) {
-		super(hostname);
-		this.token = token;
-		this.endpoint = this.getEndpoint(this.getApiRootURL());
-	}
+	private final OkHttpClient client;
+	private User assessor;
 
 	public LoginManager(String hostname, String username, String password) {
 		super(hostname);
 		this.username = username;
 		this.password = password;
-		this.endpoint = this.getEndpoint(this.getApiRootURL());
+		// Create without token ..
+		this.client = this.createClient(null);
 	}
 
 	@Override
@@ -42,20 +38,16 @@ public class LoginManager extends AbstractArtemisClient implements IAuthenticati
 
 	@Override
 	public void login() throws ArtemisClientException {
-		try {
-
-			if (this.hostname.isBlank()) {
-				throw new ArtemisClientException("Login without hostname is impossible");
-			} else if (username.isBlank() || password.isBlank()) {
-				BrowserLogin login = new BrowserLogin(getRootURL());
-				this.token = login.getToken();
-			} else {
-				this.token = this.loginViaUsernameAndPassword();
-			}
-			this.assessor = this.fetchAssessor();
-		} catch (ProcessingException e) {
-			throw new ArtemisClientException(e.getMessage(), e);
+		if (this.hostname.isBlank()) {
+			throw new ArtemisClientException("Login without hostname is impossible");
+		} else if (this.username.isBlank() || this.password.isBlank()) {
+			BrowserLogin login = new BrowserLogin(this.getRootURL());
+			this.token = login.getToken();
+		} else {
+			this.token = this.loginViaUsernameAndPassword();
 		}
+
+		this.assessor = this.fetchAssessor();
 	}
 
 	@Override
@@ -79,18 +71,29 @@ public class LoginManager extends AbstractArtemisClient implements IAuthenticati
 	}
 
 	private User fetchAssessor() throws ArtemisClientException {
-		final Response rsp = this.endpoint.path("account").request().cookie(getAuthCookie(this.getBearerToken())).buildGet().invoke();
-		this.throwIfStatusUnsuccessful(rsp);
-		return this.read(rsp.readEntity(String.class), User.class);
+		OkHttpClient clientWithToken = this.createClient(this.token);
+		Request request = new Request.Builder().url(this.path("account")).get().build();
+		return this.call(clientWithToken, request, User.class);
 	}
 
-	private String loginViaUsernameAndPassword() throws ArtemisClientException, ProcessingException {
+	private String loginViaUsernameAndPassword() throws ArtemisClientException {
 		String payload = this.payload(this.getAuthenticationEntity());
-		final Response authenticationResponse = this.endpoint.path("authenticate").request().buildPost(Entity.json(payload)).invoke();
 
-		this.throwIfStatusUnsuccessful(authenticationResponse);
-		final String authRspEntity = authenticationResponse.readEntity(String.class);
-		return this.read(authRspEntity, Token.class).token;
+		Request request = new Request.Builder() //
+				.url(this.path("authenticate")).post(RequestBody.create(payload, JSON)).build();
+
+		try (Response response = this.client.newCall(request).execute()) {
+			this.throwIfStatusUnsuccessful(response);
+			// jwt=JWT_CONTENT_HERE; Path=/; Max-Age=2592000; Expires=Sun, 26 Feb 2023
+			// 23:56:30 GMT; Secure; HttpOnly; SameSite=Lax
+			var cookieHeader = response.headers().get("set-cookie");
+			if (cookieHeader != null && cookieHeader.startsWith(COOKIE_NAME_JWT)) {
+				return cookieHeader.split(";", 2)[0].trim().substring((COOKIE_NAME_JWT + "=").length());
+			}
+			throw new ArtemisClientException("Authentication was not successful. Cookie not received!");
+		} catch (IOException e) {
+			throw new ArtemisClientException(e.getMessage(), e);
+		}
 	}
 
 	private final AuthenticationEntity getAuthenticationEntity() {
@@ -108,11 +111,5 @@ public class LoginManager extends AbstractArtemisClient implements IAuthenticati
 		private String password;
 		@JsonProperty
 		private boolean rememberMe = true;
-	}
-
-	private static final class Token implements Serializable {
-		private static final long serialVersionUID = -3729961485516556014L;
-		@JsonProperty("id_token")
-		private String token;
 	}
 }

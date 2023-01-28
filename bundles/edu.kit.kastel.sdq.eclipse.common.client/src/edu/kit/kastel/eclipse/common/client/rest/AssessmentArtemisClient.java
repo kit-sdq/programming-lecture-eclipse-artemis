@@ -1,11 +1,8 @@
 /* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.client.rest;
 
+import java.io.IOException;
 import java.util.Optional;
-
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.Response;
 
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.Platform;
@@ -21,6 +18,10 @@ import edu.kit.kastel.eclipse.common.client.mappings.ArtemisSubmission;
 import edu.kit.kastel.eclipse.common.client.mappings.lock.LockResult;
 import edu.kit.kastel.eclipse.common.client.mappings.stats.Stats;
 import edu.kit.kastel.eclipse.common.client.mappings.stats.Timing;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class AssessmentArtemisClient extends AbstractArtemisClient implements IAssessmentArtemisClient {
 	private static final ILog log = Platform.getLog(AssessmentArtemisClient.class);
@@ -33,14 +34,11 @@ public class AssessmentArtemisClient extends AbstractArtemisClient implements IA
 	private static final String SUBMIT_QUERY_PARAM = "submit";
 	protected static final String STATS_PATH = "stats-for-assessment-dashboard";
 
-	private WebTarget endpoint;
-	private String token;
+	private final OkHttpClient client;
 
 	public AssessmentArtemisClient(final String hostName, String token) {
 		super(hostName);
-
-		this.endpoint = this.getEndpoint(this.getApiRootURL());
-		this.token = token;
+		this.client = this.createClient(token);
 	}
 
 	@Override
@@ -48,53 +46,66 @@ public class AssessmentArtemisClient extends AbstractArtemisClient implements IA
 		String assessmentPayload = this.payload(assessment);
 		log.info(String.format("Saving assessment for submission %s with json: %s", assessment.id, assessmentPayload));
 
-		final Response rsp = this.endpoint.path(PARTICIPATION_PATHPART).path(String.valueOf(participationId)) //
-				.path(MANUAL_RESULT_PATHPART) //
-				.queryParam(SUBMIT_QUERY_PARAM, submit) //
-				.request().cookie(getAuthCookie(this.token)).buildPut(Entity.json(assessmentPayload)).invoke();
-		this.throwIfStatusUnsuccessful(rsp);
+		Request request = new Request.Builder() //
+				.url(this.path(PARTICIPATION_PATHPART, participationId, MANUAL_RESULT_PATHPART).newBuilder()
+						.addQueryParameter(SUBMIT_QUERY_PARAM, String.valueOf(submit)).build())
+				.put(RequestBody.create(assessmentPayload, JSON)).build();
 
+		this.call(this.client, request, null);
 	}
 
 	@Override
 	public ILockResult startAssessment(ISubmission submission) throws ArtemisClientException {
-		final Response rsp = this.endpoint.path(PROGRAMMING_SUBMISSION_PATHPART).path(String.valueOf(submission.getSubmissionId())).path(LOCK_QUERY_PARAM)
-				.queryParam(CORRECTION_ROUND_QUERY_PARAM, submission.getCorrectionRound()).request().cookie(getAuthCookie(this.token)).buildGet().invoke();
+		Request request = new Request.Builder() //
+				.url(this.path(PROGRAMMING_SUBMISSION_PATHPART, submission.getSubmissionId(), LOCK_QUERY_PARAM).newBuilder()
+						.addQueryParameter(CORRECTION_ROUND_QUERY_PARAM, String.valueOf(submission.getCorrectionRound())).build())
+				.get().build();
 
-		this.throwIfStatusUnsuccessful(rsp);
-		return this.read(rsp.readEntity(String.class), LockResult.class);
+		return this.call(this.client, request, LockResult.class);
 	}
 
 	@Override
 	public Optional<ILockResult> startNextAssessment(IExercise exercise, int correctionRound) throws ArtemisClientException {
-		final Response rsp = this.endpoint.path(EXERCISES_PATHPART).path(String.valueOf(exercise.getExerciseId())).path(SUBMISSION_WIHOUT_ASSESSMENT_PATH)
-				.queryParam(CORRECTION_ROUND_QUERY_PARAM, correctionRound).queryParam(LOCK_QUERY_PARAM, true).request().cookie(getAuthCookie(this.token))
-				.buildGet().invoke();
+		Request request = new Request.Builder() //
+				.url(this.path(EXERCISES_PATHPART, exercise.getExerciseId(), SUBMISSION_WIHOUT_ASSESSMENT_PATH).newBuilder()
+						.addQueryParameter(CORRECTION_ROUND_QUERY_PARAM, String.valueOf(correctionRound))
+						.addQueryParameter(LOCK_QUERY_PARAM, String.valueOf(true)).build())
+				.get().build();
 
-		if (!this.isStatusSuccessful(rsp)) {
-			// no assessment left!
-			return Optional.empty();
+		try (Response response = this.client.newCall(request).execute()) {
+			if (!response.isSuccessful()) {
+				return Optional.empty();
+			}
+			return Optional.of(this.read(response.body().string(), LockResult.class));
+		} catch (IOException e) {
+			throw new ArtemisClientException(e.getMessage(), e);
 		}
-		return Optional.of(this.read(rsp.readEntity(String.class), LockResult.class));
+
 	}
 
 	@Override
 	public ExerciseStats getStats(IExercise exercise) throws ArtemisClientException {
-		final Response rsp = this.endpoint.path(EXERCISES_PATHPART).path(String.valueOf(exercise.getExerciseId())).path(STATS_PATH).request()
-				.cookie(getAuthCookie(this.token)).buildGet().invoke();
-		if (!this.isStatusSuccessful(rsp)) {
-			return null;
+		Request request = new Request.Builder() //
+				.url(this.path(EXERCISES_PATHPART, exercise.getExerciseId(), STATS_PATH)).get().build();
+
+		Stats stats = null;
+		try (Response response = this.client.newCall(request).execute()) {
+			if (!response.isSuccessful()) {
+				return null;
+			}
+			stats = this.read(response.body().string(), Stats.class);
+		} catch (IOException e) {
+			throw new ArtemisClientException(e.getMessage(), e);
 		}
 
-		var stats = this.read(rsp.readEntity(String.class), Stats.class);
-
-		int submissionsInRound1 = countSubmissions(exercise, 0);
+		int submissionsInRound1 = this.countSubmissions(exercise, 0);
 		int submissionsInRound2 = 0;
-		if (exercise.hasSecondCorrectionRound())
-			submissionsInRound2 = countSubmissions(exercise, 1);
+		if (exercise.hasSecondCorrectionRound()) {
+			submissionsInRound2 = this.countSubmissions(exercise, 1);
+		}
 
 		return new ExerciseStats( //
-				countInRounds(stats.numberOfAssessmentsOfCorrectionRounds()), //
+				this.countInRounds(stats.numberOfAssessmentsOfCorrectionRounds()), //
 				stats.numberOfSubmissions().inTime(), //
 				stats.totalNumberOfAssessmentLocks(), //
 				submissionsInRound1 + submissionsInRound2 //
@@ -104,22 +115,28 @@ public class AssessmentArtemisClient extends AbstractArtemisClient implements IA
 
 	private int countInRounds(Timing[] rounds) {
 		int countInTime = 0;
-		for (var round : rounds)
+		for (var round : rounds) {
 			countInTime += round.inTime();
+		}
 		return countInTime;
 	}
 
 	private int countSubmissions(IExercise exercise, int correctionRound) throws ArtemisClientException {
-		final Response rsp = this.endpoint.path(EXERCISES_PATHPART).path(String.valueOf(exercise.getExerciseId())).path(PROGRAMMING_SUBMISSION_PATHPART) //
-				.queryParam("assessedByTutor", true) //
-				.queryParam("correction-round", correctionRound) //
-				.request().cookie(getAuthCookie(this.token)).buildGet().invoke();
+		Request request = new Request.Builder() //
+				.url(this.path(EXERCISES_PATHPART, exercise.getExerciseId(), PROGRAMMING_SUBMISSION_PATHPART).newBuilder()
+						.addQueryParameter("assessedByTutor", String.valueOf(true)).addQueryParameter("correction-round", String.valueOf(correctionRound))
+						.build())
+				.get().build();
 
-		if (!this.isStatusSuccessful(rsp)) {
-			return 0;
+		try (Response response = this.client.newCall(request).execute()) {
+			if (!response.isSuccessful()) {
+				return 0;
+			}
+			ArtemisSubmission[] submissionsArray = this.read(response.body().string(), ArtemisSubmission[].class);
+			return submissionsArray.length;
+		} catch (IOException e) {
+			throw new ArtemisClientException(e.getMessage(), e);
 		}
-		ArtemisSubmission[] submissionsArray = this.read(rsp.readEntity(String.class), ArtemisSubmission[].class);
-		return submissionsArray.length;
 	}
 
 }
