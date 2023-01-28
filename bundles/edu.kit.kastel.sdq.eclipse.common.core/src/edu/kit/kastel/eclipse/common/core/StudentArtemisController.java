@@ -18,7 +18,6 @@ import edu.kit.kastel.eclipse.common.api.artemis.mapping.IExercise;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.IStudentExam;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.ParticipationDTO;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.ResultsDTO;
-import edu.kit.kastel.eclipse.common.api.client.websocket.ArtemisWebsocketException;
 import edu.kit.kastel.eclipse.common.api.client.websocket.IWebsocketClient;
 import edu.kit.kastel.eclipse.common.api.client.websocket.WebsocketCallback;
 import edu.kit.kastel.eclipse.common.api.controller.IStudentArtemisController;
@@ -167,12 +166,13 @@ public class StudentArtemisController extends ArtemisController implements IStud
 
 	@Override
 	public boolean connectToWebsocket(WebsocketCallback callback) {
-		try {
-			this.websocketClient.connect(callback, this.clientManager.getAuthenticationClient().getRawToken());
-			return true;
-		} catch (ArtemisWebsocketException e) {
-			log.error("Can not connect to websocket.");
-			return false;
-		}
+		log.error("Websockets are currently broken");
+		return false;
+		/*
+		 * try { this.websocketClient.connect(callback,
+		 * this.clientManager.getAuthenticationClient().getRawToken()); return true; }
+		 * catch (ArtemisWebsocketException e) {
+		 * log.error("Can not connect to websocket."); return false; }
+		 */
 	}
 }

@@ -3,37 +3,32 @@ package edu.kit.kastel.eclipse.common.client.rest;
 
 import java.time.LocalDateTime;
 
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.Response;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import edu.kit.kastel.eclipse.common.api.ArtemisClientException;
 import edu.kit.kastel.eclipse.common.api.client.IUtilArtemisClient;
 import edu.kit.kastel.eclipse.common.api.util.Version;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 
 public class UtilArtemisClient extends AbstractArtemisClient implements IUtilArtemisClient {
-	private WebTarget endpoint;
+	private final OkHttpClient client;
 
 	public UtilArtemisClient(final String hostName) {
 		super(hostName);
-
-		this.endpoint = getEndpoint(this.getRootURL());
+		this.client = this.createClient(null);
 	}
 
 	@Override
 	public LocalDateTime getTime() throws ArtemisClientException {
-		final Response response = this.endpoint.path("time").request().buildGet().invoke();
-		this.throwIfStatusUnsuccessful(response);
-
-		return this.read(response.readEntity(String.class), LocalDateTime.class);
+		Request request = new Request.Builder().url(this.getRootURL() + "/time").get().build();
+		return this.call(this.client, request, LocalDateTime.class);
 	}
 
 	@Override
 	public Version getVersion() throws ArtemisClientException {
-		final Response response = this.endpoint.path("management/info").request().buildGet().invoke();
-		this.throwIfStatusUnsuccessful(response);
-		var info = this.read(response.readEntity(String.class), Info.class);
+		Request request = new Request.Builder().url(this.getRootURL() + "/management/info").get().build();
+		var info = this.call(this.client, request, Info.class);
 		return Version.fromString(info.build.version);
 	}
 

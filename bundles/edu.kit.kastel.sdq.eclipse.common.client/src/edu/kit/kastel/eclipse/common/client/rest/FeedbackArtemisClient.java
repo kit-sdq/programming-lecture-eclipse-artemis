@@ -1,35 +1,28 @@
 /* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.client.rest;
 
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.Response;
-
 import edu.kit.kastel.eclipse.common.api.ArtemisClientException;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.Feedback;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.ParticipationDTO;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.ResultsDTO;
 import edu.kit.kastel.eclipse.common.api.client.IFeedbackArtemisClient;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 
 public class FeedbackArtemisClient extends AbstractArtemisClient implements IFeedbackArtemisClient {
-	private WebTarget endpoint;
-	private String token;
+	private final OkHttpClient client;
 
 	public FeedbackArtemisClient(final String hostName, String token) {
 		super(hostName);
-
-		this.endpoint = getEndpoint(this.getApiRootURL());
-		this.token = token;
+		this.client = this.createClient(token);
 	}
 
 	@Override
 	public Feedback[] getFeedbackForResult(ParticipationDTO participation, ResultsDTO result) throws ArtemisClientException {
-		final Response exercisesRsp = this.endpoint.path(PARTICIPATION_PATHPART).path(Integer.toString(participation.getParticipationId()))
-				.path(RESULT_PATHPART).path(Integer.toString(result.id)).path("details").request().cookie(getAuthCookie(this.token)).buildGet().invoke();
+		Request request = new Request.Builder() //
+				.url(this.path(PARTICIPATION_PATHPART, participation.getParticipationId(), RESULT_PATHPART, result.id, "details")).get().build();
 
-		this.throwIfStatusUnsuccessful(exercisesRsp);
-
-		// get the part of the json that we want to deserialize
-		return this.read(exercisesRsp.readEntity(String.class), Feedback[].class);
+		return this.call(this.client, request, Feedback[].class);
 	}
 
 }

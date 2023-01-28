@@ -33,9 +33,10 @@ public abstract class ArtemisController extends AbstractController implements IA
 		super(handler);
 		this.clientManager = new RestClientManager(host, username, password);
 		this.lockResults = new HashMap<>();
-
-		this.checkVersion();
-		this.loginOrNotify();
+		if (host != null && !host.isBlank()) {
+			this.checkVersion();
+			this.loginOrNotify();
+		}
 	}
 
 	protected abstract List<ICourse> fetchCourses();
@@ -43,8 +44,9 @@ public abstract class ArtemisController extends AbstractController implements IA
 	@Override
 	public User getUserLogin() {
 		var login = this.clientManager.getAuthenticationClient();
-		if (login == null)
+		if (login == null) {
 			return null;
+		}
 		return login.getUser();
 	}
 

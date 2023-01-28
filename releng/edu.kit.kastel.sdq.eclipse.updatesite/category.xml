@@ -51,12 +51,6 @@
    <bundle id="javax.ws.rs">
       <category name="Eclipse Artemis Dev"/>
    </bundle>
-   <bundle id="javax.ws.rs.source">
-      <category name="Eclipse Artemis Dev"/>
-   </bundle>
-   <bundle id="jakarta.xml.bind">
-      <category name="Eclipse Artemis Dev"/>
-   </bundle>
    <bundle id="org.glassfish.jersey.core.jersey-client">
       <category name="Eclipse Artemis Dev"/>
    </bundle>
@@ -76,6 +70,36 @@
       <category name="Eclipse Artemis Dev"/>
    </bundle>
    <bundle id="org.eclipse.jface.text">
+      <category name="Eclipse Artemis Dev"/>
+   </bundle>
+   <bundle id="com.squareup.okhttp3.okhttp">
+      <category name="Eclipse Artemis Dev"/>
+   </bundle>
+   <bundle id="com.squareup.okhttp3.okhttp.source">
+      <category name="Eclipse Artemis Dev"/>
+   </bundle>
+   <bundle id="org.jetbrains.kotlin.stdlib">
+      <category name="Eclipse Artemis Dev"/>
+   </bundle>
+   <bundle id="org.jetbrains.kotlin.stdlib-common">
+      <category name="Eclipse Artemis Dev"/>
+   </bundle>
+   <bundle id="org.jetbrains.kotlin.stdlib-common.source">
+      <category name="Eclipse Artemis Dev"/>
+   </bundle>
+   <bundle id="org.jetbrains.kotlin.stdlib-jdk7">
+      <category name="Eclipse Artemis Dev"/>
+   </bundle>
+   <bundle id="org.jetbrains.kotlin.stdlib-jdk7.source">
+      <category name="Eclipse Artemis Dev"/>
+   </bundle>
+   <bundle id="org.jetbrains.kotlin.stdlib-jdk8">
+      <category name="Eclipse Artemis Dev"/>
+   </bundle>
+   <bundle id="org.jetbrains.kotlin.stdlib-jdk8.source">
+      <category name="Eclipse Artemis Dev"/>
+   </bundle>
+   <bundle id="org.jetbrains.kotlin.stdlib.source">
       <category name="Eclipse Artemis Dev"/>
    </bundle>
    <category-def name="Eclipse Artemis Grading" label="Eclipse Artemis Grading">
