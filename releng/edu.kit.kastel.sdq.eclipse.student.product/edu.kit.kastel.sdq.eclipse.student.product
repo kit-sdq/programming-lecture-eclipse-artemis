@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="Eclipse Artemis Student" uid="edu.kit.kastel.sdq.eclipse.student.product" id="edu.kit.kastel.sdq.eclipse.student.eclipse.ArtemisStudentEclipse" application="org.eclipse.ui.ide.workbench" version="3.0.2" useFeatures="true" includeLaunchers="true" autoIncludeRequirements="true">
+<product name="Eclipse Artemis Student" uid="edu.kit.kastel.sdq.eclipse.student.product" id="edu.kit.kastel.sdq.eclipse.student.eclipse.ArtemisStudentEclipse" application="org.eclipse.ui.ide.workbench" version="3.1.0" useFeatures="true" includeLaunchers="true" autoIncludeRequirements="true">
 
    <aboutInfo>
       <text>
