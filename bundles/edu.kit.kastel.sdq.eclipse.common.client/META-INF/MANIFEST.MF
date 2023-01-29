@@ -45,7 +45,8 @@ Require-Bundle: edu.kit.kastel.sdq.eclipse.common.api,
  org.eclipse.jetty.websocket.jakarta.server;bundle-version="11.0.13",
  org.eclipse.jetty.websocket.server;bundle-version="11.0.13",
  org.eclipse.jetty.websocket.servlet;bundle-version="11.0.13",
- org.eclipse.jetty.xml;bundle-version="11.0.13"
+ org.eclipse.jetty.xml;bundle-version="11.0.13",
+ jakarta.websocket
 Export-Package: edu.kit.kastel.eclipse.common.client.git,
  edu.kit.kastel.eclipse.common.client.mappings,
  edu.kit.kastel.eclipse.common.client.mappings.exam,
