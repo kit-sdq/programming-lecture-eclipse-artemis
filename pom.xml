@@ -38,6 +38,12 @@
             <layout>p2</layout>
         </repository>
         <repository>
+            <id>Jetty</id>
+            <!-- https://repo.maven.apache.org/maven2/org/eclipse/jetty/jetty-p2/ -->
+            <url>mvn:org.eclipse.jetty:jetty-p2:11.0.13:zip:p2site</url>
+            <layout>p2</layout>
+        </repository>
+        <repository>
             <id>Eclipse P2 for External Deps</id>
             <url>https://kit-sdq.github.io/programming-lecture-eclipse-artemis.p2</url>
             <layout>p2</layout>
