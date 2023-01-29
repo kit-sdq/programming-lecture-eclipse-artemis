@@ -36,8 +36,8 @@ public class AssessmentArtemisClient extends AbstractArtemisClient implements IA
 
 	private final OkHttpClient client;
 
-	public AssessmentArtemisClient(final String hostName, String token) {
-		super(hostName);
+	public AssessmentArtemisClient(final String hostname, String token) {
+		super(hostname);
 		this.client = this.createClient(token);
 	}
 

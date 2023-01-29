@@ -48,27 +48,6 @@
    <bundle id="com.fasterxml.jackson.core.jackson-databind.source">
       <category name="Eclipse Artemis Dev"/>
    </bundle>
-   <bundle id="javax.ws.rs">
-      <category name="Eclipse Artemis Dev"/>
-   </bundle>
-   <bundle id="org.glassfish.jersey.core.jersey-client">
-      <category name="Eclipse Artemis Dev"/>
-   </bundle>
-   <bundle id="org.glassfish.jersey.core.jersey-client.source">
-      <category name="Eclipse Artemis Dev"/>
-   </bundle>
-   <bundle id="org.glassfish.jersey.core.jersey-common">
-      <category name="Eclipse Artemis Dev"/>
-   </bundle>
-   <bundle id="org.glassfish.jersey.core.jersey-common.source">
-      <category name="Eclipse Artemis Dev"/>
-   </bundle>
-   <bundle id="org.glassfish.jersey.inject.jersey-hk2">
-      <category name="Eclipse Artemis Dev"/>
-   </bundle>
-   <bundle id="org.glassfish.jersey.inject.jersey-hk2.source">
-      <category name="Eclipse Artemis Dev"/>
-   </bundle>
    <bundle id="org.eclipse.jface.text">
       <category name="Eclipse Artemis Dev"/>
    </bundle>
@@ -100,6 +79,18 @@
       <category name="Eclipse Artemis Dev"/>
    </bundle>
    <bundle id="org.jetbrains.kotlin.stdlib.source">
+      <category name="Eclipse Artemis Dev"/>
+   </bundle>
+   <bundle id="org.eclipse.jetty.client">
+      <category name="Eclipse Artemis Dev"/>
+   </bundle>
+   <bundle id="org.eclipse.jetty.websocket.client">
+      <category name="Eclipse Artemis Dev"/>
+   </bundle>
+   <bundle id="org.eclipse.jetty.websocket.jakarta.client">
+      <category name="Eclipse Artemis Dev"/>
+   </bundle>
+   <bundle id="jakarta.websocket">
       <category name="Eclipse Artemis Dev"/>
    </bundle>
    <category-def name="Eclipse Artemis Grading" label="Eclipse Artemis Grading">

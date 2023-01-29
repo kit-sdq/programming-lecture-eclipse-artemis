@@ -28,7 +28,7 @@ public class BrowserLogin extends Dialog {
 
 	private static final ILog log = Platform.getLog(BrowserLogin.class);
 
-	private final String hostname;
+	private final String fullUrl;
 	private String token;
 	private Browser browser;
 
@@ -36,9 +36,9 @@ public class BrowserLogin extends Dialog {
 
 	private long lastSuccessWasAlreadyLoggedIn;
 
-	public BrowserLogin(String fullURL) {
+	public BrowserLogin(String fullUrl) {
 		super((Shell) null);
-		this.hostname = fullURL;
+		this.fullUrl = fullUrl;
 		this.setShellStyle((SWT.DIALOG_TRIM | SWT.RESIZE | SWT.MODELESS | SWT.ON_TOP) & ~SWT.CLOSE);
 	}
 
@@ -61,64 +61,66 @@ public class BrowserLogin extends Dialog {
 		final GridLayout layout = (GridLayout) comp.getLayout();
 		layout.numColumns = 1;
 
-		if (isWindows10orAbove())
-			browser = new Browser(comp, SWT.EDGE);
-		else
-			browser = new Browser(comp, SWT.NONE);
-		browser.setLayoutData(new GridData(GridData.FILL_BOTH));
-		browser.setJavascriptEnabled(true);
-		browser.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		browser.setUrl(hostname);
+		if (this.isWindows10orAbove()) {
+			this.browser = new Browser(comp, SWT.EDGE);
+		} else {
+			this.browser = new Browser(comp, SWT.NONE);
+		}
+		this.browser.setLayoutData(new GridData(GridData.FILL_BOTH));
+		this.browser.setJavascriptEnabled(true);
+		this.browser.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		this.browser.setUrl(this.fullUrl);
 		return comp;
 	}
 
 	@Override
 	public int open() {
-		closed = false;
-		lastSuccessWasAlreadyLoggedIn = System.currentTimeMillis();
+		this.closed = false;
+		this.lastSuccessWasAlreadyLoggedIn = System.currentTimeMillis();
 		int result = super.open();
-		closed = true;
+		this.closed = true;
 		return result;
 	}
 
 	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
-		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CLOSE_LABEL, true);
+		this.createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CLOSE_LABEL, true);
 	}
 
 	@Override
 	protected void cancelPressed() {
-		closed = true;
+		this.closed = true;
 		super.cancelPressed();
 	}
 
 	/**
 	 * Gets the JWT Token from Artemis
-	 * 
+	 *
 	 * @return the JWT Token or {@code null} if no token provided.
 	 */
 	public String getToken() {
-		if (this.token != null)
-			return token;
+		if (this.token != null) {
+			return this.token;
+		}
 
-		closed = false;
+		this.closed = false;
 
-		Thread pollingDaemon = new Thread(() -> pollingThread());
+		Thread pollingDaemon = new Thread(this::pollingThread);
 		pollingDaemon.setDaemon(true);
 		pollingDaemon.start();
 
 		log.info("Opened Browser. Waiting for token");
-		Display.getDefault().syncExec(() -> this.open());
-		log.info("Got Token: " + (token != null));
+		Display.getDefault().syncExec(this::open);
+		log.info("Got Token: " + (this.token != null));
 		return this.token;
 	}
 
 	private void pollingThread() {
 		try {
 			var display = Display.getDefault();
-			while (!closed) {
+			while (!this.closed) {
 				Thread.sleep(POLL_INTERVAL);
-				display.asyncExec(() -> readCookieAndSetToken());
+				display.asyncExec(this::readCookieAndSetToken);
 			}
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
@@ -128,23 +130,24 @@ public class BrowserLogin extends Dialog {
 
 	private void readCookieAndSetToken() {
 		try {
-			String jwtToken = Browser.getCookie("jwt", hostname);
+			String jwtToken = Browser.getCookie("jwt", this.fullUrl);
 
-			if (jwtToken == null && token != null) {
+			if (jwtToken == null && this.token != null) {
 				log.info("Logout occured");
-				token = null;
+				this.token = null;
 				return;
 			}
 
-			if (jwtToken == null || Objects.equals(token, jwtToken))
+			if (jwtToken == null || Objects.equals(this.token, jwtToken)) {
 				return;
+			}
 
 			log.info("Got a new Token: " + jwtToken);
-			token = jwtToken;
+			this.token = jwtToken;
 
 			// Close Dialog
-			if (!wasAlreadyLoggedIn()) {
-				Display.getDefault().asyncExec(() -> BrowserLogin.this.okPressed());
+			if (!this.wasAlreadyLoggedIn()) {
+				Display.getDefault().asyncExec(BrowserLogin.this::okPressed);
 			}
 		} catch (SWTException | SWTError e) {
 			if (e.getMessage().equals("Widget is disposed") || e.getMessage().contains("cookie access requires a Browser instance")) {
@@ -158,18 +161,19 @@ public class BrowserLogin extends Dialog {
 
 	private boolean wasAlreadyLoggedIn() {
 		long currentTime = System.currentTimeMillis();
-		long diff = currentTime - lastSuccessWasAlreadyLoggedIn;
+		long diff = currentTime - this.lastSuccessWasAlreadyLoggedIn;
 		if (diff > MIN_TIME_TO_LOGIN_IN_MS) {
 			return false;
 		}
-		lastSuccessWasAlreadyLoggedIn = currentTime;
+		this.lastSuccessWasAlreadyLoggedIn = currentTime;
 		return true;
 	}
 
 	private boolean isWindows10orAbove() {
 		String os = System.getProperty("os.name");
-		if (os == null || !os.startsWith("Windows"))
+		if (os == null || !os.startsWith("Windows")) {
 			return false;
+		}
 		return os.contains("Windows 10") || os.contains("Windows 11");
 	}
 }
