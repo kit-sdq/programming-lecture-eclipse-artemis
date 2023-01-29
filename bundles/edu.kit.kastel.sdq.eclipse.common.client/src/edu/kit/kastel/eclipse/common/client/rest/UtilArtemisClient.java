@@ -14,8 +14,8 @@ import okhttp3.Request;
 public class UtilArtemisClient extends AbstractArtemisClient implements IUtilArtemisClient {
 	private final OkHttpClient client;
 
-	public UtilArtemisClient(final String hostName) {
-		super(hostName);
+	public UtilArtemisClient(final String hostname) {
+		super(hostname);
 		this.client = this.createClient(null);
 	}
 

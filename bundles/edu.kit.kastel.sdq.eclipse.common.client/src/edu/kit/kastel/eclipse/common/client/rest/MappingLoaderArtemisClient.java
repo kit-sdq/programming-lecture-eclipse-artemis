@@ -31,8 +31,8 @@ public class MappingLoaderArtemisClient extends AbstractArtemisClient implements
 
 	private final OkHttpClient client;
 
-	public MappingLoaderArtemisClient(ISubmissionsArtemisClient submissionClient, String hostName, String token) {
-		super(hostName);
+	public MappingLoaderArtemisClient(ISubmissionsArtemisClient submissionClient, String hostname, String token) {
+		super(hostname);
 		this.client = this.createClient(token);
 		this.submissionClient = submissionClient;
 	}

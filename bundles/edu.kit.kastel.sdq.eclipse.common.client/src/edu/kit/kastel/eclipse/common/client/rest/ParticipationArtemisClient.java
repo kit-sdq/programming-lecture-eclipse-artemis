@@ -16,8 +16,8 @@ public class ParticipationArtemisClient extends AbstractArtemisClient implements
 
 	private final OkHttpClient client;
 
-	public ParticipationArtemisClient(final String hostName, String token) {
-		super(hostName);
+	public ParticipationArtemisClient(final String hostname, String token) {
+		super(hostname);
 		this.client = this.createClient(token);
 	}
 

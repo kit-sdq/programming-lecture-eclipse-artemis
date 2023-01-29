@@ -28,7 +28,8 @@ Require-Bundle: edu.kit.kastel.sdq.eclipse.common.api,
  jakarta.websocket,
  org.eclipse.jetty.client,
  org.eclipse.jetty.websocket.jakarta.client,
- org.eclipse.jetty.util
+ org.eclipse.jetty.util,
+ com.squareup.okio
 Export-Package: edu.kit.kastel.eclipse.common.client.git,
  edu.kit.kastel.eclipse.common.client.mappings,
  edu.kit.kastel.eclipse.common.client.mappings.exam,

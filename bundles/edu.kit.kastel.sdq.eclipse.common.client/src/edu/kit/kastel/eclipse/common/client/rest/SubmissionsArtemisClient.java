@@ -18,8 +18,8 @@ public class SubmissionsArtemisClient extends AbstractArtemisClient implements I
 	private final OkHttpClient client;
 	private User assessor;
 
-	public SubmissionsArtemisClient(final String hostName, String token, User assessor) {
-		super(hostName);
+	public SubmissionsArtemisClient(final String hostname, String token, User assessor) {
+		super(hostname);
 		this.client = this.createClient(token);
 		this.assessor = assessor;
 	}

@@ -12,8 +12,8 @@ import okhttp3.Request;
 public class FeedbackArtemisClient extends AbstractArtemisClient implements IFeedbackArtemisClient {
 	private final OkHttpClient client;
 
-	public FeedbackArtemisClient(final String hostName, String token) {
-		super(hostName);
+	public FeedbackArtemisClient(final String hostname, String token) {
+		super(hostname);
 		this.client = this.createClient(token);
 	}
 
