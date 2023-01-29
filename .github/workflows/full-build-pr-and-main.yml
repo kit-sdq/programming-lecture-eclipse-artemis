@@ -20,11 +20,6 @@ jobs:
 
     steps:
 
-    - name: Install build utils
-      run: |
-        sudo DEBIAN_FRONTEND="noninteractive" apt-get update
-        sudo DEBIAN_FRONTEND="noninteractive" apt-get install -y eatmydata
-
     - uses: actions/checkout@v3.3.0
 
     - name: Set up JDK
@@ -47,7 +42,7 @@ jobs:
         key: cache-dist-${{github.run_id}}
 
     - name: Build with Maven
-      run: eatmydata mvn -U -B -Pproducts package
+      run: mvn -U -B -Pproducts package
 
     - name: Move Distributions
       run: |
