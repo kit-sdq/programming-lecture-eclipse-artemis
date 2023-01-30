@@ -1,13 +1,13 @@
 /* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.grading.view.assessment;
 
-import java.io.File;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.Scanner;
 import java.util.function.Consumer;
 
 import org.eclipse.core.runtime.ILog;
@@ -18,6 +18,7 @@ import org.eclipse.swt.widgets.Display;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import de.firemage.autograder.cmd.Application;
 import edu.kit.kastel.eclipse.common.api.PreferenceConstants;
 import edu.kit.kastel.eclipse.common.api.controller.IAssessmentController;
 import edu.kit.kastel.eclipse.common.api.model.IAnnotation;
@@ -27,50 +28,59 @@ import edu.kit.kastel.eclipse.common.view.utilities.AssessmentUtilities;
 import edu.kit.kastel.eclipse.grading.view.activator.Activator;
 
 public class AutograderUtil {
-	private static final ILog LOG = Platform.getLog(AutograderUtil.class);
+	private static final ILog log = Platform.getLog(AutograderUtil.class);
 
 	public static void runAutograder(IAssessmentController assessmentController, Path path, Consumer<Boolean> onCompletion) {
 		if (!assessmentController.getAnnotations().isEmpty()) {
-			LOG.info("Skipping autograder as there already annotation present");
+			log.info("Skipping autograder as there already annotation present");
 			return; // Don't run the autograder if there are already annotations
 		}
 
-		if (CommonActivator.getDefault().getPreferenceStore().getString(PreferenceConstants.AUTOGRADER_JAR_PATH).isBlank()) {
-			LOG.warn("Autograder path not set");
+		var config = CommonActivator.getDefault().getPreferenceStore().getString(PreferenceConstants.AUTOGRADER_CONFIG_PATH);
+		if (config.isBlank()) {
+			log.warn("Autograder Config path not set");
 			return;
 		}
 
 		Job.create("Autograder", monitor -> {
+			// Store the current exercise
+			var submission = assessmentController.getSubmission();
+
+			monitor.beginTask("Autograder", 7); // Compile, PMD, CPD, SpotBugs, Spoon, integrated, parsing
+
+			String[] args = new String[] { config, path.toString(), "-s", "--output-json" };
+			var originalOutput = System.out;
+			var originalError = System.err;
+
 			try {
-				// Store the current exercise
-				var submission = assessmentController.getSubmission();
+				ByteArrayOutputStream out = new ByteArrayOutputStream();
+				ByteArrayOutputStream err = new ByteArrayOutputStream();
+				System.setOut(new PrintStream(out));
+				System.setErr(new PrintStream(err));
 
-				monitor.beginTask("Autograder", 7); // Compile, PMD, CPD, SpotBugs, Spoon, integrated, parsing
+				log.info("Autograder started");
 
-				File autograderJar = new File(CommonActivator.getDefault().getPreferenceStore().getString(PreferenceConstants.AUTOGRADER_JAR_PATH));
-				File autograderConfig = new File(CommonActivator.getDefault().getPreferenceStore().getString(PreferenceConstants.AUTOGRADER_CONFIG_PATH));
+				Application.main(args);
 
-				ProcessBuilder processBuilder = new ProcessBuilder("java", "-DFile.Encoding=UTF-8", "-jar", autograderJar.getAbsolutePath(),
-						autograderConfig.getAbsolutePath(), path.toString(), "-s", "--output-json");
-				var process = processBuilder.start();
-				Scanner autograderOutput = new Scanner(process.getInputStream(), StandardCharsets.UTF_8);
+				log.info("Autograder finished");
 
-				LOG.info("Autograder started");
+				String autograderOutput = new String(out.toByteArray(), StandardCharsets.UTF_8);
+				out.close();
+				String autograderError = new String(err.toByteArray(), StandardCharsets.UTF_8);
+				err.close();
 
 				String problems = "[]";
-				while (autograderOutput.hasNext() && process.isAlive()) {
-					String line = autograderOutput.nextLine();
+				for (String line : autograderOutput.split("\\n")) {
 					if (line.equals(">> Problems <<")) {
-						problems = autograderOutput.nextLine();
+						problems = line;
 					} else {
 						monitor.worked(1);
 					}
 				}
-
 				monitor.setTaskName("Parsing annotations");
-				String errorOutput = new String(process.getErrorStream().readAllBytes());
-				if (!errorOutput.isBlank()) {
-					LOG.warn("Autograder failed: " + errorOutput);
+
+				if (!autograderError.isBlank()) {
+					log.warn("Autograder failed: " + autograderError);
 					onCompletion.accept(false);
 					Display.getDefault().asyncExec(() -> MessageDialog.openWarning(AssessmentUtilities.getWindowsShell(), "Autograder failed",
 							"Autograder failed. Please assess the submission normally. Additional information can be found in the Eclipse log"));
@@ -78,7 +88,7 @@ public class AutograderUtil {
 					Display.getDefault().asyncExec(() -> MessageDialog.openWarning(AssessmentUtilities.getWindowsShell(), "Submission changed",
 							"Autograder completed successfully, but the current submission has changed during analysis, so no annotations will be created."));
 				} else {
-					LOG.info("Autograder completed successfully");
+					log.info("Autograder completed successfully");
 
 					List<AutograderAnnotation> annotations = Arrays.asList(new ObjectMapper().readValue(problems, AutograderAnnotation[].class));
 
@@ -91,7 +101,7 @@ public class AutograderUtil {
 							AssessmentUtilities.createMarkerByAnnotation(assessmentController.getAnnotationById(id).get(),
 									Activator.getDefault().getSystemwideController().getCurrentProjectName(), "assignment/");
 						} else {
-							LOG.warn("No mistake type found for autograder annotation type " + annotation.type());
+							log.warn("No mistake type found for autograder annotation type " + annotation.type());
 						}
 					}
 					onCompletion.accept(true);
@@ -100,8 +110,12 @@ public class AutograderUtil {
 					Display.getDefault().asyncExec(() -> MessageDialog.openInformation(AssessmentUtilities.getWindowsShell(), "Autograder succeeded",
 							String.format("Autograder found %d issues. Please check that there are no false-positives.", annotations.size())));
 				}
-			} catch (Exception ex) {
-				LOG.warn(ex.getMessage());
+
+			} catch (Exception e) {
+				log.error(e.getMessage(), e);
+			} finally {
+				System.setOut(originalOutput);
+				System.setErr(originalError);
 			}
 		}).schedule();
 	}
