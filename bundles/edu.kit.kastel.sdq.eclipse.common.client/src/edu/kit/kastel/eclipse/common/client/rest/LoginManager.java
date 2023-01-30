@@ -71,6 +71,9 @@ public class LoginManager extends AbstractArtemisClient implements IAuthenticati
 	}
 
 	private User fetchAssessor() throws ArtemisClientException {
+		if (this.token == null) {
+			return null;
+		}
 		OkHttpClient clientWithToken = this.createClient(this.token);
 		Request request = new Request.Builder().url(this.path("account")).get().build();
 		return this.call(clientWithToken, request, User.class);

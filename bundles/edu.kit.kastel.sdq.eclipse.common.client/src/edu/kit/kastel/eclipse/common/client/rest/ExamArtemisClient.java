@@ -13,8 +13,8 @@ import okhttp3.Request;
 public class ExamArtemisClient extends AbstractArtemisClient implements IExamArtemisClient {
 	private final OkHttpClient client;
 
-	public ExamArtemisClient(final String hostName, String token) {
-		super(hostName);
+	public ExamArtemisClient(final String hostname, String token) {
+		super(hostname);
 		this.client = this.createClient(token);
 	}
 
