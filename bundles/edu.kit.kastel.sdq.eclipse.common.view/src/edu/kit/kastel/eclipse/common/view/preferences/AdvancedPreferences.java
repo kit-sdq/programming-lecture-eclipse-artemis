@@ -1,8 +1,6 @@
 /* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.view.preferences;
 
-import static edu.kit.kastel.eclipse.common.view.languages.LanguageSettings.I18N;
-
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.ComboFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
@@ -15,11 +13,13 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import edu.kit.kastel.eclipse.common.api.PreferenceConstants;
 import edu.kit.kastel.eclipse.common.view.activator.CommonActivator;
 
+import static edu.kit.kastel.eclipse.common.view.languages.LanguageSettings.I18N;
+
 public class AdvancedPreferences extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 
 	public AdvancedPreferences() {
 		super(GRID);
-		this.setPreferenceStore(CommonActivator.getDefault().getPreferenceStore());
+		setPreferenceStore(CommonActivator.getDefault().getPreferenceStore());
 	}
 
 	/**
@@ -60,7 +60,10 @@ public class AdvancedPreferences extends FieldEditorPreferencePage implements IW
 						{ I18N().settingsOpenFilesOnAssessmentStartMain(), PreferenceConstants.OPEN_FILES_ON_ASSESSMENT_START_MAIN },
 						{ I18N().settingsOpenFilesOnAssessmentStartAll(), PreferenceConstants.OPEN_FILES_ON_ASSESSMENT_START_ALL } },
 				parent);
+
+		var autograderJarPath = new FileFieldEditor(PreferenceConstants.AUTOGRADER_JAR_PATH, "Autograder JAR file", parent);
 		var autograderConfigPath = new FileFieldEditor(PreferenceConstants.AUTOGRADER_CONFIG_PATH, "Autograder config file", parent);
+
 		this.addField(artemisUser);
 		this.addField(artemisPassword);
 		this.addField(gitToken);
@@ -72,6 +75,8 @@ public class AdvancedPreferences extends FieldEditorPreferencePage implements IW
 		this.addField(overrideDefaultPreferences);
 		this.addField(searchInMistakeMessages);
 		this.addField(openFiles);
+
+		this.addField(autograderJarPath);
 		this.addField(autograderConfigPath);
 	}
 

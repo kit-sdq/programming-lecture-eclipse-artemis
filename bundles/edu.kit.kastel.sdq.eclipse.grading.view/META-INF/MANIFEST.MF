@@ -19,8 +19,6 @@ Require-Bundle: org.eclipse.ui,
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: edu.kit.kastel.eclipse.grading.view.activator.Activator
-Bundle-ClassPath: lib/autograder-cmd.jar,
- .
 Automatic-Module-Name: edu.kit.kastel.sdq.eclipse.grading.view
 Import-Package: org.eclipse.jface.text.source,
  org.eclipse.ui.texteditor
