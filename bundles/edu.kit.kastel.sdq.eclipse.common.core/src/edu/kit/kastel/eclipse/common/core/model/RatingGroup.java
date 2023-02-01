@@ -18,8 +18,6 @@ public class RatingGroup implements IRatingGroup {
 	@JsonProperty
 	private String displayName;
 	@JsonProperty
-	private String engDisplayName;
-	@JsonProperty
 	private Double positiveLimit;
 	@JsonProperty
 	private Double negativeLimit;
@@ -37,22 +35,6 @@ public class RatingGroup implements IRatingGroup {
 	@Override
 	public String getDisplayName() {
 		return this.displayName;
-	}
-
-	@Override
-	/**
-	 * @since 2.7
-	 */
-	public String getLanguageSensitiveDisplayName(String language) {
-		// TODO Auto-generated method stub
-		switch (language) {
-		case "English":
-			return engDisplayName;
-		case "Deutsch":
-			return displayName;
-		default:
-			return getDisplayName();
-		}
 	}
 
 	@Override
