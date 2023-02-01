@@ -53,16 +53,18 @@ public class MistakeType implements IMistakeType {
 		this.messages = new HashMap<>();
 
 		if (messages != null) {
-			Set<String> messageKeys = messages.keySet();
-			for (String key : messageKeys) {
-				this.messages.put(new Locale(key), messages.get(key));
+			Set<Map.Entry<String, String>> messageEntries = messages.entrySet();
+			
+			for (Map.Entry<String, String> entry : messageEntries) {
+				this.messages.put(new Locale(entry.getKey()), entry.getValue());
 			}
 		}
 
 		if (buttons != null) {
-			Set<String> nameKeys = buttons.keySet();
-			for (String key : nameKeys) {
-				names.put(new Locale(key), buttons.get(key));
+			Set<Map.Entry<String, String>> nameEntries = buttons.entrySet();
+			
+			for (Map.Entry<String, String> entry : nameEntries) {
+				this.messages.put(new Locale(entry.getKey()), entry.getValue());
 			}
 		}
 		boolean defaultExists = this.messages.containsKey(DEFAULT_LOCALE) && this.names.containsKey(DEFAULT_LOCALE);
