@@ -392,7 +392,7 @@ class GermanLanguage implements I18N {
 	public String languageDisplayName() {
 		return "Deutsch";
 	}
-	
+
 	@Override
 	public Locale getLocale() {
 		// TODO Auto-generated method stub

@@ -54,7 +54,7 @@ public class MistakeType implements IMistakeType {
 
 		if (messages != null) {
 			Set<Map.Entry<String, String>> messageEntries = messages.entrySet();
-			
+
 			for (Map.Entry<String, String> entry : messageEntries) {
 				this.messages.put(new Locale(entry.getKey()), entry.getValue());
 			}
@@ -62,7 +62,7 @@ public class MistakeType implements IMistakeType {
 
 		if (buttons != null) {
 			Set<Map.Entry<String, String>> nameEntries = buttons.entrySet();
-			
+
 			for (Map.Entry<String, String> entry : nameEntries) {
 				this.messages.put(new Locale(entry.getKey()), entry.getValue());
 			}
