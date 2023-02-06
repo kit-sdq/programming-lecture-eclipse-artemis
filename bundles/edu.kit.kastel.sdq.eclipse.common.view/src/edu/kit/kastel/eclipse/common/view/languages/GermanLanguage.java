@@ -1,6 +1,8 @@
 /* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.view.languages;
 
+import java.util.Locale;
+
 /**
  * This class provides German translations for all UI-Elements
  *
@@ -389,5 +391,11 @@ class GermanLanguage implements I18N {
 	@Override
 	public String languageDisplayName() {
 		return "Deutsch";
+	}
+	
+	@Override
+	public Locale getLocale() {
+		// TODO Auto-generated method stub
+		return Locale.GERMAN;
 	}
 }
