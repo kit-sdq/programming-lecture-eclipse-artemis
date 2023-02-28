@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.client.mappings.exam;
 
 import java.io.Serializable;
@@ -16,6 +16,9 @@ import edu.kit.kastel.eclipse.common.client.mappings.ArtemisExercise;
 public class ArtemisStudentExam implements IStudentExam, Serializable {
 	private static final long serialVersionUID = 1854716703208552700L;
 	@JsonProperty
+	private int id;
+
+	@JsonProperty
 	private ArtemisExam exam;
 
 	@JsonProperty
@@ -29,6 +32,11 @@ public class ArtemisStudentExam implements IStudentExam, Serializable {
 
 	@JsonProperty
 	private Boolean started;
+
+	@Override
+	public int getId() {
+		return this.id;
+	}
 
 	@Override
 	public IExam getExam() {

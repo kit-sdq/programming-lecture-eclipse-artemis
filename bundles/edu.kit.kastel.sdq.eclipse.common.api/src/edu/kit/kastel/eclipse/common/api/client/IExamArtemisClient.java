@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.api.client;
 
 import edu.kit.kastel.eclipse.common.api.ArtemisClientException;
@@ -19,5 +19,5 @@ public interface IExamArtemisClient {
 	/**
 	 * Starts the given exam. Returns the exam object and all its exercises.
 	 */
-	IStudentExam startExam(ICourse course, IExam exam) throws ArtemisClientException;
+	IStudentExam startExam(ICourse course, int studentExamId, IExam exam) throws ArtemisClientException;
 }

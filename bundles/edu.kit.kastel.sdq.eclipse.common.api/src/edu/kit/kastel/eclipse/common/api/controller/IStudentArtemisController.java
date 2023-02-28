@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.api.controller;
 
 import java.util.List;
@@ -6,7 +6,6 @@ import java.util.Optional;
 
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.Feedback;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.ICourse;
-import edu.kit.kastel.eclipse.common.api.artemis.mapping.IExam;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.IExercise;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.IStudentExam;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.ParticipationDTO;
@@ -43,7 +42,7 @@ public interface IStudentArtemisController extends IArtemisController {
 	 * @param exam
 	 * @return the exam and its exercises.
 	 */
-	IStudentExam startExam(ICourse course, IExam exam, boolean alreadyStarted);
+	IStudentExam startExam(ICourse course, IStudentExam exam, boolean alreadyStarted);
 
 	/**
 	 * Returns participation if exists of given exercise and current user.

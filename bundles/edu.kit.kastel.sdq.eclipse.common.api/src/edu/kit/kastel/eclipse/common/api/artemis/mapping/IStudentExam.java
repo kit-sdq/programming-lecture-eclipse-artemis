@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.api.artemis.mapping;
 
 import java.util.List;
@@ -8,6 +8,7 @@ import java.util.List;
  * object and all its exercises.
  */
 public interface IStudentExam {
+	int getId();
 
 	/**
 	 * @return the exam of the StudentExam.
@@ -33,4 +34,5 @@ public interface IStudentExam {
 	 * @return true if the student has stated the student exam.
 	 */
 	boolean isStarted();
+
 }

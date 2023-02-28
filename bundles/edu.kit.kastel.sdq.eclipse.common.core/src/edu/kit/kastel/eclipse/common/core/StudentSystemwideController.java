@@ -237,7 +237,7 @@ public class StudentSystemwideController extends SystemwideController implements
 	@Override
 	public IStudentExam startExam() {
 		if (this.exam != null) {
-			this.exam = this.artemisGUIController.startExam(this.course, this.exam.getExam(), this.getExam().isStarted());
+			this.exam = this.artemisGUIController.startExam(this.course, this.exam, this.getExam().isStarted());
 			return this.exam;
 		}
 		return null;
@@ -286,7 +286,7 @@ public class StudentSystemwideController extends SystemwideController implements
 		for (ICourse c : this.getArtemisController().getCourses()) {
 			if (c.getShortName().equals(courseShortName)) {
 				this.course = c;
-				var now = getCurrentDate();
+				var now = this.getCurrentDate();
 				var allProgrammingExercises = c.getExercises().stream().filter(IExercise::isProgramming).toList();
 				var allStartedExercises = allProgrammingExercises.stream()
 						.filter(e -> e.getStartDate() == null || e.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime().isBefore(now))

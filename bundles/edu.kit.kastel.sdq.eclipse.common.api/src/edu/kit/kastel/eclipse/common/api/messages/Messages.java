@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.api.messages;
 
 public class Messages {
@@ -13,7 +13,7 @@ public class Messages {
 	public static final String CLIENT_NO_WEBSOCKET = "Cannot connecto to WebSocket";
 	public static final String CLIENT_INTERNAL_SSL_CONFIG_FAILED = "Can't configure SSL context for the websocket";
 
-	public static final String STUDENT_ARTMIS_CONTROLLER_EXAM_INFO = "To load exercises for the exam in to your local workspace you have to start the exam first!\nAfter starting the exam you can load exercises in the workspace und submit solutions \\n After submitting solutions you can view results in the Result-Tab. The exam has not been submitted yet.\nYou can only view results after the exam was submitted.\nTo submit the exam you have to submit the exam in the Artemis webclient! It is not possible in Eclipse!";
+	public static final String STUDENT_ARTMIS_CONTROLLER_EXAM_INFO = "To load exercises for the exam in to your local workspace you have to start the exam first!";
 	public static final String STUDENT_ARTMIS_CONTROLLER_CONFIRM_START_EXAM = "Do you want to start the exam now?";
 	public static final String STUDENT_ARTMIS_CONTROLLER_CLEAN = "Your changes will be deleted. Are you sure?";
 	public static final String STUDENT_ARTMIS_CONTROLLER_CLEAN_SUCCESSFUL = "Your workspace was successfully cleaned.\nFollowing files have been reset:\n";

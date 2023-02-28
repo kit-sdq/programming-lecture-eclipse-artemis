@@ -49,15 +49,15 @@ public class StudentArtemisController extends ArtemisController implements IStud
 	}
 
 	@Override
-	public IStudentExam startExam(ICourse course, IExam exam, boolean alreadyStarted) {
+	public IStudentExam startExam(ICourse course, IStudentExam exam, boolean alreadyStarted) {
 		try {
-			if (alreadyStarted || this.confirm(Messages.STUDENT_ARTMIS_CONTROLLER_CONFIRM_START_EXAM)) {
-				IStudentExam studentExam = this.clientManager.getExamArtemisClient().startExam(course, exam);
+			if (alreadyStarted) { // || this.confirm(Messages.STUDENT_ARTMIS_CONTROLLER_CONFIRM_START_EXAM)) {
+				IStudentExam studentExam = this.clientManager.getExamArtemisClient().startExam(course, exam.getId(), exam.getExam());
 				this.checkIfExamIsValid(studentExam);
 				return studentExam;
 			}
 		} catch (ArtemisClientException e) {
-			this.error("Error, can not start the exam: " + exam.getTitle() + Messages.STUDENT_ARTMIS_CONTROLLER_EXAM_NO_SIGN_IN, e);
+			this.error("Error, can not start the exam: " + exam.getExam().getTitle() + Messages.STUDENT_ARTMIS_CONTROLLER_EXAM_NO_SIGN_IN, e);
 		}
 		return new ArtemisStudentExam();
 	}
@@ -154,7 +154,8 @@ public class StudentArtemisController extends ArtemisController implements IStud
 		} catch (ArtemisClientException e) {
 			this.error(Messages.STUDENT_ARTMIS_CONTROLLER_EXAM_INFO, e);
 		}
-		return this.startExam(foundEntry.getKey(), foundEntry.getValue(), false);
+		// TODO Figure out how to start exam properly
+		return new ArtemisStudentExam(); // startExam(foundEntry.getKey(), foundEntry.getValue(), false);
 	}
 
 	private Optional<ParticipationDTO> getParticipationForExercise(ICourse course, IExercise exercise) {

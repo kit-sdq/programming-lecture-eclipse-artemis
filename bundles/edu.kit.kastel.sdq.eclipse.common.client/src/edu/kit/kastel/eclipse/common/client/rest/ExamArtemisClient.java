@@ -26,9 +26,10 @@ public class ExamArtemisClient extends AbstractArtemisClient implements IExamArt
 	}
 
 	@Override
-	public IStudentExam startExam(ICourse course, IExam exam) throws ArtemisClientException {
+	public IStudentExam startExam(ICourse course, int studentExamId, IExam exam) throws ArtemisClientException {
 		Request request = new Request.Builder() //
-				.url(this.path(COURSES_PATHPART, course.getCourseId(), EXAMS_PATHPART, exam.getExamId(), STUDENT_EXAM_PATH, "conduction")).get().build();
+				.url(this.path(COURSES_PATHPART, course.getCourseId(), EXAMS_PATHPART, exam.getExamId(), STUDENT_EXAM_PATH, studentExamId, "conduction")).get()
+				.build();
 		return this.call(this.client, request, ArtemisStudentExam.class);
 	}
 
