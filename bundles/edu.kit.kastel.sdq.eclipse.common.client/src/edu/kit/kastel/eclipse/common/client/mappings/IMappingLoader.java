@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.client.mappings;
 
 import java.util.List;
@@ -15,8 +15,6 @@ public interface IMappingLoader {
 	List<IExerciseGroup> getExerciseGroupsForExam(IExam artemisExam, ICourse course) throws ArtemisClientException;
 
 	List<IExam> getExamsForCourse(ICourse artemisCourse) throws ArtemisClientException;
-
-	List<IExercise> getStudentExercisesForCourse(ICourse artemisCourse) throws ArtemisClientException;
 
 	List<IExercise> getGradingExercisesForCourse(ICourse artemisCourse) throws ArtemisClientException;
 

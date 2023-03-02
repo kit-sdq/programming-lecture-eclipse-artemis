@@ -12,5 +12,4 @@ public final class EclipseArtemisConstants {
 	public static final Version MAXIMUM_ARTEMIS_VERSION_EXCLUSIVE = new Version(7, 0, 0);
 
 	public static final String GRADING_WIKI_URL = "https://kit-sdq.github.io/programming-lecture-eclipse-artemis.docs/grading/grading/";
-	public static final String STUDENT_WIKI_URL = "https://kit-sdq.github.io/programming-lecture-eclipse-artemis.docs/student/student/";
 }

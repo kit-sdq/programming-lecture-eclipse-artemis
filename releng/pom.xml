@@ -21,7 +21,6 @@
             <id>products</id>
             <modules>
                 <module>edu.kit.kastel.sdq.eclipse.grading.product</module>
-                <module>edu.kit.kastel.sdq.eclipse.student.product</module>
             </modules>
         </profile>
     </profiles>

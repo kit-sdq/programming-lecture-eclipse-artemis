@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.view.languages;
 
 /**
@@ -154,81 +154,6 @@ class GermanLanguage implements I18N {
 	@Override
 	public String tabResultsTutorComment() {
 		return "Tutor-Kommentar";
-	}
-
-	@Override
-	public String tabStudentClean(String name) {
-		return String.format("Clean: %s", name);
-	}
-
-	@Override
-	public String tabStudentCleanLastChanges() {
-		return "Zurücksetzen der letzte Änderungen";
-	}
-
-	@Override
-	public String tabStudentCleanImpossible() {
-		return "Diese Aufgabe kann nicht zurückgesetzt werden!";
-	}
-
-	@Override
-	public String tabStudentEndExamInArtemis() {
-		return "<a>Klicke hier, um die Klausur in Artemis abzuschließen</a>";
-	}
-
-	@Override
-	public String tabStudentNoSelection() {
-		return "*NICHTS AUSGEWÄHLT*";
-	}
-
-	@Override
-	public String tabStudentReset(String name) {
-		return String.format("Reset: %s", name);
-	}
-
-	@Override
-	public String tabStudentResetToRemote() {
-		return "Zurücksetzen auf Remote-Status";
-	}
-
-	@Override
-	public String tabStudentStartExercise() {
-		return "Aufgabe starten";
-	}
-
-	@Override
-	public String tabStudentStartExercises() {
-		return "Aufgaben starten";
-	}
-
-	@Override
-	public String tabStudentSubmit(String name) {
-		return String.format("Abgeben: %s", name);
-	}
-
-	@Override
-	public String tabStudentSubmitSolution() {
-		return "Lösung abgeben";
-	}
-
-	@Override
-	public String tabStudent() {
-		return "Aufgabe";
-	}
-
-	@Override
-	public String tabStudentExerciseExpired() {
-		return "Diese Aufgabe ist abgelaufen und kann nicht abgegeben werden!";
-	}
-
-	@Override
-	public String tabStudentExerciseStartTime() {
-		return "Startpunkt:";
-	}
-
-	@Override
-	public String tabStudentExerciseEndTime() {
-		return "Frist bis:";
 	}
 
 	@Override
