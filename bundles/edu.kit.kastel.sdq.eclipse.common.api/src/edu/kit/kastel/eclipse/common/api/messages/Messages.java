@@ -13,19 +13,6 @@ public class Messages {
 	public static final String CLIENT_NO_WEBSOCKET = "Cannot connecto to WebSocket";
 	public static final String CLIENT_INTERNAL_SSL_CONFIG_FAILED = "Can't configure SSL context for the websocket";
 
-	public static final String STUDENT_ARTMIS_CONTROLLER_EXAM_INFO = "To load exercises for the exam in to your local workspace you have to start the exam first!";
-	public static final String STUDENT_ARTMIS_CONTROLLER_CONFIRM_START_EXAM = "Do you want to start the exam now?";
-	public static final String STUDENT_ARTMIS_CONTROLLER_CLEAN = "Your changes will be deleted. Are you sure?";
-	public static final String STUDENT_ARTMIS_CONTROLLER_CLEAN_SUCCESSFUL = "Your workspace was successfully cleaned.\nFollowing files have been reset:\n";
-	public static final String STUDENT_ARTMIS_CONTROLLER_SUBMITTING_SOLUTION = "Your solutions will be submitted for the selected exercise. Make sure all files are saved.";
-	public static final String STUDENT_ARTMIS_CONTROLLER_RESET = "Your local changes will be deleted. Are you sure?";
-	public static final String STUDENT_ARTMIS_CONTROLLER_RESET_SUCCESSFUL = "Your workspace was successfully reset to remote state.";
-	public static final String STUDENT_ARTMIS_CONTROLLER_EXAM_NOT_SUBMITTED = "You have not handed in the exam in time. It will be graded with 0 Points";
-	public static final String STUDENT_ARTMIS_CONTROLLER_EXAM_NO_SIGN_IN = ".\nYou need to be signed up for the exam.";
-	public static final String STUDENT_ARTMIS_CONTROLLER_EXAM_OVER = "The exam is already over.\n";
-	public static final String STUDENT_ARTMIS_EXAMTAB_REMEMBER = "Please remember to end the exam in Artemis!\nYou can not end the exam here.";
-	public static final String STUDENT_ARTMIS_EXAM_NOT_SUBMITTED = "You have not handed in the exam in time. It will be graded with 0 Points!";
-
 	public static final String ASSESSMENT_COULD_NOT_BE_STARTED_MESSAGE = "Assessment could not be started: ";
 
 	public static final String GIT_OPEN_FAILED = "Git open failed for path: ";

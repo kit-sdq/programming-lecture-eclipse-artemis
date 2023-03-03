@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.view.languages;
 
 /**
@@ -137,78 +137,6 @@ public interface I18N {
 
 	default String tabResultsTutorComment() {
 		return "Tutor Comment";
-	}
-
-	/**
-	 * @param name the name of the exercise
-	 * @return the clean-message including the name of the exercise
-	 */
-	default String tabStudentClean(String name) {
-		return String.format("Clean: %s", name);
-	}
-
-	default String tabStudentCleanLastChanges() {
-		return "Clean your last changes";
-	}
-
-	default String tabStudentCleanImpossible() {
-		return "The exercise can not be cleaned!";
-	}
-
-	default String tabStudentEndExamInArtemis() {
-		return "<a>Click Here to access Artemis to end your Exam</a>";
-	}
-
-	default String tabStudentNoSelection() {
-		return "*NOTHING SELECTED*";
-	}
-
-	/**
-	 * @param name the name of the exercise
-	 * @return the reset-message including the name of the exercise
-	 */
-	default String tabStudentReset(String name) {
-		return String.format("Reset: %s", name);
-	}
-
-	default String tabStudentResetToRemote() {
-		return "Reset exercise to remote state";
-	}
-
-	default String tabStudentStartExercise() {
-		return "Start exercise";
-	}
-
-	default String tabStudentStartExercises() {
-		return "Start exercises";
-	}
-
-	/**
-	 * @param name the name of the exercise
-	 * @return the submit-message including the name of the exercise
-	 */
-	default String tabStudentSubmit(String name) {
-		return String.format("Submit: %s", name);
-	}
-
-	default String tabStudentSubmitSolution() {
-		return "Submit your solution";
-	}
-
-	default String tabStudent() {
-		return "Exercise";
-	}
-
-	default String tabStudentExerciseExpired() {
-		return "The exercise is expired and can therefore not be submitted!";
-	}
-
-	default String tabStudentExerciseStartTime() {
-		return "Starts at:";
-	}
-
-	default String tabStudentExerciseEndTime() {
-		return "Due to:";
 	}
 
 	default String none() {

@@ -5,7 +5,7 @@
     <parent>
         <groupId>edu.kit.kastel.sdq.artemis</groupId>
         <artifactId>parent</artifactId>
-        <version>3.0.3</version>
+        <version>4.0.0</version>
         <relativePath>../</relativePath>
     </parent>
     <artifactId>releng</artifactId>
@@ -21,7 +21,6 @@
             <id>products</id>
             <modules>
                 <module>edu.kit.kastel.sdq.eclipse.grading.product</module>
-                <module>edu.kit.kastel.sdq.eclipse.student.product</module>
             </modules>
         </profile>
     </profiles>

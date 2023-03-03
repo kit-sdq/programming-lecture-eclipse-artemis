@@ -2,7 +2,7 @@
 <feature
       id="edu.kit.kastel.sdq.eclipse.grading.feature"
       label="%featureName"
-      version="3.0.3"
+      version="4.0.0"
       provider-name="%providerName">
 
    <description>
@@ -36,10 +36,6 @@
       <import plugin="org.jetbrains.kotlin.stdlib-common"/>
       <import plugin="org.jetbrains.kotlin.stdlib-jdk7"/>
       <import plugin="org.jetbrains.kotlin.stdlib-jdk8"/>
-      <import plugin="org.eclipse.jetty.client"/>
-      <import plugin="org.eclipse.jetty.util"/>
-      <import plugin="org.eclipse.jetty.websocket.jakarta.client"/>
-      <import plugin="jakarta.websocket"/>
    </requires>
 
    <plugin
