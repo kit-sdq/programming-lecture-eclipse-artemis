@@ -1,24 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/edu.kit.kastel.sdq.eclipse.grading.feature_3.1.0.jar" id="edu.kit.kastel.sdq.eclipse.grading.feature" version="3.1.0">
+   <feature url="features/edu.kit.kastel.sdq.eclipse.grading.feature_4.0.0.jar" id="edu.kit.kastel.sdq.eclipse.grading.feature" version="4.0.0">
       <category name="Eclipse Artemis Grading"/>
    </feature>
-   <feature id="edu.kit.kastel.sdq.eclipse.grading.feature.source" version="3.1.0">
+   <feature id="edu.kit.kastel.sdq.eclipse.grading.feature.source" version="4.0.0">
       <category name="Eclipse Artemis Grading"/>
-   </feature>
-   <feature url="features/edu.kit.kastel.sdq.eclipse.student.feature_3.1.0.jar" id="edu.kit.kastel.sdq.eclipse.student.feature" version="3.1.0">
-      <category name="Eclipse Artemis Student"/>
-   </feature>
-   <feature id="edu.kit.kastel.sdq.eclipse.student.feature.source" version="3.1.0">
-      <category name="Eclipse Artemis Student"/>
    </feature>
    <feature id="org.eclipse.pde">
-      <category name="Eclipse Artemis Dev"/>
-   </feature>
-   <feature id="org.springframework.websocket-messaging.feature">
-      <category name="Eclipse Artemis Dev"/>
-   </feature>
-   <feature id="org.glassfish.tyrus.client.feature">
       <category name="Eclipse Artemis Dev"/>
    </feature>
    <feature id="org.eclipse.m2e.feature">
@@ -81,26 +69,9 @@
    <bundle id="org.jetbrains.kotlin.stdlib.source">
       <category name="Eclipse Artemis Dev"/>
    </bundle>
-   <bundle id="org.eclipse.jetty.client">
-      <category name="Eclipse Artemis Dev"/>
-   </bundle>
-   <bundle id="org.eclipse.jetty.websocket.client">
-      <category name="Eclipse Artemis Dev"/>
-   </bundle>
-   <bundle id="org.eclipse.jetty.websocket.jakarta.client">
-      <category name="Eclipse Artemis Dev"/>
-   </bundle>
-   <bundle id="jakarta.websocket">
-      <category name="Eclipse Artemis Dev"/>
-   </bundle>
    <category-def name="Eclipse Artemis Grading" label="Eclipse Artemis Grading">
       <description>
          Plugin for easier grading with Artemis and Eclipse
-      </description>
-   </category-def>
-   <category-def name="Eclipse Artemis Student" label="Eclipse Artemis Student">
-      <description>
-         Plugin for easier work with Artemis and Eclipse
       </description>
    </category-def>
    <category-def name="Eclipse Artemis Dev" label="Eclipse Artemis Development"/>

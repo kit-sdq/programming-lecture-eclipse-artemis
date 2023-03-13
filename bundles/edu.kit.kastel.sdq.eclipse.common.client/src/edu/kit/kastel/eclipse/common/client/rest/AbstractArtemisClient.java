@@ -37,7 +37,6 @@ public abstract class AbstractArtemisClient {
 	protected static final String EXAMS_PATHPART = "exams";
 	protected static final String PARTICIPATION_PATHPART = "participations";
 	protected static final String RESULT_PATHPART = "results";
-	protected static final String STUDENT_EXAM_PATH = "student-exams";
 
 	protected static final String COOKIE_NAME_JWT = "jwt";
 

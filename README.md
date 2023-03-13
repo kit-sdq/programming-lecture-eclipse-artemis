@@ -1,9 +1,8 @@
 # Programming Lecture: Eclipse Artemis
-Eclipse-Plugin for grading & working with the [Artemis Project](https://github.com/ls1intum/Artemis)
+Eclipse-Plugin for grading with the [Artemis Project](https://github.com/ls1intum/Artemis)
 
 ## Features
 * [Grading Support](https://kit-sdq.github.io/programming-lecture-eclipse-artemis.docs/grading/grading/) for Java Projects in Artemis
-* [Student Support](https://kit-sdq.github.io/programming-lecture-eclipse-artemis.docs/student/student/) Tool Support for Java Projects and students that are not familiar with GIT
 
 ## Update Site
 The Update Site is located here: https://kit-sdq.github.io/programming-lecture-eclipse-artemis/

@@ -16,7 +16,6 @@ import edu.kit.kastel.eclipse.common.api.artemis.mapping.ISubmission;
 import edu.kit.kastel.eclipse.common.api.client.ICourseArtemisClient;
 import edu.kit.kastel.eclipse.common.api.client.ISubmissionsArtemisClient;
 import edu.kit.kastel.eclipse.common.client.mappings.ArtemisCourse;
-import edu.kit.kastel.eclipse.common.client.mappings.ArtemisDashboardCourse;
 import edu.kit.kastel.eclipse.common.client.mappings.ArtemisExercise;
 import edu.kit.kastel.eclipse.common.client.mappings.ArtemisExerciseWrapper;
 import edu.kit.kastel.eclipse.common.client.mappings.IMappingLoader;
@@ -48,16 +47,6 @@ public class MappingLoaderArtemisClient extends AbstractArtemisClient implements
 	}
 
 	@Override
-	public List<ICourse> getCoursesForStudent() throws ArtemisClientException {
-		Request request = new Request.Builder().url(this.path(COURSES_PATHPART, "for-dashboard")).get().build();
-		ArtemisDashboardCourse[] coursesArray = this.call(this.client, request, ArtemisDashboardCourse[].class);
-		for (var courses : coursesArray) {
-			courses.init(this);
-		}
-		return Arrays.asList(coursesArray);
-	}
-
-	@Override
 	public List<IExerciseGroup> getExerciseGroupsForExam(IExam artemisExam, ICourse course) throws ArtemisClientException {
 		Request request = new Request.Builder() //
 				.url(this.path(COURSES_PATHPART, course.getCourseId(), EXAMS_PATHPART, artemisExam.getExamId(), "exam-for-assessment-dashboard")).get().build();
@@ -81,18 +70,6 @@ public class MappingLoaderArtemisClient extends AbstractArtemisClient implements
 			exam.init(this, artemisCourse);
 		}
 		return Arrays.asList(examsArray);
-	}
-
-	@Override
-	public List<IExercise> getStudentExercisesForCourse(ICourse artemisCourse) throws ArtemisClientException {
-		Request request = new Request.Builder() //
-				.url(this.path(COURSES_PATHPART, artemisCourse.getCourseId(), EXAMS_PATHPART)).get().build();
-
-		ArtemisExercise[] excerciseArray = this.call(this.client, request, ArtemisExercise[].class);
-		for (ArtemisExercise exercise : excerciseArray) {
-			exercise.init(this, artemisCourse);
-		}
-		return Arrays.stream(excerciseArray).filter(IExercise::isProgramming).collect(Collectors.toList());
 	}
 
 	@Override

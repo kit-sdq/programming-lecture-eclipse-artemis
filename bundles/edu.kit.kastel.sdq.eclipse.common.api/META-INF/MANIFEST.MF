@@ -2,13 +2,12 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: edu.kit.kastel.sdq.eclipse.common.api
 Bundle-SymbolicName: edu.kit.kastel.sdq.eclipse.common.api
-Bundle-Version: 3.1.0
+Bundle-Version: 4.0.0
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Export-Package: edu.kit.kastel.eclipse.common.api,
  edu.kit.kastel.eclipse.common.api.artemis,
  edu.kit.kastel.eclipse.common.api.artemis.mapping,
  edu.kit.kastel.eclipse.common.api.client,
- edu.kit.kastel.eclipse.common.api.client.websocket,
  edu.kit.kastel.eclipse.common.api.controller,
  edu.kit.kastel.eclipse.common.api.messages,
  edu.kit.kastel.eclipse.common.api.model,

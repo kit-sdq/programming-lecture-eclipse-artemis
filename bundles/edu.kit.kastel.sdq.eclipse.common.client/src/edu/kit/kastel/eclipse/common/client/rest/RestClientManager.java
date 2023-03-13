@@ -1,11 +1,10 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.client.rest;
 
 import edu.kit.kastel.eclipse.common.api.ArtemisClientException;
 import edu.kit.kastel.eclipse.common.api.client.IAssessmentArtemisClient;
 import edu.kit.kastel.eclipse.common.api.client.IAuthenticationArtemisClient;
 import edu.kit.kastel.eclipse.common.api.client.ICourseArtemisClient;
-import edu.kit.kastel.eclipse.common.api.client.IExamArtemisClient;
 import edu.kit.kastel.eclipse.common.api.client.IFeedbackArtemisClient;
 import edu.kit.kastel.eclipse.common.api.client.IParticipationArtemisClient;
 import edu.kit.kastel.eclipse.common.api.client.ISubmissionsArtemisClient;
@@ -17,7 +16,6 @@ public class RestClientManager {
 	private IAuthenticationArtemisClient loginManager;
 	private ISubmissionsArtemisClient submissionClient;
 	private ICourseArtemisClient courseClient;
-	private IExamArtemisClient examClient;
 	private IFeedbackArtemisClient feedbackClient;
 	private IParticipationArtemisClient participationClient;
 	private IUtilArtemisClient utilClient;
@@ -56,13 +54,6 @@ public class RestClientManager {
 			this.courseClient = new MappingLoaderArtemisClient(this.getSubmissionArtemisClient(), this.hostname, this.loginManager.getBearerToken());
 		}
 		return this.courseClient;
-	}
-
-	public IExamArtemisClient getExamArtemisClient() {
-		if (this.examClient == null) {
-			this.examClient = new ExamArtemisClient(this.hostname, this.loginManager.getBearerToken());
-		}
-		return this.examClient;
 	}
 
 	public IFeedbackArtemisClient getFeedbackArtemisClient() {

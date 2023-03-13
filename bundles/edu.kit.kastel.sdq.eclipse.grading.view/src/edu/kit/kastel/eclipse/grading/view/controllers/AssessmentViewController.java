@@ -19,8 +19,6 @@ import edu.kit.kastel.eclipse.grading.view.activator.Activator;
 /**
  * This class is the controller for the grading view. It creates the marker for
  * the annotations and holds all controller for the backend calls.
- *
- * @see {@link ArtemisStudentView}
  */
 public class AssessmentViewController extends AbstractArtemisViewController<IGradingSystemwideController> {
 	private IAssessmentController assessmentController;

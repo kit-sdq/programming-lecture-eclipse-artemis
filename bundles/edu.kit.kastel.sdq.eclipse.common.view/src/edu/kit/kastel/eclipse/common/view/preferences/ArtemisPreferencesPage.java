@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.view.preferences;
 
 import static edu.kit.kastel.eclipse.common.view.languages.LanguageSettings.I18N;
@@ -6,6 +6,7 @@ import static edu.kit.kastel.eclipse.common.view.languages.LanguageSettings.I18N
 import org.eclipse.jface.preference.ComboFieldEditor;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
+import org.eclipse.jface.preference.FileFieldEditor;
 import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Label;
@@ -48,11 +49,13 @@ public class ArtemisPreferencesPage extends FieldEditorPreferencePage implements
 		var parent = this.getFieldEditorParent();
 
 		var artemisUrl = new StringFieldEditor(PreferenceConstants.GENERAL_ARTEMIS_URL, I18N().settingsUrl(), parent);
+		var absoluteConfigPath = new FileFieldEditor(PreferenceConstants.GRADING_ABSOLUTE_CONFIG_PATH, I18N().settingsConfigPath(), parent);
 
 		this.languageSelector = new ComboFieldEditor(PreferenceConstants.GENERAL_PREFERRED_LANGUAGE, I18N().settingsLanguage(),
 				LanguageSettings.getAvailableLocalesForComboField(), parent);
 
 		this.addField(artemisUrl);
+		this.addField(absoluteConfigPath);
 		this.addField(languageSelector);
 
 		Label hint = this.createDescriptionLabel(this.getFieldEditorParent());

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: edu.kit.kastel.sdq.eclipse.common.client
 Bundle-SymbolicName: edu.kit.kastel.sdq.eclipse.common.client;singleton:=true
-Bundle-Version: 3.1.0
+Bundle-Version: 4.0.0
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Require-Bundle: edu.kit.kastel.sdq.eclipse.common.api,
  com.fasterxml.jackson.core.jackson-annotations,
@@ -10,30 +10,16 @@ Require-Bundle: edu.kit.kastel.sdq.eclipse.common.api,
  com.fasterxml.jackson.core.jackson-databind,
  org.eclipse.jgit,
  org.eclipse.core.runtime,
- org.springframework.spring-aop,
- org.springframework.spring-beans,
- org.springframework.spring-context,
- org.springframework.spring-core,
- org.springframework.spring-expression,
- org.springframework.spring-jcl,
- org.springframework.spring-web,
- org.springframework.spring-websocket,
- org.springframework.spring-messaging,
  org.eclipse.jface,
  com.squareup.okhttp3.okhttp,
  org.jetbrains.kotlin.stdlib,
  org.jetbrains.kotlin.stdlib-common,
  org.jetbrains.kotlin.stdlib-jdk7,
  org.jetbrains.kotlin.stdlib-jdk8,
- jakarta.websocket,
- org.eclipse.jetty.client,
- org.eclipse.jetty.websocket.jakarta.client,
- org.eclipse.jetty.util,
  com.squareup.okio
 Export-Package: edu.kit.kastel.eclipse.common.client.git,
  edu.kit.kastel.eclipse.common.client.mappings,
  edu.kit.kastel.eclipse.common.client.mappings.exam,
- edu.kit.kastel.eclipse.common.client.rest,
- edu.kit.kastel.eclipse.common.client.websocket
+ edu.kit.kastel.eclipse.common.client.rest
 Automatic-Module-Name: edu.kit.kastel.sdq.eclipse.common.client
 Bundle-ClassPath: .

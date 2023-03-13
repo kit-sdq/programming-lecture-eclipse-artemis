@@ -1,10 +1,11 @@
 /* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.view.preferences;
 
+import static edu.kit.kastel.eclipse.common.view.languages.LanguageSettings.I18N;
+
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.ComboFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
-import org.eclipse.jface.preference.FileFieldEditor;
 import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.ui.IWorkbench;
@@ -12,8 +13,6 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import edu.kit.kastel.eclipse.common.api.PreferenceConstants;
 import edu.kit.kastel.eclipse.common.view.activator.CommonActivator;
-
-import static edu.kit.kastel.eclipse.common.view.languages.LanguageSettings.I18N;
 
 public class AdvancedPreferences extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 
@@ -37,8 +36,6 @@ public class AdvancedPreferences extends FieldEditorPreferencePage implements IW
 
 		var gitToken = new StringFieldEditor(PreferenceConstants.GENERAL_ADVANCED_GIT_TOKEN, I18N().settingsGitToken(), parent);
 		gitToken.getTextControl(this.getFieldEditorParent()).setEchoChar('*');
-
-		var absoluteConfigPath = new FileFieldEditor(PreferenceConstants.GRADING_ABSOLUTE_CONFIG_PATH, I18N().settingsConfigPath(), parent);
 
 		var userPrefersLargePenaltyText = new BooleanFieldEditor(PreferenceConstants.GRADING_VIEW_PREFERS_LARGE_PENALTY_TEXT_PATH,
 				I18N().settingsLargeTextBox(), parent);
@@ -68,7 +65,6 @@ public class AdvancedPreferences extends FieldEditorPreferencePage implements IW
 		this.addField(artemisPassword);
 		this.addField(gitToken);
 
-		this.addField(absoluteConfigPath);
 		this.addField(columnsForGradingButtons);
 		this.addField(userPrefersLargePenaltyText);
 		this.addField(userPrefersTextWrappingInPenaltyText);
