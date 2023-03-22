@@ -12,7 +12,7 @@ jobs:
   docs:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3.3.0
+      - uses: actions/checkout@v3.4.0
       - name: Fix Deployment for GH Pages
         run: mkdir -p _build/dirhtml/ && touch _build/dirhtml/.nojekyll
       - uses: actions/setup-java@v3
