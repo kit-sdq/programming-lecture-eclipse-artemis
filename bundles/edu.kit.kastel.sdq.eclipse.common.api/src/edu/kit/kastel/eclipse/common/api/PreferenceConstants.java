@@ -27,6 +27,8 @@ public final class PreferenceConstants {
 	public static final String OPEN_FILES_ON_ASSESSMENT_START_MAIN = "main";
 	public static final String OPEN_FILES_ON_ASSESSMENT_START_NONE = "none";
 
+	public static final String AUTOGRADER_DOWNLOAD_JAR = "autograderDownloadJar";
+	public static final String AUTOGRADER_DOWNLOADED_JAR_PATH = "autograderDownloadedJarPath";
 	public static final String AUTOGRADER_JAR_PATH = "autograderJarPath";
 	public static final String AUTOGRADER_CONFIG_PATH = "autograderConfigPath";
 

@@ -1,14 +1,22 @@
 /* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.grading.view.assessment;
 
-import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Scanner;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
+import java.net.URL;
+import java.net.URLConnection;
 
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.Platform;
@@ -16,6 +24,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import edu.kit.kastel.eclipse.common.api.PreferenceConstants;
@@ -45,13 +54,20 @@ public class AutograderUtil {
 				// Store the current exercise
 				var submission = assessmentController.getSubmission();
 
-				monitor.beginTask("Autograder", 7); // Compile, PMD, CPD, SpotBugs, Spoon, integrated, parsing
+				// Read the configuration
+				Map<String, String> config = getConfig();
+				String autograderConfig = "[" + config.keySet().stream().collect(Collectors.joining(",")) + "]";
 
-				File autograderJar = new File(CommonActivator.getDefault().getPreferenceStore().getString(PreferenceConstants.AUTOGRADER_JAR_PATH));
-				File autograderConfig = new File(CommonActivator.getDefault().getPreferenceStore().getString(PreferenceConstants.AUTOGRADER_CONFIG_PATH));
+				monitor.beginTask("Autograder", 8); // Download, Compile, PMD, CPD, SpotBugs, Spoon, integrated, parsing
 
-				ProcessBuilder processBuilder = new ProcessBuilder("java", "-DFile.Encoding=UTF-8", "-jar", autograderJar.getAbsolutePath(),
-						autograderConfig.getAbsolutePath(), path.toString(), "-s", "--output-json");
+				monitor.setTaskName("Downloading Autograder JAR");
+				LOG.info("Downloading autograder JAR");
+				Path autograderJar = maybeDownloadAutograderRelease();
+				monitor.worked(1);
+
+				ProcessBuilder processBuilder = new ProcessBuilder("java", "-DFile.Encoding=UTF-8", "-jar", autograderJar.toAbsolutePath().toString(),
+						"\"" + autograderConfig + "\"", path.toAbsolutePath().toString(), "--static-only", "--output-json", "--pass-config", "--java-version",
+						"17");
 				var process = processBuilder.start();
 				Scanner autograderOutput = new Scanner(process.getInputStream(), StandardCharsets.UTF_8);
 
@@ -70,7 +86,7 @@ public class AutograderUtil {
 				monitor.setTaskName("Parsing annotations");
 				String errorOutput = new String(process.getErrorStream().readAllBytes());
 				if (!errorOutput.isBlank()) {
-					LOG.warn("Autograder failed: " + errorOutput);
+					LOG.error("Autograder failed: " + errorOutput);
 					onCompletion.accept(false);
 					Display.getDefault().asyncExec(() -> MessageDialog.openWarning(AssessmentUtilities.getWindowsShell(), "Autograder failed",
 							"Autograder failed. Please assess the submission normally. Additional information can be found in the Eclipse log"));
@@ -83,7 +99,7 @@ public class AutograderUtil {
 					List<AutograderAnnotation> annotations = Arrays.asList(new ObjectMapper().readValue(problems, AutograderAnnotation[].class));
 
 					for (AutograderAnnotation annotation : annotations) {
-						var type = mapAnnotation(assessmentController, annotation);
+						var type = mapAnnotation(assessmentController, annotation, config);
 						if (type.isPresent()) {
 							String id = IAnnotation.createID();
 							assessmentController.addAnnotation(id, type.get(), annotation.startLine() - 1, annotation.endLine() - 1, "src/" + annotation.file(),
@@ -101,81 +117,66 @@ public class AutograderUtil {
 							String.format("Autograder found %d issues. Please check that there are no false-positives.", annotations.size())));
 				}
 			} catch (Exception ex) {
-				LOG.warn(ex.getMessage());
+				LOG.error("Autograder failed: " + ex.getMessage(), ex);
+				Display.getDefault().asyncExec(() -> MessageDialog.openWarning(AssessmentUtilities.getWindowsShell(), "Autograder failed",
+						"Autograder failed. Please assess the submission normally. Additional information can be found in the Eclipse log"));
 			}
 		}).schedule();
 	}
 
-	private static Optional<IMistakeType> mapAnnotation(IAssessmentController assessmentController, AutograderAnnotation annotation) {
-		String id = switch (annotation.type()) {
-		case "DEPRECATED_COLLECTION_USED" -> "custom";
-		case "COLLECTION_IS_EMPTY_REIMPLEMENTED" -> "unnecessaryComplex";
-		case "STRING_IS_EMPTY_REIMPLEMENTED" -> "unnecessaryComplex";
-		case "INVALID_AUTHOR_TAG" -> "custom";
-		case "COMMENTED_OUT_CODE" -> "todo";
-		case "INCONSISTENT_COMMENT_LANGUAGE" -> "wrongLanguage";
-		case "INVALID_COMMENT_LANGUAGE" -> "wrongLanguage";
-		case "JAVADOC_STUB_DESCRIPTION" -> "jdTrivial";
-		case "JAVADOC_STUB_PARAMETER_TAG" -> "jdTrivial";
-		case "JAVADOC_STUB_RETURN_TAG" -> "jdTrivial";
-		case "JAVADOC_STUB_THROWS_TAG" -> "jdTrivial";
-		case "JAVADOC_MISSING_PARAMETER_TAG" -> "jdTrivial";
-		case "JAVADOC_UNKNOWN_PARAMETER_TAG" -> "jdTrivial";
-		case "JAVADOC_INCOMPLETE_RETURN_TAG" -> "jdTrivial";
-		case "UNUSED_DIAMOND_OPERATOR" -> "custom";
-		case "EXPLICITLY_EXTENDS_OBJECT" -> "unnecessaryComplex";
-		case "FOR_WITH_MULTIPLE_VARIABLES" -> "complexCode";
-		case "REDUNDANT_DEFAULT_CONSTRUCTOR" -> "emptyConstructor";
-		case "REDUNDANT_IF_FOR_BOOLEAN" -> "unnecessaryComplex";
-		case "REDUNDANT_MODIFIER" -> "unnecessaryComplex";
-		case "REDUNDANT_VOID_RETURN" -> "unnecessaryComplex";
-		case "REDUNDANT_SELF_ASSIGNMENT" -> "unnecessaryComplex";
-		case "REDUNDANT_LOCAL_BEFORE_RETURN" -> "unnecessaryComplex";
-		case "UNUSED_IMPORT" -> "unnecessaryComplex";
-		case "PRIMITIVE_WRAPPER_INSTANTIATION" -> "custom";
-		case "ASSERT" -> "assertIF";
-		case "EXCEPTION_PRINT_STACK_TRACE" -> "custom";
-		case "CUSTOM_EXCEPTION_INHERITS_RUNTIME_EXCEPTION" -> "custom";
-		case "CUSTOM_EXCEPTION_INHERITS_ERROR" -> "custom";
-		case "EMPTY_CATCH" -> "emptyBlock";
-		case "EXCEPTION_CAUGHT_IN_SURROUNDING_BLOCK" -> "exceptionControlFlow";
-		case "RUNTIME_EXCEPTION_OR_ERROR_CAUGHT" -> "custom";
-		case "OBJECTS_COMPARED_VIA_TO_STRING" -> "javaAPI";
-		case "CONSTANT_NOT_STATIC_OR_NOT_UPPER_CAMEL_CASE" -> "identifierNaming";
-		case "CONSTANT_IN_INTERFACE" -> "custom";
-		case "DUPLICATE_CODE" -> "codeCopyHelper";
-		case "REASSIGNED_PARAMETER" -> "custom";
-		case "DOUBLE_BRACE_INITIALIZATION" -> "custom";
-		case "NON_COMPLIANT_EQUALS" -> "custom";
-		case "INSTANCE_FIELD_CAN_BE_LOCAL" -> "unnecessaryComplex";
-		case "FOR_CAN_BE_FOREACH" -> "wrongLoopType";
-		case "OVERRIDE_ANNOTATION_MISSING" -> "custom";
-		case "SYSTEM_SPECIFIC_LINE_BREAK" -> "lineSeparator";
-		case "BOOLEAN_GETTER_NOT_CALLED_IS" -> "identifierNaming";
-		case "MEANINGLESS_CONSTANT_NAME" -> "meaninglessConstants";
-		case "CONFUSING_IDENTIFIER" -> "identifierNaming";
-		case "SINGLE_LETTER_LOCAL_NAME" -> "identifierNaming";
-		case "IDENTIFIER_IS_ABBREVIATED_TYPE" -> "identifierNaming";
-		case "CONCRETE_COLLECTION_AS_FIELD_OR_RETURN_VALUE" -> "interfaceAgainst";
-		case "LIST_NOT_COPIED_IN_GETTER" -> "getterSetter";
-		case "METHOD_USES_PLACEHOLDER_IMPLEMENTATION" -> "comment";
-		case "UTILITY_CLASS_NOT_FINAL" -> "utilityPrivate";
-		case "UTILITY_CLASS_INVALID_CONSTRUCTOR" -> "utilityPrivate";
-		case "UTILITY_CLASS_MUTABLE_FIELD" -> "unnecessaryUtility";
-		case "DEFAULT_PACKAGE_USED" -> "custom";
-		case "EMPTY_BLOCK" -> "emptyBlock";
-		case "UNUSED_CODE_ELEMENT" -> "unused";
-		case "STATIC_FIELD_SHOULD_BE_INSTANCE" -> "staticAttribute";
-		case "FIELD_SHOULD_BE_FINAL" -> "finalAttribute";
-		case "STRING_COMPARE_BY_REFERENCE" -> "custom";
-		case "REDUNDANT_NEGATION" -> "unnecessaryComplex";
-		case "JAVADOC_UNEXPECTED_TAG" -> "custom";
-		case "REDUNDANT_ARRAY_INIT" -> "unnecessaryComplex";
-		case "USE_OPERATOR_ASSIGNMENT" -> "unnecessaryComplex";
-		default -> "custom";
-		};
+	public static Path maybeDownloadAutograderRelease() throws IOException {
+		if (!CommonActivator.getDefault().getPreferenceStore().getBoolean(PreferenceConstants.AUTOGRADER_DOWNLOAD_JAR)) {
+			return Path.of(CommonActivator.getDefault().getPreferenceStore().getString(PreferenceConstants.AUTOGRADER_JAR_PATH));
+		}
+
+		URLConnection connection = new URL("https://github.com/Feuermagier/autograder/releases/latest").openConnection();
+		connection.connect();
+		var inputStream = connection.getInputStream(); // Open stream to force redirect to the latest release
+		String[] components = connection.getURL().getFile().split("/");
+		String tag = components[components.length - 1];
+		inputStream.close();
+
+		Path existingJAR = Path.of(CommonActivator.getDefault().getPreferenceStore().getString(PreferenceConstants.AUTOGRADER_DOWNLOADED_JAR_PATH));
+		if (!Files.exists(existingJAR) || !existingJAR.getFileName().toString().startsWith(tag)) {
+			Files.deleteIfExists(existingJAR);
+			existingJAR = downloadAutograderRelease(tag);
+		} else {
+			LOG.info("Skipping autograder JAR download as most recent one is already present at " + existingJAR.toAbsolutePath().toString());
+		}
+
+		return existingJAR;
+	}
+
+	private static Path downloadAutograderRelease(String version) {
+		try {
+			Path targetPath = Files.createTempFile(version + "_autograder_jar", ".jar");
+			LOG.info("Downloading autograder JAR with version/tag " + version + " to " + targetPath.toAbsolutePath().toString());
+			Files.deleteIfExists(targetPath);
+			Files.createFile(targetPath);
+			URL url = new URL("https://github.com/Feuermagier/autograder/releases/latest/download/autograder-cmd.jar");
+			ReadableByteChannel channel = Channels.newChannel(url.openStream());
+			FileOutputStream outStream = new FileOutputStream(targetPath.toFile());
+			outStream.getChannel().transferFrom(channel, 0, Long.MAX_VALUE);
+			CommonActivator.getDefault().getPreferenceStore().setValue(PreferenceConstants.AUTOGRADER_DOWNLOADED_JAR_PATH,
+					targetPath.toAbsolutePath().toString());
+			return targetPath;
+		} catch (IOException e) {
+			LOG.error("Failed to download the autograder JAR", e);
+			return null;
+		}
+	}
+
+	private static Optional<IMistakeType> mapAnnotation(IAssessmentController assessmentController, AutograderAnnotation annotation,
+			Map<String, String> config) {
+		String id = config.get(annotation.type());
 		return assessmentController.getMistakes().stream().filter(m -> m.getId().equals(id)).findAny()
 				.or(() -> assessmentController.getMistakes().stream().filter(m -> m.getId().equals("custom")).findAny());
+	}
+
+	public static Map<String, String> getConfig() throws IOException {
+		Path autograderConfigPath = Path.of(CommonActivator.getDefault().getPreferenceStore().getString(PreferenceConstants.AUTOGRADER_CONFIG_PATH));
+		return new ObjectMapper().readValue(Files.readString(autograderConfigPath), new TypeReference<Map<String, String>>() {
+		});
 	}
 
 	public record AutograderAnnotation(String type, String message, String file, int startLine, int endLine) {

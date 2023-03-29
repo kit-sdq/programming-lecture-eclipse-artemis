@@ -59,6 +59,7 @@ public class AdvancedPreferences extends FieldEditorPreferencePage implements IW
 						{ I18N().settingsOpenFilesOnAssessmentStartAll(), PreferenceConstants.OPEN_FILES_ON_ASSESSMENT_START_ALL } },
 				parent);
 
+		var autograderDownloadJar = new BooleanFieldEditor(PreferenceConstants.AUTOGRADER_DOWNLOAD_JAR, "Download most recent Autograder release", parent);
 		var autograderJarPath = new FileFieldEditor(PreferenceConstants.AUTOGRADER_JAR_PATH, "Autograder JAR file", parent);
 		var autograderConfigPath = new FileFieldEditor(PreferenceConstants.AUTOGRADER_CONFIG_PATH, "Autograder config file", parent);
 
@@ -73,6 +74,7 @@ public class AdvancedPreferences extends FieldEditorPreferencePage implements IW
 		this.addField(searchInMistakeMessages);
 		this.addField(openFiles);
 
+		this.addField(autograderDownloadJar);
 		this.addField(autograderJarPath);
 		this.addField(autograderConfigPath);
 	}
