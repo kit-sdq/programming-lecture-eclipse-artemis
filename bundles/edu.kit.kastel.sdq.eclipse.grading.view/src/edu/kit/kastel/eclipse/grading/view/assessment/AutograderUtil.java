@@ -62,8 +62,7 @@ public class AutograderUtil {
 
 				monitor.subTask("Running Autograder checks");
 				ProcessBuilder processBuilder = new ProcessBuilder("java", "-DFile.Encoding=UTF-8", "-jar", autograderJar.toAbsolutePath().toString(),
-						autograderConfig, path.toAbsolutePath().toString(), "--static-only", "--output-json", "--pass-config", "--java-version",
-						"17");
+						autograderConfig, path.toAbsolutePath().toString(), "--static-only", "--output-json", "--pass-config", "--java-version", "17");
 				var process = processBuilder.start();
 				Scanner autograderOutput = new Scanner(process.getInputStream(), StandardCharsets.UTF_8);
 
