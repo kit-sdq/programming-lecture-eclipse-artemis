@@ -44,11 +44,6 @@ public class AutograderUtil {
 			return; // Don't run the autograder if there are already annotations
 		}
 
-		if (CommonActivator.getDefault().getPreferenceStore().getString(PreferenceConstants.AUTOGRADER_JAR_PATH).isBlank()) {
-			LOG.warn("Autograder path not set");
-			return;
-		}
-
 		Job.create("Autograder", monitor -> {
 			try {
 				// Store the current exercise
@@ -56,17 +51,18 @@ public class AutograderUtil {
 
 				// Read the configuration
 				Map<String, String> config = getConfig();
-				String autograderConfig = "[" + config.keySet().stream().collect(Collectors.joining(",")) + "]";
+				String autograderConfig = "[" + config.keySet().stream().collect(Collectors.joining(", ")) + "]";
 
 				monitor.beginTask("Autograder", 8); // Download, Compile, PMD, CPD, SpotBugs, Spoon, integrated, parsing
 
-				monitor.setTaskName("Downloading Autograder JAR");
+				monitor.subTask("Downloading Autograder JAR");
 				LOG.info("Downloading autograder JAR");
 				Path autograderJar = maybeDownloadAutograderRelease();
 				monitor.worked(1);
 
+				monitor.subTask("Running Autograder checks");
 				ProcessBuilder processBuilder = new ProcessBuilder("java", "-DFile.Encoding=UTF-8", "-jar", autograderJar.toAbsolutePath().toString(),
-						"\"" + autograderConfig + "\"", path.toAbsolutePath().toString(), "--static-only", "--output-json", "--pass-config", "--java-version",
+						autograderConfig, path.toAbsolutePath().toString(), "--static-only", "--output-json", "--pass-config", "--java-version",
 						"17");
 				var process = processBuilder.start();
 				Scanner autograderOutput = new Scanner(process.getInputStream(), StandardCharsets.UTF_8);
@@ -139,6 +135,8 @@ public class AutograderUtil {
 		Path existingJAR = Path.of(CommonActivator.getDefault().getPreferenceStore().getString(PreferenceConstants.AUTOGRADER_DOWNLOADED_JAR_PATH));
 		if (!Files.exists(existingJAR) || !existingJAR.getFileName().toString().startsWith(tag)) {
 			Files.deleteIfExists(existingJAR);
+			Display.getDefault().asyncExec(() -> MessageDialog.openInformation(AssessmentUtilities.getWindowsShell(), "Downloading Autograder",
+					"Downloading Autograder " + tag + ". This may take a moment. You can safely close this window."));
 			existingJAR = downloadAutograderRelease(tag);
 		} else {
 			LOG.info("Skipping autograder JAR download as most recent one is already present at " + existingJAR.toAbsolutePath().toString());
