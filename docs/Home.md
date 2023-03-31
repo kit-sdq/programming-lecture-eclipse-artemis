@@ -128,7 +128,7 @@ This section deals with the configuration of the backend.
 
 To Configure mistake types, rating groups and whatnot, we use a config
 file. See
-[docs/examples/config.json](../examples/config.json)
+[docs/examples/config.json](https://github.com/kit-sdq/programming-lecture-eclipse-artemis/blob/main/docs/examples/config.json)
 for an example configuration.
 
 There are rating groups, mistake types, penalty rules, and allowed

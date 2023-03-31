@@ -133,6 +133,7 @@ New view elements (buttons, tabs, etc.) should be added to the
 
 
 :warning:
+
 If the new view element is state-dependent. You will have to update the
 *updateState()* method. If you create new views use the [Window
 Builder](https://www.eclipse.org/windowbuilder/).
