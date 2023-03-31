@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.api.controller;
 
 import java.util.List;
@@ -40,4 +40,12 @@ public interface ISystemwideController extends IController {
 	 * @return the current project name.
 	 */
 	String getCurrentProjectName();
+
+	/**
+	 * Adds a new listener that will be notified when the initial build & maven
+	 * update of a new submission has been completed.
+	 *
+	 * @param callback
+	 */
+	void addSubmissionBuildListener(ISubmissionLifecycleCallback callback);
 }
