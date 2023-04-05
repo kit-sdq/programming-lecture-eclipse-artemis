@@ -33,7 +33,10 @@ jobs:
         mv releng/edu.kit.kastel.sdq.eclipse.grading.product/target/products/*-linux.*.aarch64.zip dist/Artemis_Grading_Linux_aarch64.zip
         mv releng/edu.kit.kastel.sdq.eclipse.grading.product/target/products/*-macosx.*.x86_64.zip dist/Artemis_Grading_MacOS_x86_64.zip
         mv releng/edu.kit.kastel.sdq.eclipse.grading.product/target/products/*-macosx.*.aarch64.zip dist/Artemis_Grading_MacOS_aarch64.zip
-        
+    
+    - name: Create MD5-Sums
+      run: |
+        for f in dists/*.zip; do md5sum $f > $f.md5; done
 
     - name: Sign MacOS Eclipse Distribution (Grading)
       env: 
@@ -76,3 +79,8 @@ jobs:
           dist/Artemis_Grading_Linux_aarch64.zip
           dist/Artemis_Grading_MacOS_x86_64.zip
           dist/Artemis_Grading_MacOS_aarch64.zip
+          dist/Artemis_Grading_Windows.zip.md5
+          dist/Artemis_Grading_Linux_x86_64.zip.md5
+          dist/Artemis_Grading_Linux_aarch64.zip.md5
+          dist/Artemis_Grading_MacOS_x86_64.zip.md5
+          dist/Artemis_Grading_MacOS_aarch64.zip.md5
