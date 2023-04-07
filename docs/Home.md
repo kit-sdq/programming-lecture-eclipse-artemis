@@ -9,6 +9,10 @@ Developers should look [here](../Development).
     to run the plugin. It can be found
     [here](https://kit-sdq.github.io/programming-lecture-eclipse-artemis/).
 
+### Linux User
+- Under Arch Linux the grading tool is available as [artemis-grading-bin](https://aur.archlinux.org/packages/artemis-grading-bin) from the AUR.
+
+
 ### macOS User
 
 -   The package bundle is missing notarization thus it cannot be opened
