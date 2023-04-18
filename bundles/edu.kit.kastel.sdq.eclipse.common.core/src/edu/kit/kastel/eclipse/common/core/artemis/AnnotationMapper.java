@@ -158,7 +158,7 @@ public class AnnotationMapper {
 		final List<Feedback> initialFeedback = getFilteredPreexistentFeedbacks(FeedbackType.AUTOMATIC);
 		final List<Feedback> tests = initialFeedback.stream().filter(f -> f.getReference() == null).collect(Collectors.toList());
 
-		int codeIssueCount = (int) initialFeedback.stream().filter(Feedback::isSCA).count();
+		int codeIssueCount = (int) initialFeedback.stream().filter(Feedback::isStaticCodeAnalysis).count();
 		int passedTestCaseCount = (int) tests.stream() //
 				.filter(feedback -> feedback.getPositive() != null && feedback.getPositive()).count();
 
