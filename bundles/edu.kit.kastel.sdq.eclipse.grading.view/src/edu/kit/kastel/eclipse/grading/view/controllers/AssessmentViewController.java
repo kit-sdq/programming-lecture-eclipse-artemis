@@ -6,7 +6,6 @@ import java.util.Optional;
 
 import edu.kit.kastel.eclipse.common.api.ArtemisClientException;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.IExercise;
-import edu.kit.kastel.eclipse.common.api.artemis.mapping.SubmissionFilter;
 import edu.kit.kastel.eclipse.common.api.controller.IAssessmentController;
 import edu.kit.kastel.eclipse.common.api.controller.IGradingSystemwideController;
 import edu.kit.kastel.eclipse.common.api.model.IAnnotation;
@@ -82,8 +81,8 @@ public class AssessmentViewController extends AbstractArtemisViewController<IGra
 	/**
 	 * @return all submissions for the given filter
 	 */
-	public List<String> getSubmissionsForBacklog(SubmissionFilter filter) {
-		return this.systemwideController.getBegunSubmissionsProjectNames(filter);
+	public List<String> getSubmissionsForBacklog() {
+		return this.systemwideController.getBegunSubmissionsProjectNames();
 	}
 
 	/**

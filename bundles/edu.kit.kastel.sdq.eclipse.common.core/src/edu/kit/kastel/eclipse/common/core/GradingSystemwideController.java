@@ -20,7 +20,6 @@ import edu.kit.kastel.eclipse.common.api.artemis.mapping.ICourse;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.IExam;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.IExercise;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.ISubmission;
-import edu.kit.kastel.eclipse.common.api.artemis.mapping.SubmissionFilter;
 import edu.kit.kastel.eclipse.common.api.controller.ExerciseStats;
 import edu.kit.kastel.eclipse.common.api.controller.IArtemisController;
 import edu.kit.kastel.eclipse.common.api.controller.IAssessmentController;
@@ -55,12 +54,12 @@ public class GradingSystemwideController extends SystemwideController implements
 		return this.assessmentControllers.get(submission.getSubmissionId());
 	}
 
-	private List<ISubmission> getBegunSubmissions(SubmissionFilter submissionFilter) {
+	private List<ISubmission> getBegunSubmissions() {
 		if (this.nullCheckMembersAndNotify(true, true, false)) {
 			return List.of();
 		}
 
-		return this.getArtemisController().getBegunSubmissions(this.exercise).stream().filter(submissionFilter).toList();
+		return this.getArtemisController().getBegunSubmissions(this.exercise);
 	}
 
 	@Override
@@ -77,15 +76,15 @@ public class GradingSystemwideController extends SystemwideController implements
 	}
 
 	@Override
-	public List<String> getBegunSubmissionsProjectNames(SubmissionFilter submissionFilter) {
-		// sondercase: refresh
+	public List<String> getBegunSubmissionsProjectNames() {
+		// Special Case: refresh
 		if (this.course == null || this.exercise == null) {
 			this.info("You need to choose a" + (this.course == null ? "course" : "") + (this.course == null && this.exercise == null ? " and an " : "")
 					+ (this.exercise == null ? "exercise" : "."));
 			return List.of();
 		}
 
-		return this.getBegunSubmissions(submissionFilter).stream().map(
+		return this.getBegunSubmissions().stream().map(
 				sub -> this.projectFileNamingStrategy.getProjectFileInWorkspace(WorkspaceUtil.getWorkspaceFile(), this.getCurrentExercise(), sub).getName())
 				.sorted().toList();
 	}
@@ -170,19 +169,15 @@ public class GradingSystemwideController extends SystemwideController implements
 	@Override
 	public void setAssessedSubmissionByProjectName(String projectName) {
 
-		boolean[] found = { false };
-		this.getBegunSubmissions(SubmissionFilter.ALL).forEach(sub -> {
+		for (var submission : this.getBegunSubmissions()) {
 			String currentProjectName = this.projectFileNamingStrategy
-					.getProjectFileInWorkspace(WorkspaceUtil.getWorkspaceFile(), this.getCurrentExercise(), sub).getName();
-
+					.getProjectFileInWorkspace(WorkspaceUtil.getWorkspaceFile(), this.getCurrentExercise(), submission).getName();
 			if (currentProjectName.equals(projectName)) {
-				this.submission = sub;
-				found[0] = true;
+				this.submission = submission;
+				return;
 			}
-		});
-		if (found[0]) {
-			return;
 		}
+
 		this.error("Assessed submission with projectName=\"" + projectName + "\" not found!", null);
 	}
 

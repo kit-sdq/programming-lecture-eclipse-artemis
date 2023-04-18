@@ -32,7 +32,6 @@ import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.part.ViewPart;
 
 import edu.kit.kastel.eclipse.common.api.PreferenceConstants;
-import edu.kit.kastel.eclipse.common.api.artemis.mapping.SubmissionFilter;
 import edu.kit.kastel.eclipse.common.api.controller.IGradingSystemwideController;
 import edu.kit.kastel.eclipse.common.api.model.IMistakeType;
 import edu.kit.kastel.eclipse.common.api.model.IRatingGroup;
@@ -120,8 +119,8 @@ public class ArtemisGradingView extends ViewPart {
 		});
 	}
 
-	private void addSelectionListenerForRefreshButton(Button refreshButton, Combo backlogCombo, Combo filterCombo) {
-		refreshButton.addListener(SWT.Selection, e -> this.fillBacklogComboWithData(backlogCombo, filterCombo));
+	private void addSelectionListenerForRefreshButton(Button refreshButton, Combo backlogCombo) {
+		refreshButton.addListener(SWT.Selection, e -> this.fillBacklogComboWithData(backlogCombo));
 	}
 
 	private void addSelectionListenerForReloadButton(Button btnReloadA) {
@@ -169,27 +168,15 @@ public class ArtemisGradingView extends ViewPart {
 
 	private void createBacklog() {
 		var backlogCombo = assessmentTab.comboBacklogSubmission;
-		var filterCombo = assessmentTab.comboBacklogFilter;
 		var refreshButton = assessmentTab.btnBacklogRefreshSubmissions;
 		var btnLoadAgain = assessmentTab.btnBacklogLoadSubmission;
 
-		for (SubmissionFilter filter : SubmissionFilter.values()) {
-			assessmentTab.comboBacklogFilter.add(filter.name());
-		}
-
-		this.addSelectionListenerForFilterCombo(backlogCombo, filterCombo);
-		this.addSelectionListenerForRefreshButton(refreshButton, backlogCombo, filterCombo);
+		this.addSelectionListenerForRefreshButton(refreshButton, backlogCombo);
 		this.addSelectionListenerForLoadFromBacklogButton(backlogCombo, btnLoadAgain);
 	}
 
 	private void createResultTab(TabFolder tabFolder) {
 		this.result = new ResultTab(Activator.getDefault().getSystemwideController(), tabFolder);
-	}
-
-	private void addSelectionListenerForFilterCombo(Combo backlogCombo, Combo filterCombo) {
-		filterCombo.addListener(SWT.Selection, e -> {
-			this.fillBacklogComboWithData(backlogCombo, filterCombo);
-		});
 	}
 
 	private void createCustomButton(IRatingGroup ratingGroup, Group rgDisplay, IMistakeType mistake) {
@@ -348,15 +335,9 @@ public class ArtemisGradingView extends ViewPart {
 		setVersionText(this.gradingTabComposite.lblPluginVersion);
 	}
 
-	private void fillBacklogComboWithData(Combo backlogCombo, Combo filterCombo) {
+	private void fillBacklogComboWithData(Combo backlogCombo) {
 		backlogCombo.removeAll();
-		SubmissionFilter filter = SubmissionFilter.ALL;
-		int idx = filterCombo.getSelectionIndex();
-		if (idx >= 0) {
-			String value = filterCombo.getItem(idx);
-			filter = Arrays.stream(SubmissionFilter.values()).filter(f -> f.name().equals(value)).findFirst().orElse(SubmissionFilter.ALL);
-		}
-		this.viewController.getSubmissionsForBacklog(filter).forEach(backlogCombo::add);
+		this.viewController.getSubmissionsForBacklog().forEach(backlogCombo::add);
 	}
 
 	private void loadExamComboEntries(Combo examCourseCombo, Combo examCombo, Combo examExerciseCombo) {

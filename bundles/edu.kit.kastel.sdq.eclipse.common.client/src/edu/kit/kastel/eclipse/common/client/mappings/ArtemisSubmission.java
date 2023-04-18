@@ -25,9 +25,6 @@ public class ArtemisSubmission implements ISubmission, Serializable {
 	@JsonProperty(value = "participation", required = true)
 	private ParticipationDTO participation;
 
-	private transient Boolean hasSubmittedAssessment = false;
-	private transient Boolean hasSavedAssessment = false;
-
 	private transient int correctionRound;
 
 	/**
@@ -63,26 +60,8 @@ public class ArtemisSubmission implements ISubmission, Serializable {
 		return this.submissionId;
 	}
 
-	@Override
-	public boolean hasSavedAssessment() {
-		return this.hasSavedAssessment;
-	}
-
-	@Override
-	public boolean hasSubmittedAssessment() {
-		return this.hasSubmittedAssessment;
-	}
-
 	public void init(int correctionRound) {
 		this.correctionRound = correctionRound;
-
-		if (this.results != null && this.results.length > 0) {
-			ResultsDTO lastResult = this.results[this.results.length - 1];
-
-			this.hasSubmittedAssessment = lastResult.completionDate != null;
-			// TODO Determine what to do here .. hasFeedback has been removed
-			this.hasSavedAssessment = false; // lastResult.hasFeedback != null && lastResult.hasFeedback;
-		}
 	}
 
 	@Override

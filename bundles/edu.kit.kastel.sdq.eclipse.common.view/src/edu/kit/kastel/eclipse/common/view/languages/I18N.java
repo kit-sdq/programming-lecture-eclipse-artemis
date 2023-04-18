@@ -91,10 +91,6 @@ public interface I18N {
 		return "Backlog";
 	}
 
-	default String backlogFilter() {
-		return "Filter Selection";
-	}
-
 	default String submission() {
 		return "Submission";
 	}
