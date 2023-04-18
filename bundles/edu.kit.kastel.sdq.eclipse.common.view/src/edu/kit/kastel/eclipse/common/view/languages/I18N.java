@@ -267,6 +267,10 @@ public interface I18N {
 	// internal
 	//
 
+	default String key() {
+		return "en";
+	}
+
 	/**
 	 * This method defines the display-name for the current language (default:
 	 * English)

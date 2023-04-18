@@ -195,14 +195,14 @@ public class ArtemisGradingView extends ViewPart {
 	private void createCustomButton(IRatingGroup ratingGroup, Group rgDisplay, IMistakeType mistake) {
 		final Button customButton = new Button(rgDisplay, SWT.PUSH);
 		customButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-		customButton.setText(mistake.getButtonText());
+		customButton.setText(mistake.getButtonText(I18N().key()));
 		customButton.addListener(SWT.Selection, event -> {
 			final CustomButtonDialog customDialog = new CustomButtonDialog(AssessmentUtilities.getWindowsShell(), isPositiveFeedbackAllowed(),
 					this.viewController, mistake);
 			customDialog.setBlockOnOpen(true);
 			customDialog.open();
 			// avoid SWT Exception
-			Display.getDefault().asyncExec(() -> this.updatePenalty(ratingGroup.getDisplayName()));
+			Display.getDefault().asyncExec(() -> this.updatePenalty(ratingGroup.getIdentifier()));
 		});
 	}
 
@@ -277,25 +277,26 @@ public class ArtemisGradingView extends ViewPart {
 		this.gradingButtonComposite.setLayout(new GridLayout(1, true));
 		this.viewController.getRatingGroups().forEach(ratingGroup -> {
 			final Group rgDisplay = new Group(this.gradingButtonComposite, SWT.NONE);
-			this.ratingGroupViewElements.put(ratingGroup.getDisplayName(), rgDisplay);
-			this.updatePenalty(ratingGroup.getDisplayName());
+			this.ratingGroupViewElements.put(ratingGroup.getIdentifier(), rgDisplay);
+			this.updatePenalty(ratingGroup.getIdentifier());
 			var columns = CommonActivator.getDefault().getPreferenceStore().getInt(PreferenceConstants.GRADING_VIEW_BUTTONS_IN_COLUMN);
 			final GridLayout gridLayout = new GridLayout(columns, true);
 			rgDisplay.setLayout(gridLayout);
 			final GridData gridData = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
 			rgDisplay.setLayoutData(gridData);
 			this.viewController.getMistakeTypes().forEach(mistake -> {
-				if (mistake.getRatingGroup().getDisplayName().equals(ratingGroup.getDisplayName())) {
+				// TODO Check
+				if (mistake.getRatingGroup().equals(ratingGroup)) {
 					if (mistake.isCustomPenalty()) {
 						this.createCustomButton(ratingGroup, rgDisplay, mistake);
 						return;
 					}
 					final Button mistakeButton = new Button(rgDisplay, SWT.PUSH);
-					mistakeButton.setText(mistake.getButtonText());
+					mistakeButton.setText(mistake.getButtonText(I18N().key()));
 					mistakeButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 
-					this.mistakeButtons.put(mistake.getId(), mistakeButton);
-					mistakeButton.setToolTipText(this.viewController.getToolTipForMistakeType(mistake));
+					this.mistakeButtons.put(mistake.getIdentifier(), mistakeButton);
+					mistakeButton.setToolTipText(this.viewController.getToolTipForMistakeType(I18N().key(), mistake));
 
 					KeyboardAwareMouseListener listener = new KeyboardAwareMouseListener();
 					// Normal click
@@ -306,7 +307,7 @@ public class ArtemisGradingView extends ViewPart {
 					listener.setClickHandler(() -> this.createMistakePenaltyWithCustomMessageDialog(mistake), SWT.SHIFT, SWT.BUTTON2);
 					// every click
 					listener.setClickHandlerForEveryClick(() -> {
-						this.updatePenalty(mistake.getRatingGroup().getDisplayName());
+						this.updatePenalty(mistake.getRatingGroup().getIdentifier());
 						this.updateMistakeButtonToolTips(mistake);
 					});
 					mistakeButton.addMouseListener(listener);
@@ -371,7 +372,7 @@ public class ArtemisGradingView extends ViewPart {
 	private void prepareNewAssessment() {
 		this.fillGradingTab();
 		this.viewController.createAnnotationsMarkers();
-		this.viewController.getRatingGroups().forEach(ratingGroup -> this.updatePenalty(ratingGroup.getDisplayName()));
+		this.viewController.getRatingGroups().forEach(ratingGroup -> this.updatePenalty(ratingGroup.getIdentifier()));
 		this.result.loadFeedbackForExcerise();
 		AutograderUtil.runAutograder(this.viewController.getAssessmentController(),
 				Activator.getDefault().getSystemwideController().getCurrentProjectPath().resolve("assignment").resolve("src"),
@@ -384,16 +385,16 @@ public class ArtemisGradingView extends ViewPart {
 	}
 
 	private void updateMistakeButtonToolTips(IMistakeType mistakeType) {
-		Button button = this.mistakeButtons.get(mistakeType.getId());
+		Button button = this.mistakeButtons.get(mistakeType.getIdentifier());
 		if (button != null) {
 			Display.getDefault().asyncExec( //
-					() -> button.setToolTipText(this.viewController.getToolTipForMistakeType(mistakeType)) //
+					() -> button.setToolTipText(this.viewController.getToolTipForMistakeType(I18N().key(), mistakeType)) //
 			);
 		}
 	}
 
 	public void updatePenalties() {
-		this.viewController.getRatingGroups().forEach(ratingGroup -> this.updatePenalty(ratingGroup.getDisplayName()));
+		this.viewController.getRatingGroups().forEach(ratingGroup -> this.updatePenalty(ratingGroup.getIdentifier()));
 		this.updateAllToolTips();
 	}
 
@@ -404,13 +405,13 @@ public class ArtemisGradingView extends ViewPart {
 		}
 	}
 
-	private void updatePenalty(String ratingGroupName) {
-		Group viewElement = this.ratingGroupViewElements.get(ratingGroupName);
-		IRatingGroup ratingGroup = this.viewController.getRatingGroupByDisplayName(ratingGroupName);
+	private void updatePenalty(String ratingGroupId) {
+		Group viewElement = this.ratingGroupViewElements.get(ratingGroupId);
+		IRatingGroup ratingGroup = this.viewController.getRatingGroupById(ratingGroupId);
 		if (ratingGroup == null) {
 			return;
 		}
-		StringBuilder builder = new StringBuilder(ratingGroupName);
+		StringBuilder builder = new StringBuilder(ratingGroup.getDisplayName(I18N().key()));
 		builder.append("(");
 		builder.append(this.viewController.getAssessmentController().getCurrentPenaltyForRatingGroup(ratingGroup));
 		var range = ratingGroup.getRange();

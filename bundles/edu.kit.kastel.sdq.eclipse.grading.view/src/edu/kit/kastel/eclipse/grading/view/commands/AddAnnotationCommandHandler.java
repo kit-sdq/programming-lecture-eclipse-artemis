@@ -1,5 +1,7 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.grading.view.commands;
+
+import static edu.kit.kastel.eclipse.common.view.languages.LanguageSettings.I18N;
 
 import java.util.Optional;
 
@@ -66,7 +68,7 @@ public class AddAnnotationCommandHandler extends AbstractHandler {
 				customDialog.setBlockOnOpen(true);
 				customDialog.create();
 				customDialog.getShell().setLocation(dialogPosition);
-				customDialog.getShell().setText("Add custom message to penalty \"" + selectedMistake.get().getButtonText() + "\"");
+				customDialog.getShell().setText("Add custom message to penalty \"" + selectedMistake.get().getButtonText(I18N().key()) + "\"");
 				customDialog.open();
 				if (customDialog.isClosedByOk()) {
 					AssessmentUtilities.createAssessmentAnnotation(assessment, selectedMistake.get(), customDialog.getCustomMessage(), null);

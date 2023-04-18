@@ -312,6 +312,11 @@ class GermanLanguage implements I18N {
 	}
 
 	@Override
+	public String key() {
+		return "de";
+	}
+
+	@Override
 	public String languageDisplayName() {
 		return "Deutsch";
 	}

@@ -68,8 +68,8 @@ public class AssessmentViewController extends AbstractArtemisViewController<IGra
 		return this.assessmentController.getMistakes();
 	}
 
-	public IRatingGroup getRatingGroupByDisplayName(String displayName) {
-		return this.assessmentController.getRatingGroupByDisplayName(displayName);
+	public IRatingGroup getRatingGroupById(String id) {
+		return this.assessmentController.getRatingGroupById(id);
 	}
 
 	/**
@@ -86,13 +86,8 @@ public class AssessmentViewController extends AbstractArtemisViewController<IGra
 		return this.systemwideController.getBegunSubmissionsProjectNames(filter);
 	}
 
-	/**
-	 * @param mistakeType (of the certain button)
-	 * @return tooltip for the mistake type button
-	 */
-	public String getToolTipForMistakeType(IMistakeType mistakeType) {
-		return this.assessmentController.getTooltipForMistakeType(mistakeType);
-
+	public String getToolTipForMistakeType(String languageKey, IMistakeType mistakeType) {
+		return this.assessmentController.getTooltipForMistakeType(languageKey, mistakeType);
 	}
 
 	/**

@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.core.model.annotation;
 
 import java.util.Optional;
@@ -93,7 +93,7 @@ public class Annotation implements IAnnotation {
 	}
 
 	public String getMistakeTypeId() {
-		return this.mistakeType != null ? this.mistakeType.getId() : this.mistakeTypeId;
+		return this.mistakeType != null ? this.mistakeType.getIdentifier() : this.mistakeTypeId;
 	}
 
 	@Override

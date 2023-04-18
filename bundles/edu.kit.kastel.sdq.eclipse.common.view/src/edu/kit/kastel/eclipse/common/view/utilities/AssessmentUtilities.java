@@ -1,6 +1,8 @@
 /* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.view.utilities;
 
+import static edu.kit.kastel.eclipse.common.view.languages.LanguageSettings.I18N;
+
 import java.util.Optional;
 import java.util.Scanner;
 
@@ -198,12 +200,12 @@ public final class AssessmentUtilities {
 			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_ANNOTATION_ID, id);
 			AssessmentUtilities.setCharPositionsInMarkerByLine(marker, projectName, srcPath, className, startLine, endLine);
 
-			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_ERROR_DESCRIPTION, mistake.isCustomPenalty() ? "" : mistake.getMessage());
-			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_ERROR, mistake.getButtonText());
+			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_ERROR_DESCRIPTION, mistake.isCustomPenalty() ? "" : mistake.getMessage(I18N().key()));
+			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_ERROR, mistake.getButtonText(I18N().key()));
 			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_START, startLine);
 			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_END, endLine);
 			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_CLASS_NAME, AssessmentUtilities.getClassNameForAnnotation());
-			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_RATING_GROUP, mistake.getRatingGroup().getDisplayName());
+			marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_RATING_GROUP, mistake.getRatingGroup().getDisplayName(I18N().key()));
 			if (customMessage != null) {
 				marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_CUSTOM_MESSAGE, customMessage);
 			}
@@ -211,8 +213,8 @@ public final class AssessmentUtilities {
 				marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_CUSTOM_PENALTY, customPenalty.toString());
 			}
 			if (!mistake.isCustomPenalty()) {
-				marker.setAttribute(IMarker.MESSAGE, AssessmentUtilities.createMarkerTooltip(startLine, endLine, mistake.getButtonText(),
-						mistake.getRatingGroup().getDisplayName(), AssessmentUtilities.formatCustomPenaltyMessage(mistake, customMessage), null));
+				marker.setAttribute(IMarker.MESSAGE, AssessmentUtilities.createMarkerTooltip(startLine, endLine, mistake.getButtonText(I18N().key()),
+						mistake.getRatingGroup().getDisplayName(I18N().key()), AssessmentUtilities.formatCustomPenaltyMessage(mistake, customMessage), null));
 			} else {
 				marker.setAttribute(IMarker.MESSAGE, AssessmentUtilities.createMarkerTooltipForCustomButton(startLine, endLine, customMessage, customPenalty));
 			}
@@ -251,12 +253,14 @@ public final class AssessmentUtilities {
 				marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_CUSTOM_PENALTY, customPenalty);
 			}
 			if (mistake != null) {
-				marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_ERROR_DESCRIPTION, mistake.getMessage());
-				marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_ERROR, mistake.getButtonText());
-				marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_RATING_GROUP, mistake.getRatingGroup().getDisplayName());
+				marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_ERROR_DESCRIPTION, mistake.getMessage(I18N().key()));
+				marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_ERROR, mistake.getButtonText(I18N().key()));
+				marker.setAttribute(AssessmentUtilities.MARKER_ATTRIBUTE_RATING_GROUP, mistake.getRatingGroup().getDisplayName(I18N().key()));
 				if (!mistake.isCustomPenalty()) {
-					marker.setAttribute(IMarker.MESSAGE, AssessmentUtilities.createMarkerTooltip(startLine, endLine, mistake.getButtonText(),
-							mistake.getRatingGroup().getDisplayName(), formatCustomPenaltyMessage(mistake, customMessage), annotation.getClassFilePath()));
+					marker.setAttribute(IMarker.MESSAGE,
+							AssessmentUtilities.createMarkerTooltip(startLine, endLine, mistake.getButtonText(I18N().key()),
+									mistake.getRatingGroup().getDisplayName(I18N().key()), formatCustomPenaltyMessage(mistake, customMessage),
+									annotation.getClassFilePath()));
 				} else {
 					marker.setAttribute(IMarker.MESSAGE,
 							AssessmentUtilities.createMarkerTooltipForCustomButton(startLine, endLine, customMessage, Double.parseDouble(customPenalty)));
@@ -338,9 +342,9 @@ public final class AssessmentUtilities {
 	 */
 	public static String formatCustomPenaltyMessage(IMistakeType mistake, String customMessage) {
 		if (customMessage != null) {
-			return mistake.getMessage() + "\n" + customMessage;
+			return mistake.getMessage(I18N().key()) + "\n" + customMessage;
 		} else {
-			return mistake.getMessage();
+			return mistake.getMessage(I18N().key());
 		}
 	}
 

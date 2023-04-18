@@ -166,8 +166,8 @@ public class AutograderUtil {
 	private static Optional<IMistakeType> mapAnnotation(IAssessmentController assessmentController, AutograderAnnotation annotation,
 			Map<String, String> config) {
 		String id = config.get(annotation.type());
-		return assessmentController.getMistakes().stream().filter(m -> m.getId().equals(id)).findAny()
-				.or(() -> assessmentController.getMistakes().stream().filter(m -> m.getId().equals("custom")).findAny());
+		return assessmentController.getMistakes().stream().filter(m -> m.getIdentifier().equals(id)).findAny()
+				.or(() -> assessmentController.getMistakes().stream().filter(m -> m.getIdentifier().equals("custom")).findAny());
 	}
 
 	public static Map<String, String> getConfig() throws IOException {
