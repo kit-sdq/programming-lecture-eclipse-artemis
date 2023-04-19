@@ -19,8 +19,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-
-    - uses: actions/checkout@v3.3.0
+    - uses: actions/checkout@v3.5.2
 
     - name: Set up JDK
       uses: actions/setup-java@v3
@@ -52,11 +51,6 @@ jobs:
         mv releng/edu.kit.kastel.sdq.eclipse.grading.product/target/products/*-linux.*.aarch64.zip dist/Artemis_Grading_Linux_aarch64.zip
         mv releng/edu.kit.kastel.sdq.eclipse.grading.product/target/products/*-macosx.*.x86_64.zip dist/Artemis_Grading_MacOS_x86_64.zip
         mv releng/edu.kit.kastel.sdq.eclipse.grading.product/target/products/*-macosx.*.aarch64.zip dist/Artemis_Grading_MacOS_aarch64.zip
-        mv releng/edu.kit.kastel.sdq.eclipse.student.product/target/products/*-win32*.zip dist/Artemis_Student_Windows.zip
-        mv releng/edu.kit.kastel.sdq.eclipse.student.product/target/products/*-linux.*.x86_64.zip dist/Artemis_Student_Linux_x86_64.zip
-        mv releng/edu.kit.kastel.sdq.eclipse.student.product/target/products/*-linux.*.aarch64.zip dist/Artemis_Student_Linux_aarch64.zip
-        mv releng/edu.kit.kastel.sdq.eclipse.student.product/target/products/*-macosx.*.x86_64.zip dist/Artemis_Student_MacOS_x86_64.zip
-        mv releng/edu.kit.kastel.sdq.eclipse.student.product/target/products/*-macosx.*.aarch64.zip dist/Artemis_Student_MacOS_aarch64.zip
   
   upload-mac:
     name: "Sign and upload of macos distributions"
@@ -64,7 +58,6 @@ jobs:
     needs: build
 
     steps:
-
     - name: Load Distributions from cache
       uses: actions/cache@v3
       with:
@@ -94,24 +87,6 @@ jobs:
         /usr/bin/codesign -s "kit-sdq/programming-lecture-eclipse-artemis" -fv Eclipse.app
         rm dist/Artemis_Grading_MacOS_aarch64.zip
         ditto -c -k --sequesterRsrc --keepParent Eclipse.app dist/Artemis_Grading_MacOS_aarch64.zip
-        
-    - name: Sign MacOS Eclipse Distribution (Student)
-      if: startsWith(github.ref, 'refs/tags/v')
-      env: 
-        MACOS_CERTIFICATE: ${{ secrets.MACOS_CERTIFICATE }}
-        MACOS_CERTIFICATE_PWD: ${{ secrets.MACOS_CERTIFICATE_PWD }}
-      run: |
-        rm -rf Eclipse.app
-        echo $MACOS_CERTIFICATE | base64 --decode > certificate.p12
-        unzip dist/Artemis_Student_MacOS_x86_64.zip
-        /usr/bin/codesign -s "kit-sdq/programming-lecture-eclipse-artemis" -fv Eclipse.app
-        rm dist/Artemis_Student_MacOS_x86_64.zip
-        ditto -c -k --sequesterRsrc --keepParent Eclipse.app dist/Artemis_Student_MacOS_x86_64.zip
-        rm -rf Eclipse.app
-        unzip dist/Artemis_Student_MacOS_aarch64.zip
-        /usr/bin/codesign -s "kit-sdq/programming-lecture-eclipse-artemis" -fv Eclipse.app
-        rm dist/Artemis_Student_MacOS_aarch64.zip
-        ditto -c -k --sequesterRsrc --keepParent Eclipse.app dist/Artemis_Student_MacOS_aarch64.zip    
 
     - name: Save Eclipse Distribution (MacOS)
       uses: actions/upload-artifact@v3
@@ -181,8 +156,3 @@ jobs:
           dist/Artemis_Grading_Linux_aarch64.zip
           dist/Artemis_Grading_MacOS_x86_64.zip
           dist/Artemis_Grading_MacOS_aarch64.zip
-          dist/Artemis_Student_Windows.zip
-          dist/Artemis_Student_Linux_x86_64.zip
-          dist/Artemis_Student_Linux_aarch64.zip
-          dist/Artemis_Student_MacOS_x86_64.zip      
-          dist/Artemis_Student_MacOS_aarch64.zip

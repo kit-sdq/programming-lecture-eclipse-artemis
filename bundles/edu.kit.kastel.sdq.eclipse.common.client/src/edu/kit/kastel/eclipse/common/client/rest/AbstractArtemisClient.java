@@ -5,6 +5,9 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.Platform;
+
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -24,8 +27,8 @@ import okhttp3.Response;
  * Encapsulates methods to get data from and send data to Artemis
  */
 public abstract class AbstractArtemisClient {
-
-	private static final String PROTOCOL_PREFIX = "https://";
+	private static final ILog log = Platform.getLog(AbstractArtemisClient.class);
+	private static final String DEFAULT_PROTOCOL_PREFIX = "https://";
 
 	// paths
 	protected static final String PROGRAMMING_SUBMISSION_PATHPART = "programming-submissions";
@@ -34,21 +37,24 @@ public abstract class AbstractArtemisClient {
 	protected static final String EXAMS_PATHPART = "exams";
 	protected static final String PARTICIPATION_PATHPART = "participations";
 	protected static final String RESULT_PATHPART = "results";
-	protected static final String STUDENT_EXAM_PATH = "student-exams";
 
 	protected static final String COOKIE_NAME_JWT = "jwt";
 
 	protected static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
 	protected final String hostname;
+	// e.g., https://
+	private final String protocol;
 	private ObjectMapper orm;
 
 	/**
 	 * @param artemisUsername for login to artemis
 	 * @param artemisPassword for login to artemis
-	 * @param artemisHostname the hostname, only! (e.g. "test.kit.edu")
+	 * @param hostname        the hostname of the artemis system. Will be
+	 *                        transformed to domain-name:port
 	 */
-	protected AbstractArtemisClient(String artemisHostname) {
-		this.hostname = artemisHostname;
+	protected AbstractArtemisClient(String hostname) {
+		this.protocol = extractProtocol(hostname.trim());
+		this.hostname = cleanupHostnameString(hostname.trim(), this.protocol);
 		this.orm = this.createObjectMapper();
 	}
 
@@ -97,16 +103,29 @@ public abstract class AbstractArtemisClient {
 	}
 
 	protected final String getRootURL() {
-		String endpoint = this.hostname;
-		if (!endpoint.startsWith(PROTOCOL_PREFIX)) {
-			endpoint = PROTOCOL_PREFIX + endpoint;
+		return this.protocol + this.hostname;
+	}
+
+	private static String cleanupHostnameString(String hostname, String protocol) {
+		String finalHostname = hostname;
+		if (hostname.startsWith(protocol)) {
+			finalHostname = finalHostname.substring(protocol.length());
 		}
 
-		if (endpoint.endsWith("/")) {
-			endpoint = endpoint.substring(0, endpoint.length() - 1);
+		if (finalHostname.contains("/")) {
+			finalHostname = finalHostname.split("/", 2)[0];
 		}
 
-		return endpoint;
+		log.info("Using " + finalHostname + " as hostname of artemis. Protocol is " + protocol);
+		return finalHostname;
+
+	}
+
+	private static String extractProtocol(String hostname) {
+		if (!hostname.contains("://")) {
+			return DEFAULT_PROTOCOL_PREFIX;
+		}
+		return hostname.split("://", 2)[0] + "://";
 	}
 
 	protected final String getApiRootURL() {

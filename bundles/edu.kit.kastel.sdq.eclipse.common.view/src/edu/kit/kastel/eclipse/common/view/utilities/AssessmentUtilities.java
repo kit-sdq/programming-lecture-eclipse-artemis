@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.view.utilities;
 
 import java.util.Optional;
@@ -266,7 +266,7 @@ public final class AssessmentUtilities {
 			}
 
 		} catch (Exception e) {
-			throw new ArtemisClientException(e.getMessage());
+			throw new ArtemisClientException(e.getMessage(), e);
 		}
 	}
 

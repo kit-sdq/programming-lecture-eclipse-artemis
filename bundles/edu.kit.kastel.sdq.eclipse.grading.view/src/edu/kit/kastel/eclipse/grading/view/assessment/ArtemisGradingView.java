@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.grading.view.assessment;
 
 import static edu.kit.kastel.eclipse.common.view.languages.LanguageSettings.I18N;
@@ -8,13 +8,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jdt.core.ElementChangedEvent;
 import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.IElementChangedListener;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
@@ -80,6 +77,7 @@ public class ArtemisGradingView extends ViewPart {
 		this.mistakeButtons = new HashMap<>();
 		this.initializeAnnotationEditing();
 		this.addListenerForMarkerDeletion();
+		Activator.getDefault().getSystemwideController().addSubmissionBuildListener(this::openPackagesAndFiles);
 	}
 
 	@Override
@@ -375,7 +373,9 @@ public class ArtemisGradingView extends ViewPart {
 		this.viewController.createAnnotationsMarkers();
 		this.viewController.getRatingGroups().forEach(ratingGroup -> this.updatePenalty(ratingGroup.getDisplayName()));
 		this.result.loadFeedbackForExcerise();
-		this.addListenerForFileOpening();
+		AutograderUtil.runAutograder(this.viewController.getAssessmentController(),
+				Activator.getDefault().getSystemwideController().getCurrentProjectPath().resolve("assignment").resolve("src"),
+				success -> this.updatePenalties());
 	}
 
 	@Override
@@ -464,6 +464,7 @@ public class ArtemisGradingView extends ViewPart {
 
 	private void refreshArtemisState() {
 		this.viewController = new AssessmentViewController();
+		Activator.getDefault().getSystemwideController().addSubmissionBuildListener(this::openPackagesAndFiles);
 		this.result.setController(Activator.getDefault().getSystemwideController());
 		this.result.reset();
 		this.resetCombos();
@@ -475,58 +476,45 @@ public class ArtemisGradingView extends ViewPart {
 		this.viewController.getCourseShortNames().forEach(courseShortName -> this.assessmentTab.comboCourse.add(courseShortName));
 	}
 
-	private void addListenerForFileOpening() {
-		var projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
-		if (projects.length == 0) {
-			return;
-		}
-
+	private void openPackagesAndFiles(IProject project) {
 		var page = ArtemisGradingView.this.getSite().getPage();
+		try {
+			var explorer = AssessmentUtilities.getProjectExplorer(page);
 
-		IElementChangedListener listener = new IElementChangedListener() {
-			@Override
-			public void elementChanged(ElementChangedEvent event) {
-				try {
-					var explorer = AssessmentUtilities.getProjectExplorer(page);
+			// Expand all packages
+			var packagePaths = JDTUtilities.getAllCompilationUnits(project).stream().map(ICompilationUnit::getResource).toList();
+			Display.getDefault().asyncExec(() -> {
+				// Select all packages to reveal them...
+				explorer.ifPresent(e -> e.selectReveal(new StructuredSelection(packagePaths)));
+				// ... and deselect them once they are expanded
+				explorer.ifPresent(e -> e.selectReveal(new StructuredSelection()));
+			});
 
-					// Expand all packages
-					var packagePaths = JDTUtilities.getAllCompilationUnits(projects[0]).stream().map(ICompilationUnit::getResource).toList();
-					Display.getDefault().asyncExec(() -> {
-						// Select all packages to reveal them...
-						explorer.ifPresent(e -> e.selectReveal(new StructuredSelection(packagePaths)));
-						// ... and deselect them once they are expanded
-						explorer.ifPresent(e -> e.selectReveal(new StructuredSelection()));
-					});
+			String openPreference = CommonActivator.getDefault().getPreferenceStore().getString(PreferenceConstants.OPEN_FILES_ON_ASSESSMENT_START);
 
-					String openPreference = CommonActivator.getDefault().getPreferenceStore().getString(PreferenceConstants.OPEN_FILES_ON_ASSESSMENT_START);
-
-					// Open all types if desired
-					if (openPreference.equals(PreferenceConstants.OPEN_FILES_ON_ASSESSMENT_START_ALL)) {
-						JDTUtilities.getAllCompilationUnits(projects[0]).forEach(c -> AssessmentUtilities.openJavaElement(c, page));
-					}
-
-					// Open/focus the main class
-					if (!openPreference.equals(PreferenceConstants.OPEN_FILES_ON_ASSESSMENT_START_NONE)) {
-						var mainType = JDTUtilities.findMainClass(projects[0]);
-						if (mainType.isPresent()) {
-							// Open/focus the main class in the editor...
-							AssessmentUtilities.openJavaElement(mainType.get(), page);
-
-							// ... and focus it in the package explorer
-							Display.getDefault().asyncExec(() -> {
-								explorer.ifPresent(e -> e.selectReveal(new StructuredSelection(mainType.get().getResource())));
-							});
-						} else {
-							LOG.warn("No main class found");
-						}
-					}
-				} catch (JavaModelException e) {
-					LOG.error("JDT failure", e);
-				}
-				JavaCore.removeElementChangedListener(this);
+			// Open all types if desired
+			if (openPreference.equals(PreferenceConstants.OPEN_FILES_ON_ASSESSMENT_START_ALL)) {
+				JDTUtilities.getAllCompilationUnits(project).forEach(c -> AssessmentUtilities.openJavaElement(c, page));
 			}
-		};
-		JavaCore.addElementChangedListener(listener, ElementChangedEvent.POST_CHANGE);
+
+			// Open/focus the main class
+			if (!openPreference.equals(PreferenceConstants.OPEN_FILES_ON_ASSESSMENT_START_NONE)) {
+				var mainType = JDTUtilities.findMainClass(project);
+				if (mainType.isPresent()) {
+					// Open/focus the main class in the editor...
+					AssessmentUtilities.openJavaElement(mainType.get(), page);
+
+					// ... and focus it in the package explorer
+					Display.getDefault().asyncExec(() -> {
+						explorer.ifPresent(e -> e.selectReveal(new StructuredSelection(mainType.get().getResource())));
+					});
+				} else {
+					LOG.warn("No main class found");
+				}
+			}
+		} catch (JavaModelException e) {
+			LOG.error("JDT failure", e);
+		}
 	}
 
 	public boolean isPositiveFeedbackAllowed() {

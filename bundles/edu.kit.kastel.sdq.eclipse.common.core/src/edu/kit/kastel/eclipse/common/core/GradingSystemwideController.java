@@ -2,6 +2,7 @@
 package edu.kit.kastel.eclipse.common.core;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,7 +30,6 @@ import edu.kit.kastel.eclipse.common.api.controller.IViewInteraction;
 import edu.kit.kastel.eclipse.common.core.artemis.WorkspaceUtil;
 
 public class GradingSystemwideController extends SystemwideController implements IGradingSystemwideController {
-
 	private final Map<Integer, IAssessmentController> assessmentControllers = new HashMap<>();
 	private IGradingArtemisController artemisController;
 
@@ -276,7 +276,8 @@ public class GradingSystemwideController extends SystemwideController implements
 			return false;
 		}
 		try {
-			WorkspaceUtil.createEclipseProject(projectNaming.getProjectFileInWorkspace(eclipseWorkspaceRoot, exercise, submission));
+			WorkspaceUtil.createEclipseProject(projectNaming.getProjectFileInWorkspace(eclipseWorkspaceRoot, exercise, submission),
+					this.buildCompletedCallbacks);
 		} catch (CoreException e) {
 			this.error("Project could not be created: " + e.getMessage(), null);
 		}
@@ -302,4 +303,8 @@ public class GradingSystemwideController extends SystemwideController implements
 		return this.preferenceStore;
 	}
 
+	@Override
+	public Path getCurrentProjectPath() {
+		return this.projectFileNamingStrategy.getProjectFileInWorkspace(WorkspaceUtil.getWorkspaceFile(), exercise, submission).toPath();
+	}
 }

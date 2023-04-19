@@ -14,7 +14,7 @@ jobs:
     runs-on: macos-latest
 
     steps:
-    - uses: actions/checkout@v3.3.0
+    - uses: actions/checkout@v3.5.2
 
     - name: Set up JDK
       uses: actions/setup-java@v3
@@ -33,12 +33,10 @@ jobs:
         mv releng/edu.kit.kastel.sdq.eclipse.grading.product/target/products/*-linux.*.aarch64.zip dist/Artemis_Grading_Linux_aarch64.zip
         mv releng/edu.kit.kastel.sdq.eclipse.grading.product/target/products/*-macosx.*.x86_64.zip dist/Artemis_Grading_MacOS_x86_64.zip
         mv releng/edu.kit.kastel.sdq.eclipse.grading.product/target/products/*-macosx.*.aarch64.zip dist/Artemis_Grading_MacOS_aarch64.zip
-        mv releng/edu.kit.kastel.sdq.eclipse.student.product/target/products/*-win32*.zip dist/Artemis_Student_Windows.zip
-        mv releng/edu.kit.kastel.sdq.eclipse.student.product/target/products/*-linux.*.x86_64.zip dist/Artemis_Student_Linux_x86_64.zip
-        mv releng/edu.kit.kastel.sdq.eclipse.student.product/target/products/*-linux.*.aarch64.zip dist/Artemis_Student_Linux_aarch64.zip
-        mv releng/edu.kit.kastel.sdq.eclipse.student.product/target/products/*-macosx.*.x86_64.zip dist/Artemis_Student_MacOS_x86_64.zip
-        mv releng/edu.kit.kastel.sdq.eclipse.student.product/target/products/*-macosx.*.aarch64.zip dist/Artemis_Student_MacOS_aarch64.zip
-        
+    
+    - name: Create sha512sum-Sums
+      run: |
+        for f in dists/*.zip; do sha512sum $f > $f.sha512; done
 
     - name: Sign MacOS Eclipse Distribution (Grading)
       env: 
@@ -61,24 +59,7 @@ jobs:
         unzip dist/Artemis_Grading_MacOS_aarch64.zip
         /usr/bin/codesign -s "kit-sdq/programming-lecture-eclipse-artemis" -fv Eclipse.app
         rm dist/Artemis_Grading_MacOS_aarch64.zip
-        ditto -c -k --sequesterRsrc --keepParent Eclipse.app dist/Artemis_Grading_MacOS_aarch64.zip
-        
-    - name: Sign MacOS Eclipse Distribution (Student)
-      env: 
-        MACOS_CERTIFICATE: ${{ secrets.MACOS_CERTIFICATE }}
-        MACOS_CERTIFICATE_PWD: ${{ secrets.MACOS_CERTIFICATE_PWD }}
-      run: |
-        rm -rf Eclipse.app
-        echo $MACOS_CERTIFICATE | base64 --decode > certificate.p12
-        unzip dist/Artemis_Student_MacOS_x86_64.zip
-        /usr/bin/codesign -s "kit-sdq/programming-lecture-eclipse-artemis" -fv Eclipse.app
-        rm dist/Artemis_Student_MacOS_x86_64.zip
-        ditto -c -k --sequesterRsrc --keepParent Eclipse.app dist/Artemis_Student_MacOS_x86_64.zip
-        rm -rf Eclipse.app
-        unzip dist/Artemis_Student_MacOS_aarch64.zip
-        /usr/bin/codesign -s "kit-sdq/programming-lecture-eclipse-artemis" -fv Eclipse.app
-        rm dist/Artemis_Student_MacOS_aarch64.zip
-        ditto -c -k --sequesterRsrc --keepParent Eclipse.app dist/Artemis_Student_MacOS_aarch64.zip   
+        ditto -c -k --sequesterRsrc --keepParent Eclipse.app dist/Artemis_Grading_MacOS_aarch64.zip 
 
     - name: Deploy Update Site
       uses: JamesIves/github-pages-deploy-action@v4.4.1
@@ -98,8 +79,8 @@ jobs:
           dist/Artemis_Grading_Linux_aarch64.zip
           dist/Artemis_Grading_MacOS_x86_64.zip
           dist/Artemis_Grading_MacOS_aarch64.zip
-          dist/Artemis_Student_Windows.zip
-          dist/Artemis_Student_Linux_x86_64.zip
-          dist/Artemis_Student_Linux_aarch64.zip
-          dist/Artemis_Student_MacOS_x86_64.zip      
-          dist/Artemis_Student_MacOS_aarch64.zip
+          dist/Artemis_Grading_Windows.zip.sha512
+          dist/Artemis_Grading_Linux_x86_64.zip.sha512
+          dist/Artemis_Grading_Linux_aarch64.zip.sha512
+          dist/Artemis_Grading_MacOS_x86_64.zip.sha512
+          dist/Artemis_Grading_MacOS_aarch64.zip.sha512

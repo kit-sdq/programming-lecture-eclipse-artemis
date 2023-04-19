@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.view.preferences;
 
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
@@ -29,6 +29,9 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		store.setDefault(PreferenceConstants.GENERAL_PREFERRED_LANGUAGE, LanguageSettings.getDefaultLanguage().languageDisplayName());
 		store.setDefault(PreferenceConstants.SEARCH_IN_MISTAKE_MESSAGES, true);
 		store.setDefault(PreferenceConstants.OPEN_FILES_ON_ASSESSMENT_START, PreferenceConstants.OPEN_FILES_ON_ASSESSMENT_START_MAIN);
+
+		store.setDefault(PreferenceConstants.AUTOGRADER_DOWNLOAD_JAR, true);
+		store.setDefault(PreferenceConstants.AUTOGRADER_DOWNLOADED_JAR_PATH, "nonexistingfile.wtf");
 	}
 
 }

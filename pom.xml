@@ -4,7 +4,7 @@
 
     <groupId>edu.kit.kastel.sdq.artemis</groupId>
     <artifactId>parent</artifactId>
-    <version>3.1.0</version>
+    <version>4.2.0</version>
     <packaging>pom</packaging>
     <name>Artemis Eclipse Importer</name>
 
@@ -22,19 +22,19 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <xtext.version>2.19.0</xtext.version>
-        <tycho.version>3.0.1</tycho.version>
+        <tycho.version>3.0.3</tycho.version>
         <spotless.version>2.20.2</spotless.version>
     </properties>
 
     <repositories>
         <repository>
             <id>Eclipse</id>
-            <url>https://download.eclipse.org/releases/2022-12</url>
+            <url>https://download.eclipse.org/releases/2023-03</url>
             <layout>p2</layout>
         </repository>
         <repository>
             <id>Eclipse Orbit</id>
-            <url>https://download.eclipse.org/tools/orbit/downloads/drops/R20221123021534/repository</url>
+            <url>https://download.eclipse.org/tools/orbit/downloads/drops/R20230302014618/repository</url>
             <layout>p2</layout>
         </repository>
         <repository>
@@ -51,7 +51,6 @@
 
     <build>
         <plugins>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -171,7 +170,7 @@
                         <includes>src/**/*.java</includes>
                         <removeUnusedImports></removeUnusedImports>
                         <licenseHeader>
-                            <file>${maven.multiModuleProjectDirectory}/.l-header.txt</file>
+                            <file>${maven.multiModuleProjectDirectory}/tools/license-header.txt</file>
                         </licenseHeader>
                     </java>
                     <pom>

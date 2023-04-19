@@ -1,19 +1,19 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.view.preferences;
+
+import static edu.kit.kastel.eclipse.common.view.languages.LanguageSettings.I18N;
 
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.ComboFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
-import org.eclipse.jface.preference.FileFieldEditor;
 import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.jface.preference.StringFieldEditor;
+import org.eclipse.jface.preference.FileFieldEditor;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import edu.kit.kastel.eclipse.common.api.PreferenceConstants;
 import edu.kit.kastel.eclipse.common.view.activator.CommonActivator;
-
-import static edu.kit.kastel.eclipse.common.view.languages.LanguageSettings.I18N;
 
 public class AdvancedPreferences extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 
@@ -38,8 +38,6 @@ public class AdvancedPreferences extends FieldEditorPreferencePage implements IW
 		var gitToken = new StringFieldEditor(PreferenceConstants.GENERAL_ADVANCED_GIT_TOKEN, I18N().settingsGitToken(), parent);
 		gitToken.getTextControl(this.getFieldEditorParent()).setEchoChar('*');
 
-		var absoluteConfigPath = new FileFieldEditor(PreferenceConstants.GRADING_ABSOLUTE_CONFIG_PATH, I18N().settingsConfigPath(), parent);
-
 		var userPrefersLargePenaltyText = new BooleanFieldEditor(PreferenceConstants.GRADING_VIEW_PREFERS_LARGE_PENALTY_TEXT_PATH,
 				I18N().settingsLargeTextBox(), parent);
 		var userPrefersTextWrappingInPenaltyText = new BooleanFieldEditor(PreferenceConstants.GRADING_VIEW_PREFERS_TEXT_WRAPPING_IN_PENALTY_TEXT_PATH,
@@ -61,17 +59,24 @@ public class AdvancedPreferences extends FieldEditorPreferencePage implements IW
 						{ I18N().settingsOpenFilesOnAssessmentStartAll(), PreferenceConstants.OPEN_FILES_ON_ASSESSMENT_START_ALL } },
 				parent);
 
+		var autograderDownloadJar = new BooleanFieldEditor(PreferenceConstants.AUTOGRADER_DOWNLOAD_JAR, "Download most recent Autograder release", parent);
+		var autograderJarPath = new FileFieldEditor(PreferenceConstants.AUTOGRADER_JAR_PATH, "Autograder JAR file", parent);
+		var autograderConfigPath = new FileFieldEditor(PreferenceConstants.AUTOGRADER_CONFIG_PATH, "Autograder config file", parent);
+
 		this.addField(artemisUser);
 		this.addField(artemisPassword);
 		this.addField(gitToken);
 
-		this.addField(absoluteConfigPath);
 		this.addField(columnsForGradingButtons);
 		this.addField(userPrefersLargePenaltyText);
 		this.addField(userPrefersTextWrappingInPenaltyText);
 		this.addField(overrideDefaultPreferences);
 		this.addField(searchInMistakeMessages);
 		this.addField(openFiles);
+
+		this.addField(autograderDownloadJar);
+		this.addField(autograderJarPath);
+		this.addField(autograderConfigPath);
 	}
 
 	/*
