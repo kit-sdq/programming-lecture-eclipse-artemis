@@ -144,6 +144,7 @@ or disables the positive custom feedback ability.
 
 A rating group consists of multiple mistake types and an optional
 *penaltyLimit*. That limit is used for penalty calculation.
+The rating group has an optional property *additionalDisplayNames* that can be used to provide display names per language.
 
 ``` json
 "ratingGroups": [
@@ -151,7 +152,10 @@ A rating group consists of multiple mistake types and an optional
         "shortName": "functionality",
         "displayName": "Funktionalität",
         "negativeLimit": -20,
-        "positiveLimit": null
+        "positiveLimit": null,
+        "additionalDisplayNames": {
+             "en": "Functionality"
+        },
     }
 ]
 ```
@@ -159,7 +163,10 @@ A rating group consists of multiple mistake types and an optional
 ### Mistake Types
 
 A mistake type belongs to a rating group and has a penalty rule that
-defines the penalty calculation logic. Config File:
+defines the penalty calculation logic.
+The mistake type has optional properties *additionalButtonTexts* and *additionalMessages* that can be used to provide additional languages for the view (only in eclipse).
+
+ Config File:
 
 ```json
 "mistakeTypes" : [
@@ -176,6 +183,12 @@ defines the penalty calculation logic. Config File:
         "shortName": "jdEmpty",
         "button": "JavaDoc Leer",
         "message": "JavaDoc ist leer oder nicht vorhanden",
+        "additionalButtonTexts": {
+            "en": "JavaDoc Empty"
+        },
+		 "additionalMessages": {
+            "en": "JavaDoc is Empty and should not be present."
+        },
         "penaltyRule": {
             "shortName": "thresholdPenalty",
             "threshold": 1,

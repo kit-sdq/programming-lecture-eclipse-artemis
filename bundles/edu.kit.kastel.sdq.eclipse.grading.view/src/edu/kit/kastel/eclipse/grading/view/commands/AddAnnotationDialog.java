@@ -1,5 +1,7 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.grading.view.commands;
+
+import static edu.kit.kastel.eclipse.common.view.languages.LanguageSettings.I18N;
 
 import java.util.Optional;
 
@@ -131,8 +133,8 @@ public class AddAnnotationDialog extends Dialog {
 			@Override
 			public void update(ViewerCell cell) {
 				IMistakeType mistake = (IMistakeType) cell.getElement();
-				cell.setText(mistake.getButtonText() + " " + mistake.getMessage());
-				StyleRange style = new StyleRange(0, mistake.getButtonText().length(), null, null);
+				cell.setText(mistake.getButtonText(I18N().key()) + " " + mistake.getMessage(I18N().key()));
+				StyleRange style = new StyleRange(0, mistake.getButtonText(I18N().key()).length(), null, null);
 				style.fontStyle = SWT.BOLD;
 				cell.setStyleRanges(new StyleRange[] { style });
 			}
@@ -155,7 +157,7 @@ public class AddAnnotationDialog extends Dialog {
 		this.displayList.setComparator(new ViewerComparator() {
 			@Override
 			public int compare(Viewer viewer, Object e1, Object e2) {
-				return ((IMistakeType) e1).getButtonText().compareTo(((IMistakeType) e2).getButtonText());
+				return ((IMistakeType) e1).getButtonText(I18N().key()).compareTo(((IMistakeType) e2).getButtonText(I18N().key()));
 			}
 		});
 

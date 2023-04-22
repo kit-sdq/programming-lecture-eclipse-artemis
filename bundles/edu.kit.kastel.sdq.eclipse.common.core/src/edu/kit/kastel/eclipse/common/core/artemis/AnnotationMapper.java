@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.core.artemis;
 
 import java.io.IOException;
@@ -158,7 +158,7 @@ public class AnnotationMapper {
 		final List<Feedback> initialFeedback = getFilteredPreexistentFeedbacks(FeedbackType.AUTOMATIC);
 		final List<Feedback> tests = initialFeedback.stream().filter(f -> f.getReference() == null).collect(Collectors.toList());
 
-		int codeIssueCount = (int) initialFeedback.stream().filter(Feedback::isSCA).count();
+		int codeIssueCount = (int) initialFeedback.stream().filter(Feedback::isStaticCodeAnalysis).count();
 		int passedTestCaseCount = (int) tests.stream() //
 				.filter(feedback -> feedback.getPositive() != null && feedback.getPositive()).count();
 
@@ -186,11 +186,11 @@ public class AnnotationMapper {
 		String resultText = "";
 		for (var annotation : annotations.getValue()) {
 			var mistakeType = annotation.getMistakeType();
-			String detailText = "[" + mistakeType.getRatingGroup().getDisplayName() + ":" + mistakeType.getButtonText() + "] ";
+			String detailText = "[" + mistakeType.getRatingGroup().getDisplayName(null) + ":" + mistakeType.getButtonText(null) + "] ";
 			if (mistakeType.isCustomPenalty()) {
 				detailText += annotation.getCustomMessage().get() + " (" + nf.format(annotation.getCustomPenalty().get()) + "P)";
 			} else {
-				detailText += mistakeType.getMessage();
+				detailText += mistakeType.getMessage(null);
 				if (annotation.getCustomMessage().isPresent()) {
 					detailText += "\nExplanation: " + annotation.getCustomMessage().get();
 				}
@@ -208,7 +208,7 @@ public class AnnotationMapper {
 
 		String annotationHeadline = "";
 
-		annotationHeadline = ratingGroup.getDisplayName() + " [" + nf.format(pointResult.points);
+		annotationHeadline = ratingGroup.getDisplayName(null) + " [" + nf.format(pointResult.points);
 
 		if (!range.isEmpty()) {
 			double lower = range.first() == null ? Double.NEGATIVE_INFINITY : range.first();
@@ -226,7 +226,7 @@ public class AnnotationMapper {
 			final List<IAnnotation> currentAnnotations = this.annotations.stream() //
 					.filter(annotation -> annotation.getMistakeType().equals(mistakeType)) //
 					.toList();
-			lines.add("\n    * \"" + mistakeType.getButtonText() + "\" [" + nf.format(currentPenalty) + "P]:");
+			lines.add("\n    * \"" + mistakeType.getButtonText(null) + "\" [" + nf.format(currentPenalty) + "P]:");
 			if (mistakeType.isCustomPenalty()) {
 				for (var annotation : currentAnnotations) {
 					String penalty = nf.format(annotation.getCustomPenalty().get());
@@ -284,7 +284,7 @@ public class AnnotationMapper {
 
 	public PointResult calculatePointsForRatingGroup(IRatingGroup ratingGroup) {
 		// Calculate the points w.r.t. the PenaltyTypes
-		log.info("Calculate Points for RG " + ratingGroup.getDisplayName());
+		log.info("Calculate Points for RG " + ratingGroup.getDisplayName(null));
 		double sum = 0;
 		Map<IMistakeType, Double> scores = new HashMap<>();
 		for (var mistakeType : ratingGroup.getMistakeTypes()) {
@@ -299,21 +299,21 @@ public class AnnotationMapper {
 
 		boolean reachedLimit = !ratingGroup.getRange().isEmpty() && ratingGroup.setToRange(sum) != sum;
 		if (reachedLimit) {
-			log.info("RG " + ratingGroup.getDisplayName() + " reached limit");
+			log.info("RG " + ratingGroup.getDisplayName(null) + " reached limit");
 			sum = ratingGroup.setToRange(sum);
 		}
 		return new PointResult(sum, reachedLimit, scores);
 	}
 
 	private Double calculatePointsForMistakeType(IMistakeType mistakeType) {
-		log.info("Calculate Points for MT " + mistakeType.getButtonText());
+		log.info("Calculate Points for MT " + mistakeType.getButtonText(null));
 		var filteredAnnotations = this.annotations.stream().filter(a -> a.getMistakeType().equals(mistakeType)).toList();
 		if (filteredAnnotations.isEmpty()) {
 			return null;
 		}
 
 		var points = mistakeType.calculate(filteredAnnotations);
-		log.info("MT " + mistakeType.getButtonText() + " -> " + points);
+		log.info("MT " + mistakeType.getButtonText(null) + " -> " + points);
 		return points;
 	}
 

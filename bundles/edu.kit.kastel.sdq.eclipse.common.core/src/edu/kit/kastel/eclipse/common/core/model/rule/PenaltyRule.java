@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.core.model.rule;
 
 import java.util.List;
@@ -28,7 +28,6 @@ public abstract class PenaltyRule {
 	public abstract String getShortName();
 
 	/**
-	 * @param annotations
 	 * @return a tooltip String (e.g. for thresholdPenalty the score and how many
 	 *         annotations were made.)
 	 */

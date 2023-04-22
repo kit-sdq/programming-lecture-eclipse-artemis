@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.api.model;
 
 import java.util.List;
@@ -13,7 +13,16 @@ import edu.kit.kastel.eclipse.common.api.util.Pair;
  *
  */
 public interface IRatingGroup {
-	String getDisplayName();
+	String getIdentifier();
+
+	/**
+	 * Get the display name of the rating group.
+	 * 
+	 * @param languageKey the key of the language that is selected. (e.g., "de").
+	 *                    Can be null to use the default language.
+	 * @return the human readable name of the rating group.
+	 */
+	String getDisplayName(String languageKey);
 
 	/**
 	 *
@@ -32,11 +41,5 @@ public interface IRatingGroup {
 	 * @return [negative_limit, positive_limit]
 	 */
 	Pair<Double, Double> getRange();
-
-	/**
-	 *
-	 * @return the <i>unique</> shortName of this ratingGroup
-	 */
-	String getShortName();
 
 }

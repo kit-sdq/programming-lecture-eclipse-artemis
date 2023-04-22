@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.core.artemis;
 
 import java.io.IOException;
@@ -37,7 +37,7 @@ public class AnnotationDeserializer {
 	public AnnotationDeserializer(List<IMistakeType> mistakeTypes) {
 		this.oom = new ObjectMapper();
 		this.mistakeTypesMap = new HashMap<>();
-		mistakeTypes.forEach(mistakeType -> this.mistakeTypesMap.put(mistakeType.getId(), mistakeType));
+		mistakeTypes.forEach(mistakeType -> this.mistakeTypesMap.put(mistakeType.getIdentifier(), mistakeType));
 	}
 
 	/**

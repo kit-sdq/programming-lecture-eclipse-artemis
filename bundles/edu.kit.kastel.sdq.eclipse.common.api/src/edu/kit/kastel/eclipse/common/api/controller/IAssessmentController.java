@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.api.controller;
 
 import java.util.List;
@@ -72,11 +72,11 @@ public interface IAssessmentController extends IController {
 
 	List<IMistakeType> getMistakes();
 
-	IRatingGroup getRatingGroupByDisplayName(String displayName);
+	IRatingGroup getRatingGroupById(String displayName);
 
 	List<IRatingGroup> getRatingGroups();
 
-	String getTooltipForMistakeType(IMistakeType mistakeType);
+	String getTooltipForMistakeType(String languageKey, IMistakeType mistakeType);
 
 	/**
 	 * Reset annotations by re-locking and reloading from Artemis state. Do so with

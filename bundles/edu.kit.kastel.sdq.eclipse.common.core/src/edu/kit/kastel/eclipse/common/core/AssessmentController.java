@@ -150,13 +150,12 @@ public class AssessmentController extends AbstractController implements IAssessm
 	}
 
 	@Override
-	public IRatingGroup getRatingGroupByDisplayName(final String displayName) {
-		Optional<IRatingGroup> ratingGroupOptional = this.getRatingGroups().stream().filter(ratingGroup -> ratingGroup.getDisplayName().equals(displayName))
-				.findFirst();
+	public IRatingGroup getRatingGroupById(String id) {
+		Optional<IRatingGroup> ratingGroupOptional = this.getRatingGroups().stream().filter(ratingGroup -> ratingGroup.getIdentifier().equals(id)).findFirst();
 		if (ratingGroupOptional.isPresent()) {
 			return ratingGroupOptional.get();
 		}
-		this.error("Rating Group \"" + displayName + "\" not found in config!", null);
+		this.error("Rating Group \"" + id + "\" not found in config!", null);
 		return null;
 	}
 
@@ -171,9 +170,9 @@ public class AssessmentController extends AbstractController implements IAssessm
 	}
 
 	@Override
-	public String getTooltipForMistakeType(IMistakeType mistakeType) {
+	public String getTooltipForMistakeType(String languageKey, IMistakeType mistakeType) {
 		List<IAnnotation> annotations = this.getAnnotations().stream().filter(annotation -> annotation.getMistakeType().equals(mistakeType)).toList();
-		return mistakeType.getTooltip(annotations);
+		return mistakeType.getTooltip(languageKey, annotations);
 	}
 
 	private void initializeWithDeserializedAnnotations() throws IOException {
