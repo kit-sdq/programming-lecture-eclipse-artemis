@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.grading.view.assessment;
 
 import static edu.kit.kastel.eclipse.common.view.languages.LanguageSettings.I18N;
@@ -34,7 +34,6 @@ public class AssessmentTabComposite extends Composite {
 	protected Button btnHelp;
 
 	// Backlog
-	protected Combo comboBacklogFilter;
 	protected Combo comboBacklogSubmission;
 	protected Button btnBacklogRefreshSubmissions;
 	protected Button btnBacklogLoadSubmission;
@@ -74,8 +73,7 @@ public class AssessmentTabComposite extends Composite {
 		Group grpGeneral = new Group(compositeButtons, SWT.NONE);
 		grpGeneral.setText(I18N().general());
 		grpGeneral.setLayout(new GridLayout(3, true));
-		GridData gd_grpGeneral = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
-		grpGeneral.setLayoutData(gd_grpGeneral);
+		grpGeneral.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
 		btnStartRoundOne = new Button(grpGeneral, SWT.NONE);
 		btnStartRoundOne.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
@@ -125,13 +123,6 @@ public class AssessmentTabComposite extends Composite {
 		grpBacklog.setLayout(new GridLayout(2, false));
 		grpBacklog.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
 		grpBacklog.setText(I18N().backlog());
-
-		Label lblFilter = new Label(grpBacklog, SWT.NONE);
-		lblFilter.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblFilter.setText(I18N().backlogFilter());
-
-		comboBacklogFilter = new Combo(grpBacklog, SWT.READ_ONLY);
-		comboBacklogFilter.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
 		Label lblSubmission = new Label(grpBacklog, SWT.NONE);
 		lblSubmission.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
