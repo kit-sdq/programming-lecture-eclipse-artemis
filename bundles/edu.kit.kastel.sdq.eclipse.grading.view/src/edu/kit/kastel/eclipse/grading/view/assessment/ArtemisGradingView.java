@@ -282,8 +282,8 @@ public class ArtemisGradingView extends ViewPart {
 					final Button mistakeButton = new Button(rgDisplay, SWT.PUSH);
 					mistakeButton.setText(mistake.getButtonText(I18N().key()));
 					mistakeButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-					mistakeButton.setEnabled(mistake.isEnabledButton());
-					if (!mistake.isPenaltyEnabled() && mistake.isEnabledButton()) {
+					mistakeButton.setEnabled(mistake.isEnabledMistakeType());
+					if (!mistake.isEnabledPenalty() && mistake.isEnabledMistakeType()) {
 						mistakeButton.addPaintListener(e -> mistakeButton.setForeground(SWTResourceManager.getColor(SWT.COLOR_CYAN)));
 					}
 

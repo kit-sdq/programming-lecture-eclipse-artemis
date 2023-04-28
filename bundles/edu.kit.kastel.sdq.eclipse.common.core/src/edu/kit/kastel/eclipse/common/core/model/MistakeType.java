@@ -51,8 +51,7 @@ public class MistakeType implements IMistakeType {
 	}
 
 	/**
-	 *
-	 * @return to which rating group this applies. Used for deserialization...
+	 * @return to which rating group this applies.
 	 */
 	public String getAppliesTo() {
 		return this.appliesTo;
@@ -80,7 +79,7 @@ public class MistakeType implements IMistakeType {
 	}
 
 	@Override
-	public boolean isEnabledButton() {
+	public boolean isEnabledMistakeType() {
 		if (enabledForExercises == null || currentExercise == null) {
 			return true;
 		}
@@ -88,7 +87,7 @@ public class MistakeType implements IMistakeType {
 	}
 
 	@Override
-	public boolean isPenaltyEnabled() {
+	public boolean isEnabledPenalty() {
 		if (enabledPenaltyForExercises == null || currentExercise == null || penaltyRule.isCustomPenalty()) {
 			return true;
 		}
@@ -101,7 +100,7 @@ public class MistakeType implements IMistakeType {
 	}
 
 	public PenaltyRule getPenaltyRule() {
-		if (isPenaltyEnabled()) {
+		if (isEnabledPenalty()) {
 			return this.penaltyRule;
 		}
 		// Create penalty with zero points deduction

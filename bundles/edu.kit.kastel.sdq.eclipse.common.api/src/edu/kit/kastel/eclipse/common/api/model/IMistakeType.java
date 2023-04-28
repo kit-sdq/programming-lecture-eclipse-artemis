@@ -63,7 +63,7 @@ public interface IMistakeType {
 
 	void initialize(IExercise exercise);
 
-	boolean isEnabledButton();
+	boolean isEnabledMistakeType();
 
-	boolean isPenaltyEnabled();
+	boolean isEnabledPenalty();
 }
