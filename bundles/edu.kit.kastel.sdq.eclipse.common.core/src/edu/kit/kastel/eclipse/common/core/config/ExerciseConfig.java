@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.core.config;
 
 import java.util.ArrayList;
@@ -8,6 +8,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+import edu.kit.kastel.eclipse.common.api.artemis.mapping.IExercise;
 import edu.kit.kastel.eclipse.common.api.model.IMistakeType;
 import edu.kit.kastel.eclipse.common.api.model.IRatingGroup;
 import edu.kit.kastel.eclipse.common.core.model.MistakeType;
@@ -52,6 +53,15 @@ public class ExerciseConfig {
 
 	public String getShortName() {
 		return this.shortName;
+	}
+
+	/**
+	 * Modify mistakeTypes of config for the current exercise
+	 *
+	 * @param exercise the exercise
+	 */
+	public void initialize(IExercise exercise) {
+		this.mistakeTypes.forEach(e -> e.initialize(exercise));
 	}
 
 	public boolean isPositiveFeedbackAllowed() {

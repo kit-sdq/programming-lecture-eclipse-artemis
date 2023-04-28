@@ -65,7 +65,9 @@
 				"threshold": 1,
 				"penalty": 5
 			},
-			"appliesTo": "style"
+			"appliesTo": "style",
+			"enabledForExercises": "sheet1.*",
+			"enabledPenaltyForExercises": "sheet2.*"
 		},
 		{
 			"shortName": "jdTrivial",
@@ -76,7 +78,9 @@
 				"threshold": 1,
 				"penalty": 5
 			},
-			"appliesTo": "style"
+			"appliesTo": "style",
+			"enabledForExercises": "sheet2.*",
+			"enabledPenaltyForExercises": "sheet1.*"
 		},
 		{
 			"shortName": "complexCode",

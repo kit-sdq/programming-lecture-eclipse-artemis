@@ -3,6 +3,8 @@ package edu.kit.kastel.eclipse.common.api.model;
 
 import java.util.List;
 
+import edu.kit.kastel.eclipse.common.api.artemis.mapping.IExercise;
+
 /**
  * Represents one type of mistakes from a rating group.
  *
@@ -58,4 +60,10 @@ public interface IMistakeType {
 	 * @return indicator for custom penalties
 	 */
 	boolean isCustomPenalty();
+
+	void initialize(IExercise exercise);
+
+	boolean isEnabledButton();
+
+	boolean isPenaltyEnabled();
 }

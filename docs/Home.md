@@ -165,6 +165,7 @@ The rating group has an optional property *additionalDisplayNames* that can be u
 A mistake type belongs to a rating group and has a penalty rule that
 defines the penalty calculation logic.
 The mistake type has optional properties *additionalButtonTexts* and *additionalMessages* that can be used to provide additional languages for the view (only in eclipse).
+You can use the optional properties `enabledForExercises` and `enabledPenaltyForExercises` to provide a regex for the exercise short names. If set and not matched the properties will disable the whole button or the penalty for the button.
 
  Config File:
 
@@ -194,7 +195,9 @@ The mistake type has optional properties *additionalButtonTexts* and *additional
             "threshold": 1,
             "penalty": 5
         },
-        "appliesTo": "functionality"
+        "appliesTo": "functionality",
+        "enabledForExercises": "sheet1.*",
+		"enabledPenaltyForExercises": "sheet2.*"
     },
     {
         "shortName": "stackingXY",

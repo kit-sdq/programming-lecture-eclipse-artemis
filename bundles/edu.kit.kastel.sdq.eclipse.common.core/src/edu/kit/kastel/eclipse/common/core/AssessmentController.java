@@ -61,7 +61,7 @@ public class AssessmentController extends AbstractController implements IAssessm
 		this.gradingDAO = loadGradingDAO();
 
 		try {
-			ExerciseConfig exerciseConfig = this.gradingDAO.getExerciseConfig();
+			ExerciseConfig exerciseConfig = this.gradingDAO.getExerciseConfig(this.exercise);
 			if (!exerciseConfig.getAllowedExercises().isEmpty() && !exerciseConfig.getAllowedExercises().contains(this.exercise.getExerciseId())) {
 				// using interaction handler of the system wide controller, as the own
 				// interaction handler is not set during the constructor
@@ -132,7 +132,7 @@ public class AssessmentController extends AbstractController implements IAssessm
 	@Override
 	public List<IMistakeType> getMistakes() {
 		try {
-			return gradingDAO.getExerciseConfig().getIMistakeTypes();
+			return gradingDAO.getExerciseConfig(this.exercise).getIMistakeTypes();
 		} catch (ExerciseConfigConverterException | IOException e) {
 			this.error("Exercise Config not parseable: " + e.getMessage(), e);
 			return List.of();
@@ -142,7 +142,7 @@ public class AssessmentController extends AbstractController implements IAssessm
 	@Override
 	public boolean isPositiveFeedbackAllowed() {
 		try {
-			return gradingDAO.getExerciseConfig().isPositiveFeedbackAllowed();
+			return gradingDAO.getExerciseConfig(this.exercise).isPositiveFeedbackAllowed();
 		} catch (ExerciseConfigConverterException | IOException e) {
 			this.error("Exercise Config not parseable: " + e.getMessage(), e);
 			return true;
@@ -162,7 +162,7 @@ public class AssessmentController extends AbstractController implements IAssessm
 	@Override
 	public List<IRatingGroup> getRatingGroups() {
 		try {
-			return gradingDAO.getExerciseConfig().getIRatingGroups();
+			return gradingDAO.getExerciseConfig(this.exercise).getIRatingGroups();
 		} catch (ExerciseConfigConverterException | IOException e) {
 			this.error("Exercise Config not parseable: " + e.getMessage(), e);
 			return List.of();

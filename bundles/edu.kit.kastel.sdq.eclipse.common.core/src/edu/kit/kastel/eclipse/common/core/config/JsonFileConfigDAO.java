@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.core.config;
 
 import java.io.File;
@@ -6,6 +6,8 @@ import java.io.IOException;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import edu.kit.kastel.eclipse.common.api.artemis.mapping.IExercise;
 
 /**
  * Implementation of {@link GradingDAO} using a json file.
@@ -23,9 +25,11 @@ public class JsonFileConfigDAO implements GradingDAO {
 	}
 
 	@Override
-	public ExerciseConfig getExerciseConfig() throws IOException, ExerciseConfigConverterException {
-		if (this.exerciseConfig == null)
+	public ExerciseConfig getExerciseConfig(IExercise exercise) throws IOException, ExerciseConfigConverterException {
+		if (this.exerciseConfig == null) {
 			this.parse();
+		}
+		this.exerciseConfig.initialize(exercise);
 		return this.exerciseConfig;
 	}
 
