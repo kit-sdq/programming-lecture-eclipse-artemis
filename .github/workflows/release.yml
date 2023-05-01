@@ -34,9 +34,9 @@ jobs:
         mv releng/edu.kit.kastel.sdq.eclipse.grading.product/target/products/*-macosx.*.x86_64.zip dists/Artemis_Grading_MacOS_x86_64.zip
         mv releng/edu.kit.kastel.sdq.eclipse.grading.product/target/products/*-macosx.*.aarch64.zip dists/Artemis_Grading_MacOS_aarch64.zip
     
-    - name: Create sha512sum-Sums
+    - name: Create sha256sum
       run: |
-        for f in dists/*.zip; do sha512sum $f > $f.sha512; done
+        for f in dists/*.zip; do shasum -a 256 $f > $f.sha256; done
 
     - name: Sign MacOS Eclipse Distribution (Grading)
       env: 
@@ -79,8 +79,8 @@ jobs:
           dists/Artemis_Grading_Linux_aarch64.zip
           dists/Artemis_Grading_MacOS_x86_64.zip
           dists/Artemis_Grading_MacOS_aarch64.zip
-          dists/Artemis_Grading_Windows.zip.sha512
-          dists/Artemis_Grading_Linux_x86_64.zip.sha512
-          dists/Artemis_Grading_Linux_aarch64.zip.sha512
-          dists/Artemis_Grading_MacOS_x86_64.zip.sha512
-          dists/Artemis_Grading_MacOS_aarch64.zip.sha512
+          dists/Artemis_Grading_Windows.zip.sha256
+          dists/Artemis_Grading_Linux_x86_64.zip.sha256
+          dists/Artemis_Grading_Linux_aarch64.zip.sha256
+          dists/Artemis_Grading_MacOS_x86_64.zip.sha256
+          dists/Artemis_Grading_MacOS_aarch64.zip.sha256
