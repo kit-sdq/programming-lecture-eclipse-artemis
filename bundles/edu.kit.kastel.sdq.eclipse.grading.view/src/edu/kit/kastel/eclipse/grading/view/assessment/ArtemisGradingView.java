@@ -30,6 +30,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.wb.swt.SWTResourceManager;
 
 import edu.kit.kastel.eclipse.common.api.PreferenceConstants;
 import edu.kit.kastel.eclipse.common.api.controller.IGradingSystemwideController;
@@ -281,6 +282,10 @@ public class ArtemisGradingView extends ViewPart {
 					final Button mistakeButton = new Button(rgDisplay, SWT.PUSH);
 					mistakeButton.setText(mistake.getButtonText(I18N().key()));
 					mistakeButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+					mistakeButton.setEnabled(mistake.isEnabledMistakeType());
+					if (!mistake.isEnabledPenalty() && mistake.isEnabledMistakeType()) {
+						mistakeButton.addPaintListener(e -> mistakeButton.setForeground(SWTResourceManager.getColor(SWT.COLOR_CYAN)));
+					}
 
 					this.mistakeButtons.put(mistake.getIdentifier(), mistakeButton);
 					mistakeButton.setToolTipText(this.viewController.getToolTipForMistakeType(I18N().key(), mistake));
@@ -475,12 +480,12 @@ public class ArtemisGradingView extends ViewPart {
 			String openPreference = CommonActivator.getDefault().getPreferenceStore().getString(PreferenceConstants.OPEN_FILES_ON_ASSESSMENT_START);
 
 			// Open all types if desired
-			if (openPreference.equals(PreferenceConstants.OPEN_FILES_ON_ASSESSMENT_START_ALL)) {
+			if (PreferenceConstants.OPEN_FILES_ON_ASSESSMENT_START_ALL.equals(openPreference)) {
 				JDTUtilities.getAllCompilationUnits(project).forEach(c -> AssessmentUtilities.openJavaElement(c, page));
 			}
 
 			// Open/focus the main class
-			if (!openPreference.equals(PreferenceConstants.OPEN_FILES_ON_ASSESSMENT_START_NONE)) {
+			if (!PreferenceConstants.OPEN_FILES_ON_ASSESSMENT_START_NONE.equals(openPreference)) {
 				var mainType = JDTUtilities.findMainClass(project);
 				if (mainType.isPresent()) {
 					// Open/focus the main class in the editor...

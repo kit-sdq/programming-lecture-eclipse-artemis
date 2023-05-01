@@ -7,10 +7,12 @@ import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import edu.kit.kastel.eclipse.common.api.artemis.mapping.IExercise;
 import edu.kit.kastel.eclipse.common.api.model.IAnnotation;
 import edu.kit.kastel.eclipse.common.api.model.IMistakeType;
 import edu.kit.kastel.eclipse.common.api.model.IRatingGroup;
 import edu.kit.kastel.eclipse.common.core.model.rule.PenaltyRule;
+import edu.kit.kastel.eclipse.common.core.model.rule.ThresholdPenaltyRule;
 
 public class MistakeType implements IMistakeType {
 	@JsonProperty("shortName")
@@ -35,15 +37,21 @@ public class MistakeType implements IMistakeType {
 	@JsonProperty("penaltyRule")
 	private PenaltyRule penaltyRule;
 
+	@JsonProperty("enabledForExercises")
+	private String enabledForExercises;
+	@JsonProperty("enabledPenaltyForExercises")
+	private String enabledPenaltyForExercises;
+
+	private transient IExercise currentExercise = null;
+
 	@Override
 	public double calculate(List<IAnnotation> annotations) {
 		assert annotations.stream().allMatch(a -> this.equals(a.getMistakeType()));
-		return this.penaltyRule.calculate(annotations);
+		return this.getPenaltyRule().calculate(annotations);
 	}
 
 	/**
-	 *
-	 * @return to which rating group this applies. Used for deserialization...
+	 * @return to which rating group this applies.
 	 */
 	public String getAppliesTo() {
 		return this.appliesTo;
@@ -51,16 +59,39 @@ public class MistakeType implements IMistakeType {
 
 	@Override
 	public String getMessage(String languageKey) {
-		if (languageKey == null || additionalMessages == null || !additionalMessages.containsKey(languageKey))
+		if (languageKey == null || additionalMessages == null || !additionalMessages.containsKey(languageKey)) {
 			return this.message;
+		}
 		return additionalMessages.get(languageKey);
 	}
 
 	@Override
 	public String getButtonText(String languageKey) {
-		if (languageKey == null || additionalButtonTexts == null || !additionalButtonTexts.containsKey(languageKey))
+		if (languageKey == null || additionalButtonTexts == null || !additionalButtonTexts.containsKey(languageKey)) {
 			return this.buttonText;
+		}
 		return additionalButtonTexts.get(languageKey);
+	}
+
+	@Override
+	public void initialize(IExercise exercise) {
+		currentExercise = exercise;
+	}
+
+	@Override
+	public boolean isEnabledMistakeType() {
+		if (enabledForExercises == null || currentExercise == null) {
+			return true;
+		}
+		return this.currentExercise.getShortName().matches(this.enabledForExercises);
+	}
+
+	@Override
+	public boolean isEnabledPenalty() {
+		if (enabledPenaltyForExercises == null || currentExercise == null || penaltyRule.isCustomPenalty()) {
+			return true;
+		}
+		return this.currentExercise.getShortName().matches(this.enabledPenaltyForExercises);
 	}
 
 	@Override
@@ -69,7 +100,11 @@ public class MistakeType implements IMistakeType {
 	}
 
 	public PenaltyRule getPenaltyRule() {
-		return this.penaltyRule;
+		if (isEnabledPenalty()) {
+			return this.penaltyRule;
+		}
+		// Create penalty with zero points deduction
+		return new ThresholdPenaltyRule(1, 0);
 	}
 
 	@Override
@@ -79,7 +114,7 @@ public class MistakeType implements IMistakeType {
 
 	@Override
 	public String getTooltip(String languageKey, List<IAnnotation> annotations) {
-		String penaltyText = this.penaltyRule.getTooltip(annotations);
+		String penaltyText = getPenaltyRule().getTooltip(annotations);
 		return getMessage(languageKey) + "\n" + penaltyText;
 	}
 
