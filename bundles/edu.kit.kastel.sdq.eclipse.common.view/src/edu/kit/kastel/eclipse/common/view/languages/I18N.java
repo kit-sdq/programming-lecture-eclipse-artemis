@@ -259,6 +259,14 @@ public interface I18N {
 		return "Assessment";
 	}
 
+	default String rerunAutograder() {
+		return "Rerun Autograder";
+	}
+
+	default String autograder() {
+		return "Autograder";
+	}
+
 	//
 	// internal
 	//

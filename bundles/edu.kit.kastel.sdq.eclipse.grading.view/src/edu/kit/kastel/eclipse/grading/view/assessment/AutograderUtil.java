@@ -38,8 +38,8 @@ import edu.kit.kastel.eclipse.grading.view.activator.Activator;
 public class AutograderUtil {
 	private static final ILog LOG = Platform.getLog(AutograderUtil.class);
 
-	public static void runAutograder(IAssessmentController assessmentController, Path path, Consumer<Boolean> onCompletion) {
-		if (!assessmentController.getAnnotations().isEmpty()) {
+	public static void runAutograder(IAssessmentController assessmentController, Path path, Consumer<Boolean> onCompletion, boolean forceExecution) {
+		if (!forceExecution && !assessmentController.getAnnotations().isEmpty()) {
 			LOG.info("Skipping autograder as there already annotation present");
 			return; // Don't run the autograder if there are already annotations
 		}

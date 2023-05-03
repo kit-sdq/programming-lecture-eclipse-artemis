@@ -33,6 +33,8 @@ public class AssessmentTab extends AssessmentTabComposite {
 		btnSubmit.setEnabled(assessmentStarted);
 		btnCloseAssessment.setEnabled(assessmentStarted);
 
+		btnRerunAutograder.setEnabled(assessmentStarted);
+
 		btnStartRoundOne.setEnabled(exerciseSelected && !assessmentStarted);
 		btnStartRoundTwo.setEnabled(exerciseSelected && !assessmentStarted && secondCorrectionRoundEnabled);
 
