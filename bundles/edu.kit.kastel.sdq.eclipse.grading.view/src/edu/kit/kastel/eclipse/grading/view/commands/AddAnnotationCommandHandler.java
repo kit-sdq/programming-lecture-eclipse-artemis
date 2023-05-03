@@ -82,12 +82,18 @@ public class AddAnnotationCommandHandler extends AbstractHandler {
 
 		// Prevent insertion of a new line because the default keybinding is alt+enter
 		if (event.getTrigger() != null) {
-			// Found to work by reverse-engineering Eclipse; cancels the event in
-			// StyledText::traverse
-			((Event) event.getTrigger()).detail = SWT.TRAVERSE_NONE;
-			// doit needs to be true; otherwise Eclipse would do the normal action which is
-			// inserting a new line
-			((Event) event.getTrigger()).doit = true;
+			// Windows and GTK behave differently in regard to doit
+			if (System.getProperty("os.name").contains("Windows")) {
+				((Event) event.getTrigger()).doit = false;
+			} else {
+				// We are probably under GTK
+				// Found to work by reverse-engineering Eclipse; cancels the event in
+				// StyledText::traverse
+				((Event) event.getTrigger()).detail = SWT.TRAVERSE_NONE;
+				// doit needs to be true; otherwise Eclipse would do the normal action which is
+				// inserting a new line
+				((Event) event.getTrigger()).doit = true;
+			}
 		}
 
 		// Return the focus to the editor
