@@ -3,6 +3,8 @@ package edu.kit.kastel.eclipse.grading.view.assessment;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.StandardCharsets;
@@ -15,10 +17,10 @@ import java.util.Optional;
 import java.util.Scanner;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
-import java.net.URL;
-import java.net.URLConnection;
 
+import org.eclipse.core.runtime.ICoreRunnable;
 import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -44,79 +46,87 @@ public class AutograderUtil {
 			return; // Don't run the autograder if there are already annotations
 		}
 
-		Job.create("Autograder", monitor -> {
-			try {
-				// Store the current exercise
-				var submission = assessmentController.getSubmission();
+		ICoreRunnable job = monitor -> runAutograderJob(monitor, assessmentController, path, onCompletion);
+		Job.create("Autograder", job).schedule();
+	}
 
-				// Read the configuration
-				Map<String, String> config = getConfig();
-				String autograderConfig = "[" + config.keySet().stream().collect(Collectors.joining(", ")) + "]";
+	private static void runAutograderJob(IProgressMonitor monitor, IAssessmentController assessmentController, Path path, Consumer<Boolean> onCompletion) {
+		try {
+			// Store the current exercise
+			var submission = assessmentController.getSubmission();
 
-				monitor.beginTask("Autograder", 8); // Download, Compile, PMD, CPD, SpotBugs, Spoon, integrated, parsing
+			// Read the configuration
+			Map<String, String> config = getConfig();
+			String autograderConfig = "[" + config.keySet().stream().collect(Collectors.joining(", ")) + "]";
 
-				monitor.subTask("Downloading Autograder JAR");
-				LOG.info("Downloading autograder JAR");
-				Path autograderJar = maybeDownloadAutograderRelease();
-				monitor.worked(1);
+			monitor.beginTask("Autograder", 8); // Download, Compile, PMD, CPD, SpotBugs, Spoon,
+												// integrated, parsing
 
-				monitor.subTask("Running Autograder checks");
-				ProcessBuilder processBuilder = new ProcessBuilder("java", "-DFile.Encoding=UTF-8", "-jar", autograderJar.toAbsolutePath().toString(),
-						autograderConfig, path.toAbsolutePath().toString(), "--static-only", "--output-json", "--pass-config", "--java-version", "17");
-				var process = processBuilder.start();
-				Scanner autograderOutput = new Scanner(process.getInputStream(), StandardCharsets.UTF_8);
+			monitor.subTask("Downloading Autograder JAR");
+			LOG.info("Downloading autograder JAR");
+			Path autograderJar = maybeDownloadAutograderRelease();
+			monitor.worked(1);
 
-				LOG.info("Autograder started");
+			monitor.subTask("Running Autograder checks");
+			ProcessBuilder processBuilder = new ProcessBuilder("java", "-DFile.Encoding=UTF-8", "-jar", autograderJar.toAbsolutePath().toString(),
+					autograderConfig, path.toAbsolutePath().toString(), "--static-only", "--output-json", "--pass-config", "--java-version", "17");
+			var process = processBuilder.start();
+			Scanner autograderOutput = new Scanner(process.getInputStream(), StandardCharsets.UTF_8);
 
-				String problems = "[]";
-				while (autograderOutput.hasNext() && process.isAlive()) {
-					String line = autograderOutput.nextLine();
-					if (line.equals(">> Problems <<")) {
-						problems = autograderOutput.nextLine();
-					} else {
-						monitor.worked(1);
-					}
-				}
+			LOG.info("Autograder started");
 
-				monitor.setTaskName("Parsing annotations");
-				String errorOutput = new String(process.getErrorStream().readAllBytes());
-				if (!errorOutput.isBlank()) {
-					LOG.error("Autograder failed: " + errorOutput);
-					onCompletion.accept(false);
-					Display.getDefault().asyncExec(() -> MessageDialog.openWarning(AssessmentUtilities.getWindowsShell(), "Autograder failed",
-							"Autograder failed. Please assess the submission normally. Additional information can be found in the Eclipse log"));
-				} else if (assessmentController.getSubmission().getSubmissionId() != submission.getSubmissionId()) {
-					Display.getDefault().asyncExec(() -> MessageDialog.openWarning(AssessmentUtilities.getWindowsShell(), "Submission changed",
-							"Autograder completed successfully, but the current submission has changed during analysis, so no annotations will be created."));
+			String problems = "[]";
+			while (autograderOutput.hasNext() && process.isAlive()) {
+				String line = autograderOutput.nextLine();
+				if (">> Problems <<".equals(line)) {
+					problems = autograderOutput.nextLine();
 				} else {
-					LOG.info("Autograder completed successfully");
-
-					List<AutograderAnnotation> annotations = Arrays.asList(new ObjectMapper().readValue(problems, AutograderAnnotation[].class));
-
-					for (AutograderAnnotation annotation : annotations) {
-						var type = mapAnnotation(assessmentController, annotation, config);
-						if (type.isPresent()) {
-							String id = IAnnotation.createID();
-							assessmentController.addAnnotation(id, type.get(), annotation.startLine() - 1, annotation.endLine() - 1, "src/" + annotation.file(),
-									annotation.message(), type.get().isCustomPenalty() ? 0.0 : null);
-							AssessmentUtilities.createMarkerByAnnotation(assessmentController.getAnnotationById(id).get(),
-									Activator.getDefault().getSystemwideController().getCurrentProjectName(), "assignment/");
-						} else {
-							LOG.warn("No mistake type found for autograder annotation type " + annotation.type());
-						}
-					}
-					onCompletion.accept(true);
-
-					monitor.done();
-					Display.getDefault().asyncExec(() -> MessageDialog.openInformation(AssessmentUtilities.getWindowsShell(), "Autograder succeeded",
-							String.format("Autograder found %d issues. Please check that there are no false-positives.", annotations.size())));
+					monitor.worked(1);
 				}
-			} catch (Exception ex) {
-				LOG.error("Autograder failed: " + ex.getMessage(), ex);
+			}
+
+			monitor.setTaskName("Parsing annotations");
+			String errorOutput = new String(process.getErrorStream().readAllBytes());
+			if (!errorOutput.isBlank()) {
+				LOG.error("Autograder failed: " + errorOutput);
+				onCompletion.accept(false);
 				Display.getDefault().asyncExec(() -> MessageDialog.openWarning(AssessmentUtilities.getWindowsShell(), "Autograder failed",
 						"Autograder failed. Please assess the submission normally. Additional information can be found in the Eclipse log"));
+			} else if (assessmentController.getSubmission().getSubmissionId() != submission.getSubmissionId()) {
+				Display.getDefault().asyncExec(() -> MessageDialog.openWarning(AssessmentUtilities.getWindowsShell(), "Submission changed",
+						"Autograder completed successfully, but the current submission has changed during analysis, so no annotations will be created."));
+			} else {
+				LOG.info("Autograder completed successfully");
+
+				List<AutograderAnnotation> annotations = Arrays.asList(new ObjectMapper().readValue(problems, AutograderAnnotation[].class));
+
+				for (AutograderAnnotation annotation : annotations) {
+					var type = mapAnnotation(assessmentController, annotation, config);
+					if (type.isPresent()) {
+						if (!type.get().isEnabledMistakeType()) {
+							LOG.info("Skipping annotation " + annotation.type() + " because button is disabled");
+							continue;
+						}
+						String id = IAnnotation.createID();
+						assessmentController.addAnnotation(id, type.get(), annotation.startLine() - 1, annotation.endLine() - 1, "src/" + annotation.file(),
+								annotation.message(), type.get().isCustomPenalty() ? 0.0 : null);
+						AssessmentUtilities.createMarkerByAnnotation(assessmentController.getAnnotationById(id).get(),
+								Activator.getDefault().getSystemwideController().getCurrentProjectName(), "assignment/");
+					} else {
+						LOG.warn("No mistake type found for autograder annotation type " + annotation.type());
+					}
+				}
+				onCompletion.accept(true);
+
+				monitor.done();
+				Display.getDefault().asyncExec(() -> MessageDialog.openInformation(AssessmentUtilities.getWindowsShell(), "Autograder succeeded",
+						String.format("Autograder found %d issues. Please check that there are no false-positives.", annotations.size())));
 			}
-		}).schedule();
+		} catch (Exception ex) {
+			LOG.error("Autograder failed: " + ex.getMessage(), ex);
+			Display.getDefault().asyncExec(() -> MessageDialog.openWarning(AssessmentUtilities.getWindowsShell(), "Autograder failed",
+					"Autograder failed. Please assess the submission normally. Additional information can be found in the Eclipse log"));
+		}
 	}
 
 	public static Path maybeDownloadAutograderRelease() throws IOException {
@@ -126,7 +136,8 @@ public class AutograderUtil {
 
 		URLConnection connection = new URL("https://github.com/Feuermagier/autograder/releases/latest").openConnection();
 		connection.connect();
-		var inputStream = connection.getInputStream(); // Open stream to force redirect to the latest release
+		var inputStream = connection.getInputStream(); // Open stream to force redirect to the
+														// latest release
 		String[] components = connection.getURL().getFile().split("/");
 		String tag = components[components.length - 1];
 		inputStream.close();
@@ -167,7 +178,7 @@ public class AutograderUtil {
 			Map<String, String> config) {
 		String id = config.get(annotation.type());
 		return assessmentController.getMistakes().stream().filter(m -> m.getIdentifier().equals(id)).findAny()
-				.or(() -> assessmentController.getMistakes().stream().filter(m -> m.getIdentifier().equals("custom")).findAny());
+				.or(() -> assessmentController.getMistakes().stream().filter(m -> "custom".equals(m.getIdentifier())).findAny());
 	}
 
 	public static Map<String, String> getConfig() throws IOException {
