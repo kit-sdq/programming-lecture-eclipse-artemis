@@ -10,6 +10,7 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
@@ -81,7 +82,12 @@ public class AddAnnotationCommandHandler extends AbstractHandler {
 
 		// Prevent insertion of a new line because the default keybinding is alt+enter
 		if (event.getTrigger() != null) {
-			((Event) event.getTrigger()).doit = false;
+			// Found to work by reverse-engineering Eclipse; cancels the event in
+			// StyledText::traverse
+			((Event) event.getTrigger()).detail = SWT.TRAVERSE_NONE;
+			// doit needs to be true; otherwise Eclipse would do the normal action which is
+			// inserting a new line
+			((Event) event.getTrigger()).doit = true;
 		}
 
 		// Return the focus to the editor
