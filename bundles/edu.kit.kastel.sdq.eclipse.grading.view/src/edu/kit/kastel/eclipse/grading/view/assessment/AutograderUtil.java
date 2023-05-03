@@ -39,6 +39,7 @@ import edu.kit.kastel.eclipse.grading.view.activator.Activator;
 
 public class AutograderUtil {
 	private static final ILog LOG = Platform.getLog(AutograderUtil.class);
+	private static final ObjectMapper MAPPER = new ObjectMapper();
 
 	public static void runAutograder(IAssessmentController assessmentController, Path path, Consumer<Boolean> onCompletion) {
 		if (!assessmentController.getAnnotations().isEmpty()) {
@@ -59,8 +60,8 @@ public class AutograderUtil {
 			Map<String, String> config = getConfig();
 			String autograderConfig = "[" + config.keySet().stream().collect(Collectors.joining(", ")) + "]";
 
-			monitor.beginTask("Autograder", 8); // Download, Compile, PMD, CPD, SpotBugs, Spoon,
-												// integrated, parsing
+			// Download, Compile, PMD, CPD, SpotBugs, Spoon, integrated, parsing
+			monitor.beginTask("Autograder", 8);
 
 			monitor.subTask("Downloading Autograder JAR");
 			LOG.info("Downloading autograder JAR");
@@ -98,7 +99,7 @@ public class AutograderUtil {
 			} else {
 				LOG.info("Autograder completed successfully");
 
-				List<AutograderAnnotation> annotations = Arrays.asList(new ObjectMapper().readValue(problems, AutograderAnnotation[].class));
+				List<AutograderAnnotation> annotations = Arrays.asList(MAPPER.readValue(problems, AutograderAnnotation[].class));
 
 				for (AutograderAnnotation annotation : annotations) {
 					var type = mapAnnotation(assessmentController, annotation, config);
@@ -108,8 +109,14 @@ public class AutograderUtil {
 							continue;
 						}
 						String id = IAnnotation.createID();
-						assessmentController.addAnnotation(id, type.get(), annotation.startLine() - 1, annotation.endLine() - 1, "src/" + annotation.file(),
-								annotation.message(), type.get().isCustomPenalty() ? 0.0 : null);
+						assessmentController.addAnnotation(id, //
+								type.get(), //
+								annotation.startLine() - 1, //
+								annotation.endLine() - 1, //
+								"src/" + annotation.file(), //
+								annotation.message(), //
+								type.get().isCustomPenalty() ? 0.0 : null //
+						);
 						AssessmentUtilities.createMarkerByAnnotation(assessmentController.getAnnotationById(id).get(),
 								Activator.getDefault().getSystemwideController().getCurrentProjectName(), "assignment/");
 					} else {
@@ -136,8 +143,9 @@ public class AutograderUtil {
 
 		URLConnection connection = new URL("https://github.com/Feuermagier/autograder/releases/latest").openConnection();
 		connection.connect();
-		var inputStream = connection.getInputStream(); // Open stream to force redirect to the
-														// latest release
+		// Open stream to force redirect to the latest release
+		var inputStream = connection.getInputStream();
+
 		String[] components = connection.getURL().getFile().split("/");
 		String tag = components[components.length - 1];
 		inputStream.close();
@@ -183,7 +191,7 @@ public class AutograderUtil {
 
 	public static Map<String, String> getConfig() throws IOException {
 		Path autograderConfigPath = Path.of(CommonActivator.getDefault().getPreferenceStore().getString(PreferenceConstants.AUTOGRADER_CONFIG_PATH));
-		return new ObjectMapper().readValue(Files.readString(autograderConfigPath), new TypeReference<Map<String, String>>() {
+		return MAPPER.readValue(Files.readString(autograderConfigPath), new TypeReference<Map<String, String>>() {
 		});
 	}
 
