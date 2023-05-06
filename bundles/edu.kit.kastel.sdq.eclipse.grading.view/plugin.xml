@@ -36,6 +36,12 @@
                id="edu.kit.kastel.eclipse.grading.assessment.keybindings.addAnnotation"
                name="Add Annotation">
          </command>
+         <command
+               categoryId="edu.kit.kastel.eclipse.grading.assessment"
+               description="Delete annotation(s) at the current cursor position"
+               id="edu.kit.kastel.eclipse.grading.assessment.keybindings.deleteAnnotation"
+               name="Delete Annotation(s)">
+         </command>
    </extension>
    <extension
          point="org.eclipse.ui.bindings">
@@ -44,6 +50,12 @@
             contextId="org.eclipse.ui.textEditorScope"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M3+ENTER">
+      </key>
+      <key
+            commandId="edu.kit.kastel.eclipse.grading.assessment.keybindings.deleteAnnotation"
+            contextId="org.eclipse.ui.textEditorScope"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M3+DEL">
       </key>
    </extension>
 </plugin>
