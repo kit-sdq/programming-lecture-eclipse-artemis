@@ -110,10 +110,7 @@ public class DeleteAnnotationDialog extends Dialog {
 		this.displayList.getTable().addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
-				if (e.keyCode == SWT.CR || e.keyCode == SWT.LF) {
-					selectedAnnotation = null;
-					close();
-				} else if (e.keyCode == SWT.DEL) {
+				if (e.keyCode == SWT.DEL) {
 					selectedAnnotation = (IAnnotation) displayList.getStructuredSelection().getFirstElement();
 					close();
 				}
