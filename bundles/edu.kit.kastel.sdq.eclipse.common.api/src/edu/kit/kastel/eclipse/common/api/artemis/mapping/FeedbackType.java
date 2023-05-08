@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.api.artemis.mapping;
 
 /**
@@ -14,7 +14,7 @@ package edu.kit.kastel.eclipse.common.api.artemis.mapping;
 public enum FeedbackType {
 	MANUAL, MANUAL_UNREFERENCED, AUTOMATIC;
 
-	public static FeedbackType valueOfIgnoreCase(String str) {
-		return str != null ? FeedbackType.valueOf(str.toUpperCase()) : null;
+	public static FeedbackType valueOfIgnoreCase(String name) {
+		return name != null ? FeedbackType.valueOf(name.toUpperCase()) : null;
 	}
 }

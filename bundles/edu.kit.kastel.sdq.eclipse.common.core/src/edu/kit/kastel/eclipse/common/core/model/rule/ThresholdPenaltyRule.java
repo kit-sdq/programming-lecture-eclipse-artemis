@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.core.model.rule;
 
 import java.util.List;
@@ -25,6 +25,11 @@ public class ThresholdPenaltyRule extends PenaltyRule {
 		this.penalty = penaltyRuleNode.get("penalty").asDouble();
 	}
 
+	public ThresholdPenaltyRule(int threshold, double penalty) {
+		this.threshold = threshold;
+		this.penalty = penalty;
+	}
+
 	@Override
 	public double calculate(List<IAnnotation> annotations) {
 		return annotations.size() >= this.threshold ? -this.penalty : 0.D;
@@ -42,6 +47,9 @@ public class ThresholdPenaltyRule extends PenaltyRule {
 
 	@Override
 	public String getTooltip(List<IAnnotation> annotations) {
+		if (penalty == 0) {
+			return annotations.size() + " annotations. No deduction will be made.";
+		}
 		double penaltyValue = this.calculate(annotations);
 		return penaltyValue + " points [" + annotations.size() + " of at least " + this.threshold + " annotations made]";
 	}

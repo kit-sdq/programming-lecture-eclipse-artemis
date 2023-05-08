@@ -13,6 +13,7 @@ import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -30,9 +31,9 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.wb.swt.SWTResourceManager;
 
 import edu.kit.kastel.eclipse.common.api.PreferenceConstants;
-import edu.kit.kastel.eclipse.common.api.artemis.mapping.SubmissionFilter;
 import edu.kit.kastel.eclipse.common.api.controller.IGradingSystemwideController;
 import edu.kit.kastel.eclipse.common.api.model.IMistakeType;
 import edu.kit.kastel.eclipse.common.api.model.IRatingGroup;
@@ -120,8 +121,8 @@ public class ArtemisGradingView extends ViewPart {
 		});
 	}
 
-	private void addSelectionListenerForRefreshButton(Button refreshButton, Combo backlogCombo, Combo filterCombo) {
-		refreshButton.addListener(SWT.Selection, e -> this.fillBacklogComboWithData(backlogCombo, filterCombo));
+	private void addSelectionListenerForRefreshButton(Button refreshButton, Combo backlogCombo) {
+		refreshButton.addListener(SWT.Selection, e -> this.fillBacklogComboWithData(backlogCombo));
 	}
 
 	private void addSelectionListenerForReloadButton(Button btnReloadA) {
@@ -167,18 +168,24 @@ public class ArtemisGradingView extends ViewPart {
 		});
 	}
 
+	private void addSelectionListenerForRerunAutograder(Button btnRerunAutograder) {
+		btnRerunAutograder.addListener(SWT.Selection, e -> {
+			boolean userWantsRerun = MessageDialog.openConfirm(AssessmentUtilities.getWindowsShell(), "Rerun Autograder?",
+					"This action may create duplicate annotations! Are you sure that this is what you want?");
+			if (userWantsRerun) {
+				AutograderUtil.runAutograder(this.viewController.getAssessmentController(),
+						Activator.getDefault().getSystemwideController().getCurrentProjectPath().resolve("assignment").resolve("src"),
+						success -> this.updatePenalties(), true);
+			}
+		});
+	}
+
 	private void createBacklog() {
 		var backlogCombo = assessmentTab.comboBacklogSubmission;
-		var filterCombo = assessmentTab.comboBacklogFilter;
 		var refreshButton = assessmentTab.btnBacklogRefreshSubmissions;
 		var btnLoadAgain = assessmentTab.btnBacklogLoadSubmission;
 
-		for (SubmissionFilter filter : SubmissionFilter.values()) {
-			assessmentTab.comboBacklogFilter.add(filter.name());
-		}
-
-		this.addSelectionListenerForFilterCombo(backlogCombo, filterCombo);
-		this.addSelectionListenerForRefreshButton(refreshButton, backlogCombo, filterCombo);
+		this.addSelectionListenerForRefreshButton(refreshButton, backlogCombo);
 		this.addSelectionListenerForLoadFromBacklogButton(backlogCombo, btnLoadAgain);
 	}
 
@@ -186,23 +193,17 @@ public class ArtemisGradingView extends ViewPart {
 		this.result = new ResultTab(Activator.getDefault().getSystemwideController(), tabFolder);
 	}
 
-	private void addSelectionListenerForFilterCombo(Combo backlogCombo, Combo filterCombo) {
-		filterCombo.addListener(SWT.Selection, e -> {
-			this.fillBacklogComboWithData(backlogCombo, filterCombo);
-		});
-	}
-
 	private void createCustomButton(IRatingGroup ratingGroup, Group rgDisplay, IMistakeType mistake) {
 		final Button customButton = new Button(rgDisplay, SWT.PUSH);
 		customButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-		customButton.setText(mistake.getButtonText());
+		customButton.setText(mistake.getButtonText(I18N().key()));
 		customButton.addListener(SWT.Selection, event -> {
 			final CustomButtonDialog customDialog = new CustomButtonDialog(AssessmentUtilities.getWindowsShell(), isPositiveFeedbackAllowed(),
 					this.viewController, mistake);
 			customDialog.setBlockOnOpen(true);
 			customDialog.open();
 			// avoid SWT Exception
-			Display.getDefault().asyncExec(() -> this.updatePenalty(ratingGroup.getDisplayName()));
+			Display.getDefault().asyncExec(() -> this.updatePenalty(ratingGroup.getIdentifier()));
 		});
 	}
 
@@ -241,6 +242,7 @@ public class ArtemisGradingView extends ViewPart {
 		this.addSelectionListenerForStartSecondRound(this.assessmentTab.btnStartRoundTwo);
 		this.addSelectionListenerForSubmitButton(this.assessmentTab.btnSubmit);
 		this.addSelectionListenerForCloseAssessmentButton(this.assessmentTab.btnCloseAssessment);
+		this.addSelectionListenerForRerunAutograder(this.assessmentTab.btnRerunAutograder);
 		this.addSelectionListenerForRefreshArtemisStateButton(this.assessmentTab.btnResetPluginState);
 
 		setVersionText(this.assessmentTab.lblPluginVersion);
@@ -277,25 +279,30 @@ public class ArtemisGradingView extends ViewPart {
 		this.gradingButtonComposite.setLayout(new GridLayout(1, true));
 		this.viewController.getRatingGroups().forEach(ratingGroup -> {
 			final Group rgDisplay = new Group(this.gradingButtonComposite, SWT.NONE);
-			this.ratingGroupViewElements.put(ratingGroup.getDisplayName(), rgDisplay);
-			this.updatePenalty(ratingGroup.getDisplayName());
+			this.ratingGroupViewElements.put(ratingGroup.getIdentifier(), rgDisplay);
+			this.updatePenalty(ratingGroup.getIdentifier());
 			var columns = CommonActivator.getDefault().getPreferenceStore().getInt(PreferenceConstants.GRADING_VIEW_BUTTONS_IN_COLUMN);
 			final GridLayout gridLayout = new GridLayout(columns, true);
 			rgDisplay.setLayout(gridLayout);
 			final GridData gridData = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
 			rgDisplay.setLayoutData(gridData);
 			this.viewController.getMistakeTypes().forEach(mistake -> {
-				if (mistake.getRatingGroup().getDisplayName().equals(ratingGroup.getDisplayName())) {
+				// TODO Check
+				if (mistake.getRatingGroup().equals(ratingGroup)) {
 					if (mistake.isCustomPenalty()) {
 						this.createCustomButton(ratingGroup, rgDisplay, mistake);
 						return;
 					}
 					final Button mistakeButton = new Button(rgDisplay, SWT.PUSH);
-					mistakeButton.setText(mistake.getButtonText());
+					mistakeButton.setText(mistake.getButtonText(I18N().key()));
 					mistakeButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+					mistakeButton.setEnabled(mistake.isEnabledMistakeType());
+					if (!mistake.isEnabledPenalty() && mistake.isEnabledMistakeType()) {
+						mistakeButton.addPaintListener(e -> mistakeButton.setForeground(SWTResourceManager.getColor(SWT.COLOR_CYAN)));
+					}
 
-					this.mistakeButtons.put(mistake.getId(), mistakeButton);
-					mistakeButton.setToolTipText(this.viewController.getToolTipForMistakeType(mistake));
+					this.mistakeButtons.put(mistake.getIdentifier(), mistakeButton);
+					mistakeButton.setToolTipText(this.viewController.getToolTipForMistakeType(I18N().key(), mistake));
 
 					KeyboardAwareMouseListener listener = new KeyboardAwareMouseListener();
 					// Normal click
@@ -306,7 +313,7 @@ public class ArtemisGradingView extends ViewPart {
 					listener.setClickHandler(() -> this.createMistakePenaltyWithCustomMessageDialog(mistake), SWT.SHIFT, SWT.BUTTON2);
 					// every click
 					listener.setClickHandlerForEveryClick(() -> {
-						this.updatePenalty(mistake.getRatingGroup().getDisplayName());
+						this.updatePenalty(mistake.getRatingGroup().getIdentifier());
 						this.updateMistakeButtonToolTips(mistake);
 					});
 					mistakeButton.addMouseListener(listener);
@@ -348,15 +355,9 @@ public class ArtemisGradingView extends ViewPart {
 		setVersionText(this.gradingTabComposite.lblPluginVersion);
 	}
 
-	private void fillBacklogComboWithData(Combo backlogCombo, Combo filterCombo) {
+	private void fillBacklogComboWithData(Combo backlogCombo) {
 		backlogCombo.removeAll();
-		SubmissionFilter filter = SubmissionFilter.ALL;
-		int idx = filterCombo.getSelectionIndex();
-		if (idx >= 0) {
-			String value = filterCombo.getItem(idx);
-			filter = Arrays.stream(SubmissionFilter.values()).filter(f -> f.name().equals(value)).findFirst().orElse(SubmissionFilter.ALL);
-		}
-		this.viewController.getSubmissionsForBacklog(filter).forEach(backlogCombo::add);
+		this.viewController.getSubmissionsForBacklog().forEach(backlogCombo::add);
 	}
 
 	private void loadExamComboEntries(Combo examCourseCombo, Combo examCombo, Combo examExerciseCombo) {
@@ -371,11 +372,11 @@ public class ArtemisGradingView extends ViewPart {
 	private void prepareNewAssessment() {
 		this.fillGradingTab();
 		this.viewController.createAnnotationsMarkers();
-		this.viewController.getRatingGroups().forEach(ratingGroup -> this.updatePenalty(ratingGroup.getDisplayName()));
+		this.viewController.getRatingGroups().forEach(ratingGroup -> this.updatePenalty(ratingGroup.getIdentifier()));
 		this.result.loadFeedbackForExcerise();
 		AutograderUtil.runAutograder(this.viewController.getAssessmentController(),
 				Activator.getDefault().getSystemwideController().getCurrentProjectPath().resolve("assignment").resolve("src"),
-				success -> this.updatePenalties());
+				success -> this.updatePenalties(), false);
 	}
 
 	@Override
@@ -384,16 +385,16 @@ public class ArtemisGradingView extends ViewPart {
 	}
 
 	private void updateMistakeButtonToolTips(IMistakeType mistakeType) {
-		Button button = this.mistakeButtons.get(mistakeType.getId());
+		Button button = this.mistakeButtons.get(mistakeType.getIdentifier());
 		if (button != null) {
 			Display.getDefault().asyncExec( //
-					() -> button.setToolTipText(this.viewController.getToolTipForMistakeType(mistakeType)) //
+					() -> button.setToolTipText(this.viewController.getToolTipForMistakeType(I18N().key(), mistakeType)) //
 			);
 		}
 	}
 
 	public void updatePenalties() {
-		this.viewController.getRatingGroups().forEach(ratingGroup -> this.updatePenalty(ratingGroup.getDisplayName()));
+		this.viewController.getRatingGroups().forEach(ratingGroup -> this.updatePenalty(ratingGroup.getIdentifier()));
 		this.updateAllToolTips();
 	}
 
@@ -404,13 +405,13 @@ public class ArtemisGradingView extends ViewPart {
 		}
 	}
 
-	private void updatePenalty(String ratingGroupName) {
-		Group viewElement = this.ratingGroupViewElements.get(ratingGroupName);
-		IRatingGroup ratingGroup = this.viewController.getRatingGroupByDisplayName(ratingGroupName);
+	private void updatePenalty(String ratingGroupId) {
+		Group viewElement = this.ratingGroupViewElements.get(ratingGroupId);
+		IRatingGroup ratingGroup = this.viewController.getRatingGroupById(ratingGroupId);
 		if (ratingGroup == null) {
 			return;
 		}
-		StringBuilder builder = new StringBuilder(ratingGroupName);
+		StringBuilder builder = new StringBuilder(ratingGroup.getDisplayName(I18N().key()));
 		builder.append("(");
 		builder.append(this.viewController.getAssessmentController().getCurrentPenaltyForRatingGroup(ratingGroup));
 		var range = ratingGroup.getRange();
@@ -493,12 +494,12 @@ public class ArtemisGradingView extends ViewPart {
 			String openPreference = CommonActivator.getDefault().getPreferenceStore().getString(PreferenceConstants.OPEN_FILES_ON_ASSESSMENT_START);
 
 			// Open all types if desired
-			if (openPreference.equals(PreferenceConstants.OPEN_FILES_ON_ASSESSMENT_START_ALL)) {
+			if (PreferenceConstants.OPEN_FILES_ON_ASSESSMENT_START_ALL.equals(openPreference)) {
 				JDTUtilities.getAllCompilationUnits(project).forEach(c -> AssessmentUtilities.openJavaElement(c, page));
 			}
 
 			// Open/focus the main class
-			if (!openPreference.equals(PreferenceConstants.OPEN_FILES_ON_ASSESSMENT_START_NONE)) {
+			if (!PreferenceConstants.OPEN_FILES_ON_ASSESSMENT_START_NONE.equals(openPreference)) {
 				var mainType = JDTUtilities.findMainClass(project);
 				if (mainType.isPresent()) {
 					// Open/focus the main class in the editor...

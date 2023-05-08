@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.api.artemis.mapping;
 
 import java.io.Serializable;
@@ -187,7 +187,7 @@ public class Feedback implements Comparable<Feedback>, Serializable {
 	}
 
 	@JsonIgnore
-	public boolean isSCA() {
+	public boolean isStaticCodeAnalysis() {
 		return this.text != null && this.text.startsWith("SCAFeedbackIdentifier");
 	}
 }

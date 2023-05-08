@@ -91,10 +91,6 @@ public interface I18N {
 		return "Backlog";
 	}
 
-	default String backlogFilter() {
-		return "Filter Selection";
-	}
-
 	default String submission() {
 		return "Submission";
 	}
@@ -263,9 +259,21 @@ public interface I18N {
 		return "Assessment";
 	}
 
+	default String rerunAutograder() {
+		return "Rerun Autograder";
+	}
+
+	default String autograder() {
+		return "Autograder";
+	}
+
 	//
 	// internal
 	//
+
+	default String key() {
+		return "en";
+	}
 
 	/**
 	 * This method defines the display-name for the current language (default:

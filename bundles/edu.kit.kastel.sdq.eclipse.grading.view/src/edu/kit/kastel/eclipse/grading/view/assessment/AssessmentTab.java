@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.grading.view.assessment;
 
 import static edu.kit.kastel.eclipse.common.view.languages.LanguageSettings.I18N;
@@ -33,13 +33,14 @@ public class AssessmentTab extends AssessmentTabComposite {
 		btnSubmit.setEnabled(assessmentStarted);
 		btnCloseAssessment.setEnabled(assessmentStarted);
 
+		btnRerunAutograder.setEnabled(AutograderUtil.isAutograderEnabled() && assessmentStarted);
+
 		btnStartRoundOne.setEnabled(exerciseSelected && !assessmentStarted);
 		btnStartRoundTwo.setEnabled(exerciseSelected && !assessmentStarted && secondCorrectionRoundEnabled);
 
 		btnResetPluginState.setEnabled(!assessmentStarted);
 
 		// Backlog
-		comboBacklogFilter.setEnabled(exerciseSelected && !assessmentStarted);
 		comboBacklogSubmission.setEnabled(exerciseSelected && !assessmentStarted);
 		btnBacklogRefreshSubmissions.setEnabled(exerciseSelected && !assessmentStarted);
 		btnBacklogLoadSubmission.setEnabled(exerciseSelected && !assessmentStarted);

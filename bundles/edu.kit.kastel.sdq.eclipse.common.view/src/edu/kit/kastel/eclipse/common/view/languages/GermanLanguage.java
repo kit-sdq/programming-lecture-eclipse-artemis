@@ -97,11 +97,6 @@ class GermanLanguage implements I18N {
 	}
 
 	@Override
-	public String backlogFilter() {
-		return "Filterauswahl";
-	}
-
-	@Override
 	public String submission() {
 		return "Abgabe";
 	}
@@ -309,6 +304,11 @@ class GermanLanguage implements I18N {
 	@Override
 	public String assessment() {
 		return "Bewertung";
+	}
+
+	@Override
+	public String key() {
+		return "de";
 	}
 
 	@Override

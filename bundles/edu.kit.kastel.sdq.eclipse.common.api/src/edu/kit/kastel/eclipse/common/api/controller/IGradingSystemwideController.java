@@ -9,7 +9,6 @@ import edu.kit.kastel.eclipse.common.api.artemis.IProjectFileNamingStrategy;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.ICourse;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.IExercise;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.ISubmission;
-import edu.kit.kastel.eclipse.common.api.artemis.mapping.SubmissionFilter;
 
 public interface IGradingSystemwideController extends ISystemwideController {
 
@@ -19,11 +18,9 @@ public interface IGradingSystemwideController extends ISystemwideController {
 	 * calling tutor. Based on current exercise.
 	 * ISystemwideController::setExerciseId() must have been called before!
 	 *
-	 * @param filter determine which kinds of submissions should be filtered (= be
-	 *               in the result)
 	 * @return the respective project Names (unique).
 	 */
-	List<String> getBegunSubmissionsProjectNames(SubmissionFilter filter);
+	List<String> getBegunSubmissionsProjectNames();
 
 	/**
 	 * Get assessment controller for current state (courseID, exerciseID,

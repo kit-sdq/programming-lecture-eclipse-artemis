@@ -6,7 +6,6 @@ import java.util.Optional;
 
 import edu.kit.kastel.eclipse.common.api.ArtemisClientException;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.IExercise;
-import edu.kit.kastel.eclipse.common.api.artemis.mapping.SubmissionFilter;
 import edu.kit.kastel.eclipse.common.api.controller.IAssessmentController;
 import edu.kit.kastel.eclipse.common.api.controller.IGradingSystemwideController;
 import edu.kit.kastel.eclipse.common.api.model.IAnnotation;
@@ -68,8 +67,8 @@ public class AssessmentViewController extends AbstractArtemisViewController<IGra
 		return this.assessmentController.getMistakes();
 	}
 
-	public IRatingGroup getRatingGroupByDisplayName(String displayName) {
-		return this.assessmentController.getRatingGroupByDisplayName(displayName);
+	public IRatingGroup getRatingGroupById(String id) {
+		return this.assessmentController.getRatingGroupById(id);
 	}
 
 	/**
@@ -82,17 +81,12 @@ public class AssessmentViewController extends AbstractArtemisViewController<IGra
 	/**
 	 * @return all submissions for the given filter
 	 */
-	public List<String> getSubmissionsForBacklog(SubmissionFilter filter) {
-		return this.systemwideController.getBegunSubmissionsProjectNames(filter);
+	public List<String> getSubmissionsForBacklog() {
+		return this.systemwideController.getBegunSubmissionsProjectNames();
 	}
 
-	/**
-	 * @param mistakeType (of the certain button)
-	 * @return tooltip for the mistake type button
-	 */
-	public String getToolTipForMistakeType(IMistakeType mistakeType) {
-		return this.assessmentController.getTooltipForMistakeType(mistakeType);
-
+	public String getToolTipForMistakeType(String languageKey, IMistakeType mistakeType) {
+		return this.assessmentController.getTooltipForMistakeType(languageKey, mistakeType);
 	}
 
 	/**

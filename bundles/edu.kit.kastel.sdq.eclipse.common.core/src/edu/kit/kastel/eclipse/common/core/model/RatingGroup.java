@@ -1,8 +1,10 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.core.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -13,10 +15,14 @@ import edu.kit.kastel.eclipse.common.api.util.Pair;
 
 public class RatingGroup implements IRatingGroup {
 
-	@JsonProperty
-	private String shortName;
-	@JsonProperty
+	@JsonProperty("shortName")
+	private String identifier;
+	@JsonProperty("displayName")
 	private String displayName;
+	// {"en" -> "Name in English"}
+	@JsonProperty("additionalDisplayNames")
+	private Map<String, String> additionalDisplayNames;
+
 	@JsonProperty
 	private Double positiveLimit;
 	@JsonProperty
@@ -33,8 +39,10 @@ public class RatingGroup implements IRatingGroup {
 	}
 
 	@Override
-	public String getDisplayName() {
-		return this.displayName;
+	public String getDisplayName(String languageKey) {
+		if (languageKey == null || additionalDisplayNames == null || !additionalDisplayNames.containsKey(languageKey))
+			return this.displayName;
+		return additionalDisplayNames.get(languageKey);
 	}
 
 	@Override
@@ -43,8 +51,8 @@ public class RatingGroup implements IRatingGroup {
 	}
 
 	@Override
-	public String getShortName() {
-		return this.shortName;
+	public String getIdentifier() {
+		return this.identifier;
 	}
 
 	@Override
@@ -62,4 +70,20 @@ public class RatingGroup implements IRatingGroup {
 		}
 		return points;
 	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(identifier);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null || getClass() != obj.getClass())
+			return false;
+		RatingGroup other = (RatingGroup) obj;
+		return Objects.equals(identifier, other.identifier);
+	}
+
 }

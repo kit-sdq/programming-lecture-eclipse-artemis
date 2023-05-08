@@ -1,5 +1,7 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.grading.view.commands;
+
+import static edu.kit.kastel.eclipse.common.view.languages.LanguageSettings.I18N;
 
 import java.util.Arrays;
 
@@ -26,8 +28,8 @@ public class AnnotationFilter extends ViewerFilter {
 	public boolean select(Viewer viewer, Object parent, Object element) {
 		if (this.filter != null) {
 			IMistakeType mistake = (IMistakeType) element;
-			return matchesPart(mistake.getButtonText().toLowerCase(), this.filter)
-					|| (this.includeMessages && matchesPart(mistake.getMessage().toLowerCase(), this.filter));
+			return matchesPart(mistake.getButtonText(I18N().key()).toLowerCase(), this.filter)
+					|| (this.includeMessages && matchesPart(mistake.getMessage(I18N().key()).toLowerCase(), this.filter));
 		} else {
 			return true;
 		}

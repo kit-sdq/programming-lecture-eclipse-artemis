@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.core.config;
 
 import java.util.List;
@@ -21,9 +21,9 @@ public final class ExerciseConfigConverter extends StdConverter<ExerciseConfig, 
 		for (MistakeType mistakeType : exerciseConfig.getMistakeTypes()) {
 			// find rating group
 			Optional<RatingGroup> ratingGroupOptional = ratingGroups.stream()
-					.filter(ratingGroup -> ratingGroup.getShortName().equals(mistakeType.getAppliesTo())).findFirst();
+					.filter(ratingGroup -> ratingGroup.getIdentifier().equals(mistakeType.getAppliesTo())).findFirst();
 			if (ratingGroupOptional.isEmpty()) {
-				throw new ExerciseConfigConverterException("No RatingGroup could be associated with MistakeType " + mistakeType.getShortName()
+				throw new ExerciseConfigConverterException("No RatingGroup could be associated with MistakeType " + mistakeType.getIdentifier()
 						+ " with appliesTo := " + mistakeType.getAppliesTo() + " and available RatingGroups := " + ratingGroups);
 			}
 			final RatingGroup ratingGroup = ratingGroupOptional.get();
