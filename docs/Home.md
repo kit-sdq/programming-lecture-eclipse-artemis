@@ -124,6 +124,15 @@ submission. The annotation can be deleted by deleting the marker.
 
     ![AddAnnotation](./img/add_annotation.png)
 
+-   When an editor is active, press Ctrl+Alt+Enter to view or delete annotation at the current line. 
+    The shortcut opens a dialog where you can look through the annotations that include the current line, sorted by how many lines the annotations span.
+    The dialog display the lines the annotation spans, the name of the respective mistake type (i.e. the button name), and the custom message if it is present.
+    Use the arrow keys to navigate the annotations.
+    Press Del to delete a selected annotation.
+
+    ![DeleteAnnotation](./img/delete_annotation.png)
+
+
 ## Backend Configuration
 
 This section deals with the configuration of the backend.
