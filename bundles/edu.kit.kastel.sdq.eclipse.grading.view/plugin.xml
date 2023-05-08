@@ -55,7 +55,7 @@
             commandId="edu.kit.kastel.eclipse.grading.assessment.keybindings.deleteAnnotation"
             contextId="org.eclipse.ui.textEditorScope"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="M3+DEL">
+            sequence="M1+M3+ENTER">
       </key>
    </extension>
 </plugin>
