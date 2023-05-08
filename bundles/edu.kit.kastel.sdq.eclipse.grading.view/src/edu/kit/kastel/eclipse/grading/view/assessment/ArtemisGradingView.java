@@ -13,6 +13,7 @@ import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -167,6 +168,18 @@ public class ArtemisGradingView extends ViewPart {
 		});
 	}
 
+	private void addSelectionListenerForRerunAutograder(Button btnRerunAutograder) {
+		btnRerunAutograder.addListener(SWT.Selection, e -> {
+			boolean userWantsRerun = MessageDialog.openConfirm(AssessmentUtilities.getWindowsShell(), "Rerun Autograder?",
+					"This action may create duplicate annotations! Are you sure that this is what you want?");
+			if (userWantsRerun) {
+				AutograderUtil.runAutograder(this.viewController.getAssessmentController(),
+						Activator.getDefault().getSystemwideController().getCurrentProjectPath().resolve("assignment").resolve("src"),
+						success -> this.updatePenalties(), true);
+			}
+		});
+	}
+
 	private void createBacklog() {
 		var backlogCombo = assessmentTab.comboBacklogSubmission;
 		var refreshButton = assessmentTab.btnBacklogRefreshSubmissions;
@@ -229,6 +242,7 @@ public class ArtemisGradingView extends ViewPart {
 		this.addSelectionListenerForStartSecondRound(this.assessmentTab.btnStartRoundTwo);
 		this.addSelectionListenerForSubmitButton(this.assessmentTab.btnSubmit);
 		this.addSelectionListenerForCloseAssessmentButton(this.assessmentTab.btnCloseAssessment);
+		this.addSelectionListenerForRerunAutograder(this.assessmentTab.btnRerunAutograder);
 		this.addSelectionListenerForRefreshArtemisStateButton(this.assessmentTab.btnResetPluginState);
 
 		setVersionText(this.assessmentTab.lblPluginVersion);
@@ -362,7 +376,7 @@ public class ArtemisGradingView extends ViewPart {
 		this.result.loadFeedbackForExcerise();
 		AutograderUtil.runAutograder(this.viewController.getAssessmentController(),
 				Activator.getDefault().getSystemwideController().getCurrentProjectPath().resolve("assignment").resolve("src"),
-				success -> this.updatePenalties());
+				success -> this.updatePenalties(), false);
 	}
 
 	@Override

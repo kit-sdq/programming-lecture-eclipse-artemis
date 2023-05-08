@@ -41,8 +41,8 @@ public class AutograderUtil {
 	private static final ILog LOG = Platform.getLog(AutograderUtil.class);
 	private static final ObjectMapper MAPPER = new ObjectMapper();
 
-	public static void runAutograder(IAssessmentController assessmentController, Path path, Consumer<Boolean> onCompletion) {
-		if (!assessmentController.getAnnotations().isEmpty()) {
+	public static void runAutograder(IAssessmentController assessmentController, Path path, Consumer<Boolean> onCompletion, boolean forceExecution) {
+		if (!isAutograderEnabled() || (!forceExecution && !assessmentController.getAnnotations().isEmpty())) {
 			LOG.info("Skipping autograder as there already annotation present");
 			return; // Don't run the autograder if there are already annotations
 		}
@@ -193,6 +193,11 @@ public class AutograderUtil {
 		Path autograderConfigPath = Path.of(CommonActivator.getDefault().getPreferenceStore().getString(PreferenceConstants.AUTOGRADER_CONFIG_PATH));
 		return MAPPER.readValue(Files.readString(autograderConfigPath), new TypeReference<Map<String, String>>() {
 		});
+	}
+
+	public static boolean isAutograderEnabled() {
+		String configPath = CommonActivator.getDefault().getPreferenceStore().getString(PreferenceConstants.AUTOGRADER_CONFIG_PATH);
+		return configPath != null && !configPath.isBlank();
 	}
 
 	public record AutograderAnnotation(String type, String message, String file, int startLine, int endLine) {
