@@ -32,6 +32,7 @@ public class AssessmentTabComposite extends Composite {
 	protected Label lblStatisticsInformation;
 	protected Label lblPluginVersion;
 	protected Button btnHelp;
+	protected Button btnRerunAutograder;
 
 	// Backlog
 	protected Combo comboBacklogSubmission;
@@ -107,6 +108,15 @@ public class AssessmentTabComposite extends Composite {
 		btnCloseAssessment = new Button(grpAssessment, SWT.NONE);
 		btnCloseAssessment.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		btnCloseAssessment.setText(I18N().closeAssessment());
+
+		Group grpAutograder = new Group(compositeButtons, SWT.NONE);
+		grpAutograder.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		grpAutograder.setText(I18N().autograder());
+		grpAutograder.setLayout(new GridLayout(2, true));
+
+		btnRerunAutograder = new Button(grpAutograder, SWT.NONE);
+		btnRerunAutograder.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		btnRerunAutograder.setText(I18N().rerunAutograder());
 
 		Group grpMetaInformation = new Group(this, SWT.NONE);
 		grpMetaInformation.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
