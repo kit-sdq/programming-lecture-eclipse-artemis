@@ -13,21 +13,7 @@ student) edition.
 2.  Target Platform: Install the development section of the [Update
     Site](https://kit-sdq.github.io/programming-lecture-eclipse-artemis/).
 
-3.  API Baseline
-    -   Navigate to \"Window \> Preferences \> Plug-in Development
-         \> API Baselines\" (This will only be available in the
-            Eclipse for eclipse comitters build or after installing all
-            development dependencies from the update site).
-    -   Click \"Add Baseline\...\".
-    -   Select \"A target platform\", then click \"Next\".
-    -   Enter a name for the target platform.
-    -   As a target platform you will want to use the \"OSGi -
-           REST\" or the \"Active\" platform. Select it and hit
-            \"Finish\".
-    -   Click \"Apply\". Eclipse now builds something. This might
-          take some time.
-    -   Click \"Apply and close\".
-4.  Open project
+3.  Open project
     -   Clone
             [this](https://github.com/kit-sdq/programming-lecture-eclipse-artemis)
             repository into your eclipse workspace.
@@ -41,62 +27,12 @@ student) edition.
             errors. The errors for the \"jvm\" module can be ignored.
             The project builds fine anyways.
 
-5. Run Configuration
+4. Target Platform Configuration:
+	- Go to Window > Preferences > Plug-In Development > Target Platform.
+	- Add a new Target Platform > Select Default > Click Finish
+	- Activate the Target Platform (Checkbox)
 
-    * Create a new eclipse run configuration. Do not edit
-            anything. Just start it and click continue if eclipse shows
-            some warnings.
-
-    * (Alternative) Create a run configuration (more specific)
-         -   Navigate to
-                    [edu.kit.kastel.sdq.eclipse.grading.client]{.title-ref}
-                    and open the [plugin.xml]{.title-ref} file.
-        -   Click the small green arrow in the top right corner
-        -   This will either build the PlugIn (you are done) or
-                    it will crash (you have to continue with the next
-                    step).
-
-6. Fix for possible Issues with the Run Configuration
-
-    -   There is an issue where some dependencies are duplicated
-            which prevents the PlugIn from building.
-
-    -   To resolve this edit the run configuration by clicking \"Run
-            \> Run Configurations\" and selecting the tab \"Eclipse
-            Application \> Eclipse Application\"
-
-    -   Navigate to the Plug-ins tab.
-
-    -   Change the \"Launch with\" dropdown to \"plug-ins selected
-            below only\". A long list of plugins will appear.
-
-    -   Hit \"Apply\" and then \"Run\". This will most likely not
-            work though
-
-    -   Fix 1: (Fast but unlikely to work. Try this first.)
-        -   Click the \"Select All\" button on the right and
-                    then apply and run again.
-        - This has worked on some machines, not all though
-
-    - Fix 2: (Tedious but worked more often)
-        -   Click the \"Validate Plug-ins\" button.
-        -   A long lost of errors appears. Expand the errors
-            until you find one of the type \"2 versions of
-            singleton \<plugin name\> exist\".
-        -   This is a duplicate plugin.
-        -   Find the plugin in the plugin list above. There
-            should be 2 entries for the name with different
-            versions.
-        -   Deselect the plugin with that name and the **lower**
-            version, leaving the newer one active.
-        -   Again, apply and run.
-        -   Repeat this for all plugins that exhibit this kind
-            of error.
-        -   At some point you will be left with only about three
-            issues that are of a different kind and another
-            eclipse instance will start. At that point you are
-            done and you can start developing the grading tool
-            plugin.
+5. Run Configuration: Create a new eclipse run configuration. Do not edit anything. Just start it and click continue if eclipse shows some warnings.
 
 ## Architecture
 
