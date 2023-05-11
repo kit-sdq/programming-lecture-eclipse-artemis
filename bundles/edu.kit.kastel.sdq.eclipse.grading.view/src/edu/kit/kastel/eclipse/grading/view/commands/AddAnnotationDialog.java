@@ -3,6 +3,8 @@ package edu.kit.kastel.eclipse.grading.view.commands;
 
 import static edu.kit.kastel.eclipse.common.view.languages.LanguageSettings.I18N;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.eclipse.jface.dialogs.Dialog;
@@ -141,7 +143,9 @@ public class AddAnnotationDialog extends Dialog {
 		});
 
 		this.displayList.setContentProvider(ArrayContentProvider.getInstance());
-		this.displayList.setInput(this.controller.getMistakes());
+		List<IMistakeType> mistakes = new ArrayList<>(this.controller.getMistakes());
+		mistakes.removeIf(m -> !m.isEnabledMistakeType());
+		this.displayList.setInput(mistakes);
 
 		// Using the low-level table to detect shift-clicks
 		this.displayList.getTable().addSelectionListener(new SelectionAdapter() {
