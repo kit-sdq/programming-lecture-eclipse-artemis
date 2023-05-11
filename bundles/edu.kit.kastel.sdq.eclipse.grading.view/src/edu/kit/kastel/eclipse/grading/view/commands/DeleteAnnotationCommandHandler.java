@@ -44,6 +44,7 @@ public class DeleteAnnotationCommandHandler extends AbstractHandler {
 		List<IAnnotation> annotationsAtLine = assessment.getAnnotations().stream().filter(a -> a.getStartLine() <= line && a.getEndLine() >= line).toList();
 
 		if (annotationsAtLine.isEmpty()) {
+			DialogUtil.suppressKeyEvent(event);
 			return null;
 		}
 
