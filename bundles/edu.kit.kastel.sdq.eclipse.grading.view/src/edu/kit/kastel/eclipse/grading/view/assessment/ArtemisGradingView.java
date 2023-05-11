@@ -44,6 +44,7 @@ import edu.kit.kastel.eclipse.common.view.utilities.JDTUtilities;
 import edu.kit.kastel.eclipse.common.view.utilities.UIUtilities;
 import edu.kit.kastel.eclipse.grading.view.activator.Activator;
 import edu.kit.kastel.eclipse.grading.view.commands.AddAnnotationCommandHandler;
+import edu.kit.kastel.eclipse.grading.view.commands.DeleteAnnotationCommandHandler;
 import edu.kit.kastel.eclipse.grading.view.controllers.AssessmentViewController;
 import edu.kit.kastel.eclipse.grading.view.listeners.AssessmentMarkerViewDoubleClickListener;
 import edu.kit.kastel.eclipse.grading.view.listeners.KeyboardAwareMouseListener;
@@ -58,6 +59,7 @@ import edu.kit.kastel.eclipse.grading.view.listeners.KeyboardAwareMouseListener;
  */
 public class ArtemisGradingView extends ViewPart {
 	private static final String ADD_ANNOTATION_COMMAND = "edu.kit.kastel.eclipse.grading.assessment.keybindings.addAnnotation";
+	private static final String DELETE_ANNOTATION_COMMAND = "edu.kit.kastel.eclipse.grading.assessment.keybindings.deleteAnnotation";
 
 	private static final ILog LOG = Platform.getLog(ArtemisGradingView.class);
 
@@ -85,10 +87,14 @@ public class ArtemisGradingView extends ViewPart {
 	public void init(IViewSite site) throws PartInitException {
 		super.init(site);
 
-		// Set the command handler manually to be able to inject the view controller
+		// Set the command handlers manually to be able to inject the view controller
 		ICommandService commandService = getSite().getService(ICommandService.class);
-		var command = commandService.getCommand(ADD_ANNOTATION_COMMAND);
-		command.setHandler(new AddAnnotationCommandHandler(this, this.viewController));
+
+		var addAnnotationCommand = commandService.getCommand(ADD_ANNOTATION_COMMAND);
+		addAnnotationCommand.setHandler(new AddAnnotationCommandHandler(this, this.viewController));
+
+		var deleteAnnotationCommand = commandService.getCommand(DELETE_ANNOTATION_COMMAND);
+		deleteAnnotationCommand.setHandler(new DeleteAnnotationCommandHandler(this, this.viewController));
 	}
 
 	private void addListenerForMarkerDeletion() {

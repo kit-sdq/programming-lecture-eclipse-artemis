@@ -9,10 +9,6 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.text.source.ISourceViewer;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.ui.texteditor.AbstractTextEditor;
 
 import edu.kit.kastel.eclipse.common.api.model.IMistakeType;
 import edu.kit.kastel.eclipse.common.view.utilities.AssessmentUtilities;
@@ -22,7 +18,6 @@ import edu.kit.kastel.eclipse.grading.view.assessment.CustomButtonDialog;
 import edu.kit.kastel.eclipse.grading.view.controllers.AssessmentViewController;
 
 public class AddAnnotationCommandHandler extends AbstractHandler {
-	private static final int DIALOG_OFFSET_X = 10; // px
 
 	private final AssessmentViewController controller;
 	private final ArtemisGradingView view;
@@ -45,11 +40,7 @@ public class AddAnnotationCommandHandler extends AbstractHandler {
 		var dialog = new AddAnnotationDialog(AssessmentUtilities.getWindowsShell(), assessment);
 		dialog.setBlockOnOpen(true);
 		dialog.create();
-
-		var dialogPosition = getCaretPosition();
-		dialogPosition.x += DIALOG_OFFSET_X;
-		dialogPosition.y += getLineHeight();
-		dialog.getShell().setLocation(dialogPosition);
+		dialog.getShell().setLocation(DialogUtil.getInEditorDialogPosition());
 		dialog.open();
 
 		Optional<IMistakeType> selectedMistake = dialog.getSelectedMistake();
@@ -59,7 +50,7 @@ public class AddAnnotationCommandHandler extends AbstractHandler {
 						controller, selectedMistake.get());
 				customDialog.setBlockOnOpen(true);
 				customDialog.create();
-				customDialog.getShell().setLocation(dialogPosition);
+				customDialog.getShell().setLocation(DialogUtil.getInEditorDialogPosition());
 				customDialog.open();
 				// The dialog creates the annotation
 			} else if (dialog.isCustomMessageWanted()) {
@@ -67,7 +58,7 @@ public class AddAnnotationCommandHandler extends AbstractHandler {
 						controller, null);
 				customDialog.setBlockOnOpen(true);
 				customDialog.create();
-				customDialog.getShell().setLocation(dialogPosition);
+				customDialog.getShell().setLocation(DialogUtil.getInEditorDialogPosition());
 				customDialog.getShell().setText("Add custom message to penalty \"" + selectedMistake.get().getButtonText(I18N().key()) + "\"");
 				customDialog.open();
 				if (customDialog.isClosedByOk()) {
@@ -79,36 +70,9 @@ public class AddAnnotationCommandHandler extends AbstractHandler {
 			this.view.updatePenalties();
 		}
 
-		// Prevent insertion of a new line because the default keybinding is alt+enter
-		if (event.getTrigger() != null) {
-			((Event) event.getTrigger()).doit = false;
-		}
-
-		// Return the focus to the editor
+		DialogUtil.suppressKeyEvent(event);
 		AssessmentUtilities.getActiveEditor().setFocus();
 
 		return null;
-	}
-
-	private ISourceViewer getActiveSourceViewer() {
-		try {
-			var method = AbstractTextEditor.class.getDeclaredMethod("getSourceViewer");
-			method.setAccessible(true);
-			return (ISourceViewer) method.invoke(AssessmentUtilities.getActiveEditor());
-		} catch (ReflectiveOperationException e) {
-			Platform.getLog(this.getClass()).error("Failed to obtain the source viewer", e);
-			return null;
-		}
-	}
-
-	private Point getCaretPosition() {
-		var viewer = getActiveSourceViewer();
-		int caret = viewer.getTextWidget().getCaretOffset();
-		return viewer.getTextWidget().toDisplay(viewer.getTextWidget().getLocationAtOffset(caret));
-	}
-
-	private int getLineHeight() {
-		var viewer = getActiveSourceViewer();
-		return viewer.getTextWidget().getLineHeight();
 	}
 }
