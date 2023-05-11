@@ -112,6 +112,7 @@ public class DeleteAnnotationDialog extends Dialog {
 			public void keyPressed(KeyEvent e) {
 				if (e.keyCode == SWT.DEL) {
 					selectedAnnotation = (IAnnotation) displayList.getStructuredSelection().getFirstElement();
+					e.doit = false;
 					close();
 				}
 			}
