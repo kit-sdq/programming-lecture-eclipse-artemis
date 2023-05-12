@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.view.utilities;
 
 import org.eclipse.swt.SWT;
@@ -28,5 +28,6 @@ public final class UIUtilities {
 		}
 		casted.setContent(content);
 		casted.setMinSize(content.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+		content.layout();
 	}
 }

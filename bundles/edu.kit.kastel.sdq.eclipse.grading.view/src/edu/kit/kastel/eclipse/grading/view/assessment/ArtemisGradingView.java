@@ -325,6 +325,8 @@ public class ArtemisGradingView extends ViewPart {
 					mistakeButton.addMouseListener(listener);
 				}
 			});
+			rgDisplay.setSize(rgDisplay.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+			rgDisplay.layout();
 		});
 
 		UIUtilities.initializeTabAfterFilling(container, gradingButtonComposite);
