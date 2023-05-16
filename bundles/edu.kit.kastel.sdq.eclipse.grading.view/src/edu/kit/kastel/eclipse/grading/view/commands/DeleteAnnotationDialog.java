@@ -4,8 +4,11 @@ package edu.kit.kastel.eclipse.grading.view.commands;
 import static edu.kit.kastel.eclipse.common.view.languages.LanguageSettings.I18N;
 
 import java.util.List;
-import java.util.Optional;
 
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.StyledCellLabelProvider;
@@ -25,24 +28,30 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
+import edu.kit.kastel.eclipse.common.api.controller.IAssessmentController;
 import edu.kit.kastel.eclipse.common.api.model.IAnnotation;
+import edu.kit.kastel.eclipse.common.view.utilities.AssessmentUtilities;
+import edu.kit.kastel.eclipse.grading.view.activator.Activator;
+import edu.kit.kastel.eclipse.grading.view.assessment.ArtemisGradingView;
 
 public class DeleteAnnotationDialog extends Dialog {
+	private static final ILog LOG = Platform.getLog(DeleteAnnotationDialog.class);
+
 	private static final int LIST_HEIGHT = 200;
 	private static final int LIST_WIDTH = 400;
 
-	private final List<IAnnotation> annotations;
+	private final IAssessmentController controller;
+	private final ArtemisGradingView view;
+	private final String path;
+	private final int line;
 	private TableViewer displayList;
 
-	private IAnnotation selectedAnnotation;
-
-	public DeleteAnnotationDialog(Shell parentShell, List<IAnnotation> annotations) {
+	public DeleteAnnotationDialog(Shell parentShell, IAssessmentController controller, ArtemisGradingView view, String path, int line) {
 		super(parentShell);
-		this.annotations = annotations;
-	}
-
-	public Optional<IAnnotation> getSelectedAnnotation() {
-		return Optional.ofNullable(this.selectedAnnotation);
+		this.controller = controller;
+		this.view = view;
+		this.line = line;
+		this.path = path;
 	}
 
 	@Override
@@ -56,6 +65,7 @@ public class DeleteAnnotationDialog extends Dialog {
 		delInfo.setText("Press Del to delete");
 		delInfo.setForeground(new Color(100, 100, 100));
 		this.createAnnotationList(container);
+		this.updateAnnotations();
 
 		return container;
 	}
@@ -105,15 +115,19 @@ public class DeleteAnnotationDialog extends Dialog {
 		});
 
 		this.displayList.setContentProvider(ArrayContentProvider.getInstance());
-		this.displayList.setInput(this.annotations);
 
 		this.displayList.getTable().addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
-				if (e.keyCode == SWT.DEL) {
-					selectedAnnotation = (IAnnotation) displayList.getStructuredSelection().getFirstElement();
+				if (e.keyCode == SWT.DEL || e.keyCode == SWT.BS) {
+					var annotation = (IAnnotation) displayList.getStructuredSelection().getFirstElement();
+					if (annotation != null) {
+						deleteAnnotation(annotation);
+						updateAnnotations();
+						displayList.getTable().select(0);
+						displayList.getTable().showSelection();
+					}
 					e.doit = false;
-					close();
 				}
 			}
 		});
@@ -145,5 +159,25 @@ public class DeleteAnnotationDialog extends Dialog {
 		gridData.widthHint = LIST_WIDTH;
 		gridData.horizontalAlignment = GridData.FILL;
 		this.displayList.getControl().setLayoutData(gridData);
+	}
+
+	private void updateAnnotations() {
+		List<IAnnotation> annotationsAtLine = this.controller.getAnnotations().stream()
+				.filter(a -> a.getClassFilePath().equals(this.path) && a.getStartLine() <= this.line && a.getEndLine() >= this.line).toList();
+		this.displayList.setInput(annotationsAtLine);
+	}
+
+	private void deleteAnnotation(IAnnotation annotation) {
+		this.controller.removeAnnotation(annotation.getUUID());
+		IMarker marker = AssessmentUtilities.findPresentAnnotation(annotation, Activator.getDefault().getSystemwideController().getCurrentProjectName(),
+				"assignment/");
+		if (marker != null) {
+			try {
+				marker.delete();
+			} catch (CoreException e) {
+				LOG.error("Could not delete marker", e);
+			}
+		}
+		this.view.updatePenalties();
 	}
 }
