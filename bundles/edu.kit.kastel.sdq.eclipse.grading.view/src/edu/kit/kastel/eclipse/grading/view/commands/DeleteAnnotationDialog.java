@@ -62,7 +62,7 @@ public class DeleteAnnotationDialog extends Dialog {
 		container.setLayout(layout);
 
 		Label delInfo = new Label(container, SWT.NONE);
-		delInfo.setText("Press Del to delete");
+		delInfo.setText("Press Backspace or Del to delete");
 		delInfo.setForeground(new Color(100, 100, 100));
 		this.createAnnotationList(container);
 		this.updateAnnotations();
