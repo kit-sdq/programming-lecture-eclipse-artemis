@@ -1,0 +1,68 @@
+name: Eclipse Artemis (Manual Release)
+
+on:
+  workflow_dispatch:
+    inputs:
+      release-version:
+        type: string
+        description: The version for release. E.g., "1.2.3"
+        required: true
+      next-version:
+        type: string
+        description: The version after release. E.g., "2.0.0"
+        required: true
+
+jobs:
+  build:
+    name: "Trigger new Release"
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3.5.2
+      with:
+        persist-credentials: false
+
+    - name: Set up JDK
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'temurin'
+        java-version: 17
+
+    - name: Prepare GIT
+      shell: bash
+      run: |
+        git config --global user.email "action@github.com"
+        git config --global user.name "GitHub Action"
+
+    - name: Set Release Version
+      run: mvn -Pproducts -DnewVersion=${{ github.event.inputs.release-version }} tycho-versions:set-version
+      
+    - name: Test whether release version will build
+      run: mvn -Pproducts -U -B package
+      
+    - name: Commit & Tag release version
+      shell: bash
+      run: |
+        git add .
+        git commit --allow-empty -m "Prepare for Release ${{ github.event.inputs.release-version }}"
+        git tag "v${{ github.event.inputs.release-version }}"
+        
+    - name: Set Next Version
+      run: mvn -Pproducts -DnewVersion=${{ github.event.inputs.next-version }} tycho-versions:set-version
+      
+    - name: Test whether next version will build
+      run: mvn -Pproducts -U -B package
+      
+    - name: Commit next version
+      shell: bash
+      run: |
+        git add .
+        git commit --allow-empty -m "Bump to next version {{ github.event.inputs.next-version }}"
+        
+    - name: Push Changes
+      uses: ad-m/github-push-action@master
+      with:
+        # See https://github.com/orgs/community/discussions/25702 and https://github.com/orgs/community/discussions/26220
+        github_token: ${{ secrets.PAT_TOKEN }}
+        branch: ${{ github.ref }}
+        tags: true
