@@ -33,10 +33,6 @@ jobs:
         mv releng/edu.kit.kastel.sdq.eclipse.grading.product/target/products/*-linux.*.aarch64.zip dists/Artemis_Grading_Linux_aarch64.zip
         mv releng/edu.kit.kastel.sdq.eclipse.grading.product/target/products/*-macosx.*.x86_64.zip dists/Artemis_Grading_MacOS_x86_64.zip
         mv releng/edu.kit.kastel.sdq.eclipse.grading.product/target/products/*-macosx.*.aarch64.zip dists/Artemis_Grading_MacOS_aarch64.zip
-    
-    - name: Create sha256sum
-      run: |
-        for f in dists/*.zip; do shasum -a 256 $f > $f.sha256; done
 
     - name: Sign MacOS Eclipse Distribution (Grading)
       env: 
@@ -60,6 +56,10 @@ jobs:
         /usr/bin/codesign -s "kit-sdq/programming-lecture-eclipse-artemis" -fv Eclipse.app
         rm dists/Artemis_Grading_MacOS_aarch64.zip
         ditto -c -k --sequesterRsrc --keepParent Eclipse.app dists/Artemis_Grading_MacOS_aarch64.zip 
+
+    - name: Create sha256sum
+      run: |
+        for f in dists/*.zip; do shasum -a 256 $f > $f.sha256; done
 
     - name: Deploy Update Site
       uses: JamesIves/github-pages-deploy-action@v4.4.1
