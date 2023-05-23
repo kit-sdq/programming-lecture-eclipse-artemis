@@ -2,17 +2,13 @@
 package edu.kit.kastel.eclipse.grading.view.commands;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.Platform;
 
-import edu.kit.kastel.eclipse.common.api.controller.IAssessmentController;
 import edu.kit.kastel.eclipse.common.api.model.IAnnotation;
 import edu.kit.kastel.eclipse.common.view.utilities.AssessmentUtilities;
 import edu.kit.kastel.eclipse.grading.view.activator.Activator;
@@ -40,43 +36,26 @@ public class DeleteAnnotationCommandHandler extends AbstractHandler {
 			return null;
 		}
 
+		String path = AssessmentUtilities.getPathForAnnotation();
 		int line = AssessmentUtilities.getTextSelection().getStartLine();
-		List<IAnnotation> annotationsAtLine = assessment.getAnnotations().stream().filter(a -> a.getStartLine() <= line && a.getEndLine() >= line).toList();
+		List<IAnnotation> annotationsAtLine = assessment.getAnnotations().stream()
+				.filter(a -> a.getClassFilePath().equals(path) && a.getStartLine() <= line && a.getEndLine() >= line).toList();
 
 		if (annotationsAtLine.isEmpty()) {
 			DialogUtil.suppressKeyEvent(event);
 			return null;
 		}
 
-		var dialog = new DeleteAnnotationDialog(AssessmentUtilities.getWindowsShell(), annotationsAtLine);
+		var dialog = new DeleteAnnotationDialog(AssessmentUtilities.getWindowsShell(), assessment, view, path, line);
 		dialog.setBlockOnOpen(true);
 		dialog.create();
 
 		dialog.getShell().setLocation(DialogUtil.getInEditorDialogPosition());
 		dialog.open();
 
-		Optional<IAnnotation> selectedAnnotation = dialog.getSelectedAnnotation();
-		if (selectedAnnotation.isPresent()) {
-			this.deleteAnnotation(assessment, selectedAnnotation.get());
-		}
-
 		DialogUtil.suppressKeyEvent(event);
 		AssessmentUtilities.getActiveEditor().setFocus();
 
 		return null;
-	}
-
-	private void deleteAnnotation(IAssessmentController assessment, IAnnotation annotation) {
-		assessment.removeAnnotation(annotation.getUUID());
-		IMarker marker = AssessmentUtilities.findPresentAnnotation(annotation, Activator.getDefault().getSystemwideController().getCurrentProjectName(),
-				"assignment/");
-		if (marker != null) {
-			try {
-				marker.delete();
-			} catch (CoreException e) {
-				LOG.error("Could not delete marker", e);
-			}
-		}
-		this.view.updatePenalties();
 	}
 }
