@@ -31,11 +31,11 @@ public abstract class AbstractArtemisClient {
 	private static final String DEFAULT_PROTOCOL_PREFIX = "https://";
 
 	// paths
-	protected static final String PROGRAMMING_SUBMISSION_PATHPART = "programming-submissions";
+	protected static final String PROGRAMMING_SUBMISSIONS_PATHPART = "programming-submissions";
 	protected static final String EXERCISES_PATHPART = "exercises";
 	protected static final String COURSES_PATHPART = "courses";
 	protected static final String EXAMS_PATHPART = "exams";
-	protected static final String PARTICIPATION_PATHPART = "participations";
+	protected static final String PARTICIPATIONS_PATHPART = "participations";
 	protected static final String RESULT_PATHPART = "results";
 
 	protected static final String COOKIE_NAME_JWT = "jwt";

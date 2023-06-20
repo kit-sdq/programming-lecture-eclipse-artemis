@@ -20,7 +20,7 @@ public class FeedbackArtemisClient extends AbstractArtemisClient implements IFee
 	@Override
 	public Feedback[] getFeedbackForResult(ParticipationDTO participation, ResultsDTO result) throws ArtemisClientException {
 		Request request = new Request.Builder() //
-				.url(this.path(PARTICIPATION_PATHPART, participation.getParticipationId(), RESULT_PATHPART, result.id, "details")).get().build();
+				.url(this.path(PARTICIPATIONS_PATHPART, participation.getParticipationId(), RESULT_PATHPART, result.id, "details")).get().build();
 
 		return this.call(this.client, request, Feedback[].class);
 	}

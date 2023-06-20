@@ -5,6 +5,9 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
+import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.Platform;
+
 import edu.kit.kastel.eclipse.common.api.ArtemisClientException;
 import edu.kit.kastel.eclipse.common.api.artemis.ILockResult;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.ICourse;
@@ -20,6 +23,8 @@ import edu.kit.kastel.eclipse.common.api.model.IRatingGroup;
 import edu.kit.kastel.eclipse.common.core.artemis.AnnotationMapper;
 
 public class GradingArtemisController extends ArtemisController implements IGradingArtemisController {
+
+	private static final ILog log = Platform.getLog(GradingArtemisController.class);
 
 	public GradingArtemisController(String host, String username, String password, IViewInteraction handler) {
 		super(host, username, password, handler);
@@ -87,7 +92,7 @@ public class GradingArtemisController extends ArtemisController implements IGrad
 		try {
 			lockResultOptional = this.clientManager.getAssessmentArtemisClient().startNextAssessment(exercise, correctionRound);
 		} catch (ArtemisClientException e) {
-			this.error(Messages.ASSESSMENT_COULD_NOT_BE_STARTED_MESSAGE + e.getMessage(), e);
+			log.error(Messages.ASSESSMENT_COULD_NOT_BE_STARTED_MESSAGE + e.getMessage(), e);
 			return Optional.empty();
 		}
 		if (lockResultOptional.isEmpty()) {

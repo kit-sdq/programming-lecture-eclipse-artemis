@@ -75,7 +75,7 @@ public class LoginManager extends AbstractArtemisClient implements IAuthenticati
 			return null;
 		}
 		OkHttpClient clientWithToken = this.createClient(this.token);
-		Request request = new Request.Builder().url(this.path("account")).get().build();
+		Request request = new Request.Builder().url(this.path("public", "account")).get().build();
 		return this.call(clientWithToken, request, User.class);
 	}
 
@@ -83,7 +83,7 @@ public class LoginManager extends AbstractArtemisClient implements IAuthenticati
 		String payload = this.payload(this.getAuthenticationEntity());
 
 		Request request = new Request.Builder() //
-				.url(this.path("authenticate")).post(RequestBody.create(payload, JSON)).build();
+				.url(this.path("public", "authenticate")).post(RequestBody.create(payload, JSON)).build();
 
 		try (Response response = this.client.newCall(request).execute()) {
 			this.throwIfStatusUnsuccessful(response);
