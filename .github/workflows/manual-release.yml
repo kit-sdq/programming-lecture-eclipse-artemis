@@ -57,7 +57,7 @@ jobs:
       shell: bash
       run: |
         git add .
-        git commit --allow-empty -m "Bump to next version {{ github.event.inputs.next-version }}"
+        git commit --allow-empty -m "Bump to next version ${{ github.event.inputs.next-version }}"
         
     - name: Push Changes
       uses: ad-m/github-push-action@master
