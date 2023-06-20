@@ -8,7 +8,7 @@ public final class EclipseArtemisConstants {
 		throw new IllegalAccessError();
 	}
 
-	public static final Version MINIMUM_ARTEMIS_VERSION_INCLUSIVE = new Version(6, 0, 0);
+	public static final Version MINIMUM_ARTEMIS_VERSION_INCLUSIVE = new Version(6, 3, 0);
 	public static final Version MAXIMUM_ARTEMIS_VERSION_EXCLUSIVE = new Version(7, 0, 0);
 
 	public static final String GRADING_WIKI_URL = "https://github.com/kit-sdq/programming-lecture-eclipse-artemis/wiki";

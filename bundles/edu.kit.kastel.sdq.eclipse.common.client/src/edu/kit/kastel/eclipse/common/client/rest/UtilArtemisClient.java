@@ -21,7 +21,7 @@ public class UtilArtemisClient extends AbstractArtemisClient implements IUtilArt
 
 	@Override
 	public LocalDateTime getTime() throws ArtemisClientException {
-		Request request = new Request.Builder().url(this.getRootURL() + "/time").get().build();
+		Request request = new Request.Builder().url(this.path("public", "time")).get().build();
 		return this.call(this.client, request, LocalDateTime.class);
 	}
 

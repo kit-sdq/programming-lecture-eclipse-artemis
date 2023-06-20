@@ -28,7 +28,7 @@ public class ParticipationArtemisClient extends AbstractArtemisClient implements
 	@Override
 	public ParticipationDTO getParticipationWithLatestResult(int participationId) throws ArtemisClientException {
 		Request request = new Request.Builder() //
-				.url(this.path(PARTICIPATION_PATHPART, participationId, "withLatestResult")).get().build();
+				.url(this.path(PARTICIPATIONS_PATHPART, participationId, "withLatestResult")).get().build();
 		return this.call(this.client, request, ParticipationDTO.class);
 	}
 

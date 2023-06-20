@@ -28,7 +28,7 @@ public class SubmissionsArtemisClient extends AbstractArtemisClient implements I
 	public List<ISubmission> getSubmissions(IExercise exercise, int correctionRound) throws ArtemisClientException {
 		boolean isInstructor = exercise.getCourse().isInstructor(this.assessor);
 		Request request = new Request.Builder() //
-				.url(this.path(EXERCISES_PATHPART, exercise.getExerciseId(), PROGRAMMING_SUBMISSION_PATHPART).newBuilder()
+				.url(this.path(EXERCISES_PATHPART, exercise.getExerciseId(), PROGRAMMING_SUBMISSIONS_PATHPART).newBuilder()
 						.addQueryParameter("assessedByTutor", String.valueOf(!isInstructor))
 						.addQueryParameter("correction-round", String.valueOf(correctionRound)).build())
 				.get().build();

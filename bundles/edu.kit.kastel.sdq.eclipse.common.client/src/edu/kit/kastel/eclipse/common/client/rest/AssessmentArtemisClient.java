@@ -26,13 +26,13 @@ import okhttp3.Response;
 public class AssessmentArtemisClient extends AbstractArtemisClient implements IAssessmentArtemisClient {
 	private static final ILog log = Platform.getLog(AssessmentArtemisClient.class);
 
-	private static final String SUBMISSION_WIHOUT_ASSESSMENT_PATH = "programming-submission-without-assessment";
-	private static final String PARTICIPATION_PATHPART = "participations";
-	private static final String MANUAL_RESULT_PATHPART = "manual-results";
+	private static final String PROGRAMMING_SUBMISSION_WIHOUT_ASSESSMENT_PATH = "programming-submission-without-assessment";
+	private static final String PARTICIPATIONS_PATHPART = "participations";
+	private static final String MANUAL_RESULTS_PATHPART = "manual-results";
 	private static final String CORRECTION_ROUND_QUERY_PARAM = "correction-round";
 	private static final String LOCK_QUERY_PARAM = "lock";
 	private static final String SUBMIT_QUERY_PARAM = "submit";
-	protected static final String STATS_PATH = "stats-for-assessment-dashboard";
+	protected static final String STATS_FOR_ASSESSMENT_DASHBOARD_PATH = "stats-for-assessment-dashboard";
 
 	private final OkHttpClient client;
 
@@ -47,7 +47,7 @@ public class AssessmentArtemisClient extends AbstractArtemisClient implements IA
 		log.info(String.format("Saving assessment for submission %s with json: %s", assessment.id, assessmentPayload));
 
 		Request request = new Request.Builder() //
-				.url(this.path(PARTICIPATION_PATHPART, participationId, MANUAL_RESULT_PATHPART).newBuilder()
+				.url(this.path(PARTICIPATIONS_PATHPART, participationId, MANUAL_RESULTS_PATHPART).newBuilder()
 						.addQueryParameter(SUBMIT_QUERY_PARAM, String.valueOf(submit)).build())
 				.put(RequestBody.create(assessmentPayload, JSON)).build();
 
@@ -57,7 +57,7 @@ public class AssessmentArtemisClient extends AbstractArtemisClient implements IA
 	@Override
 	public ILockResult startAssessment(ISubmission submission) throws ArtemisClientException {
 		Request request = new Request.Builder() //
-				.url(this.path(PROGRAMMING_SUBMISSION_PATHPART, submission.getSubmissionId(), LOCK_QUERY_PARAM).newBuilder()
+				.url(this.path(PROGRAMMING_SUBMISSIONS_PATHPART, submission.getSubmissionId(), LOCK_QUERY_PARAM).newBuilder()
 						.addQueryParameter(CORRECTION_ROUND_QUERY_PARAM, String.valueOf(submission.getCorrectionRound())).build())
 				.get().build();
 
@@ -67,7 +67,7 @@ public class AssessmentArtemisClient extends AbstractArtemisClient implements IA
 	@Override
 	public Optional<ILockResult> startNextAssessment(IExercise exercise, int correctionRound) throws ArtemisClientException {
 		Request request = new Request.Builder() //
-				.url(this.path(EXERCISES_PATHPART, exercise.getExerciseId(), SUBMISSION_WIHOUT_ASSESSMENT_PATH).newBuilder()
+				.url(this.path(EXERCISES_PATHPART, exercise.getExerciseId(), PROGRAMMING_SUBMISSION_WIHOUT_ASSESSMENT_PATH).newBuilder()
 						.addQueryParameter(CORRECTION_ROUND_QUERY_PARAM, String.valueOf(correctionRound))
 						.addQueryParameter(LOCK_QUERY_PARAM, String.valueOf(true)).build())
 				.get().build();
@@ -86,7 +86,7 @@ public class AssessmentArtemisClient extends AbstractArtemisClient implements IA
 	@Override
 	public ExerciseStats getStats(IExercise exercise) throws ArtemisClientException {
 		Request request = new Request.Builder() //
-				.url(this.path(EXERCISES_PATHPART, exercise.getExerciseId(), STATS_PATH)).get().build();
+				.url(this.path(EXERCISES_PATHPART, exercise.getExerciseId(), STATS_FOR_ASSESSMENT_DASHBOARD_PATH)).get().build();
 
 		Stats stats = null;
 		try (Response response = this.client.newCall(request).execute()) {
@@ -123,7 +123,7 @@ public class AssessmentArtemisClient extends AbstractArtemisClient implements IA
 
 	private int countSubmissions(IExercise exercise, int correctionRound) throws ArtemisClientException {
 		Request request = new Request.Builder() //
-				.url(this.path(EXERCISES_PATHPART, exercise.getExerciseId(), PROGRAMMING_SUBMISSION_PATHPART).newBuilder()
+				.url(this.path(EXERCISES_PATHPART, exercise.getExerciseId(), PROGRAMMING_SUBMISSIONS_PATHPART).newBuilder()
 						.addQueryParameter("assessedByTutor", String.valueOf(true)).addQueryParameter("correction-round", String.valueOf(correctionRound))
 						.build())
 				.get().build();
