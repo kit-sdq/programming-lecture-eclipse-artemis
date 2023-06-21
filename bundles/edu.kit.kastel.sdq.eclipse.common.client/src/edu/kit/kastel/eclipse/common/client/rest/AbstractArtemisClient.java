@@ -35,8 +35,6 @@ public abstract class AbstractArtemisClient {
 	protected static final String EXERCISES_PATHPART = "exercises";
 	protected static final String COURSES_PATHPART = "courses";
 	protected static final String EXAMS_PATHPART = "exams";
-	protected static final String PARTICIPATIONS_PATHPART = "participations";
-	protected static final String RESULT_PATHPART = "results";
 
 	protected static final String COOKIE_NAME_JWT = "jwt";
 
@@ -44,13 +42,11 @@ public abstract class AbstractArtemisClient {
 	protected final String hostname;
 	// e.g., https://
 	private final String protocol;
-	private ObjectMapper orm;
+	private final ObjectMapper orm;
 
 	/**
-	 * @param artemisUsername for login to artemis
-	 * @param artemisPassword for login to artemis
-	 * @param hostname        the hostname of the artemis system. Will be
-	 *                        transformed to domain-name:port
+	 * @param hostname the hostname of the artemis system. Will be transformed to
+	 *                 domain-name:port
 	 */
 	protected AbstractArtemisClient(String hostname) {
 		this.protocol = extractProtocol(hostname.trim());

@@ -43,3 +43,5 @@ buildNumber.properties
 pom.tycho
 
 wiki
+.idea
+*.iml

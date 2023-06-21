@@ -30,7 +30,6 @@ public class BrowserLogin extends Dialog {
 
 	private final String fullUrl;
 	private String token;
-	private Browser browser;
 
 	private boolean closed = false;
 
@@ -61,15 +60,16 @@ public class BrowserLogin extends Dialog {
 		final GridLayout layout = (GridLayout) comp.getLayout();
 		layout.numColumns = 1;
 
+		Browser browser;
 		if (this.isWindows10orAbove()) {
-			this.browser = new Browser(comp, SWT.EDGE);
+			browser = new Browser(comp, SWT.EDGE);
 		} else {
-			this.browser = new Browser(comp, SWT.NONE);
+			browser = new Browser(comp, SWT.NONE);
 		}
-		this.browser.setLayoutData(new GridData(GridData.FILL_BOTH));
-		this.browser.setJavascriptEnabled(true);
-		this.browser.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		this.browser.setUrl(this.fullUrl);
+		browser.setLayoutData(new GridData(GridData.FILL_BOTH));
+		browser.setJavascriptEnabled(true);
+		browser.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		browser.setUrl(this.fullUrl);
 		return comp;
 	}
 

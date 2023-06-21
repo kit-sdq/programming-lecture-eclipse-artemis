@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.grading.view.assessment;
 
 import java.util.List;
@@ -52,8 +52,8 @@ public class ResultTab extends AbstractResultTab {
 		return null;
 	}
 
-	public void loadFeedbackForExcerise() {
-		this.reloadFeedbackForExcerise();
+	public void loadFeedbackForExercise() {
+		this.reloadFeedbackForExercise();
 	}
 
 	public void reset() {

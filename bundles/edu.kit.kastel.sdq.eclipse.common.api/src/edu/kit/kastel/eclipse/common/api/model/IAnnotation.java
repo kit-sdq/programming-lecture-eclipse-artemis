@@ -1,17 +1,18 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.api.model;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 /**
  * An annotation is one specific occurrence of a IMistakeType. There might be
- * multiple Annotations.
+ * multiple Annotations.<br>
  *
  * Note that penalty calculation is done collectively:
- * {@link IMistakeType#calculatePenalty(java.util.List)} You may define a custom
- * penalty which might be used by some MistakeType (more precise: by its
- * PenaltyRule). Also, you may define a custom message.
+ * {@link IMistakeType#calculate(List)}} You may define a custom penalty which
+ * might be used by some MistakeType (more precise: by its PenaltyRule). Also,
+ * you may define a custom message.
  */
 public interface IAnnotation {
 

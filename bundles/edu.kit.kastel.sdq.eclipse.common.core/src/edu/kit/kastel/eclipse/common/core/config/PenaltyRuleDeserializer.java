@@ -1,7 +1,8 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.core.config;
 
 import java.io.IOException;
+import java.io.Serial;
 import java.util.function.Function;
 
 import com.fasterxml.jackson.core.JsonParser;
@@ -23,6 +24,7 @@ import edu.kit.kastel.eclipse.common.core.model.rule.ThresholdPenaltyRule;
  *
  */
 public class PenaltyRuleDeserializer extends StdDeserializer<PenaltyRule> {
+	@Serial
 	private static final long serialVersionUID = 6326274512036616184L;
 
 	/**
@@ -36,7 +38,7 @@ public class PenaltyRuleDeserializer extends StdDeserializer<PenaltyRule> {
 		// Need to add a new enum value with a short Name (that must be used in the
 		// config file) and a constructor based on the json node.
 		THRESHOLD_PENALTY_RULE_TYPE(ThresholdPenaltyRule.SHORT_NAME, ThresholdPenaltyRule::new), //
-		STACKING_PENATLY_RULE_TYPE(StackingPenaltyRule.SHORT_NAME, StackingPenaltyRule::new), //
+		STACKING_PENALTY_RULE_TYPE(StackingPenaltyRule.SHORT_NAME, StackingPenaltyRule::new), //
 		CUSTOM_PENALTY_RULE_TYPE(CustomPenaltyRule.SHORT_NAME, CustomPenaltyRule::new);
 
 		public static PenaltyRuleType fromShortName(String shortName) {

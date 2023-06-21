@@ -1,11 +1,13 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.api.artemis.mapping;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ParticipationDTO implements Serializable {
+	@Serial
 	private static final long serialVersionUID = -9151262219739630658L;
 
 	@JsonProperty("id")
@@ -29,10 +31,6 @@ public class ParticipationDTO implements Serializable {
 
 	public String getParticipantIdentifier() {
 		return this.participantIdentifier;
-	}
-
-	public String getParticipantName() {
-		return this.participantName;
 	}
 
 	public String getRepositoryUrl() {

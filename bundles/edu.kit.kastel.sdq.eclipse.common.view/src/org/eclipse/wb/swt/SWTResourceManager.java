@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2011-2022. */
+/* Licensed under EPL-2.0 2011-2023. */
 package org.eclipse.wb.swt;
 
 import java.io.FileInputStream;
@@ -34,6 +34,7 @@ import org.eclipse.swt.widgets.Display;
  * @author scheglov_ke
  * @author Dan Rubel
  */
+@SuppressWarnings("ALL")
 public class SWTResourceManager {
 	////////////////////////////////////////////////////////////////////////////
 	//

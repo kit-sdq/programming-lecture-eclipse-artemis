@@ -31,7 +31,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		store.setDefault(PreferenceConstants.OPEN_FILES_ON_ASSESSMENT_START, PreferenceConstants.OPEN_FILES_ON_ASSESSMENT_START_MAIN);
 
 		store.setDefault(PreferenceConstants.AUTOGRADER_DOWNLOAD_JAR, true);
-		store.setDefault(PreferenceConstants.AUTOGRADER_DOWNLOADED_JAR_PATH, "nonexistingfile.wtf");
+		store.setDefault(PreferenceConstants.AUTOGRADER_DOWNLOADED_JAR_PATH, "nonexistingfile.nonexistingfile");
 	}
 
 }

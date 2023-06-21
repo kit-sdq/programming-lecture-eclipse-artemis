@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.api.controller;
 
 import java.util.Optional;
@@ -14,14 +14,13 @@ import edu.kit.kastel.eclipse.common.api.artemis.mapping.ISubmission;
 public interface IGradingArtemisController extends IArtemisController {
 	/**
 	 * Submit the assessment to Artemis. Must have been started by
-	 * {@link #startAssessment(int)}, {@link #startNextAssessment(int)} or
-	 * {@link #startNextAssessment(int, int)}, before!
-	 * 
-	 * @param submission
-	 * @param submit       should the assessment be submitted or merely saved to
-	 *                     artemis?
-	 * @param exerciseName the exercise name is used to internally identify which
-	 *                     annotations should be sent.
+	 * {@link #startAssessment(ISubmission)} or
+	 * {@link #startNextAssessment(IExercise, int)}.
+	 *
+	 * @param submit   should the assessment be submitted or merely saved to
+	 *                 artemis?
+	 * @param exercise the exercise is used to internally identify which annotations
+	 *                 should be sent.
 	 * @return whether the operation was successful.
 	 */
 	boolean saveAssessment(IAssessmentController assessmentController, IExercise exercise, ISubmission submission, boolean submit);

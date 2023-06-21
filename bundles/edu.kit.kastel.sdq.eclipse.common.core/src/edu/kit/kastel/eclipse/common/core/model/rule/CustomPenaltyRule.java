@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.core.model.rule;
 
 import java.util.List;
@@ -36,7 +36,7 @@ public class CustomPenaltyRule extends PenaltyRule {
 
 	@Override
 	public String getTooltip(List<IAnnotation> annotations) {
-		return new StringBuilder().append(this.calculate(annotations)).append(" points [").append(annotations.size()).append(" annotations made]").toString();
+		return this.calculate(annotations) + " points [" + annotations.size() + " annotations made]";
 	}
 
 	@Override

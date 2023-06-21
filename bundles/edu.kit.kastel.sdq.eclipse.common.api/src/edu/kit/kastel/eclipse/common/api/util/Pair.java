@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.api.util;
 
 public record Pair<A, B> (A first, B second) {
@@ -9,7 +9,7 @@ public record Pair<A, B> (A first, B second) {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static final <A, B> Pair<A, B> empty() {
+	public static <A, B> Pair<A, B> empty() {
 		return (Pair<A, B>) EMPTY;
 	}
 

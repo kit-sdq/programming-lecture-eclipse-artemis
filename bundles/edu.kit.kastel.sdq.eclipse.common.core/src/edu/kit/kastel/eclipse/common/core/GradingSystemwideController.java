@@ -256,11 +256,6 @@ public class GradingSystemwideController extends SystemwideController implements
 	}
 
 	@Override
-	protected void refreshArtemisController(IPreferenceStore preferenceStore) {
-		this.createController(preferenceStore, this.getViewInteractionHandler());
-	}
-
-	@Override
 	public boolean downloadExerciseAndSubmission(ICourse course, IExercise exercise, ISubmission submission, IProjectFileNamingStrategy projectNaming) {
 		final File eclipseWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile();
 

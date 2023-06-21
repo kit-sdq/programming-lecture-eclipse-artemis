@@ -3,17 +3,17 @@ student) edition.
 
 ## Setting up Eclipse
 
-0.  Use [Eclipse 2023-03](https://www.eclipse.org/downloads/packages/)
+1. Use [Eclipse 2023-03](https://www.eclipse.org/downloads/packages/)
     for development.
 
-1.  In general, you can use any distribution of eclipse. We\'d suggest
+2. In general, you can use any distribution of eclipse. We\'d suggest
     to you to use \"eclipse for eclipse committers\" for Plugin
     development.
 
-2.  Target Platform: Install the development section of the [Update
+3. Target Platform: Install the development section of the [Update
     Site](https://kit-sdq.github.io/programming-lecture-eclipse-artemis/).
 
-3.  Open project
+4. Open project
     -   Clone
             [this](https://github.com/kit-sdq/programming-lecture-eclipse-artemis)
             repository into your eclipse workspace.
@@ -27,12 +27,12 @@ student) edition.
             errors. The errors for the \"jvm\" module can be ignored.
             The project builds fine anyways.
 
-4. Target Platform Configuration:
-	- Go to Window > Preferences > Plug-In Development > Target Platform.
-	- Add a new Target Platform > Select Default > Click Finish
-	- Activate the Target Platform (Checkbox)
+5. Target Platform Configuration:
+    - Go to Window > Preferences > Plug-In Development > Target Platform.
+    - Add a new Target Platform > Select Default > Click Finish
+    - Activate the Target Platform (Checkbox)
 
-5. Run Configuration: Create a new eclipse run configuration. Do not edit anything. Just start it and click continue if eclipse shows some warnings.
+6. Run Configuration: Create a new eclipse run configuration. Do not edit anything. Just start it and click continue if eclipse shows some warnings.
 
 ## Architecture
 

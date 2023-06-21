@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.view.marker;
 
 import org.eclipse.ui.views.markers.MarkerField;
@@ -8,7 +8,7 @@ import org.eclipse.ui.views.markers.MarkerItem;
  * Class of the position field in the marker view. Converted to
  * [startLine,endLine]
  *
- * @See {@link MarkerField}
+ * @see MarkerField
  *
  */
 public class AssessmentMarkerPositionField extends MarkerField {

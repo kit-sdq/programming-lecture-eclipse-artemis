@@ -2,9 +2,8 @@
 package edu.kit.kastel.eclipse.common.view.languages;
 
 /**
- * This class provides German translations for all UI-Elements
- *
- * NOTE: This file MUST use UTF-8 encoding. Otherwise spotless will fail or
+ * This class provides German translations for all UI-Elements.<br>
+ * NOTE: This file MUST use UTF-8 encoding. Otherwise, spotless will fail or
  * umlauts will break.
  *
  * @see I18N
@@ -27,11 +26,6 @@ class GermanLanguage implements I18N {
 	}
 
 	@Override
-	public String settingsAdvancedDescription() {
-		return "Erweiterte Einstellungen für Artemis";
-	}
-
-	@Override
 	public String settingsLanguage() {
 		return "Sprache: ";
 	}
@@ -47,11 +41,6 @@ class GermanLanguage implements I18N {
 	}
 
 	@Override
-	public String settingsUrl() {
-		return "Artemis URL: ";
-	}
-
-	@Override
 	public String settingsUsername() {
 		return "Artemis Benutzername: ";
 	}
@@ -59,11 +48,6 @@ class GermanLanguage implements I18N {
 	@Override
 	public String settingsConfigPath() {
 		return "Bewertungs-Konfigurations-Datei: ";
-	}
-
-	@Override
-	public String settingsGitToken() {
-		return "Git Token (optional): ";
 	}
 
 	@Override
@@ -92,11 +76,6 @@ class GermanLanguage implements I18N {
 	}
 
 	@Override
-	public String backlog() {
-		return "Backlog";
-	}
-
-	@Override
 	public String submission() {
 		return "Abgabe";
 	}
@@ -122,21 +101,6 @@ class GermanLanguage implements I18N {
 	}
 
 	@Override
-	public String tabResultsDescription() {
-		return "Zusammenfassung der Ergebnisse der aktuell ausgewählten Aufgabe";
-	}
-
-	@Override
-	public String tabResultsDetailedText() {
-		return "Detailierter Text";
-	}
-
-	@Override
-	public String tabResultsLatest() {
-		return "Neuste Ergebnisse";
-	}
-
-	@Override
 	public String tabResultsLatestResultsFromArtemis() {
 		return "Neuste Ergebnisse von Artemis";
 	}
@@ -149,26 +113,6 @@ class GermanLanguage implements I18N {
 	@Override
 	public String tabResultsTutorComment() {
 		return "Tutor-Kommentar";
-	}
-
-	@Override
-	public String none() {
-		return "None";
-	}
-
-	@Override
-	public String ended() {
-		return "beendet";
-	}
-
-	@Override
-	public String notEnded() {
-		return "nicht beendet";
-	}
-
-	@Override
-	public String finished() {
-		return "fertig";
 	}
 
 	@Override
@@ -202,21 +146,6 @@ class GermanLanguage implements I18N {
 	}
 
 	@Override
-	public String submissions() {
-		return "Abgaben";
-	}
-
-	@Override
-	public String credits() {
-		return "Credits";
-	}
-
-	@Override
-	public String name() {
-		return "Name";
-	}
-
-	@Override
 	public String points() {
 		return "Punkte";
 	}
@@ -244,11 +173,6 @@ class GermanLanguage implements I18N {
 	@Override
 	public String unknownTask() {
 		return "Unbekannte Aufgabe";
-	}
-
-	@Override
-	public String tests() {
-		return "Test(s)";
 	}
 
 	@Override

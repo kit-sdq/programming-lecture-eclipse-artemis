@@ -11,7 +11,6 @@ public interface IUtilArtemisClient {
 	 * Returns current time of server.
 	 *
 	 * @return current Date of server
-	 * @throws ArtemisClientException
 	 */
 	LocalDateTime getTime() throws ArtemisClientException;
 
@@ -19,7 +18,6 @@ public interface IUtilArtemisClient {
 	 * Get the current version of artemis.
 	 * 
 	 * @return the current version of artemis
-	 * @throws ArtemisClientException
 	 */
 	Version getVersion() throws ArtemisClientException;
 }

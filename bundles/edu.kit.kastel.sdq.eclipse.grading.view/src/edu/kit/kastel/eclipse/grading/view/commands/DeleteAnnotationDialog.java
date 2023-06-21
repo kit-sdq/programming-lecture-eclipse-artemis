@@ -97,7 +97,7 @@ public class DeleteAnnotationDialog extends Dialog {
 
 				String rangeInfo;
 				if (annotation.getStartLine() == annotation.getEndLine()) {
-					rangeInfo = annotation.getStartLine() + "";
+					rangeInfo = String.valueOf(annotation.getStartLine());
 				} else {
 					rangeInfo = annotation.getStartLine() + " - " + annotation.getEndLine();
 				}

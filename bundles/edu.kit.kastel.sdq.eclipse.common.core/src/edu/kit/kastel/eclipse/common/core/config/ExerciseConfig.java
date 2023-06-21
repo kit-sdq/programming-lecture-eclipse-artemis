@@ -65,7 +65,7 @@ public class ExerciseConfig {
 	}
 
 	public boolean isPositiveFeedbackAllowed() {
-		return this.isPositiveFeedbackAllowed == null ? true : this.isPositiveFeedbackAllowed;
+		return this.isPositiveFeedbackAllowed == null || this.isPositiveFeedbackAllowed;
 	}
 
 }

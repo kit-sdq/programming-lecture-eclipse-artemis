@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.view.ui;
 
 import static edu.kit.kastel.eclipse.common.view.languages.LanguageSettings.I18N;
@@ -62,7 +62,7 @@ public abstract class AbstractResultTab extends AbstractResultTabCompositeContro
 	protected abstract String getCurrentSourceDirectoryRelative();
 
 	@Override
-	protected final void reloadFeedbackForExcerise() {
+	protected final void reloadFeedbackForExercise() {
 		var currentExercise = this.getCurrentExercise();
 		var resultFeedback = this.getCurrentResultAndFeedback();
 		var currentProjectFileForAnnotation = this.getCurrentProjectNameForAnnotations();

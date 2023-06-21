@@ -34,11 +34,9 @@ public class WorkspaceUtil {
 	 * Create a new eclipse project given a projectName which corresponds to an
 	 * EXISTING project in the workspace. Natures are Maven and Java
 	 *
-	 * @param projectDirectory
-	 * @param buildCallbacks   Are called when the triggered build has completed
-	 * @throws CoreException
+	 * @param buildCallbacks Are called when the triggered build has completed
 	 */
-	public static final void createEclipseProject(final File projectDirectory, List<ISubmissionLifecycleCallback> buildCallbacks) throws CoreException {
+	public static void createEclipseProject(final File projectDirectory, List<ISubmissionLifecycleCallback> buildCallbacks) throws CoreException {
 		createEclipseProject(projectDirectory.getName(), buildCallbacks);
 	}
 
@@ -46,10 +44,9 @@ public class WorkspaceUtil {
 	 * Create a new eclipse project given a projectName which corresponds to an
 	 * EXISTING project in the workspace. Natures are Maven and Java
 	 *
-	 * @param projectName
 	 * @param buildCallbacks Are called when the triggered build has completed
 	 */
-	public static final void createEclipseProject(final String projectName, List<ISubmissionLifecycleCallback> buildCallbacks) throws CoreException {
+	public static void createEclipseProject(final String projectName, List<ISubmissionLifecycleCallback> buildCallbacks) throws CoreException {
 		final IProjectDescription description = ResourcesPlugin.getWorkspace().newProjectDescription(projectName);
 
 		final String[] natures = { JavaCore.NATURE_ID, IMavenConstants.NATURE_ID };
@@ -73,7 +70,6 @@ public class WorkspaceUtil {
 				buildCallbacks.forEach(c -> c.onPhaseCompleted(project));
 			}
 		});
-		;
 		job.schedule();
 	}
 
@@ -83,8 +79,8 @@ public class WorkspaceUtil {
 		return command;
 	}
 
-	public static final void deleteDirectoryRecursively(final Path directory) throws IOException {
-		Files.walkFileTree(directory, new SimpleFileVisitor<Path>() {
+	public static void deleteDirectoryRecursively(final Path directory) throws IOException {
+		Files.walkFileTree(directory, new SimpleFileVisitor<>() {
 			@Override
 			public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
 				Files.delete(dir);
@@ -102,12 +98,8 @@ public class WorkspaceUtil {
 	/**
 	 * Delete a given eclipse project via eclipse functionality and, thereafter, on
 	 * the file system if anything is left.
-	 *
-	 * @param projectName
-	 * @throws CoreException
-	 * @throws IOException
 	 */
-	public static final void deleteEclipseProject(final String projectName) throws CoreException, IOException {
+	public static void deleteEclipseProject(final String projectName) throws CoreException, IOException {
 		final IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
 		if (project == null || !project.exists()) {
 			// doesnt exist ==> nothing to be done
@@ -125,7 +117,7 @@ public class WorkspaceUtil {
 	 *
 	 * @return the current workspace as a file.
 	 */
-	public static final File getWorkspaceFile() {
+	public static File getWorkspaceFile() {
 		return ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile();
 
 	}

@@ -34,9 +34,4 @@ public final class SWTViewHandler implements IViewInteraction {
 		log.warn(warningMsg);
 		MessageDialog.openWarning(AssessmentUtilities.getWindowsShell(), "Warning", warningMsg);
 	}
-
-	@Override
-	public boolean confirm(String msg) {
-		return MessageDialog.openConfirm(AssessmentUtilities.getWindowsShell(), "Confirm", msg);
-	}
 }

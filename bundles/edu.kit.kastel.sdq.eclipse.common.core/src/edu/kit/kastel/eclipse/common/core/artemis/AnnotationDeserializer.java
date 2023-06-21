@@ -2,10 +2,7 @@
 package edu.kit.kastel.eclipse.common.core.artemis;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.Platform;
@@ -46,7 +43,7 @@ public class AnnotationDeserializer {
 	 */
 	public List<IAnnotation> deserialize(List<Feedback> feedbacks) throws IOException {
 		final List<Feedback> feedbacksWithAnnotationInformation = feedbacks.stream() //
-				.filter(it -> it != null) //
+				.filter(Objects::nonNull) //
 				.filter(it -> FEEDBACK_TEXT.equals(it.getText())) //
 				.toList();
 
@@ -67,7 +64,7 @@ public class AnnotationDeserializer {
 		List<Annotation> annotations = new ArrayList<>();
 		for (var feedback : feedbacksWithAnnotationInformation) {
 			try {
-				List<Annotation> annotationsInFeedback = oom.readValue(feedback.getDetailText(), new TypeReference<List<Annotation>>() {
+				List<Annotation> annotationsInFeedback = oom.readValue(feedback.getDetailText(), new TypeReference<>() {
 				});
 				annotations.addAll(annotationsInFeedback);
 			} catch (JsonProcessingException e) {

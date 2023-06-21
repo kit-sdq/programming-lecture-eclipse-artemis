@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.grading.view.listeners;
 
 import java.util.NoSuchElementException;
@@ -18,7 +18,7 @@ import edu.kit.kastel.eclipse.grading.view.assessment.CustomButtonDialog;
 
 public class AssessmentMarkerViewDoubleClickListener implements IDoubleClickListener {
 
-	private ArtemisGradingView gradingView;
+	private final ArtemisGradingView gradingView;
 
 	public AssessmentMarkerViewDoubleClickListener(ArtemisGradingView gradingView) {
 		this.gradingView = gradingView;

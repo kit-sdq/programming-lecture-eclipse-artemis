@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.api.client;
 
 import edu.kit.kastel.eclipse.common.api.ArtemisClientException;
@@ -16,15 +16,7 @@ public interface IAuthenticationArtemisClient {
 	 *
 	 * @return security token
 	 */
-	String getRawToken();
-
-	/**
-	 * Returns raw token as String. The token can be used to authenticate for
-	 * REST-calls.
-	 *
-	 * @return security token with Bearer prefix
-	 */
-	String getBearerToken();
+	String getToken();
 
 	/**
 	 * @return the Artemis {@code Assessor} object (needed for submitting the

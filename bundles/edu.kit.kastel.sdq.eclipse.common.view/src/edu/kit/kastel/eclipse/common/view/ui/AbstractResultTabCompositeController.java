@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.view.ui;
 
 import static edu.kit.kastel.eclipse.common.view.languages.LanguageSettings.I18N;
@@ -25,12 +25,12 @@ abstract class AbstractResultTabCompositeController extends AbstractResultTabCom
 		if (!hasReloadFunctionality) {
 			this.btnReload.setVisible(false);
 		}
-		btnReload.addListener(SWT.Selection, e -> this.reloadFeedbackForExcerise());
+		btnReload.addListener(SWT.Selection, e -> this.reloadFeedbackForExercise());
 		testTable.addListener(SWT.Selection, this::handleResultTableEvent);
 		UIUtilities.initializeTabAfterFilling(this.getParent(), this);
 	}
 
-	protected abstract void reloadFeedbackForExcerise();
+	protected abstract void reloadFeedbackForExercise();
 
 	protected void setSuccessAndScore(IExercise currentExercise, boolean successOfAutomaticTests, double points, double score, String completionTime) {
 		var display = getDisplay();
@@ -53,7 +53,7 @@ abstract class AbstractResultTabCompositeController extends AbstractResultTabCom
 		final TableItem item = new TableItem(table, SWT.NULL);
 		item.setData(feedback);
 		item.setText(0, name);
-		item.setText(1, "" + roundedCredits);
+		item.setText(1, roundedCredits);
 		item.setText(2, success);
 		item.setForeground(2, Display.getDefault().getSystemColor(colorIndicator));
 		item.setText(3, feedback.getDetailText() != null ? CHECK_MARK_IN_UTF8 : X_MARK_IN_UTF8);
@@ -71,14 +71,6 @@ abstract class AbstractResultTabCompositeController extends AbstractResultTabCom
 			return SWT.COLOR_BLACK;
 		}
 		return Boolean.TRUE.equals(feedback.getPositive()) ? SWT.COLOR_GREEN : SWT.COLOR_RED;
-	}
-
-	protected final void loadingStarted() {
-		this.loadingIndicator.setVisible(true);
-	}
-
-	protected final void loadingFinished() {
-		this.loadingIndicator.setVisible(false);
 	}
 
 	private void handleResultTableEvent(Event e) {

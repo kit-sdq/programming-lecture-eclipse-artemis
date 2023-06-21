@@ -4,7 +4,6 @@ package edu.kit.kastel.eclipse.common.view.controllers;
 import java.util.List;
 
 import edu.kit.kastel.eclipse.common.api.ArtemisClientException;
-import edu.kit.kastel.eclipse.common.api.artemis.mapping.ICourse;
 import edu.kit.kastel.eclipse.common.api.controller.IArtemisController;
 import edu.kit.kastel.eclipse.common.api.controller.ISystemwideController;
 import edu.kit.kastel.eclipse.common.api.controller.IViewInteraction;
@@ -28,13 +27,6 @@ public abstract class AbstractArtemisViewController<C extends ISystemwideControl
 
 	protected void initializeControllersAndObserver() {
 		this.artemisController = this.systemwideController.getArtemisController();
-	}
-
-	/**
-	 * @return all courses available at artemis
-	 */
-	public List<ICourse> getCourses() {
-		return this.artemisController.getCourses();
 	}
 
 	/**
@@ -84,10 +76,6 @@ public abstract class AbstractArtemisViewController<C extends ISystemwideControl
 		} catch (ArtemisClientException e) {
 			this.viewObserver.error(e.getMessage(), e);
 		}
-	}
-
-	protected IArtemisController getArtemisController() {
-		return this.artemisController;
 	}
 
 }

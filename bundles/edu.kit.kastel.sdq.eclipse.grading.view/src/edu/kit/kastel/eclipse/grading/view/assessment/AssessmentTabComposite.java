@@ -19,25 +19,25 @@ import org.eclipse.wb.swt.ResourceManager;
 import edu.kit.kastel.eclipse.common.api.EclipseArtemisConstants;
 
 public class AssessmentTabComposite extends Composite {
-	protected Combo comboCourse;
-	protected Combo comboExam;
-	protected Combo comboExercise;
-	protected Button btnReload;
-	protected Button btnSave;
-	protected Button btnSubmit;
-	protected Button btnStartRoundOne;
-	protected Button btnStartRoundTwo;
-	protected Button btnCloseAssessment;
-	protected Button btnResetPluginState;
-	protected Label lblStatisticsInformation;
-	protected Label lblPluginVersion;
-	protected Button btnHelp;
-	protected Button btnRerunAutograder;
+	protected final Combo comboCourse;
+	protected final Combo comboExam;
+	protected final Combo comboExercise;
+	protected final Button btnReload;
+	protected final Button btnSave;
+	protected final Button btnSubmit;
+	protected final Button btnStartRoundOne;
+	protected final Button btnStartRoundTwo;
+	protected final Button btnCloseAssessment;
+	protected final Button btnResetPluginState;
+	protected final Label lblStatisticsInformation;
+	protected final Label lblPluginVersion;
+	protected final Button btnHelp;
+	protected final Button btnRerunAutograder;
 
 	// Backlog
-	protected Combo comboBacklogSubmission;
-	protected Button btnBacklogRefreshSubmissions;
-	protected Button btnBacklogLoadSubmission;
+	protected final Combo comboBacklogSubmission;
+	protected final Button btnBacklogRefreshSubmissions;
+	protected final Button btnBacklogLoadSubmission;
 
 	/**
 	 * Create the composite.

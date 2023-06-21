@@ -174,10 +174,9 @@ public final class AssessmentUtilities {
 	 * This method creates a marker for the annotation and add a new annotation to
 	 * the backlog
 	 *
-	 * @param mistake         (the mistake type of the new annotation)
-	 * @param customMessage   (for custom mistake type, else null)
-	 * @param customPenalty   (for custom mistake, else null)
-	 * @param ratingGroupName (the name of the rating group of the new annotation)
+	 * @param mistake       (the mistake type of the new annotation)
+	 * @param customMessage (for custom mistake type, else null)
+	 * @param customPenalty (for custom mistake, else null)
 	 */
 	public static void createAssessmentAnnotation(IAssessmentController assessmentController, IMistakeType mistake, String customMessage,
 			Double customPenalty) {

@@ -5,31 +5,22 @@ import java.util.List;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.Platform;
 
 import edu.kit.kastel.eclipse.common.api.model.IAnnotation;
 import edu.kit.kastel.eclipse.common.view.utilities.AssessmentUtilities;
 import edu.kit.kastel.eclipse.grading.view.activator.Activator;
 import edu.kit.kastel.eclipse.grading.view.assessment.ArtemisGradingView;
-import edu.kit.kastel.eclipse.grading.view.controllers.AssessmentViewController;
 
 public class DeleteAnnotationCommandHandler extends AbstractHandler {
-	private static final ILog LOG = Platform.getLog(DeleteAnnotationCommandHandler.class);
-
-	private final AssessmentViewController controller;
 	private final ArtemisGradingView view;
 
-	public DeleteAnnotationCommandHandler(ArtemisGradingView view, AssessmentViewController controller) {
-		this.controller = controller;
+	public DeleteAnnotationCommandHandler(ArtemisGradingView view) {
 		this.view = view;
 	}
 
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException {
-		// this.controller().getAssessmentController() may return null even if we have a
-		// current assessment
+	public Object execute(ExecutionEvent event) {
 		var assessment = Activator.getDefault().getSystemwideController().getCurrentAssessmentController();
 		if (assessment == null) {
 			Platform.getLog(this.getClass()).warn("Not executing the Delete Annotation command because the assessment is null");

@@ -19,8 +19,8 @@ public class Annotation implements IAnnotation {
 	private final int endLine;
 	private final String fullyClassifiedClassName;
 
-	private String customMessage;
-	private Double customPenalty;
+	private final String customMessage;
+	private final Double customPenalty;
 
 	public Annotation(String uuid, IMistakeType mistakeType, int startLine, int endLine, String fullyClassifiedClassName, String customMessage,
 			Double customPenalty) {

@@ -1,24 +1,25 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.client.mappings.lock;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import edu.kit.kastel.eclipse.common.api.artemis.ILockResult;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.Feedback;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.ParticipationDTO;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.io.Serial;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
 public class LockResult implements ILockResult {
+	@Serial
 	private static final long serialVersionUID = -3787474578751131899L;
 
-	private int submissionId;
-	private int participationId;
-
-	private List<Feedback> latestFeedback;
+	private final int submissionId;
+	private final int participationId;
+	private final List<Feedback> latestFeedback;
 
 	@JsonCreator
 	public LockResult( //

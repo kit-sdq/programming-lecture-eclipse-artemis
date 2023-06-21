@@ -1,12 +1,14 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.api.artemis.mapping;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public final class User implements Serializable {
+	@Serial
 	private static final long serialVersionUID = -5600566607034486129L;
 
 	@JsonProperty("id")
@@ -34,32 +36,12 @@ public final class User implements Serializable {
 	@JsonProperty("vcsAccessToken")
 	private String vcsAccessToken;
 
-	public boolean getActivated() {
-		return this.activated;
-	}
-
 	public String getEmail() {
 		return this.email;
 	}
 
-	public String getFirstName() {
-		return this.firstName;
-	}
-
 	public int getId() {
 		return this.id;
-	}
-
-	public String getLangKey() {
-		return this.langKey;
-	}
-
-	public String getLastName() {
-		return this.lastName;
-	}
-
-	public String getLastNotificationRead() {
-		return this.lastNotificationRead;
 	}
 
 	public String getLogin() {
@@ -68,10 +50,6 @@ public final class User implements Serializable {
 
 	public String getName() {
 		return this.name;
-	}
-
-	public String getParticipantIdentifier() {
-		return this.participantIdentifier == null ? login : participantIdentifier;
 	}
 
 	public List<String> getGroups() {

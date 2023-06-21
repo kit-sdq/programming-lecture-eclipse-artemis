@@ -12,8 +12,7 @@ import edu.kit.kastel.eclipse.common.api.artemis.mapping.IExercise;
 public interface IMistakeType {
 
 	/**
-	 * Calculate penalty using only the given annotations. Consider
-	 * {@link #isDeduction()} for the calculation!
+	 * Calculate penalty using only the given annotations.
 	 *
 	 * @return a <i>positive or negative</> value denoting the penalty or points.
 	 */
@@ -42,7 +41,7 @@ public interface IMistakeType {
 	/**
 	 *
 	 * @return the {@link IRatingGroup} this {@link IMistakeType} belongs to, which
-	 *         may introduce a {@link IRatingGroup#getPenaltyLimit()}!
+	 *         may introduce a {@link IRatingGroup#getRange()}!
 	 */
 	IRatingGroup getRatingGroup();
 

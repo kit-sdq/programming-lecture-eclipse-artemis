@@ -24,10 +24,6 @@ public interface I18N {
 		return "Set preferences for Artemis";
 	}
 
-	default String settingsAdvancedDescription() {
-		return "Set advanced settings for Artemis";
-	}
-
 	default String settingsLanguage() {
 		return "Language: ";
 	}
@@ -111,18 +107,6 @@ public interface I18N {
 		return "Test Results";
 	}
 
-	default String tabResultsDescription() {
-		return "Summary of the results of the currently selected exercise";
-	}
-
-	default String tabResultsDetailedText() {
-		return "Detailed Text";
-	}
-
-	default String tabResultsLatest() {
-		return "Latest Results";
-	}
-
 	default String tabResultsLatestResultsFromArtemis() {
 		return "Latest Results from Artemis";
 	}
@@ -137,18 +121,6 @@ public interface I18N {
 
 	default String none() {
 		return "None";
-	}
-
-	default String ended() {
-		return "ended";
-	}
-
-	default String notEnded() {
-		return "not ended";
-	}
-
-	default String finished() {
-		return "finished";
 	}
 
 	default String course() {
@@ -173,10 +145,6 @@ public interface I18N {
 
 	default String submitAssessment() {
 		return "Submit Assessment";
-	}
-
-	default String submissions() {
-		return "Submissions";
 	}
 
 	default String credits() {

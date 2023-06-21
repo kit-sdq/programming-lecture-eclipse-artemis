@@ -7,14 +7,8 @@ public class Messages {
 	}
 
 	public static final String CLIENT_COMMUNICATION_ERROR_FORMAT = "Communication with \" %s \" failed with status \"%s: %s\".";
-	public static final String CLIENT_CONNECTION_REFUSED = "Connection refused. Maybe check your VPN connection.";
 	public static final String CLIENT_NO_SUBMISSION_FOUND_FORMAT = "Submission %d not found!";
-	public static final String CLIENT_NO_BASE_URL = "Base URL or Token is empty";
-	public static final String CLIENT_NO_WEBSOCKET = "Cannot connecto to WebSocket";
-	public static final String CLIENT_INTERNAL_SSL_CONFIG_FAILED = "Can't configure SSL context for the websocket";
-
 	public static final String ASSESSMENT_COULD_NOT_BE_STARTED_MESSAGE = "Assessment could not be started: ";
-
 	public static final String GIT_OPEN_FAILED = "Git open failed for path: ";
 	public static final String GIT_CLONE_FAILED = "Git clone failed with exception: ";
 	public static final String GIT_COMMIT_FAILED = "Git commit failed for path: ";
