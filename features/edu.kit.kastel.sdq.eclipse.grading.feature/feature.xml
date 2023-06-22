@@ -2,7 +2,7 @@
 <feature
       id="edu.kit.kastel.sdq.eclipse.grading.feature"
       label="%featureName"
-      version="4.4.1"
+      version="4.5.0"
       provider-name="%providerName">
 
    <description>
