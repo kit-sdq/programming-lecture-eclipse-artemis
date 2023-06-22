@@ -44,7 +44,7 @@ public class Feedback implements Comparable<Feedback>, Serializable {
 	@JsonProperty("detailText")
 	private String detailText; // null for auto feedback
 	@JsonProperty("hasLongFeedbackText")
-	private boolean hasLongFeedbackText;
+	private Boolean hasLongFeedbackText;
 
 	public Feedback() {
 		// NOP
@@ -191,7 +191,7 @@ public class Feedback implements Comparable<Feedback>, Serializable {
 	}
 
 	public boolean hasLongFeedbackText() {
-		return hasLongFeedbackText;
+		return this.hasLongFeedbackText != null && this.hasLongFeedbackText;
 	}
 
 	@JsonIgnore
