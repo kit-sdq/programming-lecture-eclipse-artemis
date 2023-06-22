@@ -19,18 +19,15 @@ public interface ISystemwideController extends IController {
 	 * @param courseShortName unique short name
 	 * @return all exercise short names. Can be used to call
 	 *         {@link #setExerciseId(String)}.
-	 * @throws ArtemisClientException
 	 */
 	List<String> setCourseIdAndGetExerciseShortNames(String courseShortName) throws ArtemisClientException;
 
 	/**
 	 * <B>ASSESSMENT - STATE</B><br/>
-	 * <li>Set the current exercise for further assessment-related actions, such as
-	 * {@link #startAssessment()}
+	 * <li>Set the current exercise for further assessment-related actions.
 	 * <li>See docs/Zustandshaltung-Automat
 	 *
 	 * @param exerciseShortName unique short name
-	 * @throws ArtemisClientException
 	 */
 	void setExerciseId(String exerciseShortName) throws ArtemisClientException;
 
@@ -44,8 +41,6 @@ public interface ISystemwideController extends IController {
 	/**
 	 * Adds a new listener that will be notified when the initial build & maven
 	 * update of a new submission has been completed.
-	 *
-	 * @param callback
 	 */
 	void addSubmissionBuildListener(ISubmissionLifecycleCallback callback);
 }

@@ -44,10 +44,6 @@ public class AssessmentController extends AbstractController implements IAssessm
 	/**
 	 * Protected, because the way to get a specific assessment controller should be
 	 * over a SystemwideController.
-	 *
-	 * @param configFile   path to the config file
-	 * @param exerciseName the shortName of the exercise (must be same in the config
-	 *                     file).
 	 */
 	protected AssessmentController(GradingSystemwideController systemWideController, ICourse course, IExercise exercise, ISubmission submission) {
 		super(systemWideController.getViewInteractionHandler());
@@ -66,8 +62,8 @@ public class AssessmentController extends AbstractController implements IAssessm
 				// using interaction handler of the system wide controller, as the own
 				// interaction handler is not set during the constructor
 				systemWideController.getViewInteractionHandler().warn("""
-						You are using a configuration file not designed for this exercise!\n
-						Your file is \"%s\", however you are correcting exercise \"%s\"!\n
+						You are using a configuration file not designed for this exercise!
+						Your file is "%s", however you are correcting exercise "%s"!
 						Please double check your settings!
 						""".formatted(exerciseConfig.getShortName(), this.exercise.getShortName()));
 			}

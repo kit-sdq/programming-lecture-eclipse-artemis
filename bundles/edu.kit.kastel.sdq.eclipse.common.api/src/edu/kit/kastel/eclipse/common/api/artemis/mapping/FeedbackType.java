@@ -2,7 +2,7 @@
 package edu.kit.kastel.eclipse.common.api.artemis.mapping;
 
 /**
- * See also {@link IFeedback}.
+ * See also {@link Feedback}.
  * <ul>
  * <li>{@link FeedbackType#MANUAL} represents single line annotations</li>
  * <li>{@link FeedbackType#MANUAL_UNREFERENCED} represents remarks that are

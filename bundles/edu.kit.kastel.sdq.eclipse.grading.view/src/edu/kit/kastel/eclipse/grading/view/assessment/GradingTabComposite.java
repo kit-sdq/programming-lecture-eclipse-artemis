@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.grading.view.assessment;
 
 import org.eclipse.swt.SWT;
@@ -15,8 +15,8 @@ import edu.kit.kastel.eclipse.common.view.utilities.UIUtilities;
 import static edu.kit.kastel.eclipse.common.view.languages.LanguageSettings.I18N;
 
 public class GradingTabComposite extends Composite {
-	protected Label lblPluginVersion;
-	protected ScrolledComposite gradingCompositeContainerScrollable;
+	protected final Label lblPluginVersion;
+	protected final ScrolledComposite gradingCompositeContainerScrollable;
 
 	public GradingTabComposite(TabFolder tabFolder) {
 		this(UIUtilities.createTabWithScrolledComposite(tabFolder, I18N().tabGrading()), SWT.NONE);

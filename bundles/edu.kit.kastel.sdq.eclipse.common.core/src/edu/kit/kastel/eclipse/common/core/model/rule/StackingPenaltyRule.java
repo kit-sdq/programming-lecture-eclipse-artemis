@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.core.model.rule;
 
 import java.util.List;
@@ -13,14 +13,12 @@ public class StackingPenaltyRule extends PenaltyRule {
 	private static final String DISPLAY_NAME = "Stacking Penalty";
 	public static final String SHORT_NAME = "stackingPenalty";
 
-	// Penalty stored with decimal-point shifted one to the right (make sure no
-	// rounding issues happen)
-	private int penalty;
+	private final double penalty;
 
 	private Integer maxUses = null; // null => no limit
 
 	public StackingPenaltyRule(JsonNode penaltyRuleNode) {
-		this.penalty = (int) (penaltyRuleNode.get("penalty").asDouble() * 10);
+		this.penalty = penaltyRuleNode.get("penalty").asDouble();
 
 		if (penaltyRuleNode.hasNonNull("maxUses")) {
 			maxUses = penaltyRuleNode.get("maxUses").asInt();
@@ -30,7 +28,7 @@ public class StackingPenaltyRule extends PenaltyRule {
 	@Override
 	public double calculate(List<IAnnotation> annotations) {
 		int multiplier = maxUses == null ? annotations.size() : Math.min(annotations.size(), maxUses);
-		return (multiplier * -this.penalty) / 10.0;
+		return (multiplier * -this.penalty);
 	}
 
 	@Override
@@ -54,7 +52,7 @@ public class StackingPenaltyRule extends PenaltyRule {
 
 	@Override
 	public String toString() {
-		String string = "StackingPenaltyRule [penalty=\" + this.penalty / 10.0 + \" per annotation";
+		String string = "StackingPenaltyRule [penalty=" + this.penalty + " per annotation";
 		string += maxUses != null ? " capped to " + maxUses + " annotations" : "";
 		string += "]";
 		return string;

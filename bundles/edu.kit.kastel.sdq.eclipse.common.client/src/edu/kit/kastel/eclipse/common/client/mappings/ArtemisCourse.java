@@ -1,7 +1,9 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.client.mappings;
 
+import java.io.Serial;
 import java.io.Serializable;
+import java.util.Comparator;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -13,6 +15,7 @@ import edu.kit.kastel.eclipse.common.api.artemis.mapping.IExercise;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.User;
 
 public class ArtemisCourse implements ICourse, Serializable {
+	@Serial
 	private static final long serialVersionUID = -2658127210041804941L;
 
 	@JsonProperty(value = "id")
@@ -45,7 +48,7 @@ public class ArtemisCourse implements ICourse, Serializable {
 	public List<IExam> getExams() throws ArtemisClientException {
 		if (this.exams == null) {
 			this.exams = this.client.getExamsForCourse(this);
-			this.exams.sort((e1, e2) -> e1.getTitle().compareTo(e2.getTitle()));
+			this.exams.sort(Comparator.comparing(IExam::getTitle));
 		}
 		return this.exams;
 	}
@@ -54,7 +57,7 @@ public class ArtemisCourse implements ICourse, Serializable {
 	public List<IExercise> getExercises() throws ArtemisClientException {
 		if (this.exercises == null) {
 			this.exercises = this.client.getGradingExercisesForCourse(this);
-			this.exercises.sort((e1, e2) -> e1.getShortName().compareTo(e2.getShortName()));
+			this.exercises.sort(Comparator.comparing(IExercise::getShortName));
 		}
 		return this.exercises;
 	}

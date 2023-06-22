@@ -32,8 +32,9 @@ public interface IGradingSystemwideController extends ISystemwideController {
 	 * <B>BACKLOG</B><br/>
 	 * <li>Loads an already assessed (started, saved or even submitted) submission
 	 * for re-assessment.
-	 * <li>You need to select a submission via {@link #setAssessedSubmission(int)},
-	 * first! Has the same effect as {@link #startAssessment()} otherwise.
+	 * <li>You need to select a submission via
+	 * {@link #setAssessedSubmissionByProjectName(String)} )}, first! Has the same
+	 * effect as {@link #startCorrectionRound1()} )} otherwise.
 	 */
 	void loadAgain();
 
@@ -62,7 +63,7 @@ public interface IGradingSystemwideController extends ISystemwideController {
 	/**
 	 * <B>BACKLOG</B><br/>
 	 * <li>Only sets the submission, does not start the assessment!.
-	 * <li>You want to have called {@link #getBegunSubmissions(ISubmission.Filter)},
+	 * <li>You want to have called {@link #getBegunSubmissionsProjectNames()},
 	 * first!
 	 *
 	 */
@@ -70,9 +71,7 @@ public interface IGradingSystemwideController extends ISystemwideController {
 
 	/**
 	 * <B>ASSESSMENT</B><br/>
-	 * <li>The same as {@link #startAssessment()}.
-	 *
-	 *
+	 * 
 	 * @return whether a new assessment was started or not, depending on whether
 	 *         there was a submission available.
 	 */
@@ -80,10 +79,9 @@ public interface IGradingSystemwideController extends ISystemwideController {
 
 	/**
 	 * <B>ASSESSMENT</B><br/>
-	 * <li>Like {@link #startAssessment()}, but with correction round 2 as a
+	 * <li>Like {@link #startCorrectionRound1()}, but with correction round 2 as a
 	 * parameter.
-	 *
-	 *
+	 * 
 	 * @return whether a new assessment was started or not, depending on whether
 	 *         there was a submission available.
 	 */
@@ -100,7 +98,6 @@ public interface IGradingSystemwideController extends ISystemwideController {
 	/**
 	 * Download submissions defined by the given submissionIds
 	 *
-	 * @param submissionIds
 	 * @return whether download was successful or not
 	 */
 	boolean downloadExerciseAndSubmission(ICourse course, IExercise exercise, ISubmission submission, IProjectFileNamingStrategy projectNaming);
@@ -111,10 +108,6 @@ public interface IGradingSystemwideController extends ISystemwideController {
 
 	ExerciseStats getStats();
 
-	/**
-	 *
-	 * @return the path to the current project
-	 */
 	Path getCurrentProjectPath();
 
 }

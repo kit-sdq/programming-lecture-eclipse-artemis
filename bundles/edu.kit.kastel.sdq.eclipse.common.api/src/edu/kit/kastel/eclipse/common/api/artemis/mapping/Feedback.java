@@ -1,6 +1,7 @@
 /* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.api.artemis.mapping;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -19,10 +20,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * <li>{@link FeedbackType#AUTOMATIC} represents e.g. unit test results</li>
  * </ul>
  * Whether a method returns null or not depends on the FeedbackType
- * {@link edu.kit.kastel.sdq.eclipse.grading.api.artemis.mapping.IFeedback#getFeedbackType() }!
+ * {@link Feedback#getFeedbackType()} }!
  */
 @JsonInclude(Include.NON_NULL)
 public class Feedback implements Comparable<Feedback>, Serializable {
+	@Serial
 	private static final long serialVersionUID = 4531964872375020131L;
 
 	@JsonProperty("type")
@@ -126,11 +128,6 @@ public class Feedback implements Comparable<Feedback>, Serializable {
 		return this.text;
 	}
 
-	/**
-	 * This is NECESSARY! for serialization to artemis.
-	 *
-	 * @return
-	 */
 	public String getType() {
 		return this.type;
 	}

@@ -16,7 +16,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Scanner;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 import org.eclipse.core.runtime.ICoreRunnable;
 import org.eclipse.core.runtime.ILog;
@@ -58,7 +57,7 @@ public class AutograderUtil {
 
 			// Read the configuration
 			Map<String, String> config = getConfig();
-			String autograderConfig = "[" + config.keySet().stream().collect(Collectors.joining(", ")) + "]";
+			String autograderConfig = "[" + String.join(", ", config.keySet()) + "]";
 
 			// Download, Compile, PMD, CPD, SpotBugs, Spoon, integrated, parsing
 			monitor.beginTask("Autograder", 8);
@@ -157,7 +156,7 @@ public class AutograderUtil {
 					"Downloading Autograder " + tag + ". This may take a moment. You can safely close this window."));
 			existingJAR = downloadAutograderRelease(tag);
 		} else {
-			LOG.info("Skipping autograder JAR download as most recent one is already present at " + existingJAR.toAbsolutePath().toString());
+			LOG.info("Skipping autograder JAR download as most recent one is already present at " + existingJAR.toAbsolutePath());
 		}
 
 		return existingJAR;
@@ -166,7 +165,7 @@ public class AutograderUtil {
 	private static Path downloadAutograderRelease(String version) {
 		try {
 			Path targetPath = Files.createTempFile(version + "_autograder_jar", ".jar");
-			LOG.info("Downloading autograder JAR with version/tag " + version + " to " + targetPath.toAbsolutePath().toString());
+			LOG.info("Downloading autograder JAR with version/tag " + version + " to " + targetPath.toAbsolutePath());
 			Files.deleteIfExists(targetPath);
 			Files.createFile(targetPath);
 			URL url = new URL("https://github.com/Feuermagier/autograder/releases/latest/download/autograder-cmd.jar");
@@ -191,7 +190,7 @@ public class AutograderUtil {
 
 	public static Map<String, String> getConfig() throws IOException {
 		Path autograderConfigPath = Path.of(CommonActivator.getDefault().getPreferenceStore().getString(PreferenceConstants.AUTOGRADER_CONFIG_PATH));
-		return MAPPER.readValue(Files.readString(autograderConfigPath), new TypeReference<Map<String, String>>() {
+		return MAPPER.readValue(Files.readString(autograderConfigPath), new TypeReference<>() {
 		});
 	}
 

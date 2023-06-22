@@ -4,7 +4,6 @@ package edu.kit.kastel.eclipse.common.client.rest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import edu.kit.kastel.eclipse.common.api.ArtemisClientException;
@@ -26,7 +25,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 
 public class MappingLoaderArtemisClient extends AbstractArtemisClient implements ICourseArtemisClient, IMappingLoader {
-	private ISubmissionsArtemisClient submissionClient;
+	private final ISubmissionsArtemisClient submissionClient;
 
 	private final OkHttpClient client;
 
@@ -81,7 +80,7 @@ public class MappingLoaderArtemisClient extends AbstractArtemisClient implements
 		final List<ArtemisExercise> exercises = this.call(this.client, request, ArtemisExerciseWrapper.class).getExercises();
 
 		for (ArtemisExercise exercise : exercises) {
-			exercise.init(this, artemisCourse, Optional.empty());
+			exercise.init(this, artemisCourse, null);
 		}
 
 		// Here we filter all programming exercises

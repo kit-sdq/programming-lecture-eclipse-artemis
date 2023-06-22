@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2011-2022. */
+/* Licensed under EPL-2.0 2011-2023. */
 package org.eclipse.wb.swt;
 
 import java.io.File;
@@ -44,6 +44,7 @@ import org.osgi.framework.Bundle;
  * @author Dan Rubel
  * @author Wim Jongman
  */
+@SuppressWarnings("ALL")
 public class ResourceManager extends SWTResourceManager {
 
 	/**

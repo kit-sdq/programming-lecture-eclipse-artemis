@@ -1,11 +1,12 @@
 /* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.core.model;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -13,7 +14,10 @@ import edu.kit.kastel.eclipse.common.api.model.IMistakeType;
 import edu.kit.kastel.eclipse.common.api.model.IRatingGroup;
 import edu.kit.kastel.eclipse.common.api.util.Pair;
 
-public class RatingGroup implements IRatingGroup {
+public class RatingGroup implements IRatingGroup, Serializable {
+
+	@Serial
+	private static final long serialVersionUID = 8116874549849287171L;
 
 	@JsonProperty("shortName")
 	private String identifier;
@@ -28,7 +32,7 @@ public class RatingGroup implements IRatingGroup {
 	@JsonProperty
 	private Double negativeLimit;
 
-	private transient List<MistakeType> mistakeTypes = new ArrayList<>();
+	private final transient List<MistakeType> mistakeTypes = new ArrayList<>();
 
 	public RatingGroup() {
 		// NOP
@@ -47,7 +51,7 @@ public class RatingGroup implements IRatingGroup {
 
 	@Override
 	public List<IMistakeType> getMistakeTypes() {
-		return this.mistakeTypes.stream().map(IMistakeType.class::cast).collect(Collectors.toList());
+		return this.mistakeTypes.stream().map(IMistakeType.class::cast).toList();
 	}
 
 	@Override

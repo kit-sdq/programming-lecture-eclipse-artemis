@@ -21,9 +21,9 @@ public interface IAssessmentArtemisClient {
 	 * Starts an assessment for the given submission. Acquires a lock in the
 	 * process.
 	 *
-	 * @param submission
 	 * @return the data gotten back, which is needed for submitting the assessment
-	 *         result correctly ({@link #saveAssessment(int, boolean, String)}
+	 *         result correctly
+	 *         ({@link #saveAssessment(int, boolean, AssessmentResult)}
 	 * @throws ArtemisClientException if some errors occur while parsing the result.
 	 */
 
@@ -44,16 +44,16 @@ public interface IAssessmentArtemisClient {
 
 	/**
 	 * Submit the assessment to Artemis. Must have been started by
-	 * {@link #startAssessment(int)} or {@link #startNextAssessment(int, int)}
-	 * before!
+	 * {@link #startAssessment(ISubmission)} or
+	 * {@link #startNextAssessment(IExercise, int)} before!
 	 *
-	 * @param participation YOU SHALL NOT PROVIDE THE SUBMISSIONID, HERE! The
-	 *                      participationId can be gotten from the
-	 *                      {@link ILockResult}, via {@link #startAssessment(int)}
-	 *                      or {@link #startNextAssessment(int, int)}!
-	 * @param submit        determine whether the assessment should be submitted or
-	 *                      just saved.
-	 * @param assessment    the assessment
+	 * @param participationId The participationId can be gotten from the
+	 *                        {@link ILockResult}, via
+	 *                        {@link #startAssessment(ISubmission)} or
+	 *                        {@link #startNextAssessment(IExercise, int)}!
+	 * @param submit          determine whether the assessment should be submitted
+	 *                        or just saved.
+	 * @param assessment      the assessment
 	 */
 	void saveAssessment(int participationId, boolean submit, AssessmentResult assessment) throws ArtemisClientException;
 

@@ -3,36 +3,6 @@ package edu.kit.kastel.eclipse.grading.view.assessment;
 
 import static edu.kit.kastel.eclipse.common.view.languages.LanguageSettings.I18N;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.ILog;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.IViewSite;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.commands.ICommandService;
-import org.eclipse.ui.part.ViewPart;
-import org.eclipse.wb.swt.SWTResourceManager;
-
 import edu.kit.kastel.eclipse.common.api.PreferenceConstants;
 import edu.kit.kastel.eclipse.common.api.controller.IGradingSystemwideController;
 import edu.kit.kastel.eclipse.common.api.model.IMistakeType;
@@ -49,13 +19,35 @@ import edu.kit.kastel.eclipse.grading.view.controllers.AssessmentViewController;
 import edu.kit.kastel.eclipse.grading.view.listeners.AssessmentMarkerViewDoubleClickListener;
 import edu.kit.kastel.eclipse.grading.view.listeners.KeyboardAwareMouseListener;
 
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.part.ViewPart;
+import org.eclipse.wb.swt.SWTResourceManager;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
- * This class creates the view elements for the artemis grading process. It is
- * build as a tab folder with with three tabs: assessment (incl. backlog),
- * grading, and tests.
+ * This class creates the view elements for the artemis grading process.
+ * Assessment (incl. backlog), grading, and tests.
  *
- * @see {@link ViewPart}
- *
+ * @see ViewPart
  */
 public class ArtemisGradingView extends ViewPart {
 	private static final String ADD_ANNOTATION_COMMAND = "edu.kit.kastel.eclipse.grading.assessment.keybindings.addAnnotation";
@@ -64,8 +56,8 @@ public class ArtemisGradingView extends ViewPart {
 	private static final ILog LOG = Platform.getLog(ArtemisGradingView.class);
 
 	private AssessmentViewController viewController;
-	private Map<String, Group> ratingGroupViewElements;
-	private Map<String, Button> mistakeButtons;
+	private final Map<String, Group> ratingGroupViewElements;
+	private final Map<String, Button> mistakeButtons;
 
 	private AssessmentTab assessmentTab;
 
@@ -94,7 +86,7 @@ public class ArtemisGradingView extends ViewPart {
 		addAnnotationCommand.setHandler(new AddAnnotationCommandHandler(this, this.viewController));
 
 		var deleteAnnotationCommand = commandService.getCommand(DELETE_ANNOTATION_COMMAND);
-		deleteAnnotationCommand.setHandler(new DeleteAnnotationCommandHandler(this, this.viewController));
+		deleteAnnotationCommand.setHandler(new DeleteAnnotationCommandHandler(this));
 	}
 
 	private void addListenerForMarkerDeletion() {
@@ -379,7 +371,7 @@ public class ArtemisGradingView extends ViewPart {
 		this.fillGradingTab();
 		this.viewController.createAnnotationsMarkers();
 		this.viewController.getRatingGroups().forEach(ratingGroup -> this.updatePenalty(ratingGroup.getIdentifier()));
-		this.result.loadFeedbackForExcerise();
+		this.result.loadFeedbackForExercise();
 		AutograderUtil.runAutograder(this.viewController.getAssessmentController(),
 				Activator.getDefault().getSystemwideController().getCurrentProjectPath().resolve("assignment").resolve("src"),
 				success -> this.updatePenalties(), false);
@@ -454,8 +446,8 @@ public class ArtemisGradingView extends ViewPart {
 	 * Updates the text above exam & exercise-selection according to the amount of
 	 * assessed submissions (by the current tutor) for the currently selected
 	 * exercise (if selected; otherwise just an empty string) Method is triggered by
-	 * all invocations of updateState, hence a variety of {@link Transition}s could
-	 * trigger a change. (e.g. selecting another exercise, starting an assessment,
+	 * all invocations of updateState, hence a variety of Transitions could trigger
+	 * a change. (e.g. selecting another exercise, starting an assessment,
 	 * submitting an assessment, ...)
 	 */
 	private void updateCorrectedSubmissionCount() {
@@ -512,9 +504,7 @@ public class ArtemisGradingView extends ViewPart {
 					AssessmentUtilities.openJavaElement(mainType.get(), page);
 
 					// ... and focus it in the package explorer
-					Display.getDefault().asyncExec(() -> {
-						explorer.ifPresent(e -> e.selectReveal(new StructuredSelection(mainType.get().getResource())));
-					});
+					Display.getDefault().asyncExec(() -> explorer.ifPresent(e -> e.selectReveal(new StructuredSelection(mainType.get().getResource()))));
 				} else {
 					LOG.warn("No main class found");
 				}

@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.core.artemis.naming;
 
 import java.io.File;
@@ -25,11 +25,6 @@ public class DefaultProjectFileNamingStrategy implements IProjectFileNamingStrat
 	@Override
 	public File getAssignmentFileInProjectDirectory(File projectDirectory) {
 		return new File(projectDirectory, "assignment");
-	}
-
-	@Override
-	public File getGitFileInProjectDirectory(File projectDirectory) {
-		return new File(projectDirectory, ".git");
 	}
 
 	@Override

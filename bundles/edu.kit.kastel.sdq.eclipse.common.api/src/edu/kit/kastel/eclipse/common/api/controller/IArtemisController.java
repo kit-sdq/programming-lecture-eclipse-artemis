@@ -1,7 +1,6 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.api.controller;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.Feedback;
@@ -50,17 +49,6 @@ public interface IArtemisController extends IController {
 	List<String> getExamTitles(String courseShortName);
 
 	/**
-	 *
-	 * Returns all exercises for the given course.
-	 *
-	 * @param course
-	 * @param withExamExercises if true returns also exercises of the exams of the
-	 *                          course.
-	 * @return
-	 */
-	List<IExercise> getExercises(ICourse course, boolean withExamExercises);
-
-	/**
 	 * Returns all exercises of exasm with title examTitle.
 	 *
 	 * @param examTitle exam title of the exam
@@ -73,13 +61,6 @@ public interface IArtemisController extends IController {
 	 * @return the {@link IExercise#getShortName()}s of the given {@link IExam}
 	 */
 	List<String> getExerciseShortNamesFromExam(String examTitle);
-
-	/**
-	 * Fetches current local time of artemis backend via REST.
-	 *
-	 * @return current time of Artemis-Server
-	 */
-	LocalDateTime getCurrentDate();
 
 	User getUserLogin();
 }

@@ -1,7 +1,8 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.view.utilities;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -77,10 +78,8 @@ public final class JDTUtilities {
 	 */
 	public static List<ICompilationUnit> getAllCompilationUnits(IProject project) throws JavaModelException {
 		List<ICompilationUnit> compilationUnits = new ArrayList<>();
-		for (var packageFragment : getAllStudentPackages(project)) {
-			for (ICompilationUnit compilationUnit : packageFragment.getCompilationUnits()) {
-				compilationUnits.add(compilationUnit);
-			}
+		for (IPackageFragment packageFragment : getAllStudentPackages(project)) {
+			Collections.addAll(compilationUnits, packageFragment.getCompilationUnits());
 		}
 
 		return compilationUnits;

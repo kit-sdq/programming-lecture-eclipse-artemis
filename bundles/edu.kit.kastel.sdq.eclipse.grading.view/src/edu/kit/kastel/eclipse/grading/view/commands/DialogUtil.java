@@ -38,6 +38,7 @@ public final class DialogUtil {
 		return viewer.getTextWidget().getLineHeight();
 	}
 
+	@SuppressWarnings("java:S3011")
 	private static ISourceViewer getActiveSourceViewer() {
 		try {
 			var method = AbstractTextEditor.class.getDeclaredMethod("getSourceViewer");

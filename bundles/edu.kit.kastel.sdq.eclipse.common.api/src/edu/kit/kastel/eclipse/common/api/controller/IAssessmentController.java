@@ -30,8 +30,6 @@ public interface IAssessmentController extends IController {
 	 * @param customMessage            custom message set by tutor
 	 * @param customPenalty            This may or may not have an effect, depending
 	 *                                 on the MistakeType's PenaltyRule!
-	 *
-	 *
 	 */
 	void addAnnotation(String annotationId, IMistakeType mistakeType, int startLine, int endLine, String fullyClassifiedClassName, String customMessage,
 			Double customPenalty);
@@ -79,9 +77,7 @@ public interface IAssessmentController extends IController {
 	String getTooltipForMistakeType(String languageKey, IMistakeType mistakeType);
 
 	/**
-	 * Reset annotations by re-locking and reloading from Artemis state. Do so with
-	 * {@link IArtemisController#startAssessment(int)}, with this
-	 * {@link IAssessmentController#getSubmissionID()} as param.
+	 * Reset annotations by re-locking and reloading from Artemis state.
 	 */
 	void resetAndRestartAssessment(IProjectFileNamingStrategy projectNaming);
 

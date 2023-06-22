@@ -1,10 +1,10 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.client.mappings.exam;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -16,6 +16,7 @@ import edu.kit.kastel.eclipse.common.client.mappings.ArtemisExercise;
 import edu.kit.kastel.eclipse.common.client.mappings.IMappingLoader;
 
 public class ArtemisExerciseGroup implements IExerciseGroup, Serializable {
+	@Serial
 	private static final long serialVersionUID = 1797252671567588724L;
 
 	@JsonProperty(value = "id")
@@ -45,11 +46,10 @@ public class ArtemisExerciseGroup implements IExerciseGroup, Serializable {
 			return;
 		}
 		this.exercises = this.exercises.stream().filter(exercise -> exercise.getShortName() != null).toList();
-		// TODO Check Filter ..
 		this.exercises = this.exercises.stream().filter(IExercise::isProgramming).toList();
 
 		for (ArtemisExercise artemisExercise : this.exercises) {
-			artemisExercise.init(client, course, Optional.of(exam));
+			artemisExercise.init(client, course, exam);
 		}
 	}
 }

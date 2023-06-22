@@ -28,14 +28,14 @@ public class AnnotationFilter extends ViewerFilter {
 	public boolean select(Viewer viewer, Object parent, Object element) {
 		if (this.filter != null) {
 			IMistakeType mistake = (IMistakeType) element;
-			return matchesPart(mistake.getButtonText(I18N().key()).toLowerCase(), this.filter)
-					|| (this.includeMessages && matchesPart(mistake.getMessage(I18N().key()).toLowerCase(), this.filter));
+			return matchesPart(mistake.getButtonText(I18N().key()).toLowerCase())
+					|| (this.includeMessages && matchesPart(mistake.getMessage(I18N().key()).toLowerCase()));
 		} else {
 			return true;
 		}
 	}
 
-	private boolean matchesPart(String text, String filter) {
+	private boolean matchesPart(String text) {
 		return Arrays.stream(text.split(" ")).anyMatch(w -> w.startsWith(this.filter));
 	}
 }

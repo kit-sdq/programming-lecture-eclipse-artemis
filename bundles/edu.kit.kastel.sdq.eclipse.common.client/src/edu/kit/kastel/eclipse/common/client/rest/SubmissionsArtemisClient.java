@@ -16,7 +16,7 @@ import okhttp3.Request;
 
 public class SubmissionsArtemisClient extends AbstractArtemisClient implements ISubmissionsArtemisClient {
 	private final OkHttpClient client;
-	private User assessor;
+	private final User assessor;
 
 	public SubmissionsArtemisClient(final String hostname, String token, User assessor) {
 		super(hostname);

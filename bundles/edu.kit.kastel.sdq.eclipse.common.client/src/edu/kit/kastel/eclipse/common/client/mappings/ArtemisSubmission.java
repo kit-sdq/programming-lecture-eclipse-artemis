@@ -1,6 +1,7 @@
 /* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.client.mappings;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -10,6 +11,7 @@ import edu.kit.kastel.eclipse.common.api.artemis.mapping.ParticipationDTO;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.ResultsDTO;
 
 public class ArtemisSubmission implements ISubmission, Serializable {
+	@Serial
 	private static final long serialVersionUID = 4084879944629151733L;
 
 	@JsonProperty(value = "id")
@@ -47,7 +49,7 @@ public class ArtemisSubmission implements ISubmission, Serializable {
 		int startIndexOfUID = studentsUrl.indexOf(studentId);
 		int endIndexOfUID = studentsUrl.indexOf("@");
 
-		assert startIndexOfUID < endIndexOfUID && startIndexOfUID >= 0 && endIndexOfUID >= 0;
+		assert startIndexOfUID < endIndexOfUID && startIndexOfUID >= 0;
 
 		String newUrl = "";
 		newUrl += studentsUrl.substring(0, startIndexOfUID);

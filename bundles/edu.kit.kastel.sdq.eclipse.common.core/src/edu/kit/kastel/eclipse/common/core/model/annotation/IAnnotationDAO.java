@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.core.model.annotation;
 
 import java.util.Set;
@@ -13,8 +13,6 @@ public interface IAnnotationDAO {
 
 	/**
 	 * Add an annotation to the current assessment.
-	 *
-	 * @param annotation the annotation to be added
 	 */
 	void addAnnotation(String annotationUUID, IMistakeType mistakeType, int startLine, int endLine, String fullyClassifiedClassName, String customMessage,
 			Double customPenalty) throws AnnotationException;
@@ -36,12 +34,8 @@ public interface IAnnotationDAO {
 
 	/**
 	 * Modify an annotation in the database.
-	 *
-	 * @param annatationId
-	 * @param customMessage
-	 * @param customPenalty
 	 */
-	void modifyAnnotation(String annatationId, String customMessage, Double customPenalty);
+	void modifyAnnotation(String annotationId, String customMessage, Double customPenalty);
 
 	/**
 	 * Remove an existent annotation

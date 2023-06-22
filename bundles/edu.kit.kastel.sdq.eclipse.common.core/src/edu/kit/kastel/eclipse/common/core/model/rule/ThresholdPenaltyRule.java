@@ -17,8 +17,8 @@ public class ThresholdPenaltyRule extends PenaltyRule {
 	private static final String DISPLAY_NAME = "Threshold Penalty";
 	public static final String SHORT_NAME = "thresholdPenalty";
 
-	private int threshold;
-	private double penalty;
+	private final int threshold;
+	private final double penalty;
 
 	public ThresholdPenaltyRule(JsonNode penaltyRuleNode) {
 		this.threshold = penaltyRuleNode.get("threshold").asInt();

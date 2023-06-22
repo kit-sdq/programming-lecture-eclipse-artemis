@@ -7,7 +7,6 @@ import java.util.Optional;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.Platform;
 
 import edu.kit.kastel.eclipse.common.api.model.IMistakeType;
@@ -28,7 +27,7 @@ public class AddAnnotationCommandHandler extends AbstractHandler {
 	}
 
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException {
+	public Object execute(ExecutionEvent event) {
 		// this.controller().getAssessmentController() may return null even if we have a
 		// current assessment
 		var assessment = Activator.getDefault().getSystemwideController().getCurrentAssessmentController();

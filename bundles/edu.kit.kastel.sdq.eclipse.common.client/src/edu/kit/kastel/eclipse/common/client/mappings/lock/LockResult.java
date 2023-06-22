@@ -1,6 +1,7 @@
 /* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.client.mappings.lock;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -16,6 +17,7 @@ import edu.kit.kastel.eclipse.common.api.artemis.mapping.ParticipationDTO;
 import edu.kit.kastel.eclipse.common.api.client.IAssessmentArtemisClient;
 
 public class LockResult implements ILockResult {
+	@Serial
 	private static final long serialVersionUID = -3787474578751131899L;
 
 	private int submissionId;

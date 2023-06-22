@@ -19,8 +19,8 @@ import edu.kit.kastel.eclipse.common.client.git.GitException;
 import edu.kit.kastel.eclipse.common.client.git.GitHandler;
 
 public class ExerciseArtemisController extends AbstractController implements IExerciseArtemisController {
-	private String username;
-	private String gitPassword;
+	private final String username;
+	private final String gitPassword;
 
 	public ExerciseArtemisController(IViewInteraction viewInteractionHandler, User user, IPreferenceStore preferenceStore) {
 		super(viewInteractionHandler);
@@ -58,22 +58,6 @@ public class ExerciseArtemisController extends AbstractController implements IEx
 			throw new ArtemisClientException("Unable to download exercise and submission: " + e.getMessage(), e);
 		}
 
-	}
-
-	public static boolean deleteDirectory(File directory) {
-		if (directory.exists()) {
-			File[] files = directory.listFiles();
-			if (null != files) {
-				for (File file : files) {
-					if (file.isDirectory()) {
-						deleteDirectory(file);
-					} else {
-						file.delete();
-					}
-				}
-			}
-		}
-		return directory.delete();
 	}
 
 	private void existsAndThrow(File file) throws ArtemisClientException {

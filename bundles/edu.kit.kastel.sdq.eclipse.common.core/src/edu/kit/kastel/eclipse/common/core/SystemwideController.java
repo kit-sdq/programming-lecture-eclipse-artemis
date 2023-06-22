@@ -23,8 +23,8 @@ public abstract class SystemwideController extends AbstractController implements
 	protected ICourse course;
 	protected IExercise exercise;
 	protected IPreferenceStore preferenceStore;
-	protected IProjectFileNamingStrategy projectFileNamingStrategy;
-	protected IExerciseArtemisController exerciseController;
+	protected final IProjectFileNamingStrategy projectFileNamingStrategy;
+	protected final IExerciseArtemisController exerciseController;
 
 	protected SystemwideController(IPreferenceStore preferenceStore, IViewInteraction handler) {
 		super(handler);
@@ -35,8 +35,6 @@ public abstract class SystemwideController extends AbstractController implements
 	}
 
 	protected abstract IArtemisController createController(IPreferenceStore preferenceStore, IViewInteraction handler);
-
-	protected abstract void refreshArtemisController(IPreferenceStore preferenceStore);
 
 	protected boolean nullCheckMembersAndNotify(boolean checkCourseId, boolean checkExerciseId) {
 		String alert = "[";

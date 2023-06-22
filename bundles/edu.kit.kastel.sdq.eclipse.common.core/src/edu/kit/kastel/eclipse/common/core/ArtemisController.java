@@ -1,13 +1,10 @@
 /* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.core;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import edu.kit.kastel.eclipse.common.api.ArtemisClientException;
 import edu.kit.kastel.eclipse.common.api.EclipseArtemisConstants;
@@ -33,7 +30,7 @@ public abstract class ArtemisController extends AbstractController implements IA
 		super(handler);
 		this.clientManager = new RestClientManager(host, username, password);
 		this.lockResults = new HashMap<>();
-		if (host != null && !host.isBlank()) {
+		if (!host.isBlank()) {
 			this.checkVersion();
 			this.loginOrNotify();
 		}
@@ -112,38 +109,6 @@ public abstract class ArtemisController extends AbstractController implements IA
 	}
 
 	@Override
-	public List<IExercise> getExercises(final ICourse course, boolean withExamExercises) {
-		if (course == null) {
-			return List.of();
-		}
-		try {
-			List<IExercise> allExercises = new ArrayList<>(course.getExercises());
-			if (withExamExercises) {
-
-				for (IExam e : course.getExams()) {
-					for (IExerciseGroup g : e.getExerciseGroups()) {
-						allExercises.addAll(g.getExercises());
-					}
-				}
-
-			}
-			return allExercises;
-		} catch (final Exception e) {
-			this.error(e.getMessage(), e);
-			return List.of();
-		}
-	}
-
-	@Override
-	public LocalDateTime getCurrentDate() {
-		try {
-			return this.clientManager.getUtilArtemisClient().getTime();
-		} catch (ArtemisClientException e) {
-			return LocalDateTime.now();
-		}
-	}
-
-	@Override
 	public List<IExercise> getExercisesFromExam(final String examTitle) {
 		return this.getExercisesFromExam(examTitle, this.getCourses());
 	}
@@ -179,25 +144,6 @@ public abstract class ArtemisController extends AbstractController implements IA
 
 	}
 
-	protected Entry<ICourse, IExam> filterGetExamObjectFromLoadedCourses(String examTitle, List<ICourse> courses) {
-		for (ICourse course : courses) {
-			List<IExam> filteredExams;
-			try {
-				filteredExams = course.getExams().stream().filter(exam -> exam.getTitle().equals(examTitle)).toList();
-			} catch (final Exception e) {
-				this.error(e.getMessage(), e);
-				continue;
-			}
-			if (filteredExams.size() == 1) {
-				IExam exam = filteredExams.iterator().next();
-				if (exam.getTitle().equals(examTitle)) {
-					return Map.entry(course, exam);
-				}
-			}
-		}
-		return null;
-	}
-
 	private void loginOrNotify() {
 		try {
 			this.clientManager.login();
@@ -209,14 +155,14 @@ public abstract class ArtemisController extends AbstractController implements IA
 	private void checkVersion() {
 		try {
 			var currentVersion = this.clientManager.getUtilArtemisClient().getVersion();
-			if (currentVersion.compareTo(EclipseArtemisConstants.MINIMUM_ARTEMIS_VERSION_INCLUSIVE) == -1) {
+			if (currentVersion.compareTo(EclipseArtemisConstants.MINIMUM_ARTEMIS_VERSION_INCLUSIVE) < 0) {
 				String response = """
 						This version of Eclipse Artemis has Artemis %s as minimum requirement.
 						Your Artemis instance runs %s
 						Proceed on your own responsibility.
 						""";
 				this.warn(response.formatted(EclipseArtemisConstants.MINIMUM_ARTEMIS_VERSION_INCLUSIVE, currentVersion));
-			} else if (currentVersion.compareTo(EclipseArtemisConstants.MAXIMUM_ARTEMIS_VERSION_EXCLUSIVE) != -1) {
+			} else if (currentVersion.compareTo(EclipseArtemisConstants.MAXIMUM_ARTEMIS_VERSION_EXCLUSIVE) >= 0) {
 				String response = """
 						This version of Eclipse Artemis has Artemis %s as maximum (exclusive) requirement.
 						Your Artemis instance runs %s

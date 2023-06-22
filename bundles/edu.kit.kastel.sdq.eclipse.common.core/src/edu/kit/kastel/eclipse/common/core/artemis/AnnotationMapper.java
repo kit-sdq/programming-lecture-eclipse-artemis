@@ -74,7 +74,7 @@ public class AnnotationMapper {
 	}
 
 	private List<Feedback> calculateAllFeedbacks() throws IOException {
-		final List<Feedback> result = new ArrayList<>(this.getFilteredPreexistentFeedbacks(FeedbackType.AUTOMATIC));
+		final List<Feedback> result = new ArrayList<>(this.getFilteredPreexistentFeedbacks());
 		result.addAll(this.calculateManualFeedbacks());
 		result.addAll(this.calculateAnnotationSerialitationAsFeedbacks());
 		result.removeIf(Objects::isNull);
@@ -155,8 +155,8 @@ public class AnnotationMapper {
 		final double absoluteScore = Math.min(Math.max(0.D, this.calculateAbsoluteScore(allFeedbacks)), this.exercise.getMaxPoints());
 		final double relativeScore = this.calculateRelativeScore(absoluteScore);
 
-		final List<Feedback> initialFeedback = getFilteredPreexistentFeedbacks(FeedbackType.AUTOMATIC);
-		final List<Feedback> tests = initialFeedback.stream().filter(f -> f.getReference() == null).collect(Collectors.toList());
+		final List<Feedback> initialFeedback = getFilteredPreexistentFeedbacks();
+		final List<Feedback> tests = initialFeedback.stream().filter(f -> f.getReference() == null).toList();
 
 		int codeIssueCount = (int) initialFeedback.stream().filter(Feedback::isStaticCodeAnalysis).count();
 		int passedTestCaseCount = (int) tests.stream() //
@@ -251,12 +251,12 @@ public class AnnotationMapper {
 
 		String text = annotationHeadline + " (annotation " + 1 + ")";
 
-		for (int i = 0; i < lines.size(); i++) {
-			if (text.length() + lines.get(i).length() >= FEEDBACK_DETAIL_TEXT_MAX_CHARACTERS - annotationHeadline.length() - FEEDBACK_DETAIL_SAFETY_MARGIN) {
+		for (String line : lines) {
+			if (text.length() + line.length() >= FEEDBACK_DETAIL_TEXT_MAX_CHARACTERS - annotationHeadline.length() - FEEDBACK_DETAIL_SAFETY_MARGIN) {
 				feedbackTexts.add(text);
 				text = annotationHeadline + " (annotation " + (feedbackTexts.size() + 1) + ")";
 			}
-			text += lines.get(i);
+			text += line;
 		}
 		feedbackTexts.add(text);
 
@@ -271,10 +271,10 @@ public class AnnotationMapper {
 		return feedbacks;
 	}
 
-	private List<Feedback> getFilteredPreexistentFeedbacks(FeedbackType feedbackType) {
+	private List<Feedback> getFilteredPreexistentFeedbacks() {
 		List<Feedback> feedbacks = new ArrayList<>();
 		for (Feedback feedback : this.lock.getLatestFeedback()) {
-			if (feedback.getFeedbackType() == null || feedback.getFeedbackType() != feedbackType) {
+			if (feedback.getFeedbackType() == null || feedback.getFeedbackType() != FeedbackType.AUTOMATIC) {
 				continue;
 			}
 			feedbacks.add(feedback);

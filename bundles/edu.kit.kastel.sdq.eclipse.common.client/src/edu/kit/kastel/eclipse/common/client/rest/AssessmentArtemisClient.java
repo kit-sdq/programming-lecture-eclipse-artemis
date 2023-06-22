@@ -128,8 +128,8 @@ public class AssessmentArtemisClient extends AbstractArtemisClient implements IA
 	private int countSubmissions(IExercise exercise, int correctionRound) throws ArtemisClientException {
 		Request request = new Request.Builder() //
 				.url(this.path(EXERCISES_PATHPART, exercise.getExerciseId(), PROGRAMMING_SUBMISSIONS_PATHPART).newBuilder()
-						.addQueryParameter("assessedByTutor", String.valueOf(true)).addQueryParameter("correction-round", String.valueOf(correctionRound))
-						.build())
+						.addQueryParameter("assessedByTutor", String.valueOf(true))
+						.addQueryParameter(CORRECTION_ROUND_QUERY_PARAM, String.valueOf(correctionRound)).build())
 				.get().build();
 
 		try (Response response = this.client.newCall(request).execute()) {

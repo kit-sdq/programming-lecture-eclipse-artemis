@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.grading.view.assessment;
 
 import java.util.Objects;
@@ -45,7 +45,7 @@ public class CustomButtonDialog extends Dialog {
 	// Data
 	private String customMessage;
 	private Double customPoints;
-	private IMistakeType customMistake;
+	private final IMistakeType customMistake;
 
 	public CustomButtonDialog(Shell parentShell, boolean allowPositiveFeedback, AssessmentViewController viewController, IMistakeType mistake) {
 		super(parentShell);
@@ -135,7 +135,7 @@ public class CustomButtonDialog extends Dialog {
 
 			// Multiply by 10 because the selection internally stores the selection as an
 			// integer ignoring the decimal point. (0.5 ==> 5, 1 ==> 10)
-			this.customPointsInputField.setSelection((int) (Objects.requireNonNullElse(this.customPoints, 0d).doubleValue() * 10));
+			this.customPointsInputField.setSelection((int) (Objects.requireNonNullElse(this.customPoints, 0d) * 10));
 		}
 
 		return comp;
@@ -195,7 +195,7 @@ public class CustomButtonDialog extends Dialog {
 	 * This class implements a {@link KeyListener} that will prevent pressing RETURN
 	 * from creating a new line. Instead it'll confirm the dialog. Also pressing TAB
 	 * will jump out of the message-field in select the penalty-box. Newlines and
-	 * tabs can be created by pressing SHIFT + (RETURN | TAB)
+	 * tabs can be created by pressing SHIFT + (RETURN | TAB)<br>
 	 *
 	 * This is required to mimic the behavior of a single-line text input, hence
 	 * multi-line-text will handle those keys differently.

@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.view.marker;
 
 import java.lang.reflect.Field;
@@ -15,7 +15,7 @@ import edu.kit.kastel.eclipse.common.view.utilities.AssessmentUtilities;
 /**
  * Class of the marker view
  *
- * @See {@link MarkerSupportView}
+ * @see MarkerSupportView
  *
  */
 @SuppressWarnings("restriction")

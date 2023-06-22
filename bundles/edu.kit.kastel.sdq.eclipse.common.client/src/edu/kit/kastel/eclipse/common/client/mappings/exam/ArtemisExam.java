@@ -1,6 +1,7 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.client.mappings.exam;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -16,6 +17,7 @@ import edu.kit.kastel.eclipse.common.client.mappings.IMappingLoader;
 
 public class ArtemisExam implements IExam, Serializable {
 
+	@Serial
 	private static final long serialVersionUID = 97898730702942861L;
 
 	@JsonProperty(value = "id")
@@ -70,21 +72,4 @@ public class ArtemisExam implements IExam, Serializable {
 		return this.numberOfCorrectionRounds >= 2;
 	}
 
-	@Override
-	public Date getEndDate() {
-		return this.endDate;
-	}
-
-	public int getNumberOfCorrectionRounds() {
-		return this.numberOfCorrectionRounds;
-	}
-
-	@Override
-	public Date getStartDate() {
-		return this.startDate;
-	}
-
-	public ICourse getCourse() {
-		return this.course;
-	}
 }

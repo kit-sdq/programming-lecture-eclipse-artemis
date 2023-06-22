@@ -1,8 +1,8 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.client.mappings;
 
+import java.io.Serial;
 import java.util.Date;
-import java.util.Optional;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -14,6 +14,7 @@ import edu.kit.kastel.eclipse.common.api.artemis.mapping.IExercise;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.ISubmission;
 
 public class ArtemisExercise implements IExercise {
+	@Serial
 	private static final long serialVersionUID = 5892461865571113106L;
 
 	@JsonProperty(value = "id")
@@ -40,7 +41,7 @@ public class ArtemisExercise implements IExercise {
 
 	private transient IMappingLoader client;
 	private transient ICourse course;
-	private transient Optional<IExam> exam;
+	private transient IExam exam;
 
 	/**
 	 * For Auto-Deserialization Need to call this::init thereafter!
@@ -87,14 +88,14 @@ public class ArtemisExercise implements IExercise {
 		return this.course;
 	}
 
-	public void init(IMappingLoader client, ICourse course, Optional<IExam> exam) {
+	public void init(IMappingLoader client, ICourse course, IExam exam) {
 		this.client = client;
 		this.course = course;
 		this.exam = exam;
 	}
 
 	public void init(IMappingLoader client, ICourse course) {
-		this.init(client, course, Optional.empty());
+		this.init(client, course, null);
 	}
 
 	@Override
@@ -104,17 +105,10 @@ public class ArtemisExercise implements IExercise {
 
 	@Override
 	public boolean hasSecondCorrectionRound() {
-		return this.exam.map(IExam::hasSecondCorrectionRound).orElse(false);
-	}
-
-	@Override
-	public Date getDueDate() {
-		return dueDate;
-	}
-
-	@Override
-	public Date getStartDate() {
-		return startDate;
+		if (this.exam == null) {
+			return false;
+		}
+		return this.exam.hasSecondCorrectionRound();
 	}
 
 	@Override

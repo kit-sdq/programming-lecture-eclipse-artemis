@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.api.artemis;
 
 import java.io.File;
@@ -30,10 +30,4 @@ public interface IProjectFileNamingStrategy {
 	 */
 	File getProjectFileInWorkspace(File workspace, IExercise exercise, ISubmission submission);
 
-	/**
-	 * 
-	 * @param projectDirectory
-	 * @return returns the unique .git file in File
-	 */
-	File getGitFileInProjectDirectory(File projectDirectory);
 }

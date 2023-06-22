@@ -2,6 +2,7 @@
 package edu.kit.kastel.eclipse.common.client.rest;
 
 import java.io.IOException;
+import java.io.Serial;
 import java.io.Serializable;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -16,8 +17,8 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class LoginManager extends AbstractArtemisClient implements IAuthenticationArtemisClient {
-	private String username;
-	private String password;
+	private final String username;
+	private final String password;
 	private String token;
 
 	private final OkHttpClient client;
@@ -56,12 +57,7 @@ public class LoginManager extends AbstractArtemisClient implements IAuthenticati
 	}
 
 	@Override
-	public String getRawToken() {
-		return this.token;
-	}
-
-	@Override
-	public String getBearerToken() {
+	public String getToken() {
 		return this.token;
 	}
 
@@ -99,7 +95,7 @@ public class LoginManager extends AbstractArtemisClient implements IAuthenticati
 		}
 	}
 
-	private final AuthenticationEntity getAuthenticationEntity() {
+	private AuthenticationEntity getAuthenticationEntity() {
 		AuthenticationEntity entity = new AuthenticationEntity();
 		entity.username = this.username;
 		entity.password = this.password;
@@ -107,6 +103,7 @@ public class LoginManager extends AbstractArtemisClient implements IAuthenticati
 	}
 
 	private static final class AuthenticationEntity implements Serializable {
+		@Serial
 		private static final long serialVersionUID = -6291795795865534155L;
 		@JsonProperty
 		private String username;

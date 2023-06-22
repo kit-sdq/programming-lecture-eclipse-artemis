@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.view.ui;
 
 import org.eclipse.jface.resource.FontDescriptor;
@@ -23,21 +23,15 @@ class AbstractResultTabComposite extends Composite {
 	protected static final String STATE_OF_TESTS = "StateOfTests";
 	protected static final String TASK_NAME = "TaskName";
 
-	protected Table testTable;
-	protected ProgressBar loadingIndicator;
-	protected Button btnReload;
-	protected Label lblStateOfTests;
-	protected Label lblTaskname;
-	protected Label lblScore;
-	protected Label lblPoints;
-	protected Label lblTaskdetails;
+	protected final Table testTable;
+	protected final ProgressBar loadingIndicator;
+	protected final Button btnReload;
+	protected final Label lblStateOfTests;
+	protected final Label lblTaskname;
+	protected final Label lblScore;
+	protected final Label lblPoints;
+	protected final Label lblTaskdetails;
 
-	/**
-	 * Create the composite.
-	 *
-	 * @param parent
-	 * @param style
-	 */
 	public AbstractResultTabComposite(Composite parent, int style) {
 		super(parent, style);
 		setLayout(new GridLayout(2, false));

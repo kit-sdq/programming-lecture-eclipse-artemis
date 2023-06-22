@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.core.model.annotation;
 
 import java.util.Collections;
@@ -41,8 +41,8 @@ public class AnnotationDAO implements IAnnotationDAO {
 	}
 
 	@Override
-	public void modifyAnnotation(String annatationId, String customMessage, Double customPenalty) {
-		final IAnnotation oldAnnotation = this.getAnnotation(annatationId);
+	public void modifyAnnotation(String annotationId, String customMessage, Double customPenalty) {
+		final IAnnotation oldAnnotation = this.getAnnotation(annotationId);
 		final IAnnotation newAnnotation = new Annotation(oldAnnotation.getUUID(), oldAnnotation.getMistakeType(), oldAnnotation.getStartLine(),
 				oldAnnotation.getEndLine(), oldAnnotation.getClassFilePath(), customMessage, customPenalty);
 

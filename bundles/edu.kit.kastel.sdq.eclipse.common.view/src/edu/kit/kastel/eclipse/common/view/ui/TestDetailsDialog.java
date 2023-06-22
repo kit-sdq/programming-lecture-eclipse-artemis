@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.view.ui;
 
 import org.eclipse.jface.dialogs.Dialog;
@@ -17,8 +17,8 @@ class TestDetailsDialog extends Dialog {
 	private static final int WIDTH = 300;
 	private static final int HEIGHT = 300;
 
-	private String testName;
-	private String testDetails;
+	private final String testName;
+	private final String testDetails;
 
 	public TestDetailsDialog(String testName, String testDetails) {
 		super((Shell) null);
