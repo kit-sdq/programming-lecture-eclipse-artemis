@@ -6,8 +6,10 @@ import java.util.Optional;
 import edu.kit.kastel.eclipse.common.api.ArtemisClientException;
 import edu.kit.kastel.eclipse.common.api.artemis.AssessmentResult;
 import edu.kit.kastel.eclipse.common.api.artemis.ILockResult;
+import edu.kit.kastel.eclipse.common.api.artemis.mapping.Feedback;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.IExercise;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.ISubmission;
+import edu.kit.kastel.eclipse.common.api.artemis.mapping.LongFeedbackText;
 import edu.kit.kastel.eclipse.common.api.controller.ExerciseStats;
 
 /**
@@ -57,9 +59,11 @@ public interface IAssessmentArtemisClient {
 
 	/**
 	 * Get statistics for exercise.
-	 * 
+	 *
 	 * @param exercise the exercise
 	 * @return the statistics
 	 */
 	ExerciseStats getStats(IExercise exercise) throws ArtemisClientException;
+
+	LongFeedbackText getLongFeedback(int resultId, Feedback feedback) throws ArtemisClientException;
 }

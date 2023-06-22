@@ -43,6 +43,8 @@ public class Feedback implements Comparable<Feedback>, Serializable {
 	private String reference; // null for UNREFERENCED manual feedback and auto feedback
 	@JsonProperty("detailText")
 	private String detailText; // null for auto feedback
+	@JsonProperty("hasLongFeedbackText")
+	private boolean hasLongFeedbackText;
 
 	public Feedback() {
 		// NOP
@@ -186,5 +188,14 @@ public class Feedback implements Comparable<Feedback>, Serializable {
 	@JsonIgnore
 	public boolean isStaticCodeAnalysis() {
 		return this.text != null && this.text.startsWith("SCAFeedbackIdentifier");
+	}
+
+	public boolean hasLongFeedbackText() {
+		return hasLongFeedbackText;
+	}
+
+	@JsonIgnore
+	public void setDetailText(String actualFeedbackText) {
+		this.detailText = actualFeedbackText;
 	}
 }
