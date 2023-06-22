@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.client.mappings.lock;
 
 import java.util.ArrayList;
@@ -8,9 +8,12 @@ import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import edu.kit.kastel.eclipse.common.api.ArtemisClientException;
 import edu.kit.kastel.eclipse.common.api.artemis.ILockResult;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.Feedback;
+import edu.kit.kastel.eclipse.common.api.artemis.mapping.LongFeedbackText;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.ParticipationDTO;
+import edu.kit.kastel.eclipse.common.api.client.IAssessmentArtemisClient;
 
 public class LockResult implements ILockResult {
 	private static final long serialVersionUID = -3787474578751131899L;
@@ -18,6 +21,7 @@ public class LockResult implements ILockResult {
 	private int submissionId;
 	private int participationId;
 
+	private int resultId;
 	private List<Feedback> latestFeedback;
 
 	@JsonCreator
@@ -35,8 +39,20 @@ public class LockResult implements ILockResult {
 				: previousAssessmentResults.get(previousAssessmentResults.size() - 1);
 
 		if (latestResult != null) {
+			resultId = latestResult.getId();
 			latestResult.getFeedbacks().stream().filter(Objects::nonNull).forEach(this.latestFeedback::add);
 		}
+	}
+
+	public void init(IAssessmentArtemisClient assessmentClient) throws ArtemisClientException {
+		for (Feedback feedback : this.latestFeedback) {
+			if (!feedback.hasLongFeedbackText()) {
+				continue;
+			}
+			LongFeedbackText actualFeedback = assessmentClient.getLongFeedback(resultId, feedback);
+			feedback.setDetailText(actualFeedback.getText());
+		}
+
 	}
 
 	@Override

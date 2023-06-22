@@ -10,8 +10,10 @@ import org.eclipse.core.runtime.Platform;
 import edu.kit.kastel.eclipse.common.api.ArtemisClientException;
 import edu.kit.kastel.eclipse.common.api.artemis.AssessmentResult;
 import edu.kit.kastel.eclipse.common.api.artemis.ILockResult;
+import edu.kit.kastel.eclipse.common.api.artemis.mapping.Feedback;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.IExercise;
 import edu.kit.kastel.eclipse.common.api.artemis.mapping.ISubmission;
+import edu.kit.kastel.eclipse.common.api.artemis.mapping.LongFeedbackText;
 import edu.kit.kastel.eclipse.common.api.client.IAssessmentArtemisClient;
 import edu.kit.kastel.eclipse.common.api.controller.ExerciseStats;
 import edu.kit.kastel.eclipse.common.client.mappings.ArtemisSubmission;
@@ -61,7 +63,9 @@ public class AssessmentArtemisClient extends AbstractArtemisClient implements IA
 						.addQueryParameter(CORRECTION_ROUND_QUERY_PARAM, String.valueOf(submission.getCorrectionRound())).build())
 				.get().build();
 
-		return this.call(this.client, request, LockResult.class);
+		LockResult result = this.call(this.client, request, LockResult.class);
+		result.init(this);
+		return result;
 	}
 
 	@Override
@@ -139,4 +143,11 @@ public class AssessmentArtemisClient extends AbstractArtemisClient implements IA
 		}
 	}
 
+	@Override
+	public LongFeedbackText getLongFeedback(int resultId, Feedback feedback) throws ArtemisClientException {
+		Request request = new Request.Builder()//
+				.url(this.path("results", resultId, "feedbacks", feedback.getId(), "long-feedback")).get().build();
+
+		return this.call(client, request, LongFeedbackText.class);
+	}
 }
