@@ -48,9 +48,15 @@ public class LockResult implements ILockResult {
 
 	public void init(IAssessmentArtemisClient assessmentClient) throws ArtemisClientException {
 		for (Feedback feedback : this.latestFeedback) {
-			if (!feedback.hasLongFeedbackText()) {
+			boolean hasLongFeedbackText = feedback.hasLongFeedbackText();
+
+			// Needed for storing the information later on.
+			feedback.resetLongFeedbackProperty();
+
+			if (!hasLongFeedbackText) {
 				continue;
 			}
+
 			LongFeedbackText actualFeedback = assessmentClient.getLongFeedback(resultId, feedback);
 			feedback.setDetailText(actualFeedback.getText());
 		}

@@ -198,4 +198,8 @@ public class Feedback implements Comparable<Feedback>, Serializable {
 	public void setDetailText(String actualFeedbackText) {
 		this.detailText = actualFeedbackText;
 	}
+
+	public void resetLongFeedbackProperty() {
+		this.hasLongFeedbackText = null;
+	}
 }
