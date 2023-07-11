@@ -10,6 +10,7 @@ import edu.kit.kastel.eclipse.common.api.EclipseArtemisConstants;
 import edu.kit.kastel.eclipse.common.api.controller.AbstractController;
 import edu.kit.kastel.eclipse.common.api.controller.IArtemisController;
 import edu.kit.kastel.eclipse.common.api.controller.IViewInteraction;
+import edu.kit.kastel.eclipse.common.client.rest.LoginManager;
 import edu.kit.kastel.sdq.artemis4j.api.ArtemisClientException;
 import edu.kit.kastel.sdq.artemis4j.api.artemis.Course;
 import edu.kit.kastel.sdq.artemis4j.api.artemis.Exercise;
@@ -28,7 +29,7 @@ public abstract class ArtemisController extends AbstractController implements IA
 
 	protected ArtemisController(final String host, final String username, final String password, final IViewInteraction handler) {
 		super(handler);
-		this.clientManager = new RestClientManager(host, username, password);
+		this.clientManager = new RestClientManager(host.trim(), new LoginManager(host.trim(), username, password));
 		this.lockResults = new HashMap<>();
 		if (!host.isBlank()) {
 			this.checkVersion();
