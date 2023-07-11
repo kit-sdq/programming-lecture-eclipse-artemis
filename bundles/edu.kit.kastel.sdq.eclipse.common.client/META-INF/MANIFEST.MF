@@ -10,16 +10,8 @@ Require-Bundle: edu.kit.kastel.sdq.eclipse.common.api,
  com.fasterxml.jackson.core.jackson-databind,
  org.eclipse.jgit,
  org.eclipse.core.runtime,
- org.eclipse.jface,
- com.squareup.okhttp3.okhttp,
- org.jetbrains.kotlin.stdlib,
- org.jetbrains.kotlin.stdlib-common,
- org.jetbrains.kotlin.stdlib-jdk7,
- org.jetbrains.kotlin.stdlib-jdk8,
- com.squareup.okio
+ org.eclipse.jface
 Export-Package: edu.kit.kastel.eclipse.common.client.git,
- edu.kit.kastel.eclipse.common.client.mappings,
- edu.kit.kastel.eclipse.common.client.mappings.exam,
  edu.kit.kastel.eclipse.common.client.rest
 Automatic-Module-Name: edu.kit.kastel.sdq.eclipse.common.client
 Bundle-ClassPath: .

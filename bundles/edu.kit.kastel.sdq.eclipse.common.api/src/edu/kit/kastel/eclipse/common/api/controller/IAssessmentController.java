@@ -5,11 +5,11 @@ import java.util.List;
 import java.util.Optional;
 
 import edu.kit.kastel.eclipse.common.api.artemis.IProjectFileNamingStrategy;
-import edu.kit.kastel.eclipse.common.api.artemis.mapping.IExercise;
-import edu.kit.kastel.eclipse.common.api.artemis.mapping.ISubmission;
-import edu.kit.kastel.eclipse.common.api.model.IAnnotation;
-import edu.kit.kastel.eclipse.common.api.model.IMistakeType;
-import edu.kit.kastel.eclipse.common.api.model.IRatingGroup;
+import edu.kit.kastel.sdq.artemis4j.api.artemis.Exercise;
+import edu.kit.kastel.sdq.artemis4j.api.artemis.assessment.Submission;
+import edu.kit.kastel.sdq.artemis4j.api.grading.IAnnotation;
+import edu.kit.kastel.sdq.artemis4j.api.grading.IMistakeType;
+import edu.kit.kastel.sdq.artemis4j.api.grading.IRatingGroup;
 
 /**
  * The assessmentController handles everything that has to do with the
@@ -64,9 +64,9 @@ public interface IAssessmentController extends IController {
 	 */
 	void deleteEclipseProject(IProjectFileNamingStrategy projectNaming);
 
-	IExercise getExercise();
+	Exercise getExercise();
 
-	ISubmission getSubmission();
+	Submission getSubmission();
 
 	List<IMistakeType> getMistakes();
 

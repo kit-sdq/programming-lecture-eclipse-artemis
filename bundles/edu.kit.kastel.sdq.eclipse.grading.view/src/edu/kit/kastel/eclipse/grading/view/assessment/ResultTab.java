@@ -5,12 +5,12 @@ import java.util.List;
 
 import org.eclipse.swt.widgets.TabFolder;
 
-import edu.kit.kastel.eclipse.common.api.artemis.mapping.Feedback;
-import edu.kit.kastel.eclipse.common.api.artemis.mapping.FeedbackType;
-import edu.kit.kastel.eclipse.common.api.artemis.mapping.IExercise;
 import edu.kit.kastel.eclipse.common.api.controller.IGradingSystemwideController;
-import edu.kit.kastel.eclipse.common.api.util.Pair;
 import edu.kit.kastel.eclipse.common.view.ui.AbstractResultTab;
+import edu.kit.kastel.sdq.artemis4j.api.artemis.Exercise;
+import edu.kit.kastel.sdq.artemis4j.api.artemis.assessment.Feedback;
+import edu.kit.kastel.sdq.artemis4j.api.artemis.assessment.FeedbackType;
+import edu.kit.kastel.sdq.artemis4j.util.Pair;
 
 public class ResultTab extends AbstractResultTab {
 
@@ -26,7 +26,7 @@ public class ResultTab extends AbstractResultTab {
 	}
 
 	@Override
-	protected IExercise getCurrentExercise() {
+	protected Exercise getCurrentExercise() {
 		return this.controller.getCurrentAssessmentController().getExercise();
 	}
 

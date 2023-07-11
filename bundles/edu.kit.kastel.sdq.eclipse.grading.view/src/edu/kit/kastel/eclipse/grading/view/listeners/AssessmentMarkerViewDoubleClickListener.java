@@ -9,12 +9,12 @@ import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.ui.views.markers.MarkerItem;
 
-import edu.kit.kastel.eclipse.common.api.ArtemisClientException;
-import edu.kit.kastel.eclipse.common.api.model.IAnnotation;
 import edu.kit.kastel.eclipse.common.view.utilities.AssessmentUtilities;
 import edu.kit.kastel.eclipse.grading.view.activator.Activator;
 import edu.kit.kastel.eclipse.grading.view.assessment.ArtemisGradingView;
 import edu.kit.kastel.eclipse.grading.view.assessment.CustomButtonDialog;
+import edu.kit.kastel.sdq.artemis4j.api.ArtemisClientException;
+import edu.kit.kastel.sdq.artemis4j.api.grading.IAnnotation;
 
 public class AssessmentMarkerViewDoubleClickListener implements IDoubleClickListener {
 

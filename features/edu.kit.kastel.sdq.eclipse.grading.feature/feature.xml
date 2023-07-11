@@ -31,11 +31,6 @@
       <import plugin="org.eclipse.jface.text"/>
       <import plugin="org.eclipse.ui.editors"/>
       <import feature="org.eclipse.platform"/>
-      <import plugin="com.squareup.okhttp3.okhttp"/>
-      <import plugin="org.jetbrains.kotlin.stdlib"/>
-      <import plugin="org.jetbrains.kotlin.stdlib-common"/>
-      <import plugin="org.jetbrains.kotlin.stdlib-jdk7"/>
-      <import plugin="org.jetbrains.kotlin.stdlib-jdk8"/>
    </requires>
 
    <plugin

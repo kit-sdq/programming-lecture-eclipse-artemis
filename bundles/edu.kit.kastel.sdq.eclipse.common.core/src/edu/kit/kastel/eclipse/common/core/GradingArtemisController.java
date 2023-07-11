@@ -8,19 +8,19 @@ import java.util.Optional;
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.Platform;
 
-import edu.kit.kastel.eclipse.common.api.ArtemisClientException;
-import edu.kit.kastel.eclipse.common.api.artemis.ILockResult;
-import edu.kit.kastel.eclipse.common.api.artemis.mapping.ICourse;
-import edu.kit.kastel.eclipse.common.api.artemis.mapping.IExercise;
-import edu.kit.kastel.eclipse.common.api.artemis.mapping.ISubmission;
-import edu.kit.kastel.eclipse.common.api.controller.ExerciseStats;
 import edu.kit.kastel.eclipse.common.api.controller.IAssessmentController;
 import edu.kit.kastel.eclipse.common.api.controller.IGradingArtemisController;
 import edu.kit.kastel.eclipse.common.api.controller.IViewInteraction;
 import edu.kit.kastel.eclipse.common.api.messages.Messages;
-import edu.kit.kastel.eclipse.common.api.model.IAnnotation;
-import edu.kit.kastel.eclipse.common.api.model.IRatingGroup;
-import edu.kit.kastel.eclipse.common.core.artemis.AnnotationMapper;
+import edu.kit.kastel.sdq.artemis4j.api.ArtemisClientException;
+import edu.kit.kastel.sdq.artemis4j.api.artemis.Course;
+import edu.kit.kastel.sdq.artemis4j.api.artemis.Exercise;
+import edu.kit.kastel.sdq.artemis4j.api.artemis.ExerciseStats;
+import edu.kit.kastel.sdq.artemis4j.api.artemis.assessment.LockResult;
+import edu.kit.kastel.sdq.artemis4j.api.artemis.assessment.Submission;
+import edu.kit.kastel.sdq.artemis4j.api.grading.IAnnotation;
+import edu.kit.kastel.sdq.artemis4j.api.grading.IRatingGroup;
+import edu.kit.kastel.sdq.artemis4j.grading.artemis.AnnotationMapper;
 
 public class GradingArtemisController extends ArtemisController implements IGradingArtemisController {
 
@@ -32,11 +32,11 @@ public class GradingArtemisController extends ArtemisController implements IGrad
 
 	@Override
 	public List<String> getExerciseShortNamesFromExam(final String examTitle) {
-		return this.getExercisesFromExam(examTitle).stream().map(IExercise::getShortName).toList();
+		return this.getExercisesFromExam(examTitle).stream().map(Exercise::getShortName).toList();
 	}
 
 	@Override
-	protected List<ICourse> fetchCourses() {
+	protected List<Course> fetchCourses() {
 		if (!this.clientManager.isReady()) {
 			return List.of();
 		}
@@ -49,11 +49,11 @@ public class GradingArtemisController extends ArtemisController implements IGrad
 	}
 
 	@Override
-	public boolean saveAssessment(IAssessmentController assessmentController, IExercise exercise, ISubmission submission, boolean submit) {
+	public boolean saveAssessment(IAssessmentController assessmentController, Exercise exercise, Submission submission, boolean submit) {
 		if (!this.lockResults.containsKey(submission.getSubmissionId())) {
 			throw new IllegalStateException("Assessment not started, yet!");
 		}
-		final ILockResult lock = this.lockResults.get(submission.getSubmissionId());
+		final LockResult lock = this.lockResults.get(submission.getSubmissionId());
 		final int participationId = lock.getParticipationId();
 
 		final List<IAnnotation> annotations = assessmentController.getAnnotations();
@@ -78,7 +78,7 @@ public class GradingArtemisController extends ArtemisController implements IGrad
 	}
 
 	@Override
-	public void startAssessment(ISubmission submissionId) {
+	public void startAssessment(Submission submissionId) {
 		try {
 			this.lockResults.put(submissionId.getSubmissionId(), this.clientManager.getAssessmentArtemisClient().startAssessment(submissionId));
 		} catch (ArtemisClientException e) {
@@ -87,8 +87,8 @@ public class GradingArtemisController extends ArtemisController implements IGrad
 	}
 
 	@Override
-	public Optional<ISubmission> startNextAssessment(IExercise exercise, int correctionRound) {
-		Optional<ILockResult> lockResultOptional;
+	public Optional<Submission> startNextAssessment(Exercise exercise, int correctionRound) {
+		Optional<LockResult> lockResultOptional;
 		try {
 			lockResultOptional = this.clientManager.getAssessmentArtemisClient().startNextAssessment(exercise, correctionRound);
 		} catch (ArtemisClientException e) {
@@ -98,7 +98,7 @@ public class GradingArtemisController extends ArtemisController implements IGrad
 		if (lockResultOptional.isEmpty()) {
 			return Optional.empty();
 		}
-		final ILockResult lockResult = lockResultOptional.get();
+		final LockResult lockResult = lockResultOptional.get();
 
 		final int submissionID = lockResult.getSubmissionId();
 		this.lockResults.put(submissionID, lockResult);
@@ -111,7 +111,7 @@ public class GradingArtemisController extends ArtemisController implements IGrad
 	}
 
 	@Override
-	public ExerciseStats getStats(IExercise exercise) throws ArtemisClientException {
+	public ExerciseStats getStats(Exercise exercise) throws ArtemisClientException {
 		return this.clientManager.getAssessmentArtemisClient().getStats(exercise);
 	}
 

@@ -18,12 +18,6 @@
    <feature id="org.eclipse.jgit.source">
       <category name="Eclipse Artemis Dev"/>
    </feature>
-   <feature id="com.squareup.okhttp3.feature">
-      <category name="Eclipse Artemis Dev"/>
-   </feature>
-   <feature id="com.squareup.okhttp3.feature.source">
-      <category name="Eclipse Artemis Dev"/>
-   </feature>
    <bundle id="com.fasterxml.jackson.core.jackson-annotations">
       <category name="Eclipse Artemis Dev"/>
    </bundle>
@@ -51,5 +45,4 @@
       </description>
    </category-def>
    <category-def name="Eclipse Artemis Dev" label="Eclipse Artemis Development"/>
-   <repository-reference location="https://kit-sdq.github.io/programming-lecture-eclipse-artemis.p2" enabled="true" />
 </site>

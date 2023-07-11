@@ -6,25 +6,25 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import edu.kit.kastel.eclipse.common.api.ArtemisClientException;
 import edu.kit.kastel.eclipse.common.api.EclipseArtemisConstants;
-import edu.kit.kastel.eclipse.common.api.artemis.ILockResult;
-import edu.kit.kastel.eclipse.common.api.artemis.mapping.Feedback;
-import edu.kit.kastel.eclipse.common.api.artemis.mapping.ICourse;
-import edu.kit.kastel.eclipse.common.api.artemis.mapping.IExam;
-import edu.kit.kastel.eclipse.common.api.artemis.mapping.IExercise;
-import edu.kit.kastel.eclipse.common.api.artemis.mapping.IExerciseGroup;
-import edu.kit.kastel.eclipse.common.api.artemis.mapping.ISubmission;
-import edu.kit.kastel.eclipse.common.api.artemis.mapping.User;
 import edu.kit.kastel.eclipse.common.api.controller.AbstractController;
 import edu.kit.kastel.eclipse.common.api.controller.IArtemisController;
 import edu.kit.kastel.eclipse.common.api.controller.IViewInteraction;
-import edu.kit.kastel.eclipse.common.client.rest.RestClientManager;
+import edu.kit.kastel.sdq.artemis4j.api.ArtemisClientException;
+import edu.kit.kastel.sdq.artemis4j.api.artemis.Course;
+import edu.kit.kastel.sdq.artemis4j.api.artemis.Exercise;
+import edu.kit.kastel.sdq.artemis4j.api.artemis.User;
+import edu.kit.kastel.sdq.artemis4j.api.artemis.assessment.Feedback;
+import edu.kit.kastel.sdq.artemis4j.api.artemis.assessment.LockResult;
+import edu.kit.kastel.sdq.artemis4j.api.artemis.assessment.Submission;
+import edu.kit.kastel.sdq.artemis4j.api.artemis.exam.Exam;
+import edu.kit.kastel.sdq.artemis4j.api.artemis.exam.ExerciseGroup;
+import edu.kit.kastel.sdq.artemis4j.client.RestClientManager;
 
 public abstract class ArtemisController extends AbstractController implements IArtemisController {
-	protected final Map<Integer, ILockResult> lockResults;
+	protected final Map<Integer, LockResult> lockResults;
 	protected final RestClientManager clientManager;
-	protected List<ICourse> courses;
+	protected List<Course> courses;
 
 	protected ArtemisController(final String host, final String username, final String password, final IViewInteraction handler) {
 		super(handler);
@@ -36,7 +36,7 @@ public abstract class ArtemisController extends AbstractController implements IA
 		}
 	}
 
-	protected abstract List<ICourse> fetchCourses();
+	protected abstract List<Course> fetchCourses();
 
 	@Override
 	public User getUserLogin() {
@@ -48,7 +48,7 @@ public abstract class ArtemisController extends AbstractController implements IA
 	}
 
 	@Override
-	public final List<ICourse> getCourses() {
+	public final List<Course> getCourses() {
 		if (this.courses == null) {
 			this.courses = this.fetchCourses();
 		}
@@ -56,8 +56,8 @@ public abstract class ArtemisController extends AbstractController implements IA
 	}
 
 	@Override
-	public List<Feedback> getAllFeedbacksGottenFromLocking(ISubmission submission) {
-		ILockResult lockResult = this.lockResults.get(submission.getSubmissionId());
+	public List<Feedback> getAllFeedbacksGottenFromLocking(Submission submission) {
+		LockResult lockResult = this.lockResults.get(submission.getSubmissionId());
 		if (lockResult == null) {
 			this.error("No Lock found for submission=" + submission.getSubmissionId(), null);
 			return List.of();
@@ -66,7 +66,7 @@ public abstract class ArtemisController extends AbstractController implements IA
 	}
 
 	@Override
-	public List<ISubmission> getBegunSubmissions(IExercise exercise) {
+	public List<Submission> getBegunSubmissions(Exercise exercise) {
 		try {
 			return this.clientManager.getSubmissionArtemisClient().getSubmissions(exercise);
 		} catch (ArtemisClientException e) {
@@ -75,8 +75,8 @@ public abstract class ArtemisController extends AbstractController implements IA
 		}
 	}
 
-	protected ICourse getCourseByShortName(final String courseShortName) {
-		List<ICourse> filteredCourses = this.getCourses().stream().filter(course -> course.getShortName().equals(courseShortName)).toList();
+	protected Course getCourseByShortName(final String courseShortName) {
+		List<Course> filteredCourses = this.getCourses().stream().filter(course -> course.getShortName().equals(courseShortName)).toList();
 		if (filteredCourses.isEmpty()) {
 			this.error("No course found for courseShortName=" + courseShortName, null);
 			return null;
@@ -90,18 +90,18 @@ public abstract class ArtemisController extends AbstractController implements IA
 
 	@Override
 	public List<String> getCourseShortNames() {
-		return this.getCourses().stream().map(ICourse::getShortName).toList();
+		return this.getCourses().stream().map(Course::getShortName).toList();
 	}
 
 	@Override
 	public List<String> getExamTitles(final String courseShortName) {
 		try {
-			ICourse course = this.getCourseByShortName(courseShortName);
+			Course course = this.getCourseByShortName(courseShortName);
 			if (course == null) {
 				return List.of();
 			}
 
-			return course.getExams().stream().map(IExam::getTitle).toList();
+			return course.getExams().stream().map(Exam::getTitle).toList();
 		} catch (final Exception e) {
 			this.error(e.getMessage(), e);
 			return List.of();
@@ -109,15 +109,15 @@ public abstract class ArtemisController extends AbstractController implements IA
 	}
 
 	@Override
-	public List<IExercise> getExercisesFromExam(final String examTitle) {
+	public List<Exercise> getExercisesFromExam(final String examTitle) {
 		return this.getExercisesFromExam(examTitle, this.getCourses());
 	}
 
-	private List<IExercise> getExercisesFromExam(final String examTitle, List<ICourse> courses) {
-		IExam foundExam = null;
+	private List<Exercise> getExercisesFromExam(final String examTitle, List<Course> courses) {
+		Exam foundExam = null;
 
-		for (ICourse course : courses) {
-			List<IExam> filteredExams;
+		for (Course course : courses) {
+			List<Exam> filteredExams;
 			try {
 				filteredExams = course.getExams().stream().filter(exam -> exam.getTitle().equals(examTitle)).toList();
 			} catch (final Exception e) {
@@ -125,7 +125,7 @@ public abstract class ArtemisController extends AbstractController implements IA
 				continue;
 			}
 			if (filteredExams.size() == 1) {
-				IExam exam = filteredExams.iterator().next();
+				Exam exam = filteredExams.iterator().next();
 				if (exam.getTitle().equals(examTitle)) {
 					foundExam = exam;
 				}
@@ -136,7 +136,7 @@ public abstract class ArtemisController extends AbstractController implements IA
 			return List.of();
 		}
 		try {
-			return foundExam.getExerciseGroups().stream().map(IExerciseGroup::getExercises).flatMap(Collection::stream).toList();
+			return foundExam.getExerciseGroups().stream().map(ExerciseGroup::getExercises).flatMap(Collection::stream).toList();
 		} catch (final Exception e) {
 			this.error(e.getMessage(), e);
 			return List.of();

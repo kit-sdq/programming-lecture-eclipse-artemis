@@ -28,7 +28,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import edu.kit.kastel.eclipse.common.api.controller.IAssessmentController;
-import edu.kit.kastel.eclipse.common.api.model.IMistakeType;
+import edu.kit.kastel.sdq.artemis4j.api.grading.IMistakeType;
 
 // One could also use the FilteredResourcesSelectionDialog (used e.g. for the buit-in Open Type command)
 // but I don't like the UX of this dialog, it takes a comparatively long time to open
@@ -96,7 +96,7 @@ public class AddAnnotationDialog extends Dialog {
 		Text inputField = new Text(container, SWT.SINGLE | SWT.BORDER);
 		inputField.addTraverseListener(e -> {
 			if (e.detail == SWT.TRAVERSE_RETURN) {
-				processMistakeSelection(isShiftPressed(e.stateMask));
+				this.processMistakeSelection(this.isShiftPressed(e.stateMask));
 				this.okPressed();
 			} else if (e.detail == SWT.TRAVERSE_ESCAPE) {
 				this.cancelPressed();
@@ -105,19 +105,19 @@ public class AddAnnotationDialog extends Dialog {
 		inputField.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
-				int index = displayList.getTable().getSelectionIndex();
+				int index = AddAnnotationDialog.this.displayList.getTable().getSelectionIndex();
 				if (e.keyCode == SWT.ARROW_DOWN) {
-					displayList.getTable().select(index + 1);
-					displayList.getTable().showSelection();
+					AddAnnotationDialog.this.displayList.getTable().select(index + 1);
+					AddAnnotationDialog.this.displayList.getTable().showSelection();
 					e.doit = false;
 				} else if (e.keyCode == SWT.ARROW_UP) {
-					displayList.getTable().select(index - 1);
-					displayList.getTable().showSelection();
+					AddAnnotationDialog.this.displayList.getTable().select(index - 1);
+					AddAnnotationDialog.this.displayList.getTable().showSelection();
 					e.doit = false;
 				}
 			}
 		});
-		inputField.addModifyListener(e -> updateDisplayList(inputField.getText()));
+		inputField.addModifyListener(e -> this.updateDisplayList(inputField.getText()));
 		inputField.setFocus();
 
 		GridData gridData = new GridData();
@@ -151,8 +151,8 @@ public class AddAnnotationDialog extends Dialog {
 		this.displayList.getTable().addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				processMistakeSelection(isShiftPressed(e.stateMask));
-				close();
+				AddAnnotationDialog.this.processMistakeSelection(AddAnnotationDialog.this.isShiftPressed(e.stateMask));
+				AddAnnotationDialog.this.close();
 			}
 		});
 
@@ -177,7 +177,7 @@ public class AddAnnotationDialog extends Dialog {
 	}
 
 	private void processMistakeSelection(boolean customText) {
-		var mistake = (IMistakeType) displayList.getStructuredSelection().getFirstElement();
+		var mistake = (IMistakeType) this.displayList.getStructuredSelection().getFirstElement();
 		if (mistake != null) {
 			this.selectedMistake = mistake;
 			this.customMessageWanted = customText;

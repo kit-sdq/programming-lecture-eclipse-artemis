@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2022. */
+/* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.core.artemis.naming;
 
 import java.util.function.Supplier;
@@ -16,7 +16,7 @@ public enum ProjectFileNamingStrategies implements Supplier<IProjectFileNamingSt
 
 	@Override
 	public IProjectFileNamingStrategy get() {
-		return projectFileNamingStrategy;
+		return this.projectFileNamingStrategy;
 	}
 
 }

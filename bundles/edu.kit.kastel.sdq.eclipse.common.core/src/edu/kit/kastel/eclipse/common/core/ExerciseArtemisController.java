@@ -5,18 +5,18 @@ import java.io.File;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 
-import edu.kit.kastel.eclipse.common.api.ArtemisClientException;
 import edu.kit.kastel.eclipse.common.api.PreferenceConstants;
 import edu.kit.kastel.eclipse.common.api.artemis.IProjectFileNamingStrategy;
-import edu.kit.kastel.eclipse.common.api.artemis.mapping.IExercise;
-import edu.kit.kastel.eclipse.common.api.artemis.mapping.ISubmission;
-import edu.kit.kastel.eclipse.common.api.artemis.mapping.User;
 import edu.kit.kastel.eclipse.common.api.controller.AbstractController;
 import edu.kit.kastel.eclipse.common.api.controller.IExerciseArtemisController;
 import edu.kit.kastel.eclipse.common.api.controller.IViewInteraction;
 import edu.kit.kastel.eclipse.common.client.git.GitCredentials;
 import edu.kit.kastel.eclipse.common.client.git.GitException;
 import edu.kit.kastel.eclipse.common.client.git.GitHandler;
+import edu.kit.kastel.sdq.artemis4j.api.ArtemisClientException;
+import edu.kit.kastel.sdq.artemis4j.api.artemis.Exercise;
+import edu.kit.kastel.sdq.artemis4j.api.artemis.User;
+import edu.kit.kastel.sdq.artemis4j.api.artemis.assessment.Submission;
 
 public class ExerciseArtemisController extends AbstractController implements IExerciseArtemisController {
 	private final String username;
@@ -40,7 +40,7 @@ public class ExerciseArtemisController extends AbstractController implements IEx
 	}
 
 	@Override
-	public void downloadExerciseAndSubmission(IExercise exercise, ISubmission submission, File dir, IProjectFileNamingStrategy namingStrategy)
+	public void downloadExerciseAndSubmission(Exercise exercise, Submission submission, File dir, IProjectFileNamingStrategy namingStrategy)
 			throws ArtemisClientException {
 		final File projectDirectory = namingStrategy.getProjectFileInWorkspace(dir, exercise, submission);
 		this.existsAndThrow(projectDirectory);

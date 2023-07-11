@@ -3,10 +3,10 @@ package edu.kit.kastel.eclipse.common.view.controllers;
 
 import java.util.List;
 
-import edu.kit.kastel.eclipse.common.api.ArtemisClientException;
 import edu.kit.kastel.eclipse.common.api.controller.IArtemisController;
 import edu.kit.kastel.eclipse.common.api.controller.ISystemwideController;
 import edu.kit.kastel.eclipse.common.api.controller.IViewInteraction;
+import edu.kit.kastel.sdq.artemis4j.api.ArtemisClientException;
 
 /**
  * This abstract class is the base for controllers for a view for artemis. It

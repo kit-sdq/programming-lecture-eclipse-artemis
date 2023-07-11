@@ -3,7 +3,7 @@ package edu.kit.kastel.eclipse.common.api.controller;
 
 import java.util.List;
 
-import edu.kit.kastel.eclipse.common.api.ArtemisClientException;
+import edu.kit.kastel.sdq.artemis4j.api.ArtemisClientException;
 
 public interface ISystemwideController extends IController {
 

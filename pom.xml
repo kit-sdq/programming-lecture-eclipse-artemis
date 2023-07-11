@@ -38,11 +38,6 @@
             <layout>p2</layout>
         </repository>
         <repository>
-            <id>Eclipse P2 for External Deps</id>
-            <url>https://kit-sdq.github.io/programming-lecture-eclipse-artemis.p2</url>
-            <layout>p2</layout>
-        </repository>
-        <repository>
             <id>CheckStyle</id>
             <url>https://checkstyle.org/eclipse-cs-update-site</url>
             <layout>p2</layout>

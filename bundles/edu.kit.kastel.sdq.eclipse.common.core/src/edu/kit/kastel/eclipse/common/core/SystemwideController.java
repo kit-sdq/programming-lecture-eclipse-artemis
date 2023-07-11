@@ -7,8 +7,6 @@ import java.util.List;
 import org.eclipse.jface.preference.IPreferenceStore;
 
 import edu.kit.kastel.eclipse.common.api.artemis.IProjectFileNamingStrategy;
-import edu.kit.kastel.eclipse.common.api.artemis.mapping.ICourse;
-import edu.kit.kastel.eclipse.common.api.artemis.mapping.IExercise;
 import edu.kit.kastel.eclipse.common.api.controller.AbstractController;
 import edu.kit.kastel.eclipse.common.api.controller.IArtemisController;
 import edu.kit.kastel.eclipse.common.api.controller.IExerciseArtemisController;
@@ -16,12 +14,14 @@ import edu.kit.kastel.eclipse.common.api.controller.ISubmissionLifecycleCallback
 import edu.kit.kastel.eclipse.common.api.controller.ISystemwideController;
 import edu.kit.kastel.eclipse.common.api.controller.IViewInteraction;
 import edu.kit.kastel.eclipse.common.core.artemis.naming.ProjectFileNamingStrategies;
+import edu.kit.kastel.sdq.artemis4j.api.artemis.Course;
+import edu.kit.kastel.sdq.artemis4j.api.artemis.Exercise;
 
 public abstract class SystemwideController extends AbstractController implements ISystemwideController {
 	protected final List<ISubmissionLifecycleCallback> buildCompletedCallbacks;
 
-	protected ICourse course;
-	protected IExercise exercise;
+	protected Course course;
+	protected Exercise exercise;
 	protected IPreferenceStore preferenceStore;
 	protected final IProjectFileNamingStrategy projectFileNamingStrategy;
 	protected final IExerciseArtemisController exerciseController;
@@ -30,8 +30,8 @@ public abstract class SystemwideController extends AbstractController implements
 		super(handler);
 		this.buildCompletedCallbacks = new ArrayList<>();
 		this.projectFileNamingStrategy = ProjectFileNamingStrategies.DEFAULT.get();
-		var loginController = createController(preferenceStore, handler);
-		exerciseController = new ExerciseArtemisController(handler, loginController.getUserLogin(), preferenceStore);
+		var loginController = this.createController(preferenceStore, handler);
+		this.exerciseController = new ExerciseArtemisController(handler, loginController.getUserLogin(), preferenceStore);
 	}
 
 	protected abstract IArtemisController createController(IPreferenceStore preferenceStore, IViewInteraction handler);

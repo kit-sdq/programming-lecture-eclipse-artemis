@@ -9,8 +9,8 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 
 import edu.kit.kastel.eclipse.common.api.PreferenceConstants;
-import edu.kit.kastel.eclipse.common.api.model.IMistakeType;
 import edu.kit.kastel.eclipse.common.view.activator.CommonActivator;
+import edu.kit.kastel.sdq.artemis4j.api.grading.IMistakeType;
 
 public class AnnotationFilter extends ViewerFilter {
 	private final boolean includeMessages;
@@ -28,8 +28,8 @@ public class AnnotationFilter extends ViewerFilter {
 	public boolean select(Viewer viewer, Object parent, Object element) {
 		if (this.filter != null) {
 			IMistakeType mistake = (IMistakeType) element;
-			return matchesPart(mistake.getButtonText(I18N().key()).toLowerCase())
-					|| (this.includeMessages && matchesPart(mistake.getMessage(I18N().key()).toLowerCase()));
+			return this.matchesPart(mistake.getButtonText(I18N().key()).toLowerCase())
+					|| (this.includeMessages && this.matchesPart(mistake.getMessage(I18N().key()).toLowerCase()));
 		} else {
 			return true;
 		}

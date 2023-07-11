@@ -11,41 +11,39 @@ import org.eclipse.core.runtime.CoreException;
 
 import edu.kit.kastel.eclipse.common.api.PreferenceConstants;
 import edu.kit.kastel.eclipse.common.api.artemis.IProjectFileNamingStrategy;
-import edu.kit.kastel.eclipse.common.api.artemis.mapping.ICourse;
-import edu.kit.kastel.eclipse.common.api.artemis.mapping.IExercise;
-import edu.kit.kastel.eclipse.common.api.artemis.mapping.ISubmission;
 import edu.kit.kastel.eclipse.common.api.controller.AbstractController;
 import edu.kit.kastel.eclipse.common.api.controller.IAssessmentController;
-import edu.kit.kastel.eclipse.common.api.model.IAnnotation;
-import edu.kit.kastel.eclipse.common.api.model.IMistakeType;
-import edu.kit.kastel.eclipse.common.api.model.IRatingGroup;
-import edu.kit.kastel.eclipse.common.core.artemis.AnnotationDeserializer;
-import edu.kit.kastel.eclipse.common.core.artemis.AnnotationMapper;
 import edu.kit.kastel.eclipse.common.core.artemis.WorkspaceUtil;
-import edu.kit.kastel.eclipse.common.core.config.ExerciseConfig;
-import edu.kit.kastel.eclipse.common.core.config.ExerciseConfigConverterException;
-import edu.kit.kastel.eclipse.common.core.config.GradingDAO;
-import edu.kit.kastel.eclipse.common.core.config.JsonFileConfigDAO;
-import edu.kit.kastel.eclipse.common.core.model.annotation.AnnotationDAO;
-import edu.kit.kastel.eclipse.common.core.model.annotation.AnnotationException;
-import edu.kit.kastel.eclipse.common.core.model.annotation.IAnnotationDAO;
+import edu.kit.kastel.sdq.artemis4j.api.artemis.Course;
+import edu.kit.kastel.sdq.artemis4j.api.artemis.Exercise;
+import edu.kit.kastel.sdq.artemis4j.api.artemis.assessment.Submission;
+import edu.kit.kastel.sdq.artemis4j.api.grading.IAnnotation;
+import edu.kit.kastel.sdq.artemis4j.api.grading.IMistakeType;
+import edu.kit.kastel.sdq.artemis4j.api.grading.IRatingGroup;
+import edu.kit.kastel.sdq.artemis4j.grading.artemis.AnnotationDeserializer;
+import edu.kit.kastel.sdq.artemis4j.grading.artemis.AnnotationMapper;
+import edu.kit.kastel.sdq.artemis4j.grading.config.ExerciseConfig;
+import edu.kit.kastel.sdq.artemis4j.grading.config.GradingConfig;
+import edu.kit.kastel.sdq.artemis4j.grading.config.JsonFileConfig;
+import edu.kit.kastel.sdq.artemis4j.grading.model.annotation.AnnotationException;
+import edu.kit.kastel.sdq.artemis4j.grading.model.annotation.AnnotationManagement;
 
 public class AssessmentController extends AbstractController implements IAssessmentController {
 
 	private final GradingSystemwideController systemWideController;
 
-	private final ICourse course;
-	private final IExercise exercise;
-	private final ISubmission submission;
+	private final Course course;
+	private final Exercise exercise;
+	private final Submission submission;
 
-	private GradingDAO gradingDAO;
-	private IAnnotationDAO annotationDAO;
+	private GradingConfig gradingConfig;
+	private AnnotationManagement annotations;
 
 	/**
 	 * Protected, because the way to get a specific assessment controller should be
 	 * over a SystemwideController.
 	 */
-	protected AssessmentController(GradingSystemwideController systemWideController, ICourse course, IExercise exercise, ISubmission submission) {
+	protected AssessmentController(GradingSystemwideController systemWideController, Course course, Exercise exercise, Submission submission) {
 		super(systemWideController.getViewInteractionHandler());
 		this.systemWideController = systemWideController;
 
@@ -53,11 +51,11 @@ public class AssessmentController extends AbstractController implements IAssessm
 		this.exercise = exercise;
 		this.submission = submission;
 
-		this.annotationDAO = new AnnotationDAO();
-		this.gradingDAO = loadGradingDAO();
+		this.annotations = new AnnotationManagement();
+		this.gradingConfig = this.loadGradingDAO();
 
 		try {
-			ExerciseConfig exerciseConfig = this.gradingDAO.getExerciseConfig(this.exercise);
+			ExerciseConfig exerciseConfig = this.gradingConfig.getExerciseConfig(this.exercise);
 			if (!exerciseConfig.getAllowedExercises().isEmpty() && !exerciseConfig.getAllowedExercises().contains(this.exercise.getExerciseId())) {
 				// using interaction handler of the system wide controller, as the own
 				// interaction handler is not set during the constructor
@@ -67,7 +65,7 @@ public class AssessmentController extends AbstractController implements IAssessm
 						Please double check your settings!
 						""".formatted(exerciseConfig.getShortName(), this.exercise.getShortName()));
 			}
-		} catch (ExerciseConfigConverterException | IOException e) {
+		} catch (IllegalStateException | IOException e) {
 			this.error("Exercise Config not parseable: " + e.getMessage(), e);
 		}
 
@@ -78,15 +76,15 @@ public class AssessmentController extends AbstractController implements IAssessm
 		}
 	}
 
-	private GradingDAO loadGradingDAO() {
-		return new JsonFileConfigDAO(new File(this.systemWideController.getPreferences().getString(PreferenceConstants.GRADING_ABSOLUTE_CONFIG_PATH)));
+	private GradingConfig loadGradingDAO() {
+		return new JsonFileConfig(new File(this.systemWideController.getPreferences().getString(PreferenceConstants.GRADING_ABSOLUTE_CONFIG_PATH)));
 	}
 
 	@Override
 	public void addAnnotation(String annotationId, IMistakeType mistakeType, int startLine, int endLine, String fullyClassifiedClassName, String customMessage,
 			Double customPenalty) {
 		try {
-			this.annotationDAO.addAnnotation(annotationId, mistakeType, startLine, endLine, fullyClassifiedClassName, customMessage, customPenalty);
+			this.annotations.addAnnotation(annotationId, mistakeType, startLine, endLine, fullyClassifiedClassName, customMessage, customPenalty);
 		} catch (AnnotationException e) {
 			this.error(e.getMessage(), e);
 		}
@@ -107,29 +105,29 @@ public class AssessmentController extends AbstractController implements IAssessm
 
 	@Override
 	public List<IAnnotation> getAnnotations() {
-		return this.annotationDAO.getAnnotations().stream().toList();
+		return this.annotations.getAnnotations().stream().toList();
 	}
 
 	@Override
 	public Optional<IAnnotation> getAnnotationById(String id) {
-		return this.annotationDAO.getAnnotations().stream().filter(annotation -> annotation.getUUID().equals(id)).findFirst();
+		return this.annotations.getAnnotations().stream().filter(annotation -> annotation.getUUID().equals(id)).findFirst();
 	}
 
 	@Override
-	public IExercise getExercise() {
+	public Exercise getExercise() {
 		return this.exercise;
 	}
 
 	@Override
-	public ISubmission getSubmission() {
+	public Submission getSubmission() {
 		return this.submission;
 	}
 
 	@Override
 	public List<IMistakeType> getMistakes() {
 		try {
-			return gradingDAO.getExerciseConfig(this.exercise).getIMistakeTypes();
-		} catch (ExerciseConfigConverterException | IOException e) {
+			return this.gradingConfig.getExerciseConfig(this.exercise).getIMistakeTypes();
+		} catch (IllegalStateException | IOException e) {
 			this.error("Exercise Config not parseable: " + e.getMessage(), e);
 			return List.of();
 		}
@@ -138,8 +136,8 @@ public class AssessmentController extends AbstractController implements IAssessm
 	@Override
 	public boolean isPositiveFeedbackAllowed() {
 		try {
-			return gradingDAO.getExerciseConfig(this.exercise).isPositiveFeedbackAllowed();
-		} catch (ExerciseConfigConverterException | IOException e) {
+			return this.gradingConfig.getExerciseConfig(this.exercise).isPositiveFeedbackAllowed();
+		} catch (IllegalStateException | IOException e) {
 			this.error("Exercise Config not parseable: " + e.getMessage(), e);
 			return true;
 		}
@@ -158,8 +156,8 @@ public class AssessmentController extends AbstractController implements IAssessm
 	@Override
 	public List<IRatingGroup> getRatingGroups() {
 		try {
-			return gradingDAO.getExerciseConfig(this.exercise).getIRatingGroups();
-		} catch (ExerciseConfigConverterException | IOException e) {
+			return this.gradingConfig.getExerciseConfig(this.exercise).getIRatingGroups();
+		} catch (IllegalStateException | IOException e) {
 			this.error("Exercise Config not parseable: " + e.getMessage(), e);
 			return List.of();
 		}
@@ -186,12 +184,12 @@ public class AssessmentController extends AbstractController implements IAssessm
 
 	@Override
 	public void modifyAnnotation(String annatationId, String customMessage, Double customPenalty) {
-		this.annotationDAO.modifyAnnotation(annatationId, customMessage, customPenalty);
+		this.annotations.modifyAnnotation(annatationId, customMessage, customPenalty);
 	}
 
 	@Override
 	public void removeAnnotation(String annotationId) {
-		this.annotationDAO.removeAnnotation(annotationId);
+		this.annotations.removeAnnotation(annotationId);
 	}
 
 	@Override
@@ -200,8 +198,8 @@ public class AssessmentController extends AbstractController implements IAssessm
 		this.systemWideController.getArtemisController().startAssessment(this.submission);
 		this.systemWideController.downloadExerciseAndSubmission(this.course, this.exercise, this.submission, projectNaming);
 
-		this.annotationDAO = new AnnotationDAO();
-		this.gradingDAO = loadGradingDAO();
+		this.annotations = new AnnotationManagement();
+		this.gradingConfig = this.loadGradingDAO();
 
 		try {
 			this.initializeWithDeserializedAnnotations();
@@ -213,7 +211,7 @@ public class AssessmentController extends AbstractController implements IAssessm
 	@Override
 	public double getCurrentPenaltyForRatingGroup(IRatingGroup ratingGroup) {
 		AnnotationMapper mapper = //
-				new AnnotationMapper(exercise, submission, getAnnotations(), getRatingGroups(), null, null);
+				new AnnotationMapper(this.exercise, this.submission, this.getAnnotations(), this.getRatingGroups(), null, null);
 		return mapper.calculatePointsForRatingGroup(ratingGroup).points();
 	}
 }

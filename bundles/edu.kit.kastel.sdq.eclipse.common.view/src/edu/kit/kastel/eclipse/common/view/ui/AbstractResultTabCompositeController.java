@@ -12,9 +12,9 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
-import edu.kit.kastel.eclipse.common.api.artemis.mapping.Feedback;
-import edu.kit.kastel.eclipse.common.api.artemis.mapping.IExercise;
 import edu.kit.kastel.eclipse.common.view.utilities.UIUtilities;
+import edu.kit.kastel.sdq.artemis4j.api.artemis.Exercise;
+import edu.kit.kastel.sdq.artemis4j.api.artemis.assessment.Feedback;
 
 abstract class AbstractResultTabCompositeController extends AbstractResultTabComposite {
 	private static final String CHECK_MARK_IN_UTF8 = "\u2713";
@@ -25,15 +25,15 @@ abstract class AbstractResultTabCompositeController extends AbstractResultTabCom
 		if (!hasReloadFunctionality) {
 			this.btnReload.setVisible(false);
 		}
-		btnReload.addListener(SWT.Selection, e -> this.reloadFeedbackForExercise());
-		testTable.addListener(SWT.Selection, this::handleResultTableEvent);
+		this.btnReload.addListener(SWT.Selection, e -> this.reloadFeedbackForExercise());
+		this.testTable.addListener(SWT.Selection, this::handleResultTableEvent);
 		UIUtilities.initializeTabAfterFilling(this.getParent(), this);
 	}
 
 	protected abstract void reloadFeedbackForExercise();
 
-	protected void setSuccessAndScore(IExercise currentExercise, boolean successOfAutomaticTests, double points, double score, String completionTime) {
-		var display = getDisplay();
+	protected void setSuccessAndScore(Exercise currentExercise, boolean successOfAutomaticTests, double points, double score, String completionTime) {
+		var display = this.getDisplay();
 		String title = currentExercise == null ? I18N().unknownTask() : currentExercise.getTitle();
 
 		this.lblStateOfTests.setForeground(successOfAutomaticTests ? display.getSystemColor(SWT.COLOR_GREEN) : display.getSystemColor(SWT.COLOR_RED));
