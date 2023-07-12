@@ -19,16 +19,16 @@ jobs:
         fetch-depth: 0
         submodules: true
 
-    - name: Build Artemis4J
-      shell: bash
-      working-directory: "bundles/edu.kit.kastel.sdq.eclipse.common.api/lib/artemis4j"
-      run: mvn -P fatjar clean package
-
     - name: Set up JDK
       uses: actions/setup-java@v3
       with:
         distribution: 'temurin'
         java-version: 17
+
+    - name: Build Artemis4J
+      shell: bash
+      working-directory: "bundles/edu.kit.kastel.sdq.eclipse.common.api/lib/artemis4j"
+      run: mvn -P fatjar clean package
       
     - name: Check with Spotless
       run: mvn clean spotless:check
