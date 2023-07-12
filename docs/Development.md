@@ -34,6 +34,14 @@ student) edition.
 
 6. Run Configuration: Create a new eclipse run configuration. Do not edit anything. Just start it and click continue if eclipse shows some warnings.
 
+## Artemis4J
+We use a library called [Artemis4J](https://github.com/kit-sdq/artemis4j) to communicate with the Artemis system.
+If the version is updated or the project is newly cloned, you have to build the Artemis4J library.
+
+Therefore, go to the directory `bundles/edu.kit.kastel.sdq.eclipse.common.api/lib/artemis4j` and run the following command to build the library:
+`mvn -P fatjar clean package`.
+
+
 ## Architecture
 
 The architectural idea is based on having three plugins and an API
@@ -41,25 +49,23 @@ plugin over which those plugins communicate. That allows for more easily
 exchanging view, core/ Backend or client and also clearly defines
 borders, making parallel work easier and reducing coupling.
 
-### Core / Backend
+### Core
 
 Our Backend (core package) provides functionality for
 
--   managing annotations
--   calculating penalties
--   serializing and deserializing annotations (via artemis client as a
-    network interface)
--   mapping plugin-internal state to artemis-internal state
+-   managing annotations using Artemis4J
+-   calculating penalties using Artemis4J
+-   serializing and deserializing annotations using Artemis4J and Client
 -   keeping track of state
 
-### Artemis Client
+### Client
 
-The Artemis Client provides certain calls to artemis needed by the
-Backend.
+The Client provides certain calls to Artemis needed by the Core.
+It extends Artemis4J by a browser login.
 
-### GUI
+### View
 
-Here some rules / guides for UI development.
+Basically the view module is the Eclipse UI for the plugin. It handles Annotations and controls the system.
 
 #### Creating new view elements
 
@@ -74,7 +80,7 @@ If the new view element is state-dependent. You will have to update the
 *updateState()* method. If you create new views use the [Window
 Builder](https://www.eclipse.org/windowbuilder/).
 
-#### New calls to the Backend
+#### New calls to the Client
 
 New calls to the Backend can be realized through the
 *ArtemisViewController* class. Then call the method in the view using
