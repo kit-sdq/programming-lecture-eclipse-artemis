@@ -41,7 +41,7 @@ public class GradingArtemisController extends ArtemisController implements IGrad
 			return List.of();
 		}
 		try {
-			return this.clientManager.getCourseArtemisClient().getCoursesForAssessment();
+			return this.clientManager.getCourseArtemisClient().getCourses();
 		} catch (ArtemisClientException e) {
 			this.error(e.getMessage(), e);
 			return List.of();
