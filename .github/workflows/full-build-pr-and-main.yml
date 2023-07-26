@@ -36,7 +36,7 @@ jobs:
     - name: Build Artemis4J
       shell: bash
       working-directory: "bundles/edu.kit.kastel.sdq.eclipse.common.api/lib/artemis4j"
-      run: mvn -U -P fatjar clean package
+      run: mvn -U -P fatjar clean package -DskipTests
 
     - name: Cache Distributions
       uses: actions/cache@v3
