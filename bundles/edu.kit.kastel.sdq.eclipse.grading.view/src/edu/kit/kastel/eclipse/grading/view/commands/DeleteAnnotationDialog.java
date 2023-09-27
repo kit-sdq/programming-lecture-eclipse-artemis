@@ -29,10 +29,10 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
 import edu.kit.kastel.eclipse.common.api.controller.IAssessmentController;
-import edu.kit.kastel.eclipse.common.api.model.IAnnotation;
 import edu.kit.kastel.eclipse.common.view.utilities.AssessmentUtilities;
 import edu.kit.kastel.eclipse.grading.view.activator.Activator;
 import edu.kit.kastel.eclipse.grading.view.assessment.ArtemisGradingView;
+import edu.kit.kastel.sdq.artemis4j.api.grading.IAnnotation;
 
 public class DeleteAnnotationDialog extends Dialog {
 	private static final ILog LOG = Platform.getLog(DeleteAnnotationDialog.class);
@@ -120,12 +120,12 @@ public class DeleteAnnotationDialog extends Dialog {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				if (e.keyCode == SWT.DEL || e.keyCode == SWT.BS) {
-					var annotation = (IAnnotation) displayList.getStructuredSelection().getFirstElement();
+					var annotation = (IAnnotation) DeleteAnnotationDialog.this.displayList.getStructuredSelection().getFirstElement();
 					if (annotation != null) {
-						deleteAnnotation(annotation);
-						updateAnnotations();
-						displayList.getTable().select(0);
-						displayList.getTable().showSelection();
+						DeleteAnnotationDialog.this.deleteAnnotation(annotation);
+						DeleteAnnotationDialog.this.updateAnnotations();
+						DeleteAnnotationDialog.this.displayList.getTable().select(0);
+						DeleteAnnotationDialog.this.displayList.getTable().showSelection();
 					}
 					e.doit = false;
 				}

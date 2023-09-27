@@ -30,11 +30,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import edu.kit.kastel.eclipse.common.api.PreferenceConstants;
 import edu.kit.kastel.eclipse.common.api.controller.IAssessmentController;
-import edu.kit.kastel.eclipse.common.api.model.IAnnotation;
-import edu.kit.kastel.eclipse.common.api.model.IMistakeType;
 import edu.kit.kastel.eclipse.common.view.activator.CommonActivator;
 import edu.kit.kastel.eclipse.common.view.utilities.AssessmentUtilities;
 import edu.kit.kastel.eclipse.grading.view.activator.Activator;
+import edu.kit.kastel.sdq.artemis4j.api.grading.IAnnotation;
+import edu.kit.kastel.sdq.artemis4j.api.grading.IMistakeType;
 
 public class AutograderUtil {
 	private static final ILog LOG = Platform.getLog(AutograderUtil.class);

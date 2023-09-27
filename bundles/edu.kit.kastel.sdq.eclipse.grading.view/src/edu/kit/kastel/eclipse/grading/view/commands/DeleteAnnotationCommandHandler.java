@@ -7,10 +7,10 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.runtime.Platform;
 
-import edu.kit.kastel.eclipse.common.api.model.IAnnotation;
 import edu.kit.kastel.eclipse.common.view.utilities.AssessmentUtilities;
 import edu.kit.kastel.eclipse.grading.view.activator.Activator;
 import edu.kit.kastel.eclipse.grading.view.assessment.ArtemisGradingView;
+import edu.kit.kastel.sdq.artemis4j.api.grading.IAnnotation;
 
 public class DeleteAnnotationCommandHandler extends AbstractHandler {
 	private final ArtemisGradingView view;
@@ -37,7 +37,7 @@ public class DeleteAnnotationCommandHandler extends AbstractHandler {
 			return null;
 		}
 
-		var dialog = new DeleteAnnotationDialog(AssessmentUtilities.getWindowsShell(), assessment, view, path, line);
+		var dialog = new DeleteAnnotationDialog(AssessmentUtilities.getWindowsShell(), assessment, this.view, path, line);
 		dialog.setBlockOnOpen(true);
 		dialog.create();
 

@@ -3,21 +3,10 @@ package edu.kit.kastel.eclipse.grading.view.assessment;
 
 import static edu.kit.kastel.eclipse.common.view.languages.LanguageSettings.I18N;
 
-import edu.kit.kastel.eclipse.common.api.PreferenceConstants;
-import edu.kit.kastel.eclipse.common.api.controller.IGradingSystemwideController;
-import edu.kit.kastel.eclipse.common.api.model.IMistakeType;
-import edu.kit.kastel.eclipse.common.api.model.IRatingGroup;
-import edu.kit.kastel.eclipse.common.view.activator.CommonActivator;
-import edu.kit.kastel.eclipse.common.view.marker.AssessmentMarkerView;
-import edu.kit.kastel.eclipse.common.view.utilities.AssessmentUtilities;
-import edu.kit.kastel.eclipse.common.view.utilities.JDTUtilities;
-import edu.kit.kastel.eclipse.common.view.utilities.UIUtilities;
-import edu.kit.kastel.eclipse.grading.view.activator.Activator;
-import edu.kit.kastel.eclipse.grading.view.commands.AddAnnotationCommandHandler;
-import edu.kit.kastel.eclipse.grading.view.commands.DeleteAnnotationCommandHandler;
-import edu.kit.kastel.eclipse.grading.view.controllers.AssessmentViewController;
-import edu.kit.kastel.eclipse.grading.view.listeners.AssessmentMarkerViewDoubleClickListener;
-import edu.kit.kastel.eclipse.grading.view.listeners.KeyboardAwareMouseListener;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.ILog;
@@ -29,7 +18,13 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
@@ -38,10 +33,21 @@ import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.wb.swt.SWTResourceManager;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import edu.kit.kastel.eclipse.common.api.PreferenceConstants;
+import edu.kit.kastel.eclipse.common.api.controller.IGradingSystemwideController;
+import edu.kit.kastel.eclipse.common.view.activator.CommonActivator;
+import edu.kit.kastel.eclipse.common.view.marker.AssessmentMarkerView;
+import edu.kit.kastel.eclipse.common.view.utilities.AssessmentUtilities;
+import edu.kit.kastel.eclipse.common.view.utilities.JDTUtilities;
+import edu.kit.kastel.eclipse.common.view.utilities.UIUtilities;
+import edu.kit.kastel.eclipse.grading.view.activator.Activator;
+import edu.kit.kastel.eclipse.grading.view.commands.AddAnnotationCommandHandler;
+import edu.kit.kastel.eclipse.grading.view.commands.DeleteAnnotationCommandHandler;
+import edu.kit.kastel.eclipse.grading.view.controllers.AssessmentViewController;
+import edu.kit.kastel.eclipse.grading.view.listeners.AssessmentMarkerViewDoubleClickListener;
+import edu.kit.kastel.eclipse.grading.view.listeners.KeyboardAwareMouseListener;
+import edu.kit.kastel.sdq.artemis4j.api.grading.IMistakeType;
+import edu.kit.kastel.sdq.artemis4j.api.grading.IRatingGroup;
 
 /**
  * This class creates the view elements for the artemis grading process.
@@ -80,7 +86,7 @@ public class ArtemisGradingView extends ViewPart {
 		super.init(site);
 
 		// Set the command handlers manually to be able to inject the view controller
-		ICommandService commandService = getSite().getService(ICommandService.class);
+		ICommandService commandService = this.getSite().getService(ICommandService.class);
 
 		var addAnnotationCommand = commandService.getCommand(ADD_ANNOTATION_COMMAND);
 		addAnnotationCommand.setHandler(new AddAnnotationCommandHandler(this, this.viewController));
@@ -179,9 +185,9 @@ public class ArtemisGradingView extends ViewPart {
 	}
 
 	private void createBacklog() {
-		var backlogCombo = assessmentTab.comboBacklogSubmission;
-		var refreshButton = assessmentTab.btnBacklogRefreshSubmissions;
-		var btnLoadAgain = assessmentTab.btnBacklogLoadSubmission;
+		var backlogCombo = this.assessmentTab.comboBacklogSubmission;
+		var refreshButton = this.assessmentTab.btnBacklogRefreshSubmissions;
+		var btnLoadAgain = this.assessmentTab.btnBacklogLoadSubmission;
 
 		this.addSelectionListenerForRefreshButton(refreshButton, backlogCombo);
 		this.addSelectionListenerForLoadFromBacklogButton(backlogCombo, btnLoadAgain);
@@ -196,7 +202,7 @@ public class ArtemisGradingView extends ViewPart {
 		customButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		customButton.setText(mistake.getButtonText(I18N().key()));
 		customButton.addListener(SWT.Selection, event -> {
-			final CustomButtonDialog customDialog = new CustomButtonDialog(AssessmentUtilities.getWindowsShell(), isPositiveFeedbackAllowed(),
+			final CustomButtonDialog customDialog = new CustomButtonDialog(AssessmentUtilities.getWindowsShell(), this.isPositiveFeedbackAllowed(),
 					this.viewController, mistake);
 			customDialog.setBlockOnOpen(true);
 			customDialog.open();
@@ -243,7 +249,7 @@ public class ArtemisGradingView extends ViewPart {
 		this.addSelectionListenerForRerunAutograder(this.assessmentTab.btnRerunAutograder);
 		this.addSelectionListenerForRefreshArtemisStateButton(this.assessmentTab.btnResetPluginState);
 
-		setVersionText(this.assessmentTab.lblPluginVersion);
+		this.setVersionText(this.assessmentTab.lblPluginVersion);
 		this.assessmentTab.btnHelp.addListener(SWT.Selection, e -> {
 		});
 	}
@@ -268,7 +274,7 @@ public class ArtemisGradingView extends ViewPart {
 
 	private void fillGradingTab() {
 		if (this.gradingButtonComposite != null && !this.gradingButtonComposite.isDisposed()) {
-			gradingButtonComposite.dispose();
+			this.gradingButtonComposite.dispose();
 		}
 
 		var container = this.gradingTabComposite.gradingCompositeContainerScrollable;
@@ -319,7 +325,7 @@ public class ArtemisGradingView extends ViewPart {
 			});
 		});
 
-		UIUtilities.initializeTabAfterFilling(container, gradingButtonComposite);
+		UIUtilities.initializeTabAfterFilling(container, this.gradingButtonComposite);
 	}
 
 	/**
@@ -331,7 +337,8 @@ public class ArtemisGradingView extends ViewPart {
 	}
 
 	private void createMistakePenaltyWithCustomMessageDialog(IMistakeType mistake) {
-		CustomButtonDialog buttonDialog = new CustomButtonDialog(AssessmentUtilities.getWindowsShell(), isPositiveFeedbackAllowed(), this.viewController, null);
+		CustomButtonDialog buttonDialog = new CustomButtonDialog(AssessmentUtilities.getWindowsShell(), this.isPositiveFeedbackAllowed(), this.viewController,
+				null);
 		buttonDialog.setBlockOnOpen(true);
 		buttonDialog.open();
 		if (buttonDialog.isClosedByOk()) {
@@ -350,7 +357,7 @@ public class ArtemisGradingView extends ViewPart {
 
 	private void createGradingTab(TabFolder tabFolder) {
 		this.gradingTabComposite = new GradingTabComposite(tabFolder);
-		setVersionText(this.gradingTabComposite.lblPluginVersion);
+		this.setVersionText(this.gradingTabComposite.lblPluginVersion);
 	}
 
 	private void fillBacklogComboWithData(Combo backlogCombo) {

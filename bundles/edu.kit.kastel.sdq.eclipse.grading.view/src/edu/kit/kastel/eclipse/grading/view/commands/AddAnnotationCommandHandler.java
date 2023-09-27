@@ -9,12 +9,12 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.runtime.Platform;
 
-import edu.kit.kastel.eclipse.common.api.model.IMistakeType;
 import edu.kit.kastel.eclipse.common.view.utilities.AssessmentUtilities;
 import edu.kit.kastel.eclipse.grading.view.activator.Activator;
 import edu.kit.kastel.eclipse.grading.view.assessment.ArtemisGradingView;
 import edu.kit.kastel.eclipse.grading.view.assessment.CustomButtonDialog;
 import edu.kit.kastel.eclipse.grading.view.controllers.AssessmentViewController;
+import edu.kit.kastel.sdq.artemis4j.api.grading.IMistakeType;
 
 public class AddAnnotationCommandHandler extends AbstractHandler {
 
@@ -46,7 +46,7 @@ public class AddAnnotationCommandHandler extends AbstractHandler {
 		if (selectedMistake.isPresent()) {
 			if (selectedMistake.get().isCustomPenalty()) {
 				CustomButtonDialog customDialog = new CustomButtonDialog(AssessmentUtilities.getWindowsShell(), assessment.isPositiveFeedbackAllowed(),
-						controller, selectedMistake.get());
+						this.controller, selectedMistake.get());
 				customDialog.setBlockOnOpen(true);
 				customDialog.create();
 				customDialog.getShell().setLocation(DialogUtil.getInEditorDialogPosition());
@@ -54,7 +54,7 @@ public class AddAnnotationCommandHandler extends AbstractHandler {
 				// The dialog creates the annotation
 			} else if (dialog.isCustomMessageWanted()) {
 				CustomButtonDialog customDialog = new CustomButtonDialog(AssessmentUtilities.getWindowsShell(), assessment.isPositiveFeedbackAllowed(),
-						controller, null);
+						this.controller, null);
 				customDialog.setBlockOnOpen(true);
 				customDialog.create();
 				customDialog.getShell().setLocation(DialogUtil.getInEditorDialogPosition());

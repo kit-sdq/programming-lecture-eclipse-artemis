@@ -6,9 +6,10 @@ import java.util.List;
 import java.util.Optional;
 
 import edu.kit.kastel.eclipse.common.api.artemis.IProjectFileNamingStrategy;
-import edu.kit.kastel.eclipse.common.api.artemis.mapping.ICourse;
-import edu.kit.kastel.eclipse.common.api.artemis.mapping.IExercise;
-import edu.kit.kastel.eclipse.common.api.artemis.mapping.ISubmission;
+import edu.kit.kastel.sdq.artemis4j.api.artemis.Course;
+import edu.kit.kastel.sdq.artemis4j.api.artemis.Exercise;
+import edu.kit.kastel.sdq.artemis4j.api.artemis.ExerciseStats;
+import edu.kit.kastel.sdq.artemis4j.api.artemis.assessment.Submission;
 
 public interface IGradingSystemwideController extends ISystemwideController {
 
@@ -71,7 +72,7 @@ public interface IGradingSystemwideController extends ISystemwideController {
 
 	/**
 	 * <B>ASSESSMENT</B><br/>
-	 * 
+	 *
 	 * @return whether a new assessment was started or not, depending on whether
 	 *         there was a submission available.
 	 */
@@ -81,7 +82,7 @@ public interface IGradingSystemwideController extends ISystemwideController {
 	 * <B>ASSESSMENT</B><br/>
 	 * <li>Like {@link #startCorrectionRound1()}, but with correction round 2 as a
 	 * parameter.
-	 * 
+	 *
 	 * @return whether a new assessment was started or not, depending on whether
 	 *         there was a submission available.
 	 */
@@ -100,11 +101,11 @@ public interface IGradingSystemwideController extends ISystemwideController {
 	 *
 	 * @return whether download was successful or not
 	 */
-	boolean downloadExerciseAndSubmission(ICourse course, IExercise exercise, ISubmission submission, IProjectFileNamingStrategy projectNaming);
+	boolean downloadExerciseAndSubmission(Course course, Exercise exercise, Submission submission, IProjectFileNamingStrategy projectNaming);
 
 	boolean isAssessmentStarted();
 
-	Optional<IExercise> getSelectedExercise();
+	Optional<Exercise> getSelectedExercise();
 
 	ExerciseStats getStats();
 

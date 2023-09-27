@@ -1,0 +1,3 @@
+[submodule "bundles/edu.kit.kastel.sdq.eclipse.common.api/lib/artemis4j"]
+	path = bundles/edu.kit.kastel.sdq.eclipse.common.api/lib/artemis4j
+	url = ../artemis4j.git

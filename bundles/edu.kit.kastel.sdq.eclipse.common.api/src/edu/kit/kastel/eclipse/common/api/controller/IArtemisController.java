@@ -3,12 +3,11 @@ package edu.kit.kastel.eclipse.common.api.controller;
 
 import java.util.List;
 
-import edu.kit.kastel.eclipse.common.api.artemis.mapping.Feedback;
-import edu.kit.kastel.eclipse.common.api.artemis.mapping.ICourse;
-import edu.kit.kastel.eclipse.common.api.artemis.mapping.IExam;
-import edu.kit.kastel.eclipse.common.api.artemis.mapping.IExercise;
-import edu.kit.kastel.eclipse.common.api.artemis.mapping.ISubmission;
-import edu.kit.kastel.eclipse.common.api.artemis.mapping.User;
+import edu.kit.kastel.sdq.artemis4j.api.artemis.Course;
+import edu.kit.kastel.sdq.artemis4j.api.artemis.Exercise;
+import edu.kit.kastel.sdq.artemis4j.api.artemis.User;
+import edu.kit.kastel.sdq.artemis4j.api.artemis.assessment.Feedback;
+import edu.kit.kastel.sdq.artemis4j.api.artemis.assessment.Submission;
 
 /**
  * Works as an interface from backend to REST-clients
@@ -20,20 +19,20 @@ public interface IArtemisController extends IController {
 	 * @return all IFeedbacks that were gotten in the process of locking the given
 	 *         submission.
 	 */
-	List<Feedback> getAllFeedbacksGottenFromLocking(ISubmission submission);
+	List<Feedback> getAllFeedbacksGottenFromLocking(Submission submission);
 
 	/**
 	 *
 	 * @return all submissions of the given @link {@link IExercise}, that have been
 	 *         started, saved or submitted by the caller.
 	 */
-	List<ISubmission> getBegunSubmissions(IExercise exercise);
+	List<Submission> getBegunSubmissions(Exercise exercise);
 
 	/**
 	 *
 	 * @return all available courses (contains exercices and available submissions
 	 */
-	List<ICourse> getCourses();
+	List<Course> getCourses();
 
 	/**
 	 *
@@ -54,7 +53,7 @@ public interface IArtemisController extends IController {
 	 * @param examTitle exam title of the exam
 	 * @return a list of all exercises of the exam
 	 */
-	List<IExercise> getExercisesFromExam(String examTitle);
+	List<Exercise> getExercisesFromExam(String examTitle);
 
 	/**
 	 *

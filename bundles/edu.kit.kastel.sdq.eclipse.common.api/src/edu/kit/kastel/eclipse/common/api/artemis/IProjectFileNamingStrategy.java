@@ -3,8 +3,8 @@ package edu.kit.kastel.eclipse.common.api.artemis;
 
 import java.io.File;
 
-import edu.kit.kastel.eclipse.common.api.artemis.mapping.IExercise;
-import edu.kit.kastel.eclipse.common.api.artemis.mapping.ISubmission;
+import edu.kit.kastel.sdq.artemis4j.api.artemis.Exercise;
+import edu.kit.kastel.sdq.artemis4j.api.artemis.assessment.Submission;
 
 /**
  * Strategy to determine how the downloaded projects (containing submission +
@@ -28,6 +28,6 @@ public interface IProjectFileNamingStrategy {
 	 * @param submission input for the calculation
 	 * @return a exercise-and-submission-unique File inside the workspace.
 	 */
-	File getProjectFileInWorkspace(File workspace, IExercise exercise, ISubmission submission);
+	File getProjectFileInWorkspace(File workspace, Exercise exercise, Submission submission);
 
 }

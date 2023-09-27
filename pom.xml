@@ -1,19 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
     <groupId>edu.kit.kastel.sdq.artemis</groupId>
     <artifactId>parent</artifactId>
     <version>4.5.0</version>
     <packaging>pom</packaging>
     <name>Artemis Eclipse Importer</name>
-
     <modules>
         <module>bundles</module>
         <module>features</module>
         <module>releng</module>
     </modules>
-
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -25,7 +22,14 @@
         <tycho.version>3.0.3</tycho.version>
         <spotless.version>2.20.2</spotless.version>
     </properties>
-
+    <dependencies>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>2.0.9</version>
+            <type>jar</type>
+        </dependency>
+    </dependencies>
     <repositories>
         <repository>
             <id>Eclipse</id>
@@ -38,19 +42,31 @@
             <layout>p2</layout>
         </repository>
         <repository>
-            <id>Eclipse P2 for External Deps</id>
-            <url>https://kit-sdq.github.io/programming-lecture-eclipse-artemis.p2</url>
-            <layout>p2</layout>
-        </repository>
-        <repository>
             <id>CheckStyle</id>
             <url>https://checkstyle.org/eclipse-cs-update-site</url>
             <layout>p2</layout>
         </repository>
     </repositories>
-
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.6.0</version>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <phase>initialize</phase>
+                        <configuration>
+                            <includeScope>runtime</includeScope>
+                            <stripVersion>true</stripVersion>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -94,7 +110,6 @@
                     </execution>
                 </executions>
             </plugin>
-
             <!-- Correctly handles source features on p2 update site -->
             <plugin>
                 <groupId>org.eclipse.tycho</groupId>
@@ -186,7 +201,6 @@
             </plugin>
         </plugins>
     </build>
-
     <profiles>
         <profile>
             <id>products</id>

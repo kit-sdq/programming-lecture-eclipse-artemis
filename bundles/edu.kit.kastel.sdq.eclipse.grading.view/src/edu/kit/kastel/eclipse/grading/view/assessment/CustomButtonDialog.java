@@ -18,10 +18,10 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.wb.swt.SWTResourceManager;
 
 import edu.kit.kastel.eclipse.common.api.PreferenceConstants;
-import edu.kit.kastel.eclipse.common.api.model.IMistakeType;
 import edu.kit.kastel.eclipse.common.view.activator.CommonActivator;
 import edu.kit.kastel.eclipse.common.view.utilities.AssessmentUtilities;
 import edu.kit.kastel.eclipse.grading.view.controllers.AssessmentViewController;
+import edu.kit.kastel.sdq.artemis4j.api.grading.IMistakeType;
 
 /**
  * This class is the view class for the custom penalty dialog. It has two
@@ -119,15 +119,15 @@ public class CustomButtonDialog extends Dialog {
 			}
 			this.customPointsInputField.addModifyListener(e -> {
 				// Set colors according to input
-				if (customPointsInputField.getSelection() == 0) {
+				if (this.customPointsInputField.getSelection() == 0) {
 					this.customPointsInputField.setForeground(SWTResourceManager.getColor(SWT.COLOR_BLACK));
 					this.customMessageInputField.setForeground(SWTResourceManager.getColor(SWT.COLOR_BLACK));
 				}
-				if (customPointsInputField.getSelection() > 0) {
+				if (this.customPointsInputField.getSelection() > 0) {
 					this.customPointsInputField.setForeground(SWTResourceManager.getColor(SWT.COLOR_DARK_GREEN));
 					this.customMessageInputField.setForeground(SWTResourceManager.getColor(SWT.COLOR_DARK_GREEN));
 				}
-				if (customPointsInputField.getSelection() < 0) {
+				if (this.customPointsInputField.getSelection() < 0) {
 					this.customPointsInputField.setForeground(SWTResourceManager.getColor(SWT.COLOR_RED));
 					this.customMessageInputField.setForeground(SWTResourceManager.getColor(SWT.COLOR_RED));
 				}

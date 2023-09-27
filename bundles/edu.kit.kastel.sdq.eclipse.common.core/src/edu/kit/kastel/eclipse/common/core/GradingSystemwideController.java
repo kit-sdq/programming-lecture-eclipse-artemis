@@ -13,26 +13,26 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.preference.IPreferenceStore;
 
-import edu.kit.kastel.eclipse.common.api.ArtemisClientException;
 import edu.kit.kastel.eclipse.common.api.PreferenceConstants;
 import edu.kit.kastel.eclipse.common.api.artemis.IProjectFileNamingStrategy;
-import edu.kit.kastel.eclipse.common.api.artemis.mapping.ICourse;
-import edu.kit.kastel.eclipse.common.api.artemis.mapping.IExam;
-import edu.kit.kastel.eclipse.common.api.artemis.mapping.IExercise;
-import edu.kit.kastel.eclipse.common.api.artemis.mapping.ISubmission;
-import edu.kit.kastel.eclipse.common.api.controller.ExerciseStats;
 import edu.kit.kastel.eclipse.common.api.controller.IArtemisController;
 import edu.kit.kastel.eclipse.common.api.controller.IAssessmentController;
 import edu.kit.kastel.eclipse.common.api.controller.IGradingArtemisController;
 import edu.kit.kastel.eclipse.common.api.controller.IGradingSystemwideController;
 import edu.kit.kastel.eclipse.common.api.controller.IViewInteraction;
 import edu.kit.kastel.eclipse.common.core.artemis.WorkspaceUtil;
+import edu.kit.kastel.sdq.artemis4j.api.ArtemisClientException;
+import edu.kit.kastel.sdq.artemis4j.api.artemis.Course;
+import edu.kit.kastel.sdq.artemis4j.api.artemis.Exercise;
+import edu.kit.kastel.sdq.artemis4j.api.artemis.ExerciseStats;
+import edu.kit.kastel.sdq.artemis4j.api.artemis.assessment.Submission;
+import edu.kit.kastel.sdq.artemis4j.api.artemis.exam.Exam;
 
 public class GradingSystemwideController extends SystemwideController implements IGradingSystemwideController {
 	private final Map<Integer, IAssessmentController> assessmentControllers = new HashMap<>();
 	private IGradingArtemisController artemisController;
 
-	private ISubmission submission;
+	private Submission submission;
 
 	public GradingSystemwideController(final IPreferenceStore preferenceStore, IViewInteraction handler) {
 		super(preferenceStore, handler);
@@ -47,14 +47,14 @@ public class GradingSystemwideController extends SystemwideController implements
 		return this.artemisController;
 	}
 
-	private IAssessmentController getAssessmentController(ISubmission submission, ICourse course, IExercise exercise) {
+	private IAssessmentController getAssessmentController(Submission submission, Course course, Exercise exercise) {
 		// not equivalent to putIfAbsent!
 		this.assessmentControllers.computeIfAbsent(submission.getSubmissionId(),
 				submissionIDParam -> new AssessmentController(this, course, exercise, submission));
 		return this.assessmentControllers.get(submission.getSubmissionId());
 	}
 
-	private List<ISubmission> getBegunSubmissions() {
+	private List<Submission> getBegunSubmissions() {
 		if (this.nullCheckMembersAndNotify(true, true, false)) {
 			return List.of();
 		}
@@ -68,7 +68,7 @@ public class GradingSystemwideController extends SystemwideController implements
 			return new ExerciseStats(0, 0, 0, 0);
 		}
 		try {
-			return this.getArtemisController().getStats(exercise);
+			return this.getArtemisController().getStats(this.exercise);
 		} catch (ArtemisClientException e) {
 			this.error(e.getMessage(), e);
 			return new ExerciseStats(0, 0, 0, 0);
@@ -97,7 +97,7 @@ public class GradingSystemwideController extends SystemwideController implements
 		return this.getAssessmentController(this.submission, this.course, this.exercise);
 	}
 
-	private IExercise getCurrentExercise() {
+	private Exercise getCurrentExercise() {
 		if (this.nullCheckMembersAndNotify(true, true, false)) {
 			return null;
 		}
@@ -114,7 +114,7 @@ public class GradingSystemwideController extends SystemwideController implements
 				.getProjectFileInWorkspace(WorkspaceUtil.getWorkspaceFile(), this.getCurrentExercise(), this.getCurrentSubmission()).getName();
 	}
 
-	private ISubmission getCurrentSubmission() {
+	private Submission getCurrentSubmission() {
 		if (this.nullCheckMembersAndNotify(true, true, true)) {
 			return null;
 		}
@@ -134,13 +134,13 @@ public class GradingSystemwideController extends SystemwideController implements
 	@Override
 	public void setExerciseId(final String exerciseShortName) throws ArtemisClientException {
 		// Normal exercises
-		List<IExercise> exercises = new ArrayList<>(this.course.getExercises());
+		List<Exercise> exercises = new ArrayList<>(this.course.getExercises());
 		// exam exercises
-		for (IExam ex : this.course.getExams()) {
+		for (Exam ex : this.course.getExams()) {
 			ex.getExerciseGroups().forEach(g -> exercises.addAll(g.getExercises()));
 		}
 
-		for (IExercise ex : exercises) {
+		for (Exercise ex : exercises) {
 			if (ex.getShortName().equals(exerciseShortName)) {
 				this.exercise = ex;
 				return;
@@ -184,10 +184,10 @@ public class GradingSystemwideController extends SystemwideController implements
 	@Override
 	public List<String> setCourseIdAndGetExerciseShortNames(final String courseShortName) throws ArtemisClientException {
 
-		for (ICourse c : this.getArtemisController().getCourses()) {
+		for (Course c : this.getArtemisController().getCourses()) {
 			if (c.getShortName().equals(courseShortName)) {
 				this.course = c;
-				return c.getExercises().stream().filter(it -> !it.isAutomaticAssessment()).map(IExercise::getShortName).toList();
+				return c.getExercises().stream().filter(it -> !it.isAutomaticAssessment()).map(Exercise::getShortName).toList();
 			}
 		}
 		this.error("No Course with the given shortName \"" + courseShortName + "\" found.", null);
@@ -199,7 +199,7 @@ public class GradingSystemwideController extends SystemwideController implements
 			return false;
 		}
 
-		Optional<ISubmission> optionalSubmission = this.artemisController.startNextAssessment(this.exercise, correctionRound);
+		Optional<Submission> optionalSubmission = this.artemisController.startNextAssessment(this.exercise, correctionRound);
 		if (optionalSubmission.isEmpty()) {
 			// revert!
 			this.info("No more submissions available for Correction Round " + (correctionRound + 1) + "!");
@@ -256,7 +256,7 @@ public class GradingSystemwideController extends SystemwideController implements
 	}
 
 	@Override
-	public boolean downloadExerciseAndSubmission(ICourse course, IExercise exercise, ISubmission submission, IProjectFileNamingStrategy projectNaming) {
+	public boolean downloadExerciseAndSubmission(Course course, Exercise exercise, Submission submission, IProjectFileNamingStrategy projectNaming) {
 		final File eclipseWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile();
 
 		try {
@@ -285,7 +285,7 @@ public class GradingSystemwideController extends SystemwideController implements
 	}
 
 	@Override
-	public Optional<IExercise> getSelectedExercise() {
+	public Optional<Exercise> getSelectedExercise() {
 		return Optional.ofNullable(this.exercise);
 	}
 
@@ -295,6 +295,6 @@ public class GradingSystemwideController extends SystemwideController implements
 
 	@Override
 	public Path getCurrentProjectPath() {
-		return this.projectFileNamingStrategy.getProjectFileInWorkspace(WorkspaceUtil.getWorkspaceFile(), exercise, submission).toPath();
+		return this.projectFileNamingStrategy.getProjectFileInWorkspace(WorkspaceUtil.getWorkspaceFile(), this.exercise, this.submission).toPath();
 	}
 }

@@ -3,10 +3,10 @@ package edu.kit.kastel.eclipse.common.api.controller;
 
 import java.io.File;
 
-import edu.kit.kastel.eclipse.common.api.ArtemisClientException;
 import edu.kit.kastel.eclipse.common.api.artemis.IProjectFileNamingStrategy;
-import edu.kit.kastel.eclipse.common.api.artemis.mapping.IExercise;
-import edu.kit.kastel.eclipse.common.api.artemis.mapping.ISubmission;
+import edu.kit.kastel.sdq.artemis4j.api.ArtemisClientException;
+import edu.kit.kastel.sdq.artemis4j.api.artemis.Exercise;
+import edu.kit.kastel.sdq.artemis4j.api.artemis.assessment.Submission;
 
 /**
  * Controls tasks concerned with load, saving and cleaning exercises in the
@@ -16,6 +16,6 @@ public interface IExerciseArtemisController extends IController {
 	/**
 	 * Clones exercise and a submission into one project.
 	 */
-	void downloadExerciseAndSubmission(IExercise exercise, ISubmission submission, File dir, IProjectFileNamingStrategy namingStrategy)
+	void downloadExerciseAndSubmission(Exercise exercise, Submission submission, File dir, IProjectFileNamingStrategy namingStrategy)
 			throws ArtemisClientException;
 }

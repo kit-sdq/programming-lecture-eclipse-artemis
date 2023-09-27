@@ -6,14 +6,27 @@ Bundle-Version: 4.5.0
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Export-Package: edu.kit.kastel.eclipse.common.api,
  edu.kit.kastel.eclipse.common.api.artemis,
- edu.kit.kastel.eclipse.common.api.artemis.mapping,
- edu.kit.kastel.eclipse.common.api.client,
  edu.kit.kastel.eclipse.common.api.controller,
  edu.kit.kastel.eclipse.common.api.messages,
- edu.kit.kastel.eclipse.common.api.model,
- edu.kit.kastel.eclipse.common.api.util
+ edu.kit.kastel.sdq.artemis4j.api,
+ edu.kit.kastel.sdq.artemis4j.api.artemis,
+ edu.kit.kastel.sdq.artemis4j.api.artemis.assessment,
+ edu.kit.kastel.sdq.artemis4j.api.artemis.exam,
+ edu.kit.kastel.sdq.artemis4j.api.artemis.stats,
+ edu.kit.kastel.sdq.artemis4j.api.client,
+ edu.kit.kastel.sdq.artemis4j.api.grading,
+ edu.kit.kastel.sdq.artemis4j.client,
+ edu.kit.kastel.sdq.artemis4j.grading.artemis,
+ edu.kit.kastel.sdq.artemis4j.grading.config,
+ edu.kit.kastel.sdq.artemis4j.grading.model,
+ edu.kit.kastel.sdq.artemis4j.grading.model.annotation,
+ edu.kit.kastel.sdq.artemis4j.grading.model.rule,
+ edu.kit.kastel.sdq.artemis4j.util
 Require-Bundle: com.fasterxml.jackson.core.jackson-annotations,
  org.eclipse.core.runtime,
  org.eclipse.core.resources
 Automatic-Module-Name: edu.kit.kastel.sdq.eclipse.common.api
+Bundle-ClassPath: lib/artemis4j/target/artemis4j-complete.jar,
+ target/dependency/slf4j-simple.jar,
+ .
 

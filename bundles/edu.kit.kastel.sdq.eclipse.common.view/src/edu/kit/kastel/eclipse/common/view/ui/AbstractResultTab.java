@@ -13,14 +13,15 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.Table;
 
-import edu.kit.kastel.eclipse.common.api.ArtemisClientException;
-import edu.kit.kastel.eclipse.common.api.artemis.mapping.Feedback;
-import edu.kit.kastel.eclipse.common.api.artemis.mapping.FeedbackType;
-import edu.kit.kastel.eclipse.common.api.artemis.mapping.IExercise;
-import edu.kit.kastel.eclipse.common.api.model.IMistakeType;
-import edu.kit.kastel.eclipse.common.api.util.Pair;
-import edu.kit.kastel.eclipse.common.core.model.annotation.Annotation;
 import edu.kit.kastel.eclipse.common.view.utilities.AssessmentUtilities;
+import edu.kit.kastel.sdq.artemis4j.api.ArtemisClientException;
+import edu.kit.kastel.sdq.artemis4j.api.artemis.Exercise;
+import edu.kit.kastel.sdq.artemis4j.api.artemis.assessment.Feedback;
+import edu.kit.kastel.sdq.artemis4j.api.artemis.assessment.FeedbackType;
+import edu.kit.kastel.sdq.artemis4j.api.grading.IAnnotation;
+import edu.kit.kastel.sdq.artemis4j.api.grading.IMistakeType;
+import edu.kit.kastel.sdq.artemis4j.grading.model.annotation.Annotation;
+import edu.kit.kastel.sdq.artemis4j.util.Pair;
 
 public abstract class AbstractResultTab extends AbstractResultTabCompositeController {
 
@@ -36,7 +37,7 @@ public abstract class AbstractResultTab extends AbstractResultTabCompositeContro
 	 *
 	 * @return the current exercise title
 	 */
-	protected abstract IExercise getCurrentExercise();
+	protected abstract Exercise getCurrentExercise();
 
 	/**
 	 * Get the latest result of the currently selected submission.
@@ -80,7 +81,7 @@ public abstract class AbstractResultTab extends AbstractResultTabCompositeContro
 		}
 	}
 
-	private void addResultToTab(IExercise currentExercise, String completionTime, List<Feedback> feedbacks) {
+	private void addResultToTab(Exercise currentExercise, String completionTime, List<Feedback> feedbacks) {
 		boolean successOfAutomaticTests = this.calculateSuccessOfAutomaticTests(feedbacks);
 		double points = this.calculatePoints(currentExercise, feedbacks);
 		double score = this.calculateScore(currentExercise, points);
@@ -89,7 +90,7 @@ public abstract class AbstractResultTab extends AbstractResultTabCompositeContro
 		this.layout();
 	}
 
-	private double calculatePoints(IExercise exercise, List<Feedback> feedbacks) {
+	private double calculatePoints(Exercise exercise, List<Feedback> feedbacks) {
 		if (exercise == null || feedbacks == null) {
 			return Double.NaN;
 		}
@@ -97,7 +98,7 @@ public abstract class AbstractResultTab extends AbstractResultTabCompositeContro
 		return Math.max(0, sum);
 	}
 
-	private double calculateScore(IExercise exercise, double points) {
+	private double calculateScore(Exercise exercise, double points) {
 		if (exercise == null || Double.isNaN(points)) {
 			return Double.NaN;
 		}
@@ -126,7 +127,7 @@ public abstract class AbstractResultTab extends AbstractResultTabCompositeContro
 
 	}
 
-	private void handleNewResult(IExercise currentExercise, String completionTime, List<Feedback> feedbacks) {
+	private void handleNewResult(Exercise currentExercise, String completionTime, List<Feedback> feedbacks) {
 		this.testTable.removeAll();
 		this.addFeedbackToTable(this.testTable, feedbacks);
 		this.addResultToTab(currentExercise, completionTime, feedbacks);
@@ -160,8 +161,8 @@ public abstract class AbstractResultTab extends AbstractResultTabCompositeContro
 		}
 	}
 
-	private List<Annotation> convertToAnnotation(List<Feedback> feedbackForLines) {
-		List<Annotation> annotations = new ArrayList<>();
+	private List<IAnnotation> convertToAnnotation(List<Feedback> feedbackForLines) {
+		List<IAnnotation> annotations = new ArrayList<>();
 		for (Feedback f : feedbackForLines) {
 			// e.g., file:src/edu/kit/informatik/Client.java.java_line:21
 			String reference = f.getReference();

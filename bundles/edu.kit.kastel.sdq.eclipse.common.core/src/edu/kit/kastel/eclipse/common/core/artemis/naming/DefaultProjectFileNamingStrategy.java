@@ -4,8 +4,8 @@ package edu.kit.kastel.eclipse.common.core.artemis.naming;
 import java.io.File;
 
 import edu.kit.kastel.eclipse.common.api.artemis.IProjectFileNamingStrategy;
-import edu.kit.kastel.eclipse.common.api.artemis.mapping.IExercise;
-import edu.kit.kastel.eclipse.common.api.artemis.mapping.ISubmission;
+import edu.kit.kastel.sdq.artemis4j.api.artemis.Exercise;
+import edu.kit.kastel.sdq.artemis4j.api.artemis.assessment.Submission;
 
 /**
  * A naming strategy that creates projects like this:
@@ -28,7 +28,7 @@ public class DefaultProjectFileNamingStrategy implements IProjectFileNamingStrat
 	}
 
 	@Override
-	public File getProjectFileInWorkspace(File workspaceDirectory, IExercise exercise, ISubmission submission) {
+	public File getProjectFileInWorkspace(File workspaceDirectory, Exercise exercise, Submission submission) {
 		String projectName = "";
 		projectName += "exercise-" + exercise.getExerciseId() + "-" + exercise.getShortName();
 		if (submission != null) {

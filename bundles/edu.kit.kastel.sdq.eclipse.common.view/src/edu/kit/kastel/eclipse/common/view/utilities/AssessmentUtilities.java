@@ -32,10 +32,10 @@ import org.eclipse.ui.navigator.resources.ProjectExplorer;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.ITextEditor;
 
-import edu.kit.kastel.eclipse.common.api.ArtemisClientException;
 import edu.kit.kastel.eclipse.common.api.controller.IAssessmentController;
-import edu.kit.kastel.eclipse.common.api.model.IAnnotation;
-import edu.kit.kastel.eclipse.common.api.model.IMistakeType;
+import edu.kit.kastel.sdq.artemis4j.api.ArtemisClientException;
+import edu.kit.kastel.sdq.artemis4j.api.grading.IAnnotation;
+import edu.kit.kastel.sdq.artemis4j.api.grading.IMistakeType;
 
 /**
  * This class includes only static methods (or constants) for the assessment

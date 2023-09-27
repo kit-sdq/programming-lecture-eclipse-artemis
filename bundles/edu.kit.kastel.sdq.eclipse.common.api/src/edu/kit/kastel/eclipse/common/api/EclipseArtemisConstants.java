@@ -1,7 +1,7 @@
 /* Licensed under EPL-2.0 2022-2023. */
 package edu.kit.kastel.eclipse.common.api;
 
-import edu.kit.kastel.eclipse.common.api.util.Version;
+import edu.kit.kastel.sdq.artemis4j.util.Version;
 
 public final class EclipseArtemisConstants {
 	private EclipseArtemisConstants() {
