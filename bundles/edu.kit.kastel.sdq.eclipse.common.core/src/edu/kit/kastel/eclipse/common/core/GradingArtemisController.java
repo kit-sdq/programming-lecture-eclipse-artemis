@@ -78,9 +78,9 @@ public class GradingArtemisController extends ArtemisController implements IGrad
 	}
 
 	@Override
-	public void startAssessment(Submission submissionId) {
+	public void startAssessment(Submission submission) {
 		try {
-			this.lockResults.put(submissionId.getSubmissionId(), this.clientManager.getAssessmentArtemisClient().startAssessment(submissionId));
+			this.lockResults.put(submission.getSubmissionId(), this.clientManager.getAssessmentArtemisClient().startAssessment(submission));
 		} catch (ArtemisClientException e) {
 			this.error(Messages.ASSESSMENT_COULD_NOT_BE_STARTED_MESSAGE + e.getMessage(), e);
 		}
@@ -88,22 +88,22 @@ public class GradingArtemisController extends ArtemisController implements IGrad
 
 	@Override
 	public Optional<Submission> startNextAssessment(Exercise exercise, int correctionRound) {
-		Optional<LockResult> lockResultOptional;
+		LockResult lockResult;
 		try {
-			lockResultOptional = this.clientManager.getAssessmentArtemisClient().startNextAssessment(exercise, correctionRound);
+			Optional<Integer> submissionId = this.clientManager.getAssessmentArtemisClient().startNextAssessment(exercise, correctionRound);
+			if (submissionId.isEmpty()) {
+				return Optional.empty();
+			}
+
+			lockResult = this.clientManager.getAssessmentArtemisClient().startAssessment(submissionId.orElseThrow(), correctionRound);
 		} catch (ArtemisClientException e) {
 			log.error(Messages.ASSESSMENT_COULD_NOT_BE_STARTED_MESSAGE + e.getMessage(), e);
 			return Optional.empty();
 		}
-		if (lockResultOptional.isEmpty()) {
-			return Optional.empty();
-		}
-		final LockResult lockResult = lockResultOptional.get();
 
-		final int submissionID = lockResult.getSubmissionId();
-		this.lockResults.put(submissionID, lockResult);
+		this.lockResults.put(lockResult.getSubmissionId(), lockResult);
 		try {
-			return Optional.of(exercise.getSubmission(submissionID));
+			return Optional.of(exercise.getSubmission(lockResult.getSubmissionId()));
 		} catch (ArtemisClientException e) {
 			this.error(Messages.ASSESSMENT_COULD_NOT_BE_STARTED_MESSAGE + e.getMessage(), e);
 			return Optional.empty();
