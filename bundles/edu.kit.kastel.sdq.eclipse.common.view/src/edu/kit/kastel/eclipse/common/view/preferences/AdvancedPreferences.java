@@ -49,7 +49,10 @@ public class AdvancedPreferences extends FieldEditorPreferencePage implements IW
 
 		var searchInMistakeMessages = new BooleanFieldEditor(PreferenceConstants.SEARCH_IN_MISTAKE_MESSAGES, I18N().settingsSearchInMistakeMessages(), parent);
 
-		var colorInButtonsWithoutPenalty = new ColorFieldEditor(PreferenceConstants.COLOR_IN_BUTTONS_WITHOUT_PENALTY, I18N().settingsColorInButtonsWithoutPenalty(), parent);
+		var buttonsColorDisabled = new ColorFieldEditor(PreferenceConstants.GRADING_VIEW_BUTTONS_COLOR_DISABLED, I18N().settingsButtonsColorDisabled(), parent);
+		var buttonsColorEnabled = new ColorFieldEditor(PreferenceConstants.GRADING_VIEW_BUTTONS_COLOR_ENABLED, I18N().settingsButtonsColorEnabled(), parent);
+		var buttonsColorPenalty = new ColorFieldEditor(PreferenceConstants.GRADING_VIEW_BUTTONS_COLOR_PENALTY, I18N().settingsButtonsColorPenalty(), parent);
+		var buttonsColorLimitReached = new ColorFieldEditor(PreferenceConstants.GRADING_VIEW_BUTTONS_COLOR_LIMIT_REACHED, I18N().settingsButtonsColorLimitReached(), parent);
 
 		var columnsForGradingButtons = new IntegerFieldEditor(PreferenceConstants.GRADING_VIEW_BUTTONS_IN_COLUMN,
 				I18N().settingsAmountOfGradingButtonsInOneRow(), parent);
@@ -75,7 +78,10 @@ public class AdvancedPreferences extends FieldEditorPreferencePage implements IW
 		this.addField(userPrefersTextWrappingInPenaltyText);
 		this.addField(overrideDefaultPreferences);
 		this.addField(searchInMistakeMessages);
-		this.addField(colorInButtonsWithoutPenalty);
+		this.addField(buttonsColorDisabled);
+		this.addField(buttonsColorEnabled);
+		this.addField(buttonsColorPenalty);
+		this.addField(buttonsColorLimitReached);
 		this.addField(openFiles);
 
 		this.addField(autograderDownloadJar);

@@ -301,9 +301,13 @@ public class ArtemisGradingView extends ViewPart {
 					final Button mistakeButton = new Button(rgDisplay, SWT.PUSH);
 					mistakeButton.setText(mistake.getButtonText(I18N().key()));
 					mistakeButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-					mistakeButton.setEnabled(mistake.isEnabledMistakeType());
-					if (!mistake.isEnabledPenalty() && mistake.isEnabledMistakeType()) {
-						mistakeButton.addPaintListener(e -> mistakeButton.setForeground(SWTResourceManager.getColor(loadColorInButtonsWithoutPenalty())));
+					if (mistake.isEnabledMistakeType() && mistake.isEnabledPenalty()) {
+						mistakeButton.addPaintListener(e -> mistakeButton.setForeground(SWTResourceManager.getColor(loadButtonsColor(PreferenceConstants.GRADING_VIEW_BUTTONS_COLOR_PENALTY))));
+					} else if (mistake.isEnabledMistakeType()) {
+						mistakeButton.addPaintListener(e -> mistakeButton.setForeground(SWTResourceManager.getColor(loadButtonsColor(PreferenceConstants.GRADING_VIEW_BUTTONS_COLOR_ENABLED))));
+					} else {
+						mistakeButton.addPaintListener(e -> mistakeButton.setForeground(SWTResourceManager.getColor(loadButtonsColor(PreferenceConstants.GRADING_VIEW_BUTTONS_COLOR_DISABLED))));
+						mistakeButton.setEnabled(false);
 					}
 
 					this.mistakeButtons.put(mistake.getIdentifier(), mistakeButton);
@@ -329,8 +333,8 @@ public class ArtemisGradingView extends ViewPart {
 		UIUtilities.initializeTabAfterFilling(container, this.gradingButtonComposite);
 	}
 
-	private RGB loadColorInButtonsWithoutPenalty() {
-		int[] rgb = Arrays.stream(CommonActivator.getDefault().getPreferenceStore().getString(PreferenceConstants.COLOR_IN_BUTTONS_WITHOUT_PENALTY).split(",")).mapToInt(Integer::parseInt).toArray();
+	private RGB loadButtonsColor(String preferenceKey) {
+		int[] rgb = Arrays.stream(CommonActivator.getDefault().getPreferenceStore().getString(preferenceKey).split(",")).mapToInt(Integer::parseInt).toArray();
 		return new RGB(rgb[0], rgb[1], rgb[2]);
 	}
 

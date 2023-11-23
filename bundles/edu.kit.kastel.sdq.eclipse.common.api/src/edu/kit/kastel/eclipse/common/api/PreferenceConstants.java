@@ -22,7 +22,10 @@ public final class PreferenceConstants {
 
 	public static final String SEARCH_IN_MISTAKE_MESSAGES = "searchInMistakeMessages";
 
-	public static final String COLOR_IN_BUTTONS_WITHOUT_PENALTY ="colorInButtonsWithoutPenalty";
+	public static final String GRADING_VIEW_BUTTONS_COLOR_DISABLED = "buttonsColorDisabled";
+	public static final String GRADING_VIEW_BUTTONS_COLOR_ENABLED = "buttonsColorEnabled";
+	public static final String GRADING_VIEW_BUTTONS_COLOR_PENALTY = "buttonsColorPenalty";
+	public static final String GRADING_VIEW_BUTTONS_COLOR_LIMIT_REACHED = "buttonsColorLimitReached";
 
 	public static final String OPEN_FILES_ON_ASSESSMENT_START = "openFilesOnAssessmentStart";
 	public static final String OPEN_FILES_ON_ASSESSMENT_START_ALL = "all";
