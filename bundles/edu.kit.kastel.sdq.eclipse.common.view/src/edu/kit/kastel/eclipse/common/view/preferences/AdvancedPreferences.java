@@ -4,6 +4,7 @@ package edu.kit.kastel.eclipse.common.view.preferences;
 import static edu.kit.kastel.eclipse.common.view.languages.LanguageSettings.I18N;
 
 import org.eclipse.jface.preference.BooleanFieldEditor;
+import org.eclipse.jface.preference.ColorFieldEditor;
 import org.eclipse.jface.preference.ComboFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IntegerFieldEditor;
@@ -48,6 +49,8 @@ public class AdvancedPreferences extends FieldEditorPreferencePage implements IW
 
 		var searchInMistakeMessages = new BooleanFieldEditor(PreferenceConstants.SEARCH_IN_MISTAKE_MESSAGES, I18N().settingsSearchInMistakeMessages(), parent);
 
+		var colorInButtonsWithoutPenalty = new ColorFieldEditor(PreferenceConstants.COLOR_IN_BUTTONS_WITHOUT_PENALTY, I18N().settingsColorInButtonsWithoutPenalty(), parent);
+
 		var columnsForGradingButtons = new IntegerFieldEditor(PreferenceConstants.GRADING_VIEW_BUTTONS_IN_COLUMN,
 				I18N().settingsAmountOfGradingButtonsInOneRow(), parent);
 		columnsForGradingButtons.setEmptyStringAllowed(false);
@@ -72,6 +75,7 @@ public class AdvancedPreferences extends FieldEditorPreferencePage implements IW
 		this.addField(userPrefersTextWrappingInPenaltyText);
 		this.addField(overrideDefaultPreferences);
 		this.addField(searchInMistakeMessages);
+		this.addField(colorInButtonsWithoutPenalty);
 		this.addField(openFiles);
 
 		this.addField(autograderDownloadJar);

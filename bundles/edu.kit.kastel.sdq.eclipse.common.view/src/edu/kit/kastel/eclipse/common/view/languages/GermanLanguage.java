@@ -201,6 +201,11 @@ class GermanLanguage implements I18N {
 	}
 
 	@Override
+	public String settingsColorInButtonsWithoutPenalty() {
+			return "Farbe in Buttons ohne Abzug";
+	}
+
+	@Override
 	public String settingsOpenFilesOnAssessmentStart() {
 		return "Dateien automatisch öffnen";
 	}

@@ -203,6 +203,10 @@ public interface I18N {
 		return "Search in button descriptions";
 	}
 
+	default String settingsColorInButtonsWithoutPenalty() {
+		return "Color in buttons without penalty";
+	}
+
 	default String settingsOpenFilesOnAssessmentStart() {
 		return "Open files automatically";
 	}

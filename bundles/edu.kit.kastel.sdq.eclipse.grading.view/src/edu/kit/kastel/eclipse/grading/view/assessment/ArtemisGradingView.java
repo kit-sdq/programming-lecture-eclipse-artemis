@@ -16,6 +16,7 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -302,7 +303,7 @@ public class ArtemisGradingView extends ViewPart {
 					mistakeButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 					mistakeButton.setEnabled(mistake.isEnabledMistakeType());
 					if (!mistake.isEnabledPenalty() && mistake.isEnabledMistakeType()) {
-						mistakeButton.addPaintListener(e -> mistakeButton.setForeground(SWTResourceManager.getColor(133, 153, 0))); // solarized green
+						mistakeButton.addPaintListener(e -> mistakeButton.setForeground(SWTResourceManager.getColor(loadColorInButtonsWithoutPenalty())));
 					}
 
 					this.mistakeButtons.put(mistake.getIdentifier(), mistakeButton);
@@ -326,6 +327,11 @@ public class ArtemisGradingView extends ViewPart {
 		});
 
 		UIUtilities.initializeTabAfterFilling(container, this.gradingButtonComposite);
+	}
+
+	private RGB loadColorInButtonsWithoutPenalty() {
+		int[] rgb = Arrays.stream(CommonActivator.getDefault().getPreferenceStore().getString(PreferenceConstants.COLOR_IN_BUTTONS_WITHOUT_PENALTY).split(",")).mapToInt(Integer::parseInt).toArray();
+		return new RGB(rgb[0], rgb[1], rgb[2]);
 	}
 
 	/**

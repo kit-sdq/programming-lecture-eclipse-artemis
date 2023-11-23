@@ -28,6 +28,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		store.setDefault(PreferenceConstants.GENERAL_OVERRIDE_DEFAULT_PREFERENCES, true);
 		store.setDefault(PreferenceConstants.GENERAL_PREFERRED_LANGUAGE, LanguageSettings.getDefaultLanguage().languageDisplayName());
 		store.setDefault(PreferenceConstants.SEARCH_IN_MISTAKE_MESSAGES, true);
+		store.setDefault(PreferenceConstants.COLOR_IN_BUTTONS_WITHOUT_PENALTY, "133, 153, 0"); // solarized green
 		store.setDefault(PreferenceConstants.OPEN_FILES_ON_ASSESSMENT_START, PreferenceConstants.OPEN_FILES_ON_ASSESSMENT_START_MAIN);
 
 		store.setDefault(PreferenceConstants.AUTOGRADER_DOWNLOAD_JAR, true);
