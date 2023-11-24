@@ -218,6 +218,7 @@ public interface I18N {
 	default String settingsButtonsColorLimitReached() {
 		return "Text color in buttons with reached penalties limit";
 	}
+
 	default String settingsOpenFilesOnAssessmentStart() {
 		return "Open files automatically";
 	}
