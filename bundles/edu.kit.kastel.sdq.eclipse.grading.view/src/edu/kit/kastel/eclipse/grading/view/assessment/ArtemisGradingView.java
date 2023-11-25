@@ -16,6 +16,7 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -300,9 +301,16 @@ public class ArtemisGradingView extends ViewPart {
 					final Button mistakeButton = new Button(rgDisplay, SWT.PUSH);
 					mistakeButton.setText(mistake.getButtonText(I18N().key()));
 					mistakeButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-					mistakeButton.setEnabled(mistake.isEnabledMistakeType());
-					if (!mistake.isEnabledPenalty() && mistake.isEnabledMistakeType()) {
-						mistakeButton.addPaintListener(e -> mistakeButton.setForeground(SWTResourceManager.getColor(133, 153, 0))); // solarized green
+					if (mistake.isEnabledMistakeType() && mistake.isEnabledPenalty()) {
+						mistakeButton.addPaintListener(e -> mistakeButton
+								.setForeground(SWTResourceManager.getColor(loadButtonsColor(PreferenceConstants.GRADING_VIEW_BUTTONS_COLOR_PENALTY))));
+					} else if (mistake.isEnabledMistakeType()) {
+						mistakeButton.addPaintListener(e -> mistakeButton
+								.setForeground(SWTResourceManager.getColor(loadButtonsColor(PreferenceConstants.GRADING_VIEW_BUTTONS_COLOR_ENABLED))));
+					} else {
+						mistakeButton.addPaintListener(e -> mistakeButton
+								.setForeground(SWTResourceManager.getColor(loadButtonsColor(PreferenceConstants.GRADING_VIEW_BUTTONS_COLOR_DISABLED))));
+						mistakeButton.setEnabled(false);
 					}
 
 					this.mistakeButtons.put(mistake.getIdentifier(), mistakeButton);
@@ -326,6 +334,11 @@ public class ArtemisGradingView extends ViewPart {
 		});
 
 		UIUtilities.initializeTabAfterFilling(container, this.gradingButtonComposite);
+	}
+
+	private RGB loadButtonsColor(String preferenceKey) {
+		int[] rgb = Arrays.stream(CommonActivator.getDefault().getPreferenceStore().getString(preferenceKey).split(",")).mapToInt(Integer::parseInt).toArray();
+		return new RGB(rgb[0], rgb[1], rgb[2]);
 	}
 
 	/**

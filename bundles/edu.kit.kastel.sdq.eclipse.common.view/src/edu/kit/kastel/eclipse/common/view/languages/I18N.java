@@ -203,6 +203,22 @@ public interface I18N {
 		return "Search in button descriptions";
 	}
 
+	default String settingsButtonsColorDisabled() {
+		return "Text color in deactivated buttons";
+	}
+
+	default String settingsButtonsColorEnabled() {
+		return "Text color in activated buttons";
+	}
+
+	default String settingsButtonsColorPenalty() {
+		return "Text color in buttons with penalties";
+	}
+
+	default String settingsButtonsColorLimitReached() {
+		return "Text color in buttons with reached penalties limit";
+	}
+
 	default String settingsOpenFilesOnAssessmentStart() {
 		return "Open files automatically";
 	}

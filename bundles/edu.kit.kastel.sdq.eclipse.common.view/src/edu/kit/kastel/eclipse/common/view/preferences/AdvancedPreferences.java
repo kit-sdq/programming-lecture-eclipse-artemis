@@ -4,6 +4,7 @@ package edu.kit.kastel.eclipse.common.view.preferences;
 import static edu.kit.kastel.eclipse.common.view.languages.LanguageSettings.I18N;
 
 import org.eclipse.jface.preference.BooleanFieldEditor;
+import org.eclipse.jface.preference.ColorFieldEditor;
 import org.eclipse.jface.preference.ComboFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IntegerFieldEditor;
@@ -48,6 +49,12 @@ public class AdvancedPreferences extends FieldEditorPreferencePage implements IW
 
 		var searchInMistakeMessages = new BooleanFieldEditor(PreferenceConstants.SEARCH_IN_MISTAKE_MESSAGES, I18N().settingsSearchInMistakeMessages(), parent);
 
+		var buttonsColorDisabled = new ColorFieldEditor(PreferenceConstants.GRADING_VIEW_BUTTONS_COLOR_DISABLED, I18N().settingsButtonsColorDisabled(), parent);
+		var buttonsColorEnabled = new ColorFieldEditor(PreferenceConstants.GRADING_VIEW_BUTTONS_COLOR_ENABLED, I18N().settingsButtonsColorEnabled(), parent);
+		var buttonsColorPenalty = new ColorFieldEditor(PreferenceConstants.GRADING_VIEW_BUTTONS_COLOR_PENALTY, I18N().settingsButtonsColorPenalty(), parent);
+		var buttonsColorLimitReached = new ColorFieldEditor(PreferenceConstants.GRADING_VIEW_BUTTONS_COLOR_LIMIT_REACHED,
+				I18N().settingsButtonsColorLimitReached(), parent);
+
 		var columnsForGradingButtons = new IntegerFieldEditor(PreferenceConstants.GRADING_VIEW_BUTTONS_IN_COLUMN,
 				I18N().settingsAmountOfGradingButtonsInOneRow(), parent);
 		columnsForGradingButtons.setEmptyStringAllowed(false);
@@ -72,6 +79,10 @@ public class AdvancedPreferences extends FieldEditorPreferencePage implements IW
 		this.addField(userPrefersTextWrappingInPenaltyText);
 		this.addField(overrideDefaultPreferences);
 		this.addField(searchInMistakeMessages);
+		this.addField(buttonsColorDisabled);
+		this.addField(buttonsColorEnabled);
+		this.addField(buttonsColorPenalty);
+		this.addField(buttonsColorLimitReached);
 		this.addField(openFiles);
 
 		this.addField(autograderDownloadJar);
