@@ -125,8 +125,10 @@ public class AutograderUtil {
 				onCompletion.accept(true);
 
 				monitor.done();
-				Display.getDefault().asyncExec(() -> MessageDialog.openInformation(AssessmentUtilities.getWindowsShell(), "Autograder succeeded",
-						String.format("Autograder found %d issues. Please check that there are no false-positives.", annotations.size())));
+				if (!CommonActivator.getDefault().getPreferenceStore().getBoolean(PreferenceConstants.AUTOGRADER_DISABLE_POPUP)) {
+					Display.getDefault().asyncExec(() -> MessageDialog.openInformation(AssessmentUtilities.getWindowsShell(), "Autograder succeeded",
+							String.format("Autograder found %d issues. Please check that there are no false-positives.", annotations.size())));
+				}
 			}
 		} catch (Exception ex) {
 			LOG.error("Autograder failed: " + ex.getMessage(), ex);

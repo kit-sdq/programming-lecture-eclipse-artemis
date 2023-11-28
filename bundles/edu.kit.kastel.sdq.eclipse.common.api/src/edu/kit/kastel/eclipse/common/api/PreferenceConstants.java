@@ -34,6 +34,7 @@ public final class PreferenceConstants {
 
 	public static final String AUTOGRADER_DOWNLOAD_JAR = "autograderDownloadJar";
 	public static final String AUTOGRADER_DOWNLOADED_JAR_PATH = "autograderDownloadedJarPath";
+	public static final String AUTOGRADER_DISABLE_POPUP = "autograderDisablePopup";
 	public static final String AUTOGRADER_JAR_PATH = "autograderJarPath";
 	public static final String AUTOGRADER_CONFIG_PATH = "autograderConfigPath";
 

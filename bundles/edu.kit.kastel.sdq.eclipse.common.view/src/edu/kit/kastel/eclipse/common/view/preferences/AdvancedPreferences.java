@@ -67,6 +67,8 @@ public class AdvancedPreferences extends FieldEditorPreferencePage implements IW
 				parent);
 
 		var autograderDownloadJar = new BooleanFieldEditor(PreferenceConstants.AUTOGRADER_DOWNLOAD_JAR, "Download most recent Autograder release", parent);
+		var autograderDisablePopup = new BooleanFieldEditor(PreferenceConstants.AUTOGRADER_DISABLE_POPUP, "Disable Autograder popup on successful run",
+				parent);
 		var autograderJarPath = new FileFieldEditor(PreferenceConstants.AUTOGRADER_JAR_PATH, "Autograder JAR file", parent);
 		var autograderConfigPath = new FileFieldEditor(PreferenceConstants.AUTOGRADER_CONFIG_PATH, "Autograder config file", parent);
 
@@ -86,6 +88,7 @@ public class AdvancedPreferences extends FieldEditorPreferencePage implements IW
 		this.addField(openFiles);
 
 		this.addField(autograderDownloadJar);
+		this.addField(autograderDisablePopup);
 		this.addField(autograderJarPath);
 		this.addField(autograderConfigPath);
 	}
