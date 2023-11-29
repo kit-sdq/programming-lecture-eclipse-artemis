@@ -142,7 +142,7 @@ public class BrowserLogin extends Dialog {
 				return;
 			}
 
-			log.info("Got a new Token: " + jwtToken);
+			log.info("Got a new Token");
 			this.token = jwtToken;
 
 			// Close Dialog
