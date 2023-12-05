@@ -120,8 +120,8 @@ public abstract class AbstractResultTab extends AbstractResultTabCompositeContro
 		}
 
 		entries.stream().sorted().forEach(feedback -> {
-			var name = feedback.getFeedbackType() != FeedbackType.AUTOMATIC && feedback.getText() == null ? I18N().tabResultsTutorComment()
-					: feedback.getText();
+			var name = feedback.getFeedbackType() != FeedbackType.AUTOMATIC && feedback.getCodeLocationHumanReadable() == null ? I18N().tabResultsTutorComment()
+					: feedback.getCodeLocationHumanReadable();
 			this.createTableItemsForFeedback(table, name, feedback);
 		});
 
@@ -165,7 +165,7 @@ public abstract class AbstractResultTab extends AbstractResultTabCompositeContro
 		List<IAnnotation> annotations = new ArrayList<>();
 		for (Feedback f : feedbackForLines) {
 			// e.g., file:src/edu/kit/informatik/Client.java.java_line:21
-			String reference = f.getReference();
+			String reference = f.getCodeLocation();
 			if (reference == null || !reference.startsWith("file:")) {
 				continue;
 			}
