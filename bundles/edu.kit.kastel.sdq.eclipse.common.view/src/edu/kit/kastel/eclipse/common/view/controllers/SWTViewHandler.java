@@ -18,6 +18,12 @@ public final class SWTViewHandler implements IViewInteraction {
 	private static final ILog log = Platform.getLog(SWTViewHandler.class);
 
 	@Override
+	public void error(String errorMsg) {
+		log.error(errorMsg);
+		MessageDialog.openError(AssessmentUtilities.getWindowsShell(), "Error", errorMsg);
+	}
+
+	@Override
 	public void error(String errorMsg, Throwable cause) {
 		log.error(errorMsg, cause);
 		MessageDialog.openError(AssessmentUtilities.getWindowsShell(), "Error", errorMsg);

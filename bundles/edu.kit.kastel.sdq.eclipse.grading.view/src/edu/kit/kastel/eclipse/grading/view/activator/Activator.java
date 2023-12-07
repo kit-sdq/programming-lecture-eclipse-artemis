@@ -54,7 +54,8 @@ public class Activator extends AbstractUIPlugin {
 	 * Creates a new instance of the SystemWideController
 	 */
 	public IGradingSystemwideController createNewSystemwideController() {
-		this.systemwideController = new GradingSystemwideController(CommonActivator.getDefault().getPreferenceStore(), new SWTViewHandler());
+		this.systemwideController = new GradingSystemwideController(Activator.getDefault().getBundle().getVersion(),
+				CommonActivator.getDefault().getPreferenceStore(), new SWTViewHandler());
 		return this.systemwideController;
 	}
 

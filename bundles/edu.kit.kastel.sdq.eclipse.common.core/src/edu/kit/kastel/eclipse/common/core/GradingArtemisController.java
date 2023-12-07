@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.Platform;
+import org.osgi.framework.Version;
 
 import edu.kit.kastel.eclipse.common.api.controller.IAssessmentController;
 import edu.kit.kastel.eclipse.common.api.controller.IGradingArtemisController;
@@ -26,8 +27,8 @@ public class GradingArtemisController extends ArtemisController implements IGrad
 
 	private static final ILog log = Platform.getLog(GradingArtemisController.class);
 
-	public GradingArtemisController(String host, String username, String password, IViewInteraction handler) {
-		super(host, username, password, handler);
+	public GradingArtemisController(Version pluginVersion, String host, String username, String password, IViewInteraction handler) {
+		super(pluginVersion, host, username, password, handler);
 	}
 
 	@Override

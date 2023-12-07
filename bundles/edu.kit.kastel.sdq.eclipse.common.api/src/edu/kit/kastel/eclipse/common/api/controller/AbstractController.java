@@ -14,6 +14,10 @@ public abstract class AbstractController implements IController {
 		this.viewInteractionHandler.error(errorMsg, cause);
 	}
 
+	protected void error(String errorMsg) {
+		this.viewInteractionHandler.error(errorMsg);
+	}
+
 	protected void info(String infoMsg) {
 		this.viewInteractionHandler.info(infoMsg);
 	}

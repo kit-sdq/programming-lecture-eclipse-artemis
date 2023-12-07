@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.osgi.framework.Version;
 
 import edu.kit.kastel.eclipse.common.api.artemis.IProjectFileNamingStrategy;
 import edu.kit.kastel.eclipse.common.api.controller.AbstractController;
@@ -26,15 +27,15 @@ public abstract class SystemwideController extends AbstractController implements
 	protected final IProjectFileNamingStrategy projectFileNamingStrategy;
 	protected final IExerciseArtemisController exerciseController;
 
-	protected SystemwideController(IPreferenceStore preferenceStore, IViewInteraction handler) {
+	protected SystemwideController(Version pluginVersion, IPreferenceStore preferenceStore, IViewInteraction handler) {
 		super(handler);
 		this.buildCompletedCallbacks = new ArrayList<>();
 		this.projectFileNamingStrategy = ProjectFileNamingStrategies.DEFAULT.get();
-		var loginController = this.createController(preferenceStore, handler);
+		var loginController = this.createController(pluginVersion, preferenceStore, handler);
 		this.exerciseController = new ExerciseArtemisController(handler, loginController.getUserLogin(), preferenceStore);
 	}
 
-	protected abstract IArtemisController createController(IPreferenceStore preferenceStore, IViewInteraction handler);
+	protected abstract IArtemisController createController(Version pluginVersion, IPreferenceStore preferenceStore, IViewInteraction handler);
 
 	protected boolean nullCheckMembersAndNotify(boolean checkCourseId, boolean checkExerciseId) {
 		String alert = "[";

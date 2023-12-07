@@ -12,6 +12,7 @@ import java.util.Optional;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.osgi.framework.Version;
 
 import edu.kit.kastel.eclipse.common.api.PreferenceConstants;
 import edu.kit.kastel.eclipse.common.api.artemis.IProjectFileNamingStrategy;
@@ -34,14 +35,14 @@ public class GradingSystemwideController extends SystemwideController implements
 
 	private Submission submission;
 
-	public GradingSystemwideController(final IPreferenceStore preferenceStore, IViewInteraction handler) {
-		super(preferenceStore, handler);
+	public GradingSystemwideController(Version pluginVersion, final IPreferenceStore preferenceStore, IViewInteraction handler) {
+		super(pluginVersion, preferenceStore, handler);
 		this.preferenceStore = preferenceStore;
 	}
 
 	@Override
-	protected IArtemisController createController(IPreferenceStore preferenceStore, IViewInteraction handler) {
-		this.artemisController = new GradingArtemisController(preferenceStore.getString(PreferenceConstants.GENERAL_ARTEMIS_URL),
+	protected IArtemisController createController(Version pluginVersion, IPreferenceStore preferenceStore, IViewInteraction handler) {
+		this.artemisController = new GradingArtemisController(pluginVersion, preferenceStore.getString(PreferenceConstants.GENERAL_ARTEMIS_URL),
 				preferenceStore.getString(PreferenceConstants.GENERAL_ADVANCED_ARTEMIS_USER),
 				preferenceStore.getString(PreferenceConstants.GENERAL_ADVANCED_ARTEMIS_PASSWORD), handler);
 		return this.artemisController;

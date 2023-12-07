@@ -10,6 +10,8 @@ package edu.kit.kastel.eclipse.common.api.controller;
 public interface IViewInteraction {
 	void error(String errorMsg, Throwable cause);
 
+	void error(String errorMsg);
+
 	void info(String infoMsg);
 
 	void warn(String warningMsg);

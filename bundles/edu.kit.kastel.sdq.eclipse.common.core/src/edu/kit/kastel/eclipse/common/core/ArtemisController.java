@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.osgi.framework.Version;
+
 import edu.kit.kastel.eclipse.common.api.EclipseArtemisConstants;
 import edu.kit.kastel.eclipse.common.api.controller.AbstractController;
 import edu.kit.kastel.eclipse.common.api.controller.IArtemisController;
@@ -26,9 +28,11 @@ public abstract class ArtemisController extends AbstractController implements IA
 	protected final Map<Integer, LockResult> lockResults;
 	protected final RestClientManager clientManager;
 	protected List<Course> courses;
+	private final Version pluginVersion;
 
-	protected ArtemisController(final String host, final String username, final String password, final IViewInteraction handler) {
+	protected ArtemisController(Version pluginVersion, final String host, final String username, final String password, final IViewInteraction handler) {
 		super(handler);
+		this.pluginVersion = pluginVersion;
 		this.clientManager = new RestClientManager(host.trim(), new LoginManager(host.trim(), username, password));
 		this.lockResults = new HashMap<>();
 		if (!host.isBlank()) {
@@ -154,26 +158,28 @@ public abstract class ArtemisController extends AbstractController implements IA
 	}
 
 	private void checkVersion() {
-		try {
-			var currentVersion = this.clientManager.getUtilArtemisClient().getVersion();
-			if (currentVersion.compareTo(EclipseArtemisConstants.MINIMUM_ARTEMIS_VERSION_INCLUSIVE) < 0) {
-				String response = """
-						This version of Eclipse Artemis has Artemis %s as minimum requirement.
-						Your Artemis instance runs %s
-						Proceed on your own responsibility.
-						""";
-				this.warn(response.formatted(EclipseArtemisConstants.MINIMUM_ARTEMIS_VERSION_INCLUSIVE, currentVersion));
-			} else if (currentVersion.compareTo(EclipseArtemisConstants.MAXIMUM_ARTEMIS_VERSION_EXCLUSIVE) >= 0) {
-				String response = """
-						This version of Eclipse Artemis has Artemis %s as maximum (exclusive) requirement.
-						Your Artemis instance runs %s
-						Proceed on your own responsibility.
-						""";
-				this.warn(response.formatted(EclipseArtemisConstants.MAXIMUM_ARTEMIS_VERSION_EXCLUSIVE, currentVersion));
-			}
-		} catch (ArtemisClientException e) {
-			this.error(e.getMessage(), e);
+		boolean newerAvailable = this.compareVersions(EclipseArtemisConstants.GITHUB_GRADING_TOOL_VERSION) > 0;
+
+		if (newerAvailable) {
+			String response = """
+					This version of the Eclipse Artemis Plugin is outdated.
+					Please update to Plugin Version %s.
+					""";
+			this.error(response.formatted(EclipseArtemisConstants.GITHUB_GRADING_TOOL_VERSION));
+		}
+	}
+
+	private int compareVersions(edu.kit.kastel.sdq.artemis4j.util.Version releaseVersion) {
+		int majorCompare = Integer.compare(releaseVersion.major(), this.pluginVersion.getMajor());
+		if (majorCompare != 0) {
+			return majorCompare;
 		}
 
+		int minorCompare = Integer.compare(releaseVersion.minor(), this.pluginVersion.getMinor());
+		if (minorCompare != 0) {
+			return minorCompare;
+		}
+
+		return Integer.compare(releaseVersion.micro(), this.pluginVersion.getMicro());
 	}
 }
