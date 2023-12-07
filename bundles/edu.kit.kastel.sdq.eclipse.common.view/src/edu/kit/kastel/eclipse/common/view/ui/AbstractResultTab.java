@@ -120,8 +120,17 @@ public abstract class AbstractResultTab extends AbstractResultTabCompositeContro
 		}
 
 		entries.stream().sorted().forEach(feedback -> {
-			var name = feedback.getFeedbackType() != FeedbackType.AUTOMATIC && feedback.getCodeLocationHumanReadable() == null ? I18N().tabResultsTutorComment()
-					: feedback.getCodeLocationHumanReadable();
+			String name = "unknown";
+			if (feedback.isTest()) {
+				// TestCase
+				name = feedback.getTestName();
+			} else if (feedback.getCodeLocationHumanReadable() == null) {
+				// Tutor Comment
+				name = I18N().tabResultsTutorComment();
+			} else {
+				// Inline Comment / Static Code Analysis
+				name = feedback.getCodeLocationHumanReadable();
+			}
 			this.createTableItemsForFeedback(table, name, feedback);
 		});
 
