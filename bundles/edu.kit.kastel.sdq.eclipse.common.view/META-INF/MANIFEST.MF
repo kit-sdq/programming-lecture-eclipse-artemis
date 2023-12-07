@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: edu.kit.kastel.sdq.eclipse.common
 Bundle-SymbolicName: edu.kit.kastel.sdq.eclipse.common.view;singleton:=true
-Bundle-Version: 4.9.0
+Bundle-Version: 4.8.2
 Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.ide,
  org.eclipse.ui.editors,
