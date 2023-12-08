@@ -427,12 +427,20 @@ public class ArtemisGradingView extends ViewPart {
 	public void updatePenalties() {
 		this.viewController.getRatingGroups().forEach(ratingGroup -> this.updatePenalty(ratingGroup.getIdentifier()));
 		this.updateAllToolTips();
+		this.updateAllMistakeButtonColors();
 	}
 
 	private void updateAllToolTips() {
 		List<IMistakeType> mistakes = this.viewController.getMistakeTypes();
 		for (IMistakeType mistake : mistakes) {
 			this.updateMistakeButtonToolTips(mistake);
+		}
+	}
+
+	private void updateAllMistakeButtonColors() {
+		List<IMistakeType> mistakes = this.viewController.getMistakeTypes();
+		for (IMistakeType mistake : mistakes) {
+			this.updateMistakeButtonColor(mistake);
 		}
 	}
 
