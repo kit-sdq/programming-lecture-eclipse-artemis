@@ -61,6 +61,14 @@ public class AssessmentViewController extends AbstractArtemisViewController<IGra
 	}
 
 	/**
+	 * @param mistakeType the mistake type
+	 * @return all annotations for the given mistake type in the current assessment
+	 */
+	public List<IAnnotation> getAnnotationsByMistakeType(IMistakeType mistakeType) {
+		return this.assessmentController.getAnnotationsByMistakeType(mistakeType);
+	}
+
+	/**
 	 * @return the mistake types of the current config file
 	 */
 	public List<IMistakeType> getMistakeTypes() {
