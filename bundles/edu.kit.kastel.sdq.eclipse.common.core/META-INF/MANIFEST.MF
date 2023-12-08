@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: edu.kit.kastel.sdq.eclipse.common.core
 Bundle-SymbolicName: edu.kit.kastel.sdq.eclipse.common.core
-Bundle-Version: 4.8.3
+Bundle-Version: 4.9.0
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Export-Package: edu.kit.kastel.eclipse.common.core,
  edu.kit.kastel.eclipse.common.core.artemis
