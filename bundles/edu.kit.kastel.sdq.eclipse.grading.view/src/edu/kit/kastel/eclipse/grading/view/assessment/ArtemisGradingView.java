@@ -47,6 +47,7 @@ import edu.kit.kastel.eclipse.grading.view.commands.DeleteAnnotationCommandHandl
 import edu.kit.kastel.eclipse.grading.view.controllers.AssessmentViewController;
 import edu.kit.kastel.eclipse.grading.view.listeners.AssessmentMarkerViewDoubleClickListener;
 import edu.kit.kastel.eclipse.grading.view.listeners.KeyboardAwareMouseListener;
+import edu.kit.kastel.sdq.artemis4j.api.grading.IAnnotation;
 import edu.kit.kastel.sdq.artemis4j.api.grading.IMistakeType;
 import edu.kit.kastel.sdq.artemis4j.api.grading.IRatingGroup;
 
@@ -301,20 +302,10 @@ public class ArtemisGradingView extends ViewPart {
 					final Button mistakeButton = new Button(rgDisplay, SWT.PUSH);
 					mistakeButton.setText(mistake.getButtonText(I18N().key()));
 					mistakeButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-					if (mistake.isEnabledMistakeType() && mistake.isEnabledPenalty()) {
-						mistakeButton.addPaintListener(e -> mistakeButton
-								.setForeground(SWTResourceManager.getColor(loadButtonsColor(PreferenceConstants.GRADING_VIEW_BUTTONS_COLOR_PENALTY))));
-					} else if (mistake.isEnabledMistakeType()) {
-						mistakeButton.addPaintListener(e -> mistakeButton
-								.setForeground(SWTResourceManager.getColor(loadButtonsColor(PreferenceConstants.GRADING_VIEW_BUTTONS_COLOR_ENABLED))));
-					} else {
-						mistakeButton.addPaintListener(e -> mistakeButton
-								.setForeground(SWTResourceManager.getColor(loadButtonsColor(PreferenceConstants.GRADING_VIEW_BUTTONS_COLOR_DISABLED))));
-						mistakeButton.setEnabled(false);
-					}
-
 					this.mistakeButtons.put(mistake.getIdentifier(), mistakeButton);
-					mistakeButton.setToolTipText(this.viewController.getToolTipForMistakeType(I18N().key(), mistake));
+
+					this.updateMistakeButtonToolTips(mistake);
+					this.updateMistakeButtonColor(mistake);
 
 					KeyboardAwareMouseListener listener = new KeyboardAwareMouseListener();
 					// Normal click
@@ -327,6 +318,7 @@ public class ArtemisGradingView extends ViewPart {
 					listener.setClickHandlerForEveryClick(() -> {
 						this.updatePenalty(mistake.getRatingGroup().getIdentifier());
 						this.updateMistakeButtonToolTips(mistake);
+						this.updateMistakeButtonColor(mistake);
 					});
 					mistakeButton.addMouseListener(listener);
 				}
@@ -408,6 +400,27 @@ public class ArtemisGradingView extends ViewPart {
 			Display.getDefault().asyncExec( //
 					() -> button.setToolTipText(this.viewController.getToolTipForMistakeType(I18N().key(), mistakeType)) //
 			);
+		}
+	}
+
+	private void updateMistakeButtonColor(IMistakeType mistakeType) {
+		Button button = this.mistakeButtons.get(mistakeType.getIdentifier());
+		if (button != null) {
+			Display.getDefault().asyncExec(() -> {
+				if (mistakeType.isEnabledMistakeType() && mistakeType.isEnabledPenalty()) {
+					List<IAnnotation> filteredAnnotations = this.viewController.getAnnotationsByMistakeType(mistakeType);
+					if (filteredAnnotations != null && mistakeType.limitReached(filteredAnnotations)) {
+						button.setForeground(SWTResourceManager.getColor(loadButtonsColor(PreferenceConstants.GRADING_VIEW_BUTTONS_COLOR_LIMIT_REACHED)));
+					} else {
+						button.setForeground(SWTResourceManager.getColor(loadButtonsColor(PreferenceConstants.GRADING_VIEW_BUTTONS_COLOR_PENALTY)));
+					}
+				} else if (mistakeType.isEnabledMistakeType()) {
+					button.setForeground(SWTResourceManager.getColor(loadButtonsColor(PreferenceConstants.GRADING_VIEW_BUTTONS_COLOR_ENABLED)));
+				} else {
+					button.setForeground(SWTResourceManager.getColor(loadButtonsColor(PreferenceConstants.GRADING_VIEW_BUTTONS_COLOR_DISABLED)));
+					button.setEnabled(false);
+				}
+			});
 		}
 	}
 

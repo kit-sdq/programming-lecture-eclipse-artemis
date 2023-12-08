@@ -56,6 +56,14 @@ public interface IAssessmentController extends IController {
 	 */
 	List<IAnnotation> getAnnotations();
 
+	/**
+	 * All annotations of a specific mistake type already made with this
+	 * AssessmentController.
+	 *
+	 * @param mistakeType the mistake type
+	 */
+	List<IAnnotation> getAnnotationsByMistakeType(IMistakeType mistakeType);
+
 	Optional<IAnnotation> getAnnotationById(String annotationId);
 
 	/**

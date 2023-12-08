@@ -109,6 +109,11 @@ public class AssessmentController extends AbstractController implements IAssessm
 	}
 
 	@Override
+	public List<IAnnotation> getAnnotationsByMistakeType(IMistakeType mistakeType) {
+		return this.annotations.getAnnotations().stream().filter(annotation -> annotation.getMistakeType().equals(mistakeType)).toList();
+	}
+
+	@Override
 	public Optional<IAnnotation> getAnnotationById(String id) {
 		return this.annotations.getAnnotations().stream().filter(annotation -> annotation.getUUID().equals(id)).findFirst();
 	}
@@ -165,7 +170,7 @@ public class AssessmentController extends AbstractController implements IAssessm
 
 	@Override
 	public String getTooltipForMistakeType(String languageKey, IMistakeType mistakeType) {
-		List<IAnnotation> annotations = this.getAnnotations().stream().filter(annotation -> annotation.getMistakeType().equals(mistakeType)).toList();
+		List<IAnnotation> annotations = this.getAnnotationsByMistakeType(mistakeType);
 		return mistakeType.getTooltip(languageKey, annotations);
 	}
 
