@@ -11,7 +11,7 @@ import edu.kit.kastel.sdq.artemis4j.api.artemis.assessment.Submission;
  * A naming strategy that creates projects like this:
  *
  * <pre>
- * exercise-${EXERCISE_ID}-${EXERCISE_SHORTNAME}-${STUDENT_ID}-round-${round}-submission-${SUBMISSION_ID}}
+ * exercise-${EXERCISE_ID}-${EXERCISE_SHORTNAME}-${STUDENT_ID}-round-${round}-submission-${SUBMISSION_ID}${-locked}
  * </pre>
  *
  */
