@@ -93,7 +93,7 @@ jobs:
         ditto -c -k --sequesterRsrc --keepParent Eclipse.app dist/Artemis_Grading_MacOS_aarch64.zip
 
     - name: Save Eclipse Distribution (MacOS)
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: "Eclipse Distribution MacOS"
         path: "dist/Artemis_*_MacOS*.zip"
@@ -112,7 +112,7 @@ jobs:
         key: cache-dist-${{github.run_id}}
 
     - name: Save Eclipse Distribution (Windows)
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: "Eclipse Distribution Windows"
         path: "dist/Artemis_*_Windows.zip"
@@ -132,7 +132,7 @@ jobs:
 
 
     - name: Save Eclipse Distribution (Linux)
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: "Eclipse Distribution Linux"
         path: "dist/Artemis_*_Linux*.zip"
