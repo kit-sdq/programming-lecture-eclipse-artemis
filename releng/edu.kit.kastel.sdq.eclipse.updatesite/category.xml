@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/edu.kit.kastel.sdq.eclipse.grading.feature_4.8.4.jar" id="edu.kit.kastel.sdq.eclipse.grading.feature" version="4.8.4">
+   <feature url="features/edu.kit.kastel.sdq.eclipse.grading.feature_4.9.0.jar" id="edu.kit.kastel.sdq.eclipse.grading.feature" version="4.9.0">
       <category name="Eclipse Artemis Grading"/>
    </feature>
-   <feature id="edu.kit.kastel.sdq.eclipse.grading.feature.source" version="4.8.4">
+   <feature id="edu.kit.kastel.sdq.eclipse.grading.feature.source" version="4.9.0">
       <category name="Eclipse Artemis Grading"/>
    </feature>
    <feature id="org.eclipse.pde">
