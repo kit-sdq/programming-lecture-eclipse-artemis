@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2022-2023. */
+/* Licensed under EPL-2.0 2022-2024. */
 package edu.kit.kastel.eclipse.common.core.artemis.naming;
 
 import java.io.File;
