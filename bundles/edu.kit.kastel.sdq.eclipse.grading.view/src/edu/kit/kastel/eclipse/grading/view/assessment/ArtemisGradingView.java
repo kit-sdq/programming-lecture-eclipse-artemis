@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2022-2023. */
+/* Licensed under EPL-2.0 2022-2024. */
 package edu.kit.kastel.eclipse.grading.view.assessment;
 
 import static edu.kit.kastel.eclipse.common.view.languages.LanguageSettings.I18N;
@@ -406,20 +406,25 @@ public class ArtemisGradingView extends ViewPart {
 	private void updateMistakeButtonColor(IMistakeType mistakeType) {
 		Button button = this.mistakeButtons.get(mistakeType.getIdentifier());
 		if (button != null) {
-			Display.getDefault().asyncExec(() -> {
-				if (mistakeType.isEnabledMistakeType() && mistakeType.isEnabledPenalty()) {
-					List<IAnnotation> filteredAnnotations = this.viewController.getAnnotationsByMistakeType(mistakeType);
-					if (filteredAnnotations != null && mistakeType.limitReached(filteredAnnotations)) {
-						button.setForeground(SWTResourceManager.getColor(loadButtonsColor(PreferenceConstants.GRADING_VIEW_BUTTONS_COLOR_LIMIT_REACHED)));
-					} else {
-						button.setForeground(SWTResourceManager.getColor(loadButtonsColor(PreferenceConstants.GRADING_VIEW_BUTTONS_COLOR_PENALTY)));
-					}
-				} else if (mistakeType.isEnabledMistakeType()) {
-					button.setForeground(SWTResourceManager.getColor(loadButtonsColor(PreferenceConstants.GRADING_VIEW_BUTTONS_COLOR_ENABLED)));
+			final boolean enabled = mistakeType.isEnabledMistakeType();
+			final RGB color;
+
+			if (enabled && mistakeType.isEnabledPenalty()) {
+				List<IAnnotation> filteredAnnotations = this.viewController.getAnnotationsByMistakeType(mistakeType);
+				if (filteredAnnotations != null && mistakeType.limitReached(filteredAnnotations)) {
+					color = loadButtonsColor(PreferenceConstants.GRADING_VIEW_BUTTONS_COLOR_LIMIT_REACHED);
 				} else {
-					button.setForeground(SWTResourceManager.getColor(loadButtonsColor(PreferenceConstants.GRADING_VIEW_BUTTONS_COLOR_DISABLED)));
-					button.setEnabled(false);
+					color = loadButtonsColor(PreferenceConstants.GRADING_VIEW_BUTTONS_COLOR_PENALTY);
 				}
+			} else if (enabled) {
+				color = loadButtonsColor(PreferenceConstants.GRADING_VIEW_BUTTONS_COLOR_ENABLED);
+			} else {
+				color = loadButtonsColor(PreferenceConstants.GRADING_VIEW_BUTTONS_COLOR_DISABLED);
+			}
+
+			Display.getDefault().asyncExec(() -> {
+				button.setForeground(SWTResourceManager.getColor(color));
+				button.setEnabled(enabled);
 			});
 		}
 	}
