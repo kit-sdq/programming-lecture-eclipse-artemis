@@ -14,10 +14,10 @@ jobs:
   docs:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4.1.2
+      - uses: actions/checkout@v4.1.3
         with:
           token: ${{ secrets.PAT_TOKEN }}
-      - uses: actions/checkout@v4.1.2
+      - uses: actions/checkout@v4.1.3
         with:
           repository: ${{ github.repository }}.wiki
           path: wiki
