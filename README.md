@@ -1,8 +1,5 @@
 # Programming Lecture: Eclipse Artemis
-[![Chat on Matrix](https://matrix.to/img/matrix-badge.svg)](https://matrix.to/#/#eclipse-artemis:kit.edu)
-[![GitHub issues](https://img.shields.io/github/issues/kit-sdq/programming-lecture-eclipse-artemis.svg?style=square)](https://github.com/kit-sdq/programming-lecture-eclipse-artemis/issues)
-[![GitHub license](https://img.shields.io/badge/license-EPL_2.0-blue.svg?style=square)](https://github.com/kit-sdq/programming-lecture-eclipse-artemis/blob/main/LICENSE)
-
+⚠️ Please use [Intelligrade](https://github.com/kit-sdq/intelligrade). This project is archived. ⚠️
 
 Eclipse-Plugin for grading with the [Artemis Project](https://github.com/ls1intum/Artemis)
 
